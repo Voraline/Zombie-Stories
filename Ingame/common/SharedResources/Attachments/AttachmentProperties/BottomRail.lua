@@ -1,0 +1,73 @@
+local v1 = {
+	["Angled Grip"] = {
+		["ID"] = "BR0",
+		["UnlockLevel"] = 8,
+		["Image"] = "rbxassetid://13833342064",
+		["Description"] = "Reduces overall recoil. Decreases ADS speed.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Horizontal Recoil [-30%]" },
+		["Cons"] = { "Slower ADS Speed [-30%]" }
+	},
+	["Vertical Grip"] = {
+		["ID"] = "BR1",
+		["UnlockLevel"] = 5,
+		["Image"] = "rbxassetid://13833343857",
+		["Description"] = "Reduces vertical recoil. Decreases ADS speed.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Vertical Recoil [-30%]" },
+		["Cons"] = { "Slower ADS Speed [-30%]" }
+	},
+	["Stubby Grip"] = {
+		["ID"] = "BR2",
+		["UnlockLevel"] = 11,
+		["Image"] = "rbxassetid://13833343483",
+		["Description"] = "Reduces spread and horizontal recoil. Decreases overall handling.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Spread [-10%]", "Reduced Horizontal Recoil [-15%]" },
+		["Cons"] = { "Slower ADS Speed [-15%]", "Slower Equip Speed [15%]" }
+	},
+	["Skeleton Grip"] = {
+		["ID"] = "BR3",
+		["UnlockLevel"] = 20,
+		["Image"] = "rbxassetid://13833342843",
+		["Description"] = "Reduces spread and vertical recoil. Decreases overall handling.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Spread [-10%]", "Reduced Vertical Recoil [-20%]" },
+		["Cons"] = { "Slower ADS Speed [-15%]", "Slower Equip Speed [15%]" }
+	},
+	["Folding Grip"] = {
+		["ID"] = "BR4",
+		["UnlockLevel"] = 14,
+		["Image"] = "rbxassetid://13833342454",
+		["Description"] = "Reduces spread and overall recoil. Decreases overall handling.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Spread [-10%]", "Reduced Overall Recoil [-10%]" },
+		["Cons"] = { "Slower ADS Speed [-15%]", "Slower Equip Speed [15%]" }
+	},
+	["RK-1 Grip"] = {
+		["ID"] = "BR5",
+		["UnlockLevel"] = 17,
+		["Image"] = "rbxassetid://14056433323",
+		["Description"] = "Reduces overall recoil. Decreases overall handling.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Overall Recoil [-25%]" },
+		["Cons"] = { "Slower ADS Speed [-50%]", "Slower Equip Speed [30%]" }
+	},
+	["Grip Bipod"] = {
+		["ID"] = "BR6",
+		["UnlockLevel"] = 50,
+		["Image"] = "rbxassetid://120891351443781",
+		["Description"] = "Reduces overall recoil. Decreases overall handling.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Reduced Vertical Recoil when proning [-~35%]" },
+		["Cons"] = { "Slower ADS Speed [-60%]", "Higher Standing Recoil [10%]" }
+	}
+}
+return v1

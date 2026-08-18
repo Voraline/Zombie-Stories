@@ -1,0 +1,29 @@
+local v1 = game:GetService("ReplicatedStorage")
+local v2 = require(v1.common:FindFirstChild("Fusion", true)).Value
+return {
+	["mainBackground"] = v2(Color3.fromRGB(218, 225, 240)),
+	["lightBackground"] = v2(Color3.fromRGB(255, 255, 255)),
+	["darkBackground"] = v2(Color3.fromRGB(211, 215, 224)),
+	["brightText"] = v2(Color3.fromRGB(1, 1, 1)),
+	["mainText"] = v2(Color3.fromRGB(20, 20, 25)),
+	["subText"] = v2(Color3.fromRGB(122, 122, 122)),
+	["button"] = v2(Color3.fromRGB(186, 192, 199)),
+	["buttonText"] = v2(Color3.fromRGB(10, 10, 10)),
+	["accent"] = v2(Color3.fromRGB(0, 107, 157)),
+	["accentText"] = v2(Color3.new(1, 1, 1)),
+	["positive"] = v2(Color3.fromRGB(194, 67, 8)),
+	["negative"] = v2(Color3.fromRGB(37, 16, 231)),
+	["warning"] = v2(Color3.fromRGB(177, 82, 15)),
+	["error"] = v2(Color3.fromRGB(194, 34, 34)),
+	["dark"] = v2(Color3.fromRGB(195, 201, 214)),
+	["light"] = v2(Color3.fromRGB(157, 161, 163)),
+	["scriptBackground"] = v2(Color3.fromRGB(237, 237, 237)),
+	["scriptText"] = v2(Color3.fromRGB(37, 38, 43)),
+	["scriptKeyword"] = v2(Color3.fromRGB(164, 46, 162)),
+	["scriptBuiltin"] = v2(Color3.fromRGB(50, 103, 218)),
+	["scriptNumber"] = v2(Color3.fromRGB(226, 88, 78)),
+	["scriptOperator"] = v2(Color3.fromRGB(138, 116, 44)),
+	["scriptString"] = v2(Color3.fromRGB(70, 173, 70)),
+	["scriptComment"] = v2(Color3.fromRGB(133, 133, 155)),
+	["scriptCustom"] = v2(Color3.fromRGB(69, 39, 138))
+}

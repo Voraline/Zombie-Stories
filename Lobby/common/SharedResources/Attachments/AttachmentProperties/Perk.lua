@@ -1,0 +1,368 @@
+local v1 = {
+	["AP"] = {
+		["ID"] = "P0",
+		["UnlockLevel"] = 10,
+		["Alias"] = "Armor Piercing Rounds",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Allows the weapon to pierce through an additional target. Increased recoil and decreased piercing damage.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+1 Piercing" },
+		["Cons"] = { "Increased Recoil [10%]", "Pierce DMG 2/3" }
+	},
+	["HP"] = {
+		["ID"] = "P1",
+		["UnlockLevel"] = 15,
+		["Alias"] = "Hollow Point Rounds",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+15% Damage" },
+		["Cons"] = {
+			"Increased Vertical Recoil [10%]",
+			"Increased Horizontal Recoil [7.5%]",
+			"Slower ADS Speed [5%]",
+			"Slower Equip Speed [10%]"
+		}
+	},
+	["Flechette"] = {
+		["ID"] = "P2",
+		["UnlockLevel"] = 15,
+		["Alias"] = "Flechette Darts",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Pierces an additional target",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+2 Piercing" },
+		["Cons"] = {
+			"Greatly Increased Recoil [30%]",
+			"Slower ADS Speed [15%]",
+			"Slower Equip Speed [15%]",
+			"Pierce DMG 1/4",
+			"Decreased Damage [20%]"
+		}
+	},
+	["RAMROD"] = {
+		["ID"] = "P3",
+		["UnlockLevel"] = 26,
+		["Alias"] = "RAMRODs",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Anti-B.O.W Rounds designed to kill any fungal abomination with ease. Popularized due to its usage by someone named Winters.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Massively Increased damage [+350]", "Increased Headshot Multiplier [+33%]" },
+		["Cons"] = {
+			"Massively Increased Recoil [x22]",
+			"Slower ADS Speed [75%]",
+			"Slower Equip Speed [35%]",
+			"Decreased magazine capacity [-12]",
+			"Decreased ammo reserves [-127]",
+			"Slower Reload Speed [43%]",
+			"Increased Spread [+295]"
+		}
+	},
+	["Swiftshoot Mod"] = {
+		["ID"] = "P4",
+		["UnlockLevel"] = 35,
+		["Alias"] = "Swiftshoot Mod",
+		["Image"] = "rbxassetid://116289490994440",
+		["Description"] = "Whip out your revolver with insane speeds.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"Massively Increased Drawspeed [x155]",
+			"Massively Decreased Vertical Recoil [90%], Decreased Horizontal Recoil [50%]",
+			"Eliminates Spread",
+			"Massively Increased Firerate [+833%]",
+			"Faster ADS Speed [x15]"
+		},
+		["Cons"] = { "Decreased stored ammo [-5]", "Slower Empty Reload Speed [65%]", "Slower Unequip Speed [60%]" }
+	},
+	["Quickload"] = {
+		["ID"] = "P5",
+		["UnlockLevel"] = 35,
+		["Alias"] = "Quickload Mod",
+		["Image"] = "rbxassetid://119836521115583",
+		["Description"] = "Faster reload",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Faster Reload Speed [50%]" },
+		["Cons"] = { "Decreased stored ammo [-10]" }
+	},
+	["Stormblitz"] = {
+		["ID"] = "P6",
+		["UnlockLevel"] = 42,
+		["Alias"] = "Stormblitz Mod",
+		["Image"] = "rbxassetid://139698362439612",
+		["Description"] = "Aggressive assault shotgun",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"Increased Penetration [+4]",
+			"Increased Firerate [100%]",
+			"Increased Pellet Count [+25]",
+			"Increased Magazine Capacity [+6]",
+			"Increased Stored Ammo [+40]",
+			"40% Penetration Damage Reduction"
+		},
+		["Cons"] = {
+			"Increased Spread [357%]",
+			"Slower Reload Speed [15%]",
+			"Increased Horizontal Recoil [215%]",
+			"Decreased ADS Spread Reduction [10%]",
+			"Decreased Damage [-90%]"
+		}
+	},
+	["AE21C_Overload"] = {
+		["ID"] = "P7",
+		["UnlockLevel"] = 50,
+		["Alias"] = "L.A.Z.R OVERLOAD",
+		["Image"] = "rbxassetid://105569908328173",
+		["Description"] = "Aggressive laser",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Damage [+4% Damage]", "Increased Ammo [9999]", "You explode upon running out of stamina!" },
+		["Cons"] = {
+			"Shooting Uses Stamina",
+			"Increased Spread [100%]",
+			"Decreased Stored Ammo [-100%]",
+			"Increased Horizontal Recoil [40%]",
+			"Increased Vertical Recoil [30%]",
+			"Decreased ADS Speed [-25%]",
+			"Decreased Draw Speed[25%]",
+			"Increased ADS Spread Multiplier [+0,8]"
+		}
+	},
+	["Double Load"] = {
+		["ID"] = "P8",
+		["UnlockLevel"] = 22,
+		["Alias"] = "Double Load",
+		["Image"] = "rbxassetid://85461326168021",
+		["Description"] = "Double shotgun load",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Ability to reload 2 shells at once" },
+		["Cons"] = { "Decreased Stored Ammo [-8]" }
+	},
+	["Quad Load"] = {
+		["ID"] = "P9",
+		["UnlockLevel"] = 50,
+		["Alias"] = "Quad Load",
+		["Image"] = "rbxassetid://85461326168021",
+		["Description"] = "Quadruple shotgun load",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Ability to reload 4 shells at once" },
+		["Cons"] = { "Decreased Stored Ammo [-8]", "Slower insert time [+ 0.3]" }
+	},
+	["GM6_LightweightFrame"] = {
+		["ID"] = "P10",
+		["UnlockLevel"] = 38,
+		["Alias"] = "Lightweight Frame",
+		["Image"] = "rbxassetid://136971155304409",
+		["Description"] = "Lighten weight",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Reduced speed boost penalty", "Faster ADS Speed [x1.5]", "Faster Equip Speed [2x]" },
+		["Cons"] = { "Significant recoil increase [50%]" }
+	},
+	["MAC10_MoreMags"] = {
+		["ID"] = "P11",
+		["UnlockLevel"] = 42,
+		["Alias"] = "More Mags",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+3 Extra Mags" },
+		["Cons"] = { "8% Active and Passive speed debuff" }
+	},
+	["RSH_MoreMags"] = {
+		["ID"] = "P12",
+		["UnlockLevel"] = 40,
+		["Alias"] = "Ammo Bandolier",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+5 Extra Mags" },
+		["Cons"] = { "12% Active Speed Debuff", "10% Passive Speed Debuff", "10% Slower ADS Speed" }
+	},
+	["AK12_Automode"] = {
+		["ID"] = "P13",
+		["UnlockLevel"] = 20,
+		["Alias"] = "Automatic Configuration",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "+1 Extra Mag", "Makes the weapon full-auto" },
+		["Cons"] = { "Reduced Firerate[700 RPM]" }
+	},
+	["AK12_Gravburst"] = {
+		["ID"] = "P14",
+		["UnlockLevel"] = 60,
+		["Alias"] = "GRAVBURST Configuration",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"+3 Extra Mag",
+			"Increased Firerate [1650 RPM]",
+			"Decreased Spread [2 Degrees]",
+			"Increased Mag Capacity [+15]",
+			"Reduced Burst Delay",
+			"Decreased Vert. Recoil [25%]"
+		},
+		["Cons"] = { "Increased Burst Count [6]", "Decreased ADS Spread Reduction [250%" }
+	},
+	["FNX9_Piercer"] = {
+		["ID"] = "P15",
+		["UnlockLevel"] = 60,
+		["Alias"] = "Piercer  Kit",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"Increased Reserves [200]",
+			"Increased Mag Capacity [+5]",
+			"Increased Pierce [+5]",
+			"Increased Headshot Multiplier [x2.2]"
+		},
+		["Cons"] = { "Increased Recoil [200%]", "Decreased Damage [-20]" }
+	},
+	["Hatchet_ArmorBreaker"] = {
+		["ID"] = "P16",
+		["UnlockLevel"] = 50,
+		["Alias"] = "Armor Breaker",
+		["Image"] = "rbxassetid://80147391565543",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Damage [900]", "Increased Equip Speed [400%]" },
+		["Cons"] = { "Decreased Active Movement Speed [-10%]", "Increased Stamina Consumption", "40s Cooldown after swinging" }
+	},
+	["AR15_SHARPS"] = {
+		["ID"] = "P17",
+		["UnlockLevel"] = 275,
+		["Alias"] = "SHARPS Kit",
+		["Image"] = "rbxassetid://5934399115",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"Increased Headshot Multiplier [x2.5]",
+			"Faster Reload [100%]",
+			"Active Speed Boost [7.5%]",
+			"Lower Spread on ADS",
+			"+1 Pierce"
+		},
+		["Cons"] = { "Increased Recoil [60%]", "Decreased Damage to 20", "Decreased Mag Capacity [-10]" }
+	},
+	["HK21_APBelt"] = {
+		["ID"] = "P18",
+		["UnlockLevel"] = 100,
+		["Alias"] = "AP Ammo Belt",
+		["Image"] = "rbxassetid://113610159487540",
+		["Description"] = "Increases Damage by 15%",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Mag Capacity [+400]", "+2 Pierce", "Increased Headshot Multiplier [+0.05]" },
+		["Cons"] = {
+			"Increased Recoil [35%]",
+			"Decreased Damage to 20",
+			"Decreased Reserves [-300]",
+			"More Spread on ADS",
+			"Slower Active Movement Speed [-10%]"
+		}
+	},
+	["DamageModule"] = {
+		["ID"] = "P19",
+		["UnlockLevel"] = 100,
+		["Alias"] = "Assault Module - Damage",
+		["Image"] = "rbxassetid://6380680044",
+		["Description"] = "Increases Damage dealt by 2x",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Base Damage Multiplier 2x" },
+		["Cons"] = { "Opportunity Cost." }
+	},
+	["AmmoModule"] = {
+		["ID"] = "P20",
+		["UnlockLevel"] = 100,
+		["Alias"] = "Support Module - Ammo",
+		["Image"] = "rbxassetid://6380655347",
+		["Description"] = "Increases Stored Ammo by 2.5x",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Stored Ammo [2.5x]" },
+		["Cons"] = { "Opportunity Cost." }
+	},
+	["More Mags"] = {
+		["ID"] = "P21",
+		["UnlockLevel"] = 25,
+		["Alias"] = "More Magazines",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Increased Ammo Reserves",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Stored Ammo [+3 Magazines]" },
+		["Cons"] = { "Slower Movement Speed [-5%]" }
+	},
+	["Hammer_LightweightCore"] = {
+		["ID"] = "P22",
+		["UnlockLevel"] = 8,
+		["Alias"] = "Lighter Core",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Lighter material for increased swing speed at the cost of performance.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Swing Speed[+25%] ", "Less Stamina Consumed per Swing [-20%]", "Increased Draw/Holster Speed [+15%]" },
+		["Cons"] = { "Decreased Damage [-20%]" }
+	},
+	["Hammer_HeavyweightCore"] = {
+		["ID"] = "P23",
+		["UnlockLevel"] = 20,
+		["Alias"] = "Heavier Core",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Heavier material for increased damage at the cost of swing speed",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Damage [2x]" },
+		["Cons"] = { "Decreased Swing Speed[-40%] ", "More Stamina Consumed per Swing [+50%]", "Decreased Draw/Holster Speed [-20%]" }
+	},
+	["Winchester_CompoundShot"] = {
+		["ID"] = "P24",
+		["UnlockLevel"] = 20,
+		["Alias"] = "Compound Shot",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Fire a single high powered Shot",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Damage [x4]", "Increased Penetration [+1]" },
+		["Cons"] = { "Decreased Stored Ammo [30]", "Decreased Penetration Damage Reduction [-25%]", "Increased Vertical Recoil [+50%]" }
+	}
+}
+return v1

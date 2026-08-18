@@ -1,0 +1,112 @@
+local v1 = {
+	["AR Suppressor"] = {
+		["ID"] = "MU0",
+		["UnlockLevel"] = 5,
+		["Alias"] = "Suppressor",
+		["Image"] = "rbxassetid://13833359599",
+		["Description"] = "Reduces spread and supppresses the gun. Slightly increases recoil.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["SharedModule"] = "Suppressor_Shared",
+		["Pros"] = { "Suppressed", "Decreased Spread [20%]", "Increased Equip Speed [20%]" },
+		["Cons"] = { "Decreased Aim Speed [20%]", "Increased Recoil [5%]" }
+	},
+	["Osprey Suppressor"] = {
+		["ID"] = "MU1",
+		["UnlockLevel"] = 8,
+		["Alias"] = "Osprey",
+		["Image"] = "rbxassetid://13833360540",
+		["Description"] = "Reduces overall recoil, equip speed, and suppresses the weapon.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 1,
+		["SharedModule"] = "Suppressor_Shared",
+		["Pros"] = { "Suppressed", "Decreased Recoil [15%]", "Decreased Spread [10%]" },
+		["Cons"] = { "Decreased Damage [5%]", "Decreased Equip Speed [30%]" }
+	},
+	["Light Suppressor"] = {
+		["ID"] = "MU2",
+		["UnlockLevel"] = 10,
+		["Alias"] = "Light Suppressor",
+		["Image"] = "rbxassetid://13833360213",
+		["Description"] = "A suppressor made of lightweight materials, its shape makes equipping a weapon a hassle but easier to aim.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 2,
+		["SharedModule"] = "Suppressor_Shared",
+		["Pros"] = { "Suppressed", "Decreased Spread [20%]", "Increased Aim Speed [80%]" },
+		["Cons"] = { "Decreased Equip Speed [30%]", "Increased Recoil [5%]" }
+	},
+	["Shotgun Suppressor"] = {
+		["ID"] = "MU3",
+		["UnlockLevel"] = 10,
+		["Alias"] = "Shotgun OSP Supressor",
+		["Image"] = "rbxassetid://13833360540",
+		["Description"] = "Reduces overall recoil and suppresses the weapon. Reduces damage.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 2,
+		["SharedModule"] = "Suppressor_Shared",
+		["Pros"] = { "Suppressed", "Decreased Vertical Recoil [30%]", "Decreased Horizontal Recoil [60%]" },
+		["Cons"] = { "Decreased Damage [5%]", "Decreased Equip Speed [40%]" }
+	},
+	["AR Muzzle Brake"] = {
+		["ID"] = "MU3",
+		["UnlockLevel"] = 12,
+		["Alias"] = "Muzzle Brake",
+		["Image"] = "rbxassetid://13833359146",
+		["Description"] = "Reduces vertical recoil. Adds horozonal recoil.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 50,
+		["Pros"] = { "Decreased Vertical Recoil [35%]" },
+		["Cons"] = { "Increased Horizontal Recoil [20%]" }
+	},
+	["AR Compensator"] = {
+		["ID"] = "MU4",
+		["UnlockLevel"] = 15,
+		["Alias"] = "Compensator",
+		["Image"] = "rbxassetid://13833358323",
+		["Description"] = "TODO",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 51,
+		["Pros"] = { "Decreased Horizontal Recoil [30%]" },
+		["Cons"] = { "Slower ADS Speed [20%]" }
+	},
+	["Flash Hider"] = {
+		["ID"] = "MU5",
+		["UnlockLevel"] = 1,
+		["Image"] = "rbxassetid://13833359963",
+		["Description"] = "TODO",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 52,
+		["Pros"] = { "Decreased Muzzle Flash" },
+		["Cons"] = { "" }
+	},
+	["Pistol Muzzle Brake"] = {
+		["ID"] = "MU6",
+		["UnlockLevel"] = 5,
+		["Image"] = "rbxassetid://13833361392",
+		["Description"] = "TODO",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 53,
+		["Pros"] = { "Decreased Vertical Recoil [35%]" },
+		["Cons"] = { "Increased Horizontal Recoil [20%]" }
+	},
+	["Pistol Compensator"] = {
+		["ID"] = "MU7",
+		["UnlockLevel"] = 8,
+		["Image"] = "rbxassetid://13833361092",
+		["Description"] = "TODO",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 54,
+		["Pros"] = { "Decreased Horizontal Recoil [30%]" },
+		["Cons"] = { "Slower ADS Speed [20%]" }
+	}
+}
+return v1

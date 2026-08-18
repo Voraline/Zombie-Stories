@@ -1,0 +1,53 @@
+local v1 = {
+	["AK Magpul Handguard"] = {
+		["ID"] = "H0",
+		["UnlockLevel"] = 10,
+		["Alias"] = "Magpul Handguard",
+		["Image"] = "rbxassetid://9173132164",
+		["Description"] = "Magpul AK Hand Guard",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Priority"] = 1,
+		["Sort"] = 0,
+		["Pros"] = { "Attachment Rails" },
+		["Cons"] = { "Increased Recoil" }
+	},
+	["Nighthaven Long Handguard"] = {
+		["ID"] = "H1",
+		["UnlockLevel"] = 17,
+		["Alias"] = "X-HLB Modkit",
+		["Image"] = "rbxassetid://115780406287301",
+		["Description"] = "Magpul AK Hand Guard",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Priority"] = 1,
+		["Sort"] = 0,
+		["Pros"] = { "Reduced ADS Spread [-25%]", "Decreased Overall Recoil [20%]" },
+		["Cons"] = { "Increased Spread [+10%]", "Slower ADS Speed [-30%]", "Slower Draw Speed [30%]" }
+	},
+	["Nighthaven Integrated Suppressor Kit"] = {
+		["ID"] = "H2",
+		["UnlockLevel"] = 25,
+		["Alias"] = "R.E.A.P.E.R Suppressor Kit",
+		["Image"] = "rbxassetid://106519540409802",
+		["Description"] = "Magpul AK Hand Guard",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Priority"] = 1,
+		["Sort"] = 0,
+		["Pros"] = { "Suppressed", "ADS Spread Reduction [-100%]" },
+		["Cons"] = { "Increased Spread [+25%]", "Increased Overall Recoil [15%]" }
+	},
+	["P90 Handguard"] = {
+		["ID"] = "H3",
+		["UnlockLevel"] = 10,
+		["Alias"] = "Extended Handguard",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Handguard for Extended Barrel.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Disables Custom Grip Offset." },
+		["Cons"] = {}
+	}
+}
+return v1

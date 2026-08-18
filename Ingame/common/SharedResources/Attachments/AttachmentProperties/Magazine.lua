@@ -1,0 +1,223 @@
+local v1 = {
+	["RPK Drum"] = {
+		["ID"] = "M0",
+		["UnlockLevel"] = 20,
+		["Alias"] = "Drum Magazine",
+		["Image"] = "rbxassetid://9173132164",
+		["Description"] = "75 Round Drum",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Capacity" },
+		["Cons"] = { "Slower Movement Speed", "Faster ADS Speed" }
+	},
+	["KV-45 Drum"] = {
+		["ID"] = "M1",
+		["UnlockLevel"] = 50,
+		["Alias"] = "Drum Magazine",
+		["Image"] = "rbxassetid://99966783147492",
+		["Description"] = "50 Round Drum for the KV-45. Filled with .45 ACP Rounds.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Magazine Capacity [+10]" },
+		["Cons"] = { "Slower Overall Movement Speed [-15%]", "Slower ADS Speed [45%]", "Slower Draw Speed [25%]" }
+	},
+	["150 Round Drum"] = {
+		["ID"] = "M2",
+		["UnlockLevel"] = 80,
+		["Alias"] = "Drum Magazine",
+		["Image"] = "rbxassetid://99966783147492",
+		["Description"] = "150 Round Drum for the Thompson SMG. ",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Magazine Capacity [+120]", "Increased Stored Ammo [+150]" },
+		["Cons"] = {
+			"Slower Overall Movement Speed [-15%]",
+			"Slower ADS Speed [45%]",
+			"Slower Draw Speed [60%]",
+			"Increased Spread [-40%]",
+			"Less effective ADS Spread reduction [-30%]"
+		}
+	},
+	[".410 Extended Magazine"] = {
+		["ID"] = "M3",
+		["UnlockLevel"] = 35,
+		["Alias"] = "Extended Magazine",
+		["Image"] = "rbxassetid://108650110696526",
+		["Description"] = "15 Round Extended Magazine ",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Magazine Capacity [+5]" },
+		["Cons"] = { "Decreased Stored Ammo [-30]", "Slower ADS Speed [5%]", "Slower Draw Speed [5%]" }
+	},
+	["AS VAL Extended Magazine"] = {
+		["ID"] = "M4",
+		["UnlockLevel"] = 35,
+		["Alias"] = "Extended Magazine",
+		["Image"] = "rbxassetid://108650110696526",
+		["Description"] = "10 Round Extended Magazine ",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Magazine Capacity [+10]" },
+		["Cons"] = { "Decreased Stored Ammo [-20]", "Slower ADS Speed [10%]", "Slower Draw Speed [10%]" }
+	},
+	["HAMR Mod"] = {
+		["ID"] = "M5",
+		["UnlockLevel"] = 50,
+		["Alias"] = "HAMR-HLB Conversion",
+		["Image"] = "rbxassetid://108650110696526",
+		["Description"] = "50 Round Extended Magazine ",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Magazine Capacity [+30]", "Increased Headshot Multiplier [50%]" },
+		["Cons"] = {
+			"Slower ADS Speed [50%]",
+			"Slower Draw Speed [40%]",
+			"Increased Spread [350%]",
+			"Slower Reload Speed [40%]",
+			"Decreased Firerate",
+			"Increased Overall Recoil [200%]"
+		}
+	},
+	["AM Hyper Ammo"] = {
+		["ID"] = "M6",
+		["UnlockLevel"] = 100,
+		["Alias"] = "Anti-Matter Hypervelocity Munitions",
+		["Image"] = "rbxassetid://123528017192076",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Are you sure this is wise?" },
+		["Cons"] = { "PANDEMIC Inc. is not responsible for any incidents that may or may not occur" }
+	},
+	["Nighthaven .50 GI Conv"] = {
+		["ID"] = "M7",
+		["UnlockLevel"] = 50,
+		["Alias"] = ".50 GI Conversion",
+		["Image"] = "rbxassetid://118416275132212",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Increased Base Damage [60%]" },
+		["Cons"] = {
+			"Decreased Firerate [600 RPM]",
+			"Harsh Damage Falloff",
+			"Increased Recoil [+15%]",
+			"Decreased Magazine Capacity [-5]",
+			"Decreased Reserves [-50]"
+		}
+	},
+	["Nighthaven 9mm Conv"] = {
+		["ID"] = "M8",
+		["UnlockLevel"] = 45,
+		["Alias"] = "9x19mm Conversion",
+		["Image"] = "rbxassetid://80085577619307",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"Increased Magazine Capacity [+9]",
+			"Increased Reserves [+22]",
+			"Increased Firerate [925 RPM]",
+			"Decreased Recoil [-25%]"
+		},
+		["Cons"] = { "Decreased Base Damage [-20%]", "Increased Base Spread [+10%]" }
+	},
+	["G17_Var50"] = {
+		["ID"] = "M9",
+		["UnlockLevel"] = 150,
+		["Alias"] = ".50 Variable Auto Conversion",
+		["Image"] = "rbxassetid://131768683380926",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "Variable Firerate", "One Shots within 12 Studs", "High Base Damage [Close-Medium Range]" },
+		["Cons"] = {
+			"Slower Reload Speed [-50%]",
+			"Increased Base Spread [4 Degrees]",
+			"Increased Recoil [600%]",
+			"Decreased Magazine Capacity [-2]",
+			"Decreased Reserves [-45]",
+			"Slower ADS Speed [-55%]",
+			"Slower Equip Speed [-55%]"
+		}
+	},
+	["G17_ExtendedMag"] = {
+		["ID"] = "M10",
+		["UnlockLevel"] = 33,
+		["Alias"] = "33rnd Magazine",
+		["Image"] = "rbxassetid://131768683380926",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "33 Round Magazine", "Increased Reserves [+99]" },
+		["Cons"] = { "Slower Reload Speed [-15%]", "Slower ADS Speed [-15%]", "Slower Equip Speed [-15%]" }
+	},
+	["Ruger_180 Conv"] = {
+		["ID"] = "M11",
+		["UnlockLevel"] = 80,
+		["Alias"] = "ILARCO 180 Conversion",
+		["Image"] = "rbxassetid://77795619859248",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = {
+			"220 Round Magazine",
+			"Increased Reserves [880]",
+			"Fully Automatic",
+			"Increased Firerate [1500 RPM]",
+			"Massively Decreased Recoil [80%]",
+			"Decreased Base Spread [3 Degrees]"
+		},
+		["Cons"] = {
+			"Slower Reload Speed [-45%]",
+			"Slower ADS Speed [-70%]",
+			"Slower Equip Speed [-70%]",
+			"Higher ADS Spread",
+			"Decreased Base Damage [-7]",
+			"Decreased Headshot Multipler [2x]"
+		}
+	},
+	["Ruger_Ratshot"] = {
+		["ID"] = "M12",
+		["UnlockLevel"] = 75,
+		["Alias"] = "Ratshot Conversion",
+		["Image"] = "rbxassetid://80085577619307",
+		["Description"] = "Death",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Sort"] = 0,
+		["Pros"] = { "10x Pellets per shot" },
+		["Cons"] = {
+			"Slower Reload Speed [-15%]",
+			"Slower ADS Speed [-20%]",
+			"Slower Equip Speed [-20%]",
+			"Higher ADS Spread",
+			"Decreased Base Damage [4]",
+			"Increased Spread [8 Degrees]"
+		}
+	},
+	["Ext. Magazines"] = {
+		["ID"] = "M13",
+		["UnlockLevel"] = 20,
+		["Alias"] = "Extended Magazine",
+		["Image"] = "rbxassetid://82282612105498",
+		["Description"] = "Magazine with more ammo.",
+		["Pros"] = nil,
+		["Cons"] = nil,
+		["Pros"] = { "Increased Capacity [+10]" },
+		["Cons"] = { "Less Stored Ammo [-2 Magazines]", "Reduced Equip Speed [-10%]" }
+	}
+}
+return v1

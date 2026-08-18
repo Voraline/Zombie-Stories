@@ -1,0 +1,89 @@
+local v1 = {
+	["Ammo"] = 30,
+	["StoredAmmo"] = 240,
+	["AmmoType"] = nil,
+	["Damage"] = 24,
+	["Multipliers"] = {
+		["Arms"] = 1.1,
+		["Torso"] = 1,
+		["Legs"] = 1.1,
+		["Head"] = 1.5
+	},
+	["Penetration"] = 0,
+	["PenetrationReduction"] = 0.5,
+	["FireMode"] = { "Auto", "Burst", "Semi-Auto" },
+	["DelayPerShot"] = 0.075,
+	["BurstAmt"] = 3,
+	["BurstDelay"] = 0.1,
+	["ADSSpeed"] = 1.8,
+	["DrawSpeed"] = 1.3,
+	["HolsterSpeed"] = 1.5,
+	["ReloadTime"] = 2.41,
+	["ReloadTimeScale"] = 1.07,
+	["EmptyReloadTime"] = 2.69,
+	["EmptyReloadTimeScale"] = 1.07,
+	["ReloadTimeUntilMagInserted"] = 1.9,
+	["EmptyReloadTimeUntilBoltPulled"] = 2.1,
+	["EquippedWalkspeedChange"] = 0,
+	["HolsteredWalkspeedChange"] = 0,
+	["EquippedWalkspeedMultiplier"] = 1.1,
+	["HolsteredWalkspeedMultiplier"] = 1,
+	["BaseSpread"] = 0.10471975511965978,
+	["CrouchSpreadReduction"] = nil,
+	["ProneSpreadReduction"] = nil,
+	["ADSSpreadReduction"] = 0.25,
+	["MovementSpread"] = nil,
+	["AirSpread"] = nil,
+	["SlidingSpread"] = nil,
+	["DivingSpread"] = nil,
+	["ShootingSpreadIncrement"] = nil,
+	["ShootingSpreadDecay"] = nil,
+	["FirstDrawAnimation"] = nil,
+	["FirstDrawAnimationTime"] = nil,
+	["DrawAnimation"] = nil,
+	["DrawAnimationTime"] = nil,
+	["ShootSingle"] = {
+		["SoundId"] = "308008184",
+		["Volume"] = 0.4
+	},
+	["SuppressorShootSingle"] = {
+		["SoundId"] = "9056989662",
+		["Volume"] = 0.5
+	},
+	["AutoLoop"] = nil,
+	["AutoLoopTail"] = nil,
+	["KeyFrameSounds"] = {
+		["mag_out2"] = {
+			["SoundId"] = "6237571596",
+			["Volume"] = 0.5
+		},
+		["mag_in"] = {
+			["SoundId"] = "6237571881",
+			["Volume"] = 0.5
+		},
+		["bolt_release"] = {
+			["SoundId"] = "6237572246",
+			["Volume"] = 0.5
+		},
+		["mag_out1"] = {
+			["SoundId"] = "6237571365",
+			["Volume"] = 0.5
+		}
+	},
+	["DeploySFX"] = nil,
+	["IsAPistol"] = false,
+	["UsePistolIcon"] = false,
+	["BulletCasing"] = "rifle",
+	["WorldScaleValue"] = 0.96282212482595,
+	["NewSkinsSystem"] = false,
+	["NewSkinsSystemBlacklist"] = {},
+	["DynamicFOVOffsetConstant"] = 2,
+	["AimDynamicFOVOffsetConstant"] = 0.5,
+	["Offset"] = CFrame.new(0.100000001, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+	["SprintOffset"] = CFrame.new(0, 0, -0.300000012, 0.962250173, -0.0841859728, 0.258819044, -0.0299755037, 0.912392259, 0.408217907, -0.270510703, -0.400565982, 0.875426054),
+	["AimOffset"] = CFrame.new(),
+	["VerticalRecoil"] = 3.9,
+	["HorizontalRecoil"] = 1.8,
+	["AttachmentNodeData"] = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/AR15_Mods")
+}
+return v1

@@ -1,0 +1,1 @@
+return require(game.ReplicatedStorage.Packages.Red).SharedEvent("RequestExistingNPCs", function() end)

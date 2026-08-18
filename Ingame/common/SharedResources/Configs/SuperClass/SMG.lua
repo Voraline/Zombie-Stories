@@ -1,0 +1,4 @@
+return {
+	["MuzzleModule"] = "Smg",
+	["LODModel"] = "DefaultSMG"
+}
