@@ -1,20 +1,20 @@
-local v_u_1 = game:GetService("ReplicatedStorage")
-local v_u_3 = {
-	["objectName"] = "TopbarPlusReference",
-	["addToReplicatedStorage"] = function() -- name: addToReplicatedStorage
-		-- upvalues: (copy) v_u_1, (copy) v_u_3
-		if v_u_1:FindFirstChild(v_u_3.objectName) then
-			return false
-		end
-		local v2 = Instance.new("ObjectValue")
-		v2.Name = v_u_3.objectName
-		v2.Value = script.Parent
-		v2.Parent = v_u_1
-		return v2
-	end,
-	["getObject"] = function() -- name: getObject
-		-- upvalues: (copy) v_u_1, (copy) v_u_3
-		return v_u_1:FindFirstChild(v_u_3.objectName) or false
-	end
-}
-return v_u_3
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u5 = {objectName = "TopbarPlusReference"}
+function u5.addToReplicatedStorage() -- Line: 10 -- upvalues: ReplicatedStorage (val), u5 (val)
+    if ReplicatedStorage:FindFirstChild(u5.objectName) then
+        return false
+    end
+    local ObjectValue = Instance.new("ObjectValue")
+    ObjectValue.Name = u5.objectName
+    ObjectValue.Value = script.Parent
+    ObjectValue.Parent = ReplicatedStorage
+    return ObjectValue
+end
+function u5.getObject() -- Line: 22 -- upvalues: ReplicatedStorage (val), u5 (val)
+    local v1 = ReplicatedStorage:FindFirstChild(u5.objectName)
+    if v1 then
+        return v1
+    end
+    return false
+end
+return u5

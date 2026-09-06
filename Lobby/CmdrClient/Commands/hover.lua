@@ -1,18 +1,24 @@
-local v_u_1 = game:GetService("Players")
+local Players = game:GetService("Players")
 return {
-	["Name"] = "hover",
-	["Description"] = "Returns the name of the player you are hovering over.",
-	["Group"] = "DefaultUtil",
-	["Args"] = nil,
-	["ClientRun"] = nil,
-	["Args"] = {},
-	["ClientRun"] = function() -- name: ClientRun
-		-- upvalues: (copy) v_u_1
-		local v2 = v_u_1.LocalPlayer:GetMouse().Target
-		if not v2 then
-			return ""
-		end
-		local v3 = v_u_1:GetPlayerFromCharacter(v2:FindFirstAncestorOfClass("Model"))
-		return v3 and v3.Name or ""
-	end
+    Name = "hover",
+    Description = "Returns the name of the player you are hovering over.",
+    Group = "DefaultUtil",
+    Args = {},
+    ClientRun = function() -- Line: 9 -- upvalues: Players (val)
+        local Name
+        local Target = Players.LocalPlayer:GetMouse().Target
+        if not Target then
+            return ""
+        end
+        local PlayerFromCharacter = Players:GetPlayerFromCharacter(Target:FindFirstAncestorOfClass("Model"))
+        if not PlayerFromCharacter then
+            Name = ""
+        else
+            Name = PlayerFromCharacter.Name
+            if not Name then
+                Name = ""
+            end
+        end
+        return Name
+    end,
 }

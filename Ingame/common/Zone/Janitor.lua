@@ -1,226 +1,239 @@
-local v_u_1 = game:GetService("RunService").Heartbeat
-local v_u_2 = newproxy(true)
-getmetatable(v_u_2).__tostring = function()
-	return "IndicesReference"
+local v1, v2, v3, v4, v5
+local Heartbeat = game:GetService("RunService").Heartbeat
+local u8 = newproxy(true)
+local v6 = getmetatable(u8)
+function v6.__tostring() -- Line: 11
+    return "IndicesReference"
 end
-local v_u_3 = newproxy(true)
-getmetatable(v_u_3).__tostring = function()
-	return "LinkToInstanceIndex"
+local u15 = newproxy(true)
+local v7 = getmetatable(u15)
+function v7.__tostring() -- Line: 16
+    return "LinkToInstanceIndex"
 end
-local v_u_4 = {
-	["ClassName"] = "Janitor",
-	["__index"] = nil,
-	["__index"] = {
-		["CurrentlyCleaning"] = true,
-		[v_u_2] = nil
-	}
-}
-local v_u_5 = {
-	["function"] = true,
-	["RBXScriptConnection"] = "Disconnect"
-}
-function v_u_4.new() -- name: new
-	-- upvalues: (copy) v_u_2, (copy) v_u_4
-	local v6 = {
-		["CurrentlyCleaning"] = false,
-		[v_u_2] = nil
-	}
-	local v7 = v_u_4
-	return setmetatable(v6, v7)
+local u20 = {ClassName = "Janitor"}
+local v8 = {CurrentlyCleaning = true}
+v8[u8] = nil
+u20.__index = v8
+local u24 = {}
+u24["function"] = true
+u24.RBXScriptConnection = "Disconnect"
+function u20.new() -- Line: 40 -- upvalues: u8 (val), u20 (val)
+    local v1 = {CurrentlyCleaning = false}
+    v1[u8] = nil
+    return (setmetatable(v1, u20))
 end
-function v_u_4.Is(p8) -- name: Is
-	-- upvalues: (copy) v_u_4
-	local v9
-	if type(p8) == "table" then
-		v9 = getmetatable(p8) == v_u_4
-	else
-		v9 = false
-	end
-	return v9
+function u20.Is(p1) -- Line: 52 -- upvalues: u20 (val)
+    local v1 = false
+    if type(p1) == "table" then
+        local v2 = getmetatable(p1)
+        v1 = v2 == u20
+    end
+    return v1
 end
-v_u_4.is = v_u_4.Is
-function v_u_4.__index.Add(p10, p11, p12, p13) -- name: Add
-	-- upvalues: (copy) v_u_2, (copy) v_u_5
-	if p13 == nil then
-		p13 = newproxy(false)
-	end
-	if p13 then
-		p10:Remove(p13)
-		local v14 = p10[v_u_2]
-		if not v14 then
-			v14 = {}
-			p10[v_u_2] = v14
-		end
-		v14[p13] = p11
-	end
-	local v15 = p12 or (v_u_5[typeof(p11)] or "Destroy")
-	if type(p11) ~= "function" and not p11[v15] then
-		warn(string.format("Object %s doesn\'t have method %s, are you sure you want to add it? Traceback: %s", tostring(p11), tostring(v15), debug.traceback(nil, 2)))
-	end
-	p10[p11] = v15
-	return p11, p13
+u20.is = u20.Is
+function u20.__index:Add(p2, p3, p4) -- Line: 65 -- upvalues: u8 (val), u24 (val)
+    local v1, v2
+    if p4 ~= nil then
+        v1 = p4
+    else
+        v1 = newproxy(false)
+    end
+    if v1 then
+        self:Remove(v1)
+        v2 = self[u8]
+        if not v2 then
+            self[u8] = {}
+        end
+        v2[v1] = p2
+    end
+    v2 = p3
+    if not v2 then
+        v2 = u24[typeof(p2)]
+        if not v2 then
+            v2 = "Destroy"
+        end
+    end
+    local v3 = v2
+    if type(p2) ~= "function" and not (p2[v3]) then
+        local v4 = tostring(p2)
+        local v5 = tostring(v3)
+        warn(string.format("Object %s doesn't have method %s, are you sure you want to add it? Traceback: %s", v4, v5, debug.traceback(nil, 2)))
+    end
+    self[p2] = v3
+    return p2, v1
 end
-v_u_4.__index.Give = v_u_4.__index.Add
-function v_u_4.__index.AddObject(p16, p17) -- name: AddObject
-	local v18 = newproxy(false)
-	return p16:Add(p17, false, v18), v18
+u20.__index.Give = u20.__index.Add
+function u20.__index.AddObject(p1, p2) -- Line: 131
+    local v1 = newproxy(false)
+    local v2 = p1:Add(p2, false, v1)
+    return v2, v1
 end
-v_u_4.__index.GiveObject = v_u_4.__index.AddObject
-function v_u_4.__index.Remove(p19, p20) -- name: Remove
-	-- upvalues: (copy) v_u_2
-	local v21 = p19[v_u_2]
-	local v22 = v21 and v21[p20]
-	if v22 then
-		local v23 = p19[v22]
-		if v23 then
-			if v23 == true then
-				v22()
-			else
-				local v24 = v22[v23]
-				if v24 then
-					v24(v22)
-				end
-			end
-			p19[v22] = nil
-		end
-		v21[p20] = nil
-	end
-	return p19
+u20.__index.GiveObject = u20.__index.AddObject
+function u20.__index:Remove(p2) -- Line: 155 -- upvalues: u8 (val)
+    local v1 = self[u8]
+    if v1 then
+        local v2 = v1[p2]
+        if v2 then
+            local v3 = self[v2]
+            if v3 then
+                if v3 ~= true then
+                    local v4 = v2[v3]
+                    if v4 then
+                        v4(v2)
+                    end
+                else
+                    v2()
+                end
+                self[v2] = nil
+            end
+            v1[p2] = nil
+        end
+    end
+    return self
 end
-function v_u_4.__index.Get(p25, p26) -- name: Get
-	-- upvalues: (copy) v_u_2
-	local v27 = p25[v_u_2]
-	if v27 then
-		return v27[p26]
-	end
+function u20.__index.Get(p1, p2) -- Line: 189 -- upvalues: u8 (val)
+    local v1 = p1[u8]
+    if v1 then
+        return v1[p2]
+    end
 end
-function v_u_4.__index.Cleanup(p28) -- name: Cleanup
-	-- upvalues: (copy) v_u_2
-	if not p28.CurrentlyCleaning then
-		p28.CurrentlyCleaning = nil
-		for v29, v30 in next, p28 do
-			if v29 ~= v_u_2 then
-				local v31 = type(v29)
-				if v31 == "string" or v31 == "number" then
-					p28[v29] = nil
-				else
-					if v30 == true then
-						v29()
-					else
-						local v32 = v29[v30]
-						if v32 then
-							v32(v29)
-						end
-					end
-					p28[v29] = nil
-				end
-			end
-		end
-		local v33 = p28[v_u_2]
-		if v33 then
-			for v34 in next, v33 do
-				v33[v34] = nil
-			end
-			p28[v_u_2] = {}
-		end
-		p28.CurrentlyCleaning = false
-	end
+function u20.__index:Cleanup() -- Line: 200 -- upvalues: u8 (val)
+    if not self.CurrentlyCleaning then
+        local v1, v2
+        self.CurrentlyCleaning = nil
+        local v3 = next
+        local v4 = self
+        local v5 = nil
+        local v6 = self
+        for k, v in v3, v4, v5 do
+            if k ~= u8 then
+                v1 = type(k)
+                if v1 == "string" then
+                    v6[k] = nil
+                elseif v1 ~= "number" then
+                    if v ~= true then
+                        v2 = k[v]
+                        if v2 then
+                            v2(k)
+                        end
+                    else
+                        k()
+                    end
+                    v6[k] = nil
+                end
+            end
+        end
+        v3 = v6[u8]
+        if v3 then
+            v4 = next
+            v5 = v3
+            local v7 = nil
+            for k2 in v4, v5, v7 do
+                v3[k2] = nil
+            end
+            v6[u8] = {}
+        end
+        v6.CurrentlyCleaning = false
+    end
 end
-v_u_4.__index.Clean = v_u_4.__index.Cleanup
-function v_u_4.__index.Destroy(p35) -- name: Destroy
-	p35:Cleanup()
+u20.__index.Clean = u20.__index.Cleanup
+function u20.__index.Destroy(p1) -- Line: 246
+    p1:Cleanup()
 end
-v_u_4.__call = v_u_4.__index.Cleanup
-local v_u_36 = {
-	["Connected"] = true
-}
-v_u_36.__index = v_u_36
-function v_u_36.Disconnect(p37) -- name: Disconnect
-	if p37.Connected then
-		p37.Connected = false
-		p37.Connection:Disconnect()
-	end
+u20.__call = u20.__index.Cleanup
+local u53 = {Connected = true}
+u53.__index = u53
+function u53:Disconnect() -- Line: 260
+    if self.Connected then
+        self.Connected = false
+        self.Connection:Disconnect()
+    end
 end
-function v_u_36.__tostring(p38) -- name: __tostring
-	local v39 = p38.Connected
-	return "Disconnect<" .. tostring(v39) .. ">"
+function u53.__tostring(p1) -- Line: 267
+    local v1 = tostring(p1.Connected)
+    return "Disconnect<" .. v1 .. ">"
 end
-function v_u_4.__index.LinkToInstance(p_u_40, p41, p42) -- name: LinkToInstance
-	-- upvalues: (copy) v_u_3, (copy) v_u_36, (copy) v_u_1
-	local v_u_43 = nil
-	local v44 = p42 and newproxy(false) or v_u_3
-	local v_u_45 = p41.Parent == nil
-	local v46 = v_u_36
-	local v_u_47 = setmetatable({}, v46)
-	local function v49(_, p48) -- name: ChangedFunction
-		-- upvalues: (copy) v_u_47, (ref) v_u_45, (ref) v_u_1, (ref) v_u_43, (copy) p_u_40
-		v_u_45 = v_u_47.Connected and p48 == nil
-		if v_u_45 then
-			coroutine.wrap(function()
-				-- upvalues: (ref) v_u_1, (ref) v_u_47, (ref) v_u_43, (ref) p_u_40, (ref) v_u_45
-				v_u_1:Wait()
-				if v_u_47.Connected then
-					if v_u_43.Connected then
-						while v_u_45 and (v_u_43.Connected and v_u_47.Connected) do
-							v_u_1:Wait()
-						end
-						if v_u_47.Connected and v_u_45 then
-							p_u_40:Cleanup()
-						end
-					else
-						p_u_40:Cleanup()
-					end
-				else
-					return
-				end
-			end)()
-		end
-	end
-	local v_u_50 = p41.AncestryChanged:Connect(v49)
-	v_u_47.Connection = v_u_50
-	if v_u_45 then
-		local v51 = p41.Parent
-		if v_u_47.Connected then
-			if v51 == nil then
-				v_u_45 = true
-			else
-				v_u_45 = false
-			end
-			if v_u_45 then
-				coroutine.wrap(function()
-					-- upvalues: (ref) v_u_1, (copy) v_u_47, (ref) v_u_50, (copy) p_u_40, (ref) v_u_45
-					v_u_1:Wait()
-					if v_u_47.Connected then
-						if v_u_50.Connected then
-							while v_u_45 and (v_u_50.Connected and v_u_47.Connected) do
-								v_u_1:Wait()
-							end
-							if v_u_47.Connected and v_u_45 then
-								p_u_40:Cleanup()
-							end
-						else
-							p_u_40:Cleanup()
-						end
-					else
-						return
-					end
-				end)()
-			end
-		end
-	end
-	return p_u_40:Add(v_u_47, "Disconnect", v44)
+function u20.__index:LinkToInstance(p2, p3) -- Line: 277 -- upvalues: u15 (val), u53 (val), Heartbeat (val)
+    local v1
+    local u3 = nil
+    if not p3 then
+        v1 = u15
+    else
+        v1 = newproxy(false)
+    end
+    local u12 = p2.Parent == nil
+    local u16 = setmetatable({}, u53)
+    u3 = p2.AncestryChanged:Connect(function(p1, p2) -- Line: 283 -- upvalues: u16 (val), u12 (ref), Heartbeat (upval), u3 (ref), self (val)
+        if u16.Connected then
+            local v1 = p2 == nil
+            u12 = v1
+            if u12 then
+                coroutine.wrap(function() -- Line: 289 -- upvalues: Heartbeat (upval), u16 (upval), u3 (upval), self (upval), u12 (upval)
+                    Heartbeat:Wait()
+                    if not u16.Connected then
+                        return
+                    end
+                    if not u3.Connected then
+                        self:Cleanup()
+                        return
+                    end
+                    while u12 do
+                        if not u3.Connected or not u16.Connected then
+                            break
+                        end
+                        Heartbeat:Wait()
+                    end
+                    if u16.Connected and u12 then
+                        self:Cleanup()
+                    end
+                end)()
+            end
+        end
+    end)
+    u16.Connection = u3
+    if u12 and u16.Connected then
+        u12 = p2.Parent == nil
+        if u12 then
+            coroutine.wrap(function() -- Line: 289 -- upvalues: Heartbeat (upval), u16 (val), u3 (ref), self (val), u12 (ref)
+                Heartbeat:Wait()
+                if not u16.Connected then
+                    return
+                end
+                if not u3.Connected then
+                    self:Cleanup()
+                    return
+                end
+                while u12 do
+                    if not u3.Connected or not u16.Connected then
+                        break
+                    end
+                    Heartbeat:Wait()
+                end
+                if u16.Connected and u12 then
+                    self:Cleanup()
+                end
+            end)()
+        end
+    end
+    return self:Add(u16, "Disconnect", v1)
 end
-function v_u_4.__index.LinkToInstances(p52, ...) -- name: LinkToInstances
-	-- upvalues: (copy) v_u_4
-	local v53 = v_u_4.new()
-	for _, v54 in ipairs({ ... }) do
-		v53:Add(p52:LinkToInstance(v54, true), "Disconnect")
-	end
-	return v53
+function u20.__index.LinkToInstances(p1, ...) -- Line: 325 -- upvalues: u20 (val)
+    local v1
+    local v2 = u20.new()
+    local v3 = {...}
+    for i, v in ipairs(v3) do
+        v1 = p1:LinkToInstance(v, true)
+        v2:Add(v1, "Disconnect")
+    end
+    return v2
 end
-for v55, v56 in next, v_u_4.__index do
-	local v57 = string.lower(v55)
-	local v58 = string.sub(v57, 1, 1) .. string.sub(v55, 2)
-	v_u_4.__index[v58] = v56
+v4 = next
+local __index = u20.__index
+v5 = nil
+for k, v in v4, __index, v5 do
+    v3 = string.lower(k)
+    v2 = string.sub(v3, 1, 1)
+    v1 = v2 .. string.sub(k, 2)
+    u20.__index[v1] = v
 end
-return v_u_4
+return u20

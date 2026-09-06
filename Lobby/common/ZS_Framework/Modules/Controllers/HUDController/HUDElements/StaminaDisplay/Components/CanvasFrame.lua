@@ -1,67 +1,71 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require(v1.Packages.Fusion).Children
-return function(p3) -- name: CanvasFrame
-	-- upvalues: (copy) v_u_2
-	local v4 = p3.scope
-	local v5 = p3.isLeft
-	local v6 = v4:New("CanvasGroup")
-	local v7 = {
-		["Name"] = v5 and "LeftCanvas" or "RightCanvas",
-		["BackgroundColor3"] = Color3.fromRGB(255, 255, 255),
-		["BackgroundTransparency"] = 1,
-		["BorderColor3"] = Color3.fromRGB(27, 42, 53),
-		["GroupColor3"] = p3.groupColor3 or Color3.fromRGB(255, 255, 255),
-		["GroupTransparency"] = p3.groupTransparency
-	}
-	local v8
-	if v5 then
-		v8 = UDim2.fromScale(0, 0)
-	else
-		v8 = UDim2.fromScale(0.5, 0)
-	end
-	v7.Position = v8
-	v7.Size = UDim2.fromScale(0.5, 1)
-	v7.Visible = p3.visible
-	local v9 = v_u_2
-	local v10 = {}
-	local v11 = v4:New("ImageLabel")
-	local v12 = {
-		["Name"] = "RedGlowImage"
-	}
-	local v13
-	if v5 then
-		v13 = Vector2.new(0, 0)
-	else
-		v13 = Vector2.new(1, 0)
-	end
-	v12.AnchorPoint = v13
-	v12.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	v12.BackgroundTransparency = 1
-	v12.BorderColor3 = Color3.fromRGB(27, 42, 53)
-	v12.Image = "rbxassetid://12799025513"
-	local v14
-	if v5 then
-		v14 = UDim2.fromScale(0, 0)
-	else
-		v14 = UDim2.fromScale(1, 0)
-	end
-	v12.Position = v14
-	v12.Rotation = p3.rotation
-	v12.Size = UDim2.fromScale(2, 1)
-	v12.ZIndex = 2
-	v12[v_u_2] = { v4:New("UIGradient")({
-			["Name"] = "UIGradient",
-			["Rotation"] = nil,
-			["Transparency"] = nil,
-			["Rotation"] = p3.gradientRotation,
-			["Transparency"] = NumberSequence.new({
-				NumberSequenceKeypoint.new(0, 0),
-				NumberSequenceKeypoint.new(0.5, 0),
-				NumberSequenceKeypoint.new(0.502, 1),
-				NumberSequenceKeypoint.new(1, 1)
-			})
-		}) }
-	__set_list(v10, 1, {v11(v12)})
-	v7[v9] = v10
-	return v6(v7)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Children = require(ReplicatedStorage.Packages.Fusion).Children
+return function(p1) -- Line: 17 -- upvalues: Children (val)
+    local v1, v2
+    local scope = p1.scope
+    local isLeft = p1.isLeft
+    local v3 = scope:New("CanvasGroup")
+    local v4 = {}
+    if not isLeft then
+        v1 = "RightCanvas"
+    else
+        v1 = "LeftCanvas"
+    end
+    v4.Name = v1
+    v4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v4.BackgroundTransparency = 1
+    v4.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    local groupColor3 = p1.groupColor3
+    if not groupColor3 then
+        groupColor3 = Color3.fromRGB(255, 255, 255)
+    end
+    v4.GroupColor3 = groupColor3
+    v4.GroupTransparency = p1.groupTransparency
+    if not isLeft then
+        v1 = UDim2.fromScale(0.5, 0)
+    else
+        v1 = UDim2.fromScale(0, 0)
+    end
+    v4.Position = v1
+    v4.Size = UDim2.fromScale(0.5, 1)
+    v4.Visible = p1.visible
+    local v5 = {}
+    local v6 = scope:New("ImageLabel")
+    local v7 = {Name = "RedGlowImage"}
+    if not isLeft then
+        v2 = Vector2.new(1, 0)
+    else
+        v2 = Vector2.new(0, 0)
+    end
+    v7.AnchorPoint = v2
+    v7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v7.BackgroundTransparency = 1
+    v7.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    v7.Image = "rbxassetid://12799025513"
+    if not isLeft then
+        v2 = UDim2.fromScale(1, 0)
+    else
+        v2 = UDim2.fromScale(0, 0)
+    end
+    v7.Position = v2
+    v7.Rotation = p1.rotation
+    v7.Size = UDim2.fromScale(2, 1)
+    v7.ZIndex = 2
+    local v8 = {}
+    local v9 = scope:New("UIGradient")
+    local v10 = {Name = "UIGradient", Rotation = p1.gradientRotation}
+    local v11 = {}
+    local v12 = NumberSequenceKeypoint.new(0, 0)
+    local v13 = NumberSequenceKeypoint.new(0.5, 0)
+    local v14 = NumberSequenceKeypoint.new(0.502, 1)
+    v11[1] = v12
+    v11[2] = v13
+    v11[3] = v14
+    v11[4] = NumberSequenceKeypoint.new(1, 1)
+    v10.Transparency = NumberSequence.new(v11)
+    v8[1] = v9(v10)
+    v7[Children] = v8
+    v5[1] = v6(v7)
+    v4[Children] = v5
+    return v3(v4)
 end

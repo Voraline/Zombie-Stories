@@ -1,37 +1,21 @@
-local v1 = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 workspace:WaitForChild("Ignore")
-local v2 = v1.common:WaitForChild("NPCs_Shared")
-v2:WaitForChild("Resources")
-local v_u_3 = v1.arc.NPCs_Shared.Resources.NPCModels
-local v_u_4 = require(v2.AIClasses.BaseNPCv2_Client)
-local v_u_5 = {
-	["_ClassName"] = script.Name
-}
-v_u_5.__index = v_u_5
-setmetatable(v_u_5, v_u_4)
-v_u_5.Name = "Armored Charger"
-function v_u_5.new(p6) -- name: new
-	-- upvalues: (copy) v_u_4, (copy) v_u_5, (copy) v_u_3
-	local v7 = v_u_4.new(p6)
-	local v8 = v_u_5
-	setmetatable(v7, v8)
-	v7.BaseModel = v_u_3.ArmoredCharger
-	v7.HealthBarName = "Armored Charger"
-	v7.AnimationInfo.Attack = {
-		["Id"] = "rbxassetid://1387793624",
-		["Priority"] = nil,
-		["Priority"] = Enum.AnimationPriority.Action
-	}
-	v7.AnimationInfo.Idle = {
-		["Id"] = "rbxassetid://1457837265",
-		["Priority"] = nil,
-		["Priority"] = Enum.AnimationPriority.Core
-	}
-	v7.AnimationInfo.Walk = {
-		["Id"] = "rbxassetid://1457816581",
-		["Priority"] = nil,
-		["Priority"] = Enum.AnimationPriority.Idle
-	}
-	return v7
+local NPCs_Shared = ReplicatedStorage.common:WaitForChild("NPCs_Shared")
+NPCs_Shared:WaitForChild("Resources")
+local NPCModels = ReplicatedStorage.arc.NPCs_Shared.Resources.NPCModels
+local BaseNPCv2_Client = require(NPCs_Shared.AIClasses.BaseNPCv2_Client)
+local u27 = {_ClassName = script.Name}
+u27.__index = u27
+setmetatable(u27, BaseNPCv2_Client)
+u27.Name = "Armored Charger"
+function u27.new(p1) -- Line: 28 -- upvalues: BaseNPCv2_Client (val), u27 (val), NPCModels (val)
+    local v1 = BaseNPCv2_Client.new(p1)
+    setmetatable(v1, u27)
+    v1.BaseModel = NPCModels.ArmoredCharger
+    v1.HealthBarName = "Armored Charger"
+    v1.AnimationInfo.Attack = {Id = "rbxassetid://1387793624", Priority = Enum.AnimationPriority.Action}
+    v1.AnimationInfo.Idle = {Id = "rbxassetid://1457837265", Priority = Enum.AnimationPriority.Core}
+    v1.AnimationInfo.Walk = {Id = "rbxassetid://1457816581", Priority = Enum.AnimationPriority.Idle}
+    return v1
 end
-return v_u_5
+return u27

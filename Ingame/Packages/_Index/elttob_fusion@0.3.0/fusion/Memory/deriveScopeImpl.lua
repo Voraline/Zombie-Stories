@@ -1,14 +1,16 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Utility.merge)
-local v_u_3 = require(v1.Memory.scopePool)
-return function(p4, p5, ...) -- name: deriveScopeImpl
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	local v6 = getmetatable(p4)
-	if p5 ~= nil then
-		v6 = table.clone(v6)
-		v6.__index = v_u_2(true, {}, v6.__index, v_u_2(false, {}, p5, ...))
-	end
-	local v7 = v_u_3.reuseAny() or {}
-	return setmetatable(v7, v6)
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local merge = require(Parent.Utility.merge)
+local scopePool = require(Parent.Memory.scopePool)
+return function(p1, p2, ...) -- Line: 20 -- upvalues: merge (val), scopePool (val)
+    local v1 = getmetatable(p1)
+    if p2 ~= nil then
+        v1 = table.clone(v1)
+        v1.__index = merge(true, {}, v1.__index, merge(false, {}, p2, ...))
+    end
+    local v2 = scopePool.reuseAny()
+    if not v2 then
+        v2 = {}
+    end
+    return (setmetatable(v2, v1))
 end

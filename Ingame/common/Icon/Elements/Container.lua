@@ -1,128 +1,131 @@
-return function(p_u_1)
-	local v2 = game:GetService("GuiService")
-	local v3 = p_u_1.isOldTopbar
-	local v4 = {}
-	local v5 = v2:GetGuiInset()
-	local v6 = v2:IsTenFootInterface()
-	local v7 = v6 and 10 or (v3 and 12 or v5.Y - 46)
-	local v_u_8 = Instance.new("ScreenGui")
-	v_u_8:SetAttribute("StartInset", v7)
-	v_u_8.Name = "TopbarStandard"
-	v_u_8.Enabled = true
-	v_u_8.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-	v_u_8.IgnoreGuiInset = true
-	v_u_8.ResetOnSpawn = false
-	v_u_8.ScreenInsets = Enum.ScreenInsets.TopbarSafeInsets
-	v4[v_u_8.Name] = v_u_8
-	v_u_8.DisplayOrder = p_u_1.baseDisplayOrder
-	p_u_1.baseDisplayOrderChanged:Connect(function()
-		-- upvalues: (copy) v_u_8, (copy) p_u_1
-		v_u_8.DisplayOrder = p_u_1.baseDisplayOrder
-	end)
-	local v9 = Instance.new("Frame")
-	local v10 = v3 and 2 or 0
-	local v_u_11
-	if v6 then
-		v10 = v10 + 13
-		v_u_11 = 50
-	else
-		v_u_11 = -2
-	end
-	v9.Name = "Holders"
-	v9.BackgroundTransparency = 1
-	v9.Position = UDim2.new(0, 0, 0, v10)
-	v9.Size = UDim2.new(1, 0, 1, v_u_11)
-	v9.Visible = true
-	v9.ZIndex = 1
-	v9.Parent = v_u_8
-	local v_u_12 = v_u_8:Clone()
-	local v_u_13 = v_u_12.Holders
-	local v_u_14 = game:GetService("GuiService")
-	local function v15() -- name: updateCenteredHoldersHeight
-		-- upvalues: (copy) v_u_13, (copy) v_u_14, (ref) v_u_11
-		v_u_13.Size = UDim2.new(1, 0, 0, v_u_14.TopbarInset.Height + v_u_11)
-	end
-	v_u_12.Name = "TopbarCentered"
-	v_u_12.ScreenInsets = Enum.ScreenInsets.None
-	p_u_1.baseDisplayOrderChanged:Connect(function()
-		-- upvalues: (copy) v_u_12, (copy) p_u_1
-		v_u_12.DisplayOrder = p_u_1.baseDisplayOrder
-	end)
-	v4[v_u_12.Name] = v_u_12
-	v_u_14:GetPropertyChangedSignal("TopbarInset"):Connect(v15)
-	v_u_13.Size = UDim2.new(1, 0, 0, v_u_14.TopbarInset.Height + v_u_11)
-	local v_u_16 = v_u_8:Clone()
-	v_u_16.Name = v_u_16.Name .. "Clipped"
-	v_u_16.DisplayOrder = v_u_16.DisplayOrder + 1
-	p_u_1.baseDisplayOrderChanged:Connect(function()
-		-- upvalues: (copy) v_u_16, (copy) p_u_1
-		v_u_16.DisplayOrder = p_u_1.baseDisplayOrder + 1
-	end)
-	v4[v_u_16.Name] = v_u_16
-	local v_u_17 = v_u_12:Clone()
-	v_u_17.Name = v_u_17.Name .. "Clipped"
-	v_u_17.DisplayOrder = v_u_17.DisplayOrder + 1
-	p_u_1.baseDisplayOrderChanged:Connect(function()
-		-- upvalues: (copy) v_u_17, (copy) p_u_1
-		v_u_17.DisplayOrder = p_u_1.baseDisplayOrder + 1
-	end)
-	v4[v_u_17.Name] = v_u_17
-	if v3 then
-		task.defer(function()
-			-- upvalues: (copy) v_u_14, (copy) p_u_1
-			local function v18() -- name: decideToHideTopbar
-				-- upvalues: (ref) v_u_14, (ref) p_u_1
-				if v_u_14.MenuIsOpen then
-					p_u_1.setTopbarEnabled(false, true)
-				else
-					p_u_1.setTopbarEnabled()
-				end
-			end
-			v_u_14:GetPropertyChangedSignal("MenuIsOpen"):Connect(v18)
-			if v_u_14.MenuIsOpen then
-				p_u_1.setTopbarEnabled(false, true)
-			else
-				p_u_1.setTopbarEnabled()
-			end
-		end)
-	end
-	local v19 = Instance.new("ScrollingFrame")
-	v19:SetAttribute("IsAHolder", true)
-	v19.Name = "Left"
-	v19.Position = UDim2.fromOffset(v7, 0)
-	v19.Size = UDim2.new(1, -24, 1, 0)
-	v19.BackgroundTransparency = 1
-	v19.Visible = true
-	v19.ZIndex = 1
-	v19.Active = false
-	v19.ClipsDescendants = true
-	v19.HorizontalScrollBarInset = Enum.ScrollBarInset.None
-	v19.CanvasSize = UDim2.new(0, 0, 1, -1)
-	v19.AutomaticCanvasSize = Enum.AutomaticSize.X
-	v19.ScrollingDirection = Enum.ScrollingDirection.X
-	v19.ScrollBarThickness = 0
-	v19.BorderSizePixel = 0
-	v19.Selectable = false
-	v19.ScrollingEnabled = false
-	v19.ElasticBehavior = Enum.ElasticBehavior.Never
-	v19.Parent = v9
-	local v20 = Instance.new("UIListLayout")
-	v20.Padding = UDim.new(0, v7)
-	v20.FillDirection = Enum.FillDirection.Horizontal
-	v20.SortOrder = Enum.SortOrder.LayoutOrder
-	v20.VerticalAlignment = Enum.VerticalAlignment.Bottom
-	v20.HorizontalAlignment = Enum.HorizontalAlignment.Left
-	v20.Parent = v19
-	local v21 = v19:Clone()
-	v21.ScrollingEnabled = false
-	v21.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	v21.Name = "Center"
-	v21.Parent = v_u_13
-	local v22 = v19:Clone()
-	v22.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-	v22.Name = "Right"
-	v22.AnchorPoint = Vector2.new(1, 0)
-	v22.Position = UDim2.new(1, -12, 0, 0)
-	v22.Parent = v9
-	return v4
+return function(p1) -- Line: 1
+    local v1, v2
+    local GuiService_2 = game:GetService("GuiService")
+    local isOldTopbar = p1.isOldTopbar
+    local v3 = {}
+    local GuiInset = GuiService_2:GetGuiInset()
+    local v4 = GuiService_2:IsTenFootInterface()
+    if not isOldTopbar then
+        v1 = GuiInset.Y - 46
+    else
+        v1 = 12
+    end
+    if v4 then
+        v1 = 10
+    end
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui:SetAttribute("StartInset", v1)
+    ScreenGui.Name = "TopbarStandard"
+    ScreenGui.Enabled = true
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.IgnoreGuiInset = true
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.ScreenInsets = Enum.ScreenInsets.TopbarSafeInsets
+    v3[ScreenGui.Name] = ScreenGui
+    ScreenGui.DisplayOrder = p1.baseDisplayOrder
+    p1.baseDisplayOrderChanged:Connect(function() -- Line: 22 -- upvalues: ScreenGui (val), p1 (val)
+        ScreenGui.DisplayOrder = p1.baseDisplayOrder
+    end)
+    local Frame = Instance.new("Frame")
+    if not isOldTopbar then
+        v2 = 0
+    else
+        v2 = 2
+    end
+    local u58 = -2
+    if v4 then
+        v2 = v2 + 13
+        u58 = 50
+    end
+    Frame.Name = "Holders"
+    Frame.BackgroundTransparency = 1
+    Frame.Position = UDim2.new(0, 0, 0, v2)
+    Frame.Size = UDim2.new(1, 0, 1, u58)
+    Frame.Visible = true
+    Frame.ZIndex = 1
+    Frame.Parent = ScreenGui
+    local u83 = ScreenGui:Clone()
+    local Holders = u83.Holders
+    local GuiService = game:GetService("GuiService")
+    u83.Name = "TopbarCentered"
+    u83.ScreenInsets = Enum.ScreenInsets.None
+    p1.baseDisplayOrderChanged:Connect(function() -- Line: 49 -- upvalues: u83 (val), p1 (val)
+        u83.DisplayOrder = p1.baseDisplayOrder
+    end)
+    v3[u83.Name] = u83
+    local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("TopbarInset")
+    PropertyChangedSignal:Connect(function() -- Line: 44 -- upvalues: Holders (val), GuiService (val), u58 (ref)
+        Holders.Size = UDim2.new(1, 0, 0, GuiService.TopbarInset.Height + u58)
+    end)
+    Holders.Size = UDim2.new(1, 0, 0, GuiService.TopbarInset.Height + u58)
+    local u121 = ScreenGui:Clone()
+    u121.Name = u121.Name .. "Clipped"
+    u121.DisplayOrder = u121.DisplayOrder + 1
+    p1.baseDisplayOrderChanged:Connect(function() -- Line: 59 -- upvalues: u121 (val), p1 (val)
+        u121.DisplayOrder = p1.baseDisplayOrder + 1
+    end)
+    v3[u121.Name] = u121
+    local u135 = u83:Clone()
+    u135.Name = u135.Name .. "Clipped"
+    u135.DisplayOrder = u135.DisplayOrder + 1
+    p1.baseDisplayOrderChanged:Connect(function() -- Line: 67 -- upvalues: u135 (val), p1 (val)
+        u135.DisplayOrder = p1.baseDisplayOrder + 1
+    end)
+    v3[u135.Name] = u135
+    if isOldTopbar then
+        task.defer(function() -- Line: 73 -- upvalues: GuiService (val), p1 (val)
+            local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("MenuIsOpen")
+            PropertyChangedSignal:Connect(function() -- Line: 74 -- upvalues: GuiService (upval), p1 (upval)
+                if GuiService.MenuIsOpen then
+                    p1.setTopbarEnabled(false, true)
+                    return
+                end
+                p1.setTopbarEnabled()
+            end)
+            if GuiService.MenuIsOpen then
+                p1.setTopbarEnabled(false, true)
+                return
+            end
+            p1.setTopbarEnabled()
+        end)
+    end
+    local ScrollingFrame = Instance.new("ScrollingFrame")
+    ScrollingFrame:SetAttribute("IsAHolder", true)
+    ScrollingFrame.Name = "Left"
+    ScrollingFrame.Position = UDim2.fromOffset(v1, 0)
+    ScrollingFrame.Size = UDim2.new(1, -24, 1, 0)
+    ScrollingFrame.BackgroundTransparency = 1
+    ScrollingFrame.Visible = true
+    ScrollingFrame.ZIndex = 1
+    ScrollingFrame.Active = false
+    ScrollingFrame.ClipsDescendants = true
+    ScrollingFrame.HorizontalScrollBarInset = Enum.ScrollBarInset.None
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 1, -1)
+    ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
+    ScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.X
+    ScrollingFrame.ScrollBarThickness = 0
+    ScrollingFrame.BorderSizePixel = 0
+    ScrollingFrame.Selectable = false
+    ScrollingFrame.ScrollingEnabled = false
+    ScrollingFrame.ElasticBehavior = Enum.ElasticBehavior.Never
+    ScrollingFrame.Parent = Frame
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Padding = UDim.new(0, v1)
+    UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    UIListLayout.Parent = ScrollingFrame
+    local v5 = ScrollingFrame:Clone()
+    v5.ScrollingEnabled = false
+    v5.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    v5.Name = "Center"
+    v5.Parent = Holders
+    local v6 = ScrollingFrame:Clone()
+    v6.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    v6.Name = "Right"
+    v6.AnchorPoint = Vector2.new(1, 0)
+    v6.Position = UDim2.new(1, -12, 0, 0)
+    v6.Parent = Frame
+    return v3
 end

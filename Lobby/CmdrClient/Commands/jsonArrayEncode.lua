@@ -1,21 +1,13 @@
-local v_u_1 = game:GetService("HttpService")
+local HttpService = game:GetService("HttpService")
 return {
-	["Name"] = "json-array-encode",
-	["Aliases"] = nil,
-	["Description"] = "Encodes a comma-separated list into a JSON array",
-	["Group"] = "DefaultUtil",
-	["Args"] = nil,
-	["Run"] = nil,
-	["Aliases"] = {},
-	["Args"] = {
-		{
-			["Type"] = "string",
-			["Name"] = "CSV",
-			["Description"] = "The comma-separated list"
-		}
-	},
-	["Run"] = function(_, p2) -- name: Run
-		-- upvalues: (copy) v_u_1
-		return v_u_1:JSONEncode(p2:split(","))
-	end
+    Name = "json-array-encode",
+    Description = "Encodes a comma-separated list into a JSON array",
+    Group = "DefaultUtil",
+    Aliases = {},
+    Args = {
+        {Type = "string", Name = "CSV", Description = "The comma-separated list"},
+    },
+    Run = function(p1, p2) -- Line: 16 -- upvalues: HttpService (val)
+        return HttpService:JSONEncode(p2:split(","))
+    end,
 }

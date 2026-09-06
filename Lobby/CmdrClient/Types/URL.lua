@@ -1,18 +1,16 @@
-local v_u_1 = require("../Shared/Util")
-local v_u_4 = {
-	["Validate"] = function(p2) -- name: Validate
-		if p2:match("^https?://.+$") then
-			return true
-		else
-			return false, "URLs must begin with http:// or https://"
-		end
-	end,
-	["Parse"] = function(p3) -- name: Parse
-		return p3
-	end
+local u2 = require("../Shared/Util")
+local u3 = {
+    Validate = function(p1) -- Line: 4
+        if p1:match("^https?://.+$") then
+            return true
+        end
+        return false, "URLs must begin with http:// or https://"
+    end,
+    Parse = function(p1) -- Line: 12
+        return p1
+    end,
 }
-return function(p5)
-	-- upvalues: (copy) v_u_4, (copy) v_u_1
-	p5:RegisterType("url", v_u_4)
-	p5:RegisterType("urls", v_u_1.MakeListableType(v_u_4))
+return function(p1) -- Line: 17 -- upvalues: u3 (val), u2 (val)
+    p1:RegisterType("url", u3)
+    p1:RegisterType("urls", u2.MakeListableType(u3))
 end

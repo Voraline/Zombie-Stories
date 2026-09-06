@@ -1,210 +1,219 @@
-local v_u_1 = game:GetService("UserInputService")
-local v2 = game:GetService("ReplicatedStorage").Packages
-local v_u_3 = require(v2.Fusion)
+local UserInputService = game:GetService("UserInputService")
+local Fusion = require(game:GetService("ReplicatedStorage").Packages.Fusion)
 require("./SkillTreeRenderer")
-local v_u_4 = require("./SkillTreeCamera")
-local v_u_5 = {}
-v_u_5.__index = v_u_5
-function v_u_5.new(p6, p7) -- name: new
-	-- upvalues: (copy) v_u_5, (copy) v_u_3
-	local v8 = v_u_5
-	local v_u_9 = setmetatable({}, v8)
-	v_u_9.renderer = p6
-	v_u_9.camera = p7
-	v_u_9.selectedSkillId = nil
-	v_u_9.isAnimating = false
-	v_u_9.animatingSkillId = nil
-	v_u_9.currentAnimationId = 0
-	v_u_9.connections = {}
-	v_u_9.onBuyCallback = nil
-	v_u_9.scope = v_u_3.scoped(v_u_3)
-	v_u_9.selectedSkillValue = v_u_9.scope:Value(nil)
-	function p6.onSkillClicked(p10)
-		-- upvalues: (copy) v_u_9
-		v_u_9:onSkillClicked(p10)
-	end
-	v_u_9:setupClickAwayDetection()
-	return v_u_9
+local u19 = require("./SkillTreeCamera")
+local u20 = {}
+u20.__index = u20
+function u20.new(p1, p2) -- Line: 46 -- upvalues: u20 (val), Fusion (val)
+    local u5 = setmetatable({}, u20)
+    u5.renderer = p1
+    u5.camera = p2
+    u5.selectedSkillId = nil
+    u5.isAnimating = false
+    u5.animatingSkillId = nil
+    u5.currentAnimationId = 0
+    u5.connections = {}
+    u5.onBuyCallback = nil
+    u5.scope = Fusion.scoped(Fusion)
+    u5.selectedSkillValue = u5.scope:Value(nil)
+    function p1.onSkillClicked(p1) -- Line: 66 -- upvalues: u5 (val)
+        u5:onSkillClicked(p1)
+    end
+    u5:setupClickAwayDetection()
+    return u5
 end
-function v_u_5.onSkillClicked(p11, p12) -- name: onSkillClicked
-	if p11.animatingSkillId == p12 then
-		return
-	elseif p11.selectedSkillId == p12 then
-		p11:deselectSkill()
-	else
-		local v13 = p11.selectedSkillId or p11.animatingSkillId
-		if v13 then
-			p11:resetCardInstant(v13)
-		end
-		p11:selectSkill(p12)
-	end
+function u20:onSkillClicked(p2) -- Line: 79
+    local selectedSkillId
+    self.renderer:clearHoverStates()
+    if self.animatingSkillId == p2 then
+        return
+    end
+    if self.selectedSkillId == p2 then
+        self:deselectSkill()
+        return
+    end
+    selectedSkillId = self.selectedSkillId
+    if not selectedSkillId then
+        selectedSkillId = self.animatingSkillId
+    end
+    if selectedSkillId then
+        self:resetCardInstant(selectedSkillId)
+    end
+    self:selectSkill(p2)
 end
-function v_u_5.selectSkill(p14, p15) -- name: selectSkill
-	p14.selectedSkillId = p15
-	p14.selectedSkillValue:set(p15)
-	p14.renderer:setSkillSelected(p15, true)
-	p14.renderer:setSkillTierAlwaysOnTop(p15, false)
-	p14:tweenCameraToSkill(p15)
-	p14:flipCard(p15, true)
+function u20:selectSkill(p2) -- Line: 107
+    self.selectedSkillId = p2
+    self.selectedSkillValue:set(p2)
+    self.renderer:setSkillSelected(p2, true)
+    self.renderer:setSkillTierAlwaysOnTop(p2, false)
+    self:tweenCameraToSkill(p2)
+    self:flipCard(p2, true)
 end
-function v_u_5.resetCardInstant(p16, p17) -- name: resetCardInstant
-	-- upvalues: (copy) v_u_4
-	local v18 = p16.renderer:getSquare(p17)
-	if v18 then
-		p16.currentAnimationId = p16.currentAnimationId + 1
-		p16.isAnimating = false
-		if p16.animatingSkillId == p17 then
-			p16.animatingSkillId = nil
-		end
-		p16.renderer:setSkillShowDescription(p17, false)
-		p16.renderer:setSkillSelected(p17, false)
-		p16.renderer:setSkillTierAlwaysOnTop(p17, true)
-		local v19 = v_u_4.getSkillWorldPosition(p17)
-		if v19 then
-			v18:PivotTo(CFrame.new(v19))
-		end
-	end
+function u20:resetCardInstant(p2) -- Line: 127 -- upvalues: u19 (val)
+    local v1 = self.renderer:getSquare(p2)
+    if not v1 then
+        return
+    end
+    self.currentAnimationId = self.currentAnimationId + 1
+    self.isAnimating = false
+    if self.animatingSkillId == p2 then
+        self.animatingSkillId = nil
+    end
+    self.renderer:setSkillShowDescription(p2, false)
+    self.renderer:setSkillSelected(p2, false)
+    self.renderer:setSkillTierAlwaysOnTop(p2, true)
+    local v2 = u19.getSkillWorldPosition(p2)
+    if v2 then
+        v1:PivotTo(CFrame.new(v2))
+    end
 end
-function v_u_5.deselectSkill(p20, p21) -- name: deselectSkill
-	if p20.selectedSkillId then
-		local v22 = p20.selectedSkillId
-		p20.selectedSkillId = nil
-		p20.selectedSkillValue:set(nil)
-		p20.renderer:setSkillSelected(v22, false)
-		p20.renderer:setSkillTierAlwaysOnTop(v22, true)
-		p20:flipCard(v22, false, p21)
-	elseif p21 then
-		p21()
-	end
+function u20:deselectSkill(p2) -- Line: 157
+    local selectedSkillId
+    self.renderer:clearHoverStates()
+    if not self.selectedSkillId then
+        if p2 then
+            p2()
+        end
+        return
+    end
+    selectedSkillId = self.selectedSkillId
+    self.selectedSkillId = nil
+    self.selectedSkillValue:set(nil)
+    self.renderer:setSkillSelected(selectedSkillId, false)
+    self.renderer:setSkillTierAlwaysOnTop(selectedSkillId, true)
+    self:flipCard(selectedSkillId, false, p2)
 end
-function v_u_5.tweenCameraToSkill(p_u_23, p24) -- name: tweenCameraToSkill
-	-- upvalues: (copy) v_u_4
-	local v25 = v_u_4.getSkillWorldPosition(p24)
-	if v25 then
-		local v_u_26 = p_u_23.camera.targetPosition
-		local v27 = v25.X
-		local v28 = v_u_26.Y
-		local v29 = v25.Z
-		local v_u_30 = Vector3.new(v27, v28, v29)
-		local v_u_31 = 0
-		task.spawn(function()
-			-- upvalues: (ref) v_u_31, (copy) p_u_23, (copy) v_u_26, (copy) v_u_30
-			while v_u_31 < 0.3 do
-				v_u_31 = v_u_31 + task.wait()
-				local v32 = v_u_31 / 0.3
-				local v33 = 1 - (1 - math.min(v32, 1)) ^ 2
-				p_u_23.camera.targetPosition = v_u_26:Lerp(v_u_30, v33)
-			end
-		end)
-	end
+function u20:tweenCameraToSkill(p2) -- Line: 183 -- upvalues: u19 (val)
+    local v1 = u19.getSkillWorldPosition(p2)
+    if not v1 then
+        return
+    end
+    local targetPosition = self.camera.targetPosition
+    local u12 = Vector3.new(v1.X, targetPosition.Y, v1.Z)
+    local u13 = 0
+    task.spawn(function() -- Line: 195 -- upvalues: u13 (ref), self (val), targetPosition (val), u12 (val)
+        local v1
+        while u13 < 0.3 do
+            u13 = u13 + task.wait()
+            v1 = 1 - (1 - math.min(u13 / 0.3, 1)) ^ 2
+            self.camera.targetPosition = targetPosition:Lerp(u12, v1)
+        end
+    end)
 end
-function v_u_5.flipCard(p_u_34, p_u_35, p_u_36, p_u_37) -- name: flipCard
-	-- upvalues: (copy) v_u_4
-	local v_u_38 = p_u_34.renderer:getSquare(p_u_35)
-	if v_u_38 then
-		p_u_34.currentAnimationId = p_u_34.currentAnimationId + 1
-		local v_u_39 = p_u_34.currentAnimationId
-		p_u_34.isAnimating = true
-		p_u_34.animatingSkillId = p_u_35
-		local v40 = v_u_4.getSkillWorldPosition(p_u_35)
-		local v_u_41 = v40 and CFrame.new(v40) or v_u_38:GetPivot()
-		v_u_38:PivotTo(v_u_41)
-		local v_u_42 = false
-		local v_u_43 = 0
-		task.spawn(function()
-			-- upvalues: (ref) v_u_43, (copy) p_u_34, (copy) v_u_39, (copy) v_u_38, (copy) v_u_41, (ref) v_u_42, (copy) p_u_35, (copy) p_u_36, (copy) p_u_37
-			while v_u_43 < 0.4 do
-				local v44 = task.wait()
-				if p_u_34.currentAnimationId ~= v_u_39 then
-					return
-				end
-				v_u_43 = v_u_43 + v44
-				local v45 = v_u_43 / 0.4
-				local v46 = math.min(v45, 1)
-				local v47
-				if v46 < 0.5 then
-					v47 = v46 * 2 * v46
-				else
-					v47 = 1 - (v46 * -2 + 2) ^ 2 / 2
-				end
-				local v48 = v47 * 6.283185307179586
-				v_u_38:PivotTo(v_u_41 * CFrame.fromAxisAngle(Vector3.new(1, 0, 0), v48))
-				if not v_u_42 and v_u_43 >= 0.2 then
-					v_u_42 = true
-					p_u_34.renderer:setSkillShowDescription(p_u_35, p_u_36)
-				end
-			end
-			if p_u_34.currentAnimationId == v_u_39 then
-				v_u_38:PivotTo(v_u_41)
-				p_u_34.renderer:setSkillShowDescription(p_u_35, p_u_36)
-				p_u_34.isAnimating = false
-				p_u_34.animatingSkillId = nil
-				if p_u_37 then
-					p_u_37()
-				end
-			end
-		end)
-	elseif p_u_37 then
-		p_u_37()
-	end
+function u20:flipCard(p2, p3, p4) -- Line: 212 -- upvalues: u19 (val)
+    local Pivot
+    local u8 = self.renderer:getSquare(p2)
+    if not u8 then
+        if p4 then
+            p4()
+        end
+        return
+    end
+    self.currentAnimationId = self.currentAnimationId + 1
+    local currentAnimationId = self.currentAnimationId
+    self.isAnimating = true
+    self.animatingSkillId = p2
+    local v1 = u19.getSkillWorldPosition(p2)
+    if not v1 then
+        Pivot = u8:GetPivot()
+    else
+        Pivot = CFrame.new(v1)
+        if not Pivot then
+            Pivot = u8:GetPivot()
+        end
+    end
+    u8:PivotTo(Pivot)
+    local u32 = false
+    local u33 = 0
+    task.spawn(function() -- Line: 246 -- upvalues: u33 (ref), self (val), currentAnimationId (val), u8 (val), Pivot (val), u32 (ref), p2 (val), p3 (val), p4 (val)
+        local v1, v2, v3
+        while u33 < 0.4 do
+            if self.currentAnimationId ~= currentAnimationId then
+                return
+            end
+            u33 = u33 + task.wait()
+            v2 = u33 / 0.4
+            v1 = math.min(v2, 1)
+            if v1 >= 0.5 then
+                v2 = 1 - (v1 * -2 + 2) ^ 2 / 2
+            else
+                v2 = v1 * 2 * v1
+            end
+            v3 = CFrame.fromAxisAngle(Vector3.new(1, 0, 0), v2 * 6.283185307179586)
+            u8:PivotTo(Pivot * v3)
+            if not u32 and 0.2 <= u33 then
+                u32 = true
+                self.renderer:setSkillShowDescription(p2, p3)
+            end
+        end
+        if self.currentAnimationId ~= currentAnimationId then
+            return
+        end
+        u8:PivotTo(Pivot)
+        self.renderer:setSkillShowDescription(p2, p3)
+        self.isAnimating = false
+        self.animatingSkillId = nil
+        if p4 then
+            p4()
+        end
+    end)
 end
-function v_u_5.setupClickAwayDetection(p_u_49) -- name: setupClickAwayDetection
-	-- upvalues: (copy) v_u_1
-	local v52 = v_u_1.InputBegan:Connect(function(p50, p51)
-		-- upvalues: (copy) p_u_49
-		if p50.UserInputType == Enum.UserInputType.MouseButton1 then
-			if not p51 then
-				if p_u_49.selectedSkillId and not p_u_49.isAnimating then
-					p_u_49:deselectSkill()
-				end
-			end
-		else
-			return
-		end
-	end)
-	local v53 = p_u_49.connections
-	table.insert(v53, v52)
+function u20:setupClickAwayDetection() -- Line: 302 -- upvalues: UserInputService (val)
+    local v1 = UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 303 -- upvalues: self (val)
+        if p1.UserInputType ~= Enum.UserInputType.MouseButton1 or p2 then
+            return
+        end
+        if self.selectedSkillId and not self.isAnimating then
+            self:deselectSkill()
+        end
+    end)
+    table.insert(self.connections, v1)
 end
-function v_u_5.getSelectedSkill(p54) -- name: getSelectedSkill
-	return p54.selectedSkillId
+function u20.getSelectedSkill(p1) -- Line: 327
+    return p1.selectedSkillId
 end
-function v_u_5.isFlipping(p55) -- name: isFlipping
-	return p55.isAnimating
+function u20.isFlipping(p1) -- Line: 334
+    return p1.isAnimating
 end
-function v_u_5.getScope(p56) -- name: getScope
-	return p56.scope
+function u20.getScope(p1) -- Line: 341
+    return p1.scope
 end
-function v_u_5.getSelectedSkillValue(p57) -- name: getSelectedSkillValue
-	return p57.selectedSkillValue
+function u20.getSelectedSkillValue(p1) -- Line: 348
+    return p1.selectedSkillValue
 end
-function v_u_5.getSelectedSkillRankComputed(p_u_58) -- name: getSelectedSkillRankComputed
-	return p_u_58.scope:Computed(function(p59)
-		-- upvalues: (copy) p_u_58
-		local v60 = p59(p_u_58.selectedSkillValue)
-		if not v60 then
-			return 0
-		end
-		local v61 = p_u_58.renderer:getSkillState(v60)
-		return not v61 and 0 or p59(v61.currentRank)
-	end)
+function u20.getSelectedSkillRankComputed(p1) -- Line: 356
+    return p1.scope:Computed(function(a1) -- Line: 357 -- upvalues: p1 (val)
+        local v1 = a1(p1.selectedSkillValue)
+        if not v1 then
+            return 0
+        end
+        local v2 = p1.renderer:getSkillState(v1)
+        if not v2 then
+            return 0
+        end
+        return a1(v2.currentRank)
+    end)
 end
-function v_u_5.setOnBuyCallback(p62, p63) -- name: setOnBuyCallback
-	p62.onBuyCallback = p63
+function u20.setOnBuyCallback(p1, p2) -- Line: 375
+    p1.onBuyCallback = p2
 end
-function v_u_5.handleBuy(p64) -- name: handleBuy
-	if p64.selectedSkillId and p64.onBuyCallback then
-		p64.onBuyCallback(p64.selectedSkillId)
-	end
+function u20.handleBuy(p1) -- Line: 382
+    if p1.selectedSkillId and p1.onBuyCallback then
+        p1.onBuyCallback(p1.selectedSkillId)
+    end
 end
-function v_u_5.handleExit(p65) -- name: handleExit
-	p65:deselectSkill()
+function u20.handleExit(p1) -- Line: 391
+    p1:deselectSkill()
 end
-function v_u_5.destroy(p66) -- name: destroy
-	for _, v67 in p66.connections do
-		v67:Disconnect()
-	end
-	p66.connections = {}
-	p66.renderer.onSkillClicked = nil
-	p66.scope:doCleanup()
+function u20.destroy(p1) -- Line: 398
+    local connections = p1.connections
+    local v1 = nil
+    local v2 = nil
+    for i, j in connections, v1, v2 do
+        j:Disconnect()
+    end
+    p1.connections = {}
+    p1.renderer.onSkillClicked = nil
+    p1.scope:doCleanup()
 end
-return v_u_5
+return u20

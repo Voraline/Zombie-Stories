@@ -1,132 +1,155 @@
-local v_u_1 = {}
-local v_u_2 = nil
-local v_u_3 = nil
-function BuildNodes(p4) -- name: BuildNodes
-	-- upvalues: (ref) v_u_3, (ref) v_u_2
-	if v_u_3 ~= p4 then
-		v_u_3 = p4
-		local v5 = {}
-		local v6 = {}
-		for _, v7 in ipairs(p4:GetChildren()) do
-			if v7:IsA("Folder") then
-				local v8 = {
-					["Position"] = nil,
-					["Neighbors"] = nil,
-					["F"] = 0,
-					["G"] = 0,
-					["H"] = 0,
-					["Parent"] = nil,
-					["Position"] = v7:GetAttribute("NodePosition"),
-					["Neighbors"] = {}
-				}
-				table.insert(v5, v8)
-				v6[v7:GetAttribute("NodeId")] = v8
-			end
-		end
-		for _, v9 in ipairs(p4:GetChildren()) do
-			if v9:IsA("Folder") then
-				local v10 = v9:GetAttribute("NodeLinks"):split(",")
-				local v11 = v6[v9:GetAttribute("NodeId")]
-				for _, v12 in ipairs(v10) do
-					local v13 = v6[v12]
-					local v14 = v12 ~= ""
-					assert(v14, ("Node \'%s\' has no neighbors"):format(v9:GetAttribute("NodeId")))
-					local v15 = v11.Neighbors
-					table.insert(v15, v13)
-					local v16 = v13.Neighbors
-					table.insert(v16, v11)
-				end
-			end
-		end
-		v_u_2 = v5
-	end
+local u0 = {}
+local u1 = nil
+local u2 = nil
+function BuildNodes(self) -- Line: 22 -- upvalues: u2 (ref), u1 (ref)
+    local Attribute, v1, v2, v3, v4
+    if u2 == self then
+        return
+    end
+    u2 = self
+    local v5 = {}
+    local v6 = {}
+    for i, v in ipairs(self:GetChildren()) do
+        if v:IsA("Folder") then
+            v3 = {
+                F = 0,
+                G = 0,
+                H = 0,
+                Position = v:GetAttribute("NodePosition"),
+                Neighbors = {},
+            }
+            table.insert(v5, v3)
+            v6[v:GetAttribute("NodeId")] = v3
+        end
+    end
+    for i2, i3 in ipairs(self:GetChildren()) do
+        if i3:IsA("Folder") then
+            Attribute = i3:GetAttribute("NodeLinks")
+            v3 = Attribute:split(",")
+            v4 = v6[i3:GetAttribute("NodeId")]
+            for i4, j in ipairs(v3) do
+                v1 = v6[j]
+                v2 = j ~= ""
+                assert(v2, ("Node '%s' has no neighbors"):format(i3:GetAttribute("NodeId")))
+                table.insert(v4.Neighbors, v1)
+                table.insert(v1.Neighbors, v4)
+            end
+        end
+    end
+    u1 = v5
 end
-function v_u_1.FindNearestNode(_, p17, p18) -- name: FindNearestNode
-	-- upvalues: (ref) v_u_2
-	local v19 = (1 / 0)
-	local v20 = nil
-	for _, v21 in ipairs(v_u_2) do
-		if p18 == nil or not p18[v21] then
-			local v22 = (p17 - v21.Position).Magnitude
-			if v22 < v19 then
-				v20 = v21
-				v19 = v22
-			end
-		end
-	end
-	return v20
+function u0.FindNearestNode(p1, p2, p3) -- Line: 65 -- upvalues: u1 (ref)
+    local Magnitude, v1, v2
+    local v3 = (1 / 0)
+    local v4 = nil
+    v2, v1 = p3, p2
+    for i, v in ipairs(u1) do
+        if v2 == nil then
+            Magnitude = (v1 - v.Position).Magnitude
+            if Magnitude < v3 then
+                v3 = Magnitude
+                v4 = v
+            end
+        elseif v2[v] then
+        end
+    end
+    return v4
 end
-function v_u_1.FindPath(_, p23, p24, p25, p26) -- name: FindPath
-	-- upvalues: (copy) v_u_1
-	local v27 = p25 or v_u_1:FindNearestNode(p23)
-	local v28 = p26 or v_u_1:FindNearestNode(p24)
-	local v29 = {
-		[v27] = true
-	}
-	local v30 = {}
-	local v31 = false
-	local v32 = {}
-	while next(v29) do
-		local v33 = (1 / 0)
-		local v34 = nil
-		for v35 in pairs(v29) do
-			if v35.F < v33 then
-				v33 = v35.F
-				v34 = v35
-			end
-		end
-		v29[v34] = nil
-		v30[v34] = true
-		if v34 == v28 then
-			v31 = true
-			break
-		end
-		for _, v36 in ipairs(v34.Neighbors) do
-			if not v30[v36] then
-				if v29[v36] then
-					if v36.G < v34.G then
-						v36.Parent = v34
-						v36.G = v34.G + (v36.Position - v34.Position).Magnitude
-						v36.F = v36.G + v36.H
-					end
-				else
-					v29[v36] = true
-					v36.Parent = v34
-					v36.G = v34.G + (v36.Position - v34.Position).Magnitude
-					v36.H = (v36.Position - v28.Position).Magnitude
-					v36.F = v36.G + v36.H
-				end
-			end
-		end
-	end
-	local v37 = {}
-	if v31 then
-		while v28 do
-			local v38 = v28.Position
-			table.insert(v32, 1, v38)
-			table.insert(v37, 1, v28)
-			v28 = v28.Parent
-		end
-	end
-	for v39 in pairs(v29) do
-		v39.F = 0
-		v39.G = 0
-		v39.H = 0
-		v39.Parent = nil
-	end
-	for v40 in pairs(v30) do
-		v40.F = 0
-		v40.G = 0
-		v40.H = 0
-		v40.Parent = nil
-	end
-	if v31 == nil then
-		return nil
-	else
-		return v32, v37
-	end
+function u0.FindPath(p1, p2, p3, p4, p5) -- Line: 79 -- upvalues: u0 (val)
+    local F, v1, v2, v3, v4
+    local v5 = {}
+    local v6 = false
+    if not p4 then
+        v3 = u0:FindNearestNode(p2)
+    else
+        v3 = p4
+    end
+    if not p5 then
+        v4 = u0:FindNearestNode(p3)
+    else
+        v4 = p5
+    end
+    local u64 = {}
+    u64[v3] = true
+    local v7 = {}
+    local function FindLowestFNode() -- Line: 90 -- upvalues: u64 (val)
+        local F = (1 / 0)
+        local v1 = nil
+        for k in pairs(u64) do
+            if k.F < F then
+                F = k.F
+                v1 = k
+            end
+        end
+        return v1
+    end
+    while next(u64) do
+        F = (1 / 0)
+        v2 = nil
+        for k in pairs(u64) do
+            if k.F < F then
+                F = k.F
+                v2 = k
+            end
+        end
+        v1 = v2
+        u64[v1] = nil
+        v7[v1] = true
+        if v1 == v4 then
+            v6 = true
+            break
+        end
+        for i, v in ipairs(v1.Neighbors) do
+            if not (v7[v]) then
+                if not (u64[v]) then
+                    u64[v] = true
+                    v.Parent = v1
+                    v.G = v1.G + (v.Position - v1.Position).Magnitude
+                    v.H = (v.Position - v4.Position).Magnitude
+                    v.F = v.G + v.H
+                elseif v.G < v1.G then
+                    v.Parent = v1
+                    v.G = v1.G + (v.Position - v1.Position).Magnitude
+                    v.F = v.G + v.H
+                end
+            end
+        end
+    end
+    v1 = {}
+    if v6 then
+        local Parent = v4
+        while Parent do
+            table.insert(v5, 1, Parent.Position)
+            table.insert(v1, 1, Parent)
+            Parent = Parent.Parent
+        end
+    end
+    local function ResetNodeDictionary(p1) -- Line: 151
+        for k in pairs(p1) do
+            k.F = 0
+            k.G = 0
+            k.H = 0
+            k.Parent = nil
+        end
+    end
+    for k2 in pairs(u64) do
+        k2.F = 0
+        k2.G = 0
+        k2.H = 0
+        k2.Parent = nil
+    end
+    for k3 in pairs(v7) do
+        k3.F = 0
+        k3.G = 0
+        k3.H = 0
+        k3.Parent = nil
+    end
+    if v6 ~= nil then
+        return v5, v1
+    end
+    return nil
 end
-function v_u_1.Init(_, p41, _) -- name: Init
-	BuildNodes(p41)
+function u0.Init(p1, p2, p3) -- Line: 169
+    BuildNodes(p2)
 end
-return v_u_1
+return u0

@@ -1,15 +1,13 @@
-local v_u_1 = {}
-v_u_1.__index = v_u_1
-function v_u_1.OnHit(p2, p3, p4, p5, p6) -- name: OnHit
-	if p6 == "3016" and p2.onActivate then
-		p2.onActivate(p3, p4, p5)
-	end
+local u0 = {}
+u0.__index = u0
+function u0.OnHit(p1, p2, p3, p4, p5) -- Line: 4
+    if p5 == "3016" and p1.onActivate then
+        p1.onActivate(p2, p3, p4)
+    end
 end
-function v_u_1.new() -- name: new
-	-- upvalues: (copy) v_u_1
-	local v7 = v_u_1
-	local v8 = setmetatable({}, v7)
-	v8.onActivate = nil
-	return v8
+function u0.new() -- Line: 10 -- upvalues: u0 (val)
+    local v1 = setmetatable({}, u0)
+    v1.onActivate = nil
+    return v1
 end
-return v_u_1
+return u0

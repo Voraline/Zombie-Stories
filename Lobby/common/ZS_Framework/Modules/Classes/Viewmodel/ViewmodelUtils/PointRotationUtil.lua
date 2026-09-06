@@ -1,126 +1,207 @@
 workspace:WaitForChild("Ignore")
-local v_u_1 = {}
+local u5 = {}
 CFrame.new()
-local v_u_2 = nil
-local v_u_3 = {}
-local v_u_4 = nil
-local v_u_5 = CFrame.new(0.588401794, -0.546500206, -4.0329895)
-return {
-	["NewWeapon"] = function(p6) -- name: NewWeapon
-		-- upvalues: (ref) v_u_2, (copy) v_u_1, (ref) v_u_3
-		v_u_2 = p6
-		if p6 and p6.Model then
-			v_u_1[p6] = v_u_1[p6] or {}
-		end
-		if p6 then
-			v_u_3 = v_u_1[p6] or {}
-		end
-	end,
-	["SetActiveViewmodel"] = function(p7) -- name: SetActiveViewmodel
-		-- upvalues: (ref) v_u_4, (copy) v_u_1
-		v_u_4 = p7
-		if p7 then
-			v_u_1[p7] = v_u_1[p7] or {}
-		end
-	end,
-	["GetViewmodelRotations"] = function(p8) -- name: GetViewmodelRotations
-		-- upvalues: (copy) v_u_1
-		return v_u_1[p8] or {}
-	end,
-	["UpdateRotation"] = function(p9, p10, p11, p12) -- name: UpdateRotation
-		-- upvalues: (ref) v_u_4, (copy) v_u_1, (copy) v_u_5, (ref) v_u_3
-		if v_u_4 then
-			v_u_1[v_u_4] = v_u_1[v_u_4] or {}
-			local v13 = { p10 or v_u_5, p11, p12 }
-			v_u_1[v_u_4][p9] = v13
-		else
-			v_u_3[p9] = { p10 or v_u_5, p11, p12 }
-		end
-	end,
-	["UpdateGlobalRotation"] = function(p14, p15, p16, p17) -- name: UpdateGlobalRotation
-		-- upvalues: (ref) v_u_3, (copy) v_u_5
-		v_u_3[p14] = { p15 or v_u_5, p16, p17 }
-	end,
-	["GetRotation"] = function(p18) -- name: GetRotation
-		-- upvalues: (ref) v_u_4, (copy) v_u_1, (ref) v_u_3
-		if not (v_u_4 and v_u_1[v_u_4]) then
-			return v_u_3[p18] and v_u_3[p18][2] or CFrame.new()
-		end
-		local v19 = v_u_1[v_u_4][p18]
-		return v19 and v19[2] or CFrame.new()
-	end,
-	["Update"] = function(_, p_u_20, p_u_21, p_u_22, p_u_23, p_u_24, p25) -- name: Update
-		-- upvalues: (ref) v_u_2, (copy) v_u_1, (ref) v_u_3
-		local v_u_26 = p25 or v_u_2
-		local v27 = false
-		local v28
-		if p25 and v_u_1[p25] then
-			v28 = v_u_1[p25]
-			v27 = true
-		else
-			local v29 = v_u_2
-			if v29 then
-				v29 = v_u_2.Model
-			end
-			if v29 ~= p_u_20 then
-				return
-			end
-			v28 = v_u_3
-		end
-		if v_u_26 and v28 then
-			local function v43(p30, p31, p32) -- name: ProcessRotation
-				-- upvalues: (copy) v_u_26, (copy) p_u_23, (copy) p_u_21, (copy) p_u_24, (copy) p_u_22, (copy) p_u_20
-				local v33 = v_u_26.Barrel
-				local v34 = v_u_26.Aimpart
-				local v35 = v_u_26.Config.AimOffset or CFrame.new()
-				local v36 = p31[3]
-				if p31[1] then
-					if p31[1] ~= "Barrel" then
-						if p31[1] == "Aimpart" then
-							v33 = v34
-						else
-							v33 = p31[1]
-						end
-					end
-					if v33 then
-						local v37
-						if typeof(v33) == "Instance" and v33.Parent then
-							v37 = v33.CFrame
-						else
-							v37 = p_u_23 * v33
-						end
-						if p_u_21 and (not v36 and v34) then
-							v37 = v37:Lerp(v34.CFrame * v35 * p_u_24, p_u_22.Position)
-						end
-						local v38 = v37:toObjectSpace(p_u_20.PrimaryPart.CFrame)
-						local v39 = (v37 * p31[2]):toWorldSpace(v38)
-						if (v39.p - CFrame.new().Position).Magnitude < 0.001 then
-							local v40, v41, v42 = v39:ToAxisAngle()
-							if math.abs(v40) < 0.001 and (math.abs(v41) < 0.001 and math.abs(v42) < 0.001) then
-								v39 = CFrame.new()
-							end
-						end
-						p_u_20.PrimaryPart.CFrame = v39
-					else
-						table.clear(p32[p30])
-						p32[p30] = nil
-					end
-				else
-					table.clear(p32[p30])
-					p32[p30] = nil
-					return
-				end
-			end
-			for v44, v45 in v28 do
-				v43(v44, v45, v28)
-			end
-			if v27 then
-				for v46, v47 in v_u_3 do
-					if not v28[v46] then
-						v43(v46, v47, v_u_3)
-					end
-				end
-			end
-		end
-	end
+local u8 = nil
+local u9 = {}
+local u10 = nil
+local u15 = CFrame.new(0.588401794, -0.546500206, -4.0329895)
+local v1 = {
+    NewWeapon = function(p1) -- Line: 19 -- upvalues: u8 (ref), u5 (val), u9 (ref)
+        u8 = p1
+        if p1 and p1.Model then
+            local v1 = u5[p1]
+            if not v1 then
+                v1 = {}
+            end
+            u5[p1] = v1
+        end
+        if p1 then
+            local v2 = u5[p1]
+            if not v2 then
+                v2 = {}
+            end
+            u9 = v2
+        end
+    end,
+    SetActiveViewmodel = function(p1) -- Line: 32 -- upvalues: u10 (ref), u5 (val)
+        u10 = p1
+        if p1 then
+            local v1 = u5[p1]
+            if not v1 then
+                v1 = {}
+            end
+            u5[p1] = v1
+        end
+    end,
+    GetViewmodelRotations = function(p1) -- Line: 40 -- upvalues: u5 (val)
+        local v1 = u5[p1]
+        if not v1 then
+            v1 = {}
+        end
+        return v1
+    end,
+    UpdateRotation = function(p1, p2, p3, p4) -- Line: 44 -- upvalues: u10 (ref), u5 (val), u15 (val), u9 (ref)
+        local v1, v2
+        if not u10 then
+            v1 = {}
+            v2 = p2
+            if not v2 then
+                v2 = u15
+            end
+            v1[1] = v2
+            v1[2] = p3
+            v1[3] = p4
+            u9[p1] = v1
+            return
+        end
+        v2 = u5[u10]
+        if not v2 then
+            v2 = {}
+        end
+        u5[u10] = v2
+        v1 = {}
+        v2 = p2
+        if not v2 then
+            v2 = u15
+        end
+        v1[1] = v2
+        v1[2] = p3
+        v1[3] = p4
+        u5[u10][p1] = v1
+    end,
+    UpdateGlobalRotation = function(p1, p2, p3, p4) -- Line: 57 -- upvalues: u9 (ref), u15 (val)
+        local v1 = {}
+        local v2 = p2
+        if not v2 then
+            v2 = u15
+        end
+        v1[1] = v2
+        v1[2] = p3
+        v1[3] = p4
+        u9[p1] = v1
+    end,
+    GetRotation = function(p1) -- Line: 61 -- upvalues: u10 (ref), u5 (val), u9 (ref)
+        local v1
+        if not u10 then
+            if not (u9[p1]) then
+                v1 = CFrame.new()
+            else
+                v1 = u9[p1][2]
+                if not v1 then
+                    v1 = CFrame.new()
+                end
+            end
+            return v1
+        elseif u5[u10] then
+            local v2
+            v1 = u5[u10][p1]
+            if not v1 then
+                v2 = CFrame.new()
+            else
+                v2 = v1[2]
+                if not v2 then
+                    v2 = CFrame.new()
+                end
+            end
+            return v2
+        end
+    end,
 }
+local function null(p1) -- Line: 70
+    local v1 = if p1 <= 0.0001 then -0.0001 <= p1 else false
+    return v1
+end
+function v1.Update(p1, p2, p3, p4, p5, p6, p7) -- Line: 74 -- upvalues: u8 (ref), u5 (val), u9 (ref)
+    local v1
+    local u8 = p7
+    if not u8 then
+        u8 = u8
+    end
+    local v2 = false
+    if not p7 then
+        local v3, v4, v5
+        local Model = u8
+        if Model then
+            Model = u8.Model
+        end
+        if Model ~= p2 then
+            return
+        end
+        v1 = u9
+        if not u8 or not v1 then
+            return
+        end
+        local function ProcessRotation(p1, a2, a3) -- Line: 100 -- upvalues: u8 (val), p5 (val), p3 (val), p6 (val), p4 (val), p2 (val)
+            local CFrame, v1
+            local Aimpart = u8.Aimpart
+            local AimOffset = u8.Config.AimOffset
+            if not AimOffset then
+                AimOffset = CFrame.new()
+            end
+            local v2 = a2[3]
+            if not (a2[1]) then
+                table.clear(a3[p1])
+                a3[p1] = nil
+                return
+            end
+            if a2[1] == "Barrel" then
+                v1 = u8.Barrel
+            elseif a2[1] ~= "Aimpart" then
+                v1 = a2[1]
+            else
+                v1 = Aimpart
+            end
+            if not v1 then
+                table.clear(a3[p1])
+                a3[p1] = nil
+                return
+            end
+            if typeof(v1) ~= "Instance" then
+                CFrame = p5 * v1
+            elseif v1.Parent then
+                CFrame = v1.CFrame
+            end
+            if p3 and not v2 and Aimpart then
+                CFrame = CFrame:Lerp(Aimpart.CFrame * AimOffset * p6, p4.Position)
+            end
+            local v3 = CFrame:toObjectSpace(p2.PrimaryPart.CFrame)
+            local v4 = (CFrame * a2[2]):toWorldSpace(v3)
+            if (v4.p - CFrame.new().Position).Magnitude < 0.001 then
+                local v5, v6, v7
+                v5, v6, v7 = v4:ToAxisAngle()
+                local v8 = math.abs(v5)
+                if v8 < 0.001 then
+                    v8 = math.abs(v6)
+                    if v8 < 0.001 then
+                        v8 = math.abs(v7)
+                        if v8 < 0.001 then
+                            v4 = CFrame.new()
+                        end
+                    end
+                end
+            end
+            p2.PrimaryPart.CFrame = v4
+        end
+        v3 = v1
+        v4 = nil
+        v5 = nil
+        for i, j in v3, v4, v5 do
+            ProcessRotation(i, j, v1)
+        end
+        if v2 then
+            v3 = u9
+            v4 = nil
+            v5 = nil
+            for k, n in v3, v4, v5 do
+                if not (v1[k]) then
+                    ProcessRotation(k, n, u9)
+                end
+            end
+        end
+        return
+    elseif u5[p7] then
+        v1 = u5[p7]
+        v2 = true
+    end
+end
+return v1

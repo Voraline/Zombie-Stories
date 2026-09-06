@@ -1,255 +1,318 @@
-local v1 = game:GetService("RunService")
+local RunService = game:GetService("RunService")
 game:GetService("CollectionService")
-local v2 = game:GetService("ReplicatedStorage")
-local v_u_3 = v1:IsClient()
-local v_u_4 = v1:IsServer()
-local v_u_5 = require(v2.common.ZS_Shared.Data.GameState)
-local v_u_6 = require(v2.common.NPCs_Shared.Utils.DamageFalloffUtil)
-local v_u_7
-if v_u_4 then
-	v_u_7 = require(v2.common.skillTree.SkillTreeData)
-else
-	v_u_7 = nil
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u18 = RunService:IsClient()
+local u21 = RunService:IsServer()
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+local DamageFalloffUtil = require(ReplicatedStorage.common.NPCs_Shared.Utils.DamageFalloffUtil)
+local u40 = if u21 then require(ReplicatedStorage.common.skillTree.SkillTreeData) else nil
+local u41 = {}
+local function isPlayerStationary(p1) -- Line: 20 -- upvalues: u41 (val)
+    if not p1 or not p1.Character then
+        return false
+    end
+    local HumanoidRootPart = p1.Character:FindFirstChild("HumanoidRootPart")
+    if not HumanoidRootPart then
+        return false
+    end
+    local Position = HumanoidRootPart.Position
+    local v1 = os.clock()
+    local v2 = u41[p1]
+    if not v2 then
+        u41[p1] = {LastPosition = Position, StationaryStartTime = v1}
+        return false
+    end
+    local v3 = 0.5 < (Position - v2.LastPosition).Magnitude
+    if v3 then
+        v2.LastPosition = Position
+        v2.StationaryStartTime = v1
+        return false
+    end
+    local v4 = v1 - v2.StationaryStartTime
+    local v5 = 1 <= v4
+    return v5
 end
-local v_u_8 = {}
-local function v_u_14(p9) -- name: isPlayerStationary
-	-- upvalues: (copy) v_u_8
-	if not (p9 and p9.Character) then
-		return false
-	end
-	local v10 = p9.Character:FindFirstChild("HumanoidRootPart")
-	if not v10 then
-		return false
-	end
-	local v11 = v10.Position
-	local v12 = os.clock()
-	local v13 = v_u_8[p9]
-	if not v13 then
-		v_u_8[p9] = {
-			["LastPosition"] = v11,
-			["StationaryStartTime"] = v12
-		}
-		return false
-	end
-	if (v11 - v13.LastPosition).Magnitude <= 0.5 then
-		return v12 - v13.StationaryStartTime >= 1
-	end
-	v13.LastPosition = v11
-	v13.StationaryStartTime = v12
-	return false
+local u43 = {}
+local function calcDamageDropoff(p1, p2, p3, p4) -- Line: 48 -- upvalues: DamageFalloffUtil (val)
+    if not p3.DamageDropoff then
+        return p3.Damage
+    end
+    local Magnitude = p4
+    if not Magnitude then
+        Magnitude = (p1 - p2.Position).Magnitude
+    end
+    return DamageFalloffUtil.CalculateDamageAtDistance(p3, Magnitude)
 end
-local v_u_15 = {}
-return function(p16, p17, p18, p19)
-	-- upvalues: (copy) v_u_5, (copy) v_u_15, (copy) v_u_6, (copy) v_u_3, (copy) v_u_4, (ref) v_u_7, (copy) v_u_14
-	if not (p16._Destroyed or table.isfrozen(p16)) then
-		local v20 = p17.startPos
-		local v21 = p17.raycastResult
-		local v22 = p17.weapon
-		local v23 = p17.prevHit
-		local v24 = p17.ignoreList or {}
-		local v25 = p17.toNetwork or {}
-		local v26 = p17.roundedDistance
-		if v26 then
-			local v27 = p17.roundedDistance
-			v26 = tonumber(v27)
-		end
-		local v28 = p17.shooter
-		local v29 = nil
-		local v30 = nil
-		if p18 then
-			if not (p16.Model and p16.Model.Parent) then
-				return
-			end
-			if p16.ArmorHPs and p16.ArmorHPs[p18] then
-				v29 = p16.Model[p16.ArmorHPs[p18][2]]
-				v30 = true
-			elseif p16.UIDTable and p16.UIDTable[p18] then
-				v29 = p16.UIDTable[p18]
-			end
-		else
-			v29 = v21.Instance
-			p18 = v29:GetAttribute("uid")
-		end
-		if v29 and p18 then
-			local v31 = false
-			local v32 = v22.Config
-			local v33 = {}
-			local v34 = 1
-			if v_u_5.Data.Variables.HeadshotOnly then
-				local v35 = p16.Model.Name
-				if not v_u_15[v35] then
-					v_u_15[v35] = {
-						["HasHead"] = p16.Model:FindFirstChild("Head")
-					}
-				end
-				v34 = v_u_15[v35].HasHead and 0 or v34
-			end
-			local v36 = 1
-			local v37 = v32.Multipliers
-			if v37 and not v30 then
-				if string.find(v29.Name, "Arm") or (string.find(v29.Name, "Torso") or string.find(v29.Name, "Leg")) then
-					v36 = v34
-				elseif string.find(v29.Name, "Head") then
-					v36 = v37.Head or 1
-					v33.HitHeadshot = true
-				end
-			end
-			local v38
-			if v32.DamageDropoff then
-				local v39 = v26 or (v20 - v29.Position).Magnitude
-				v38 = v_u_6.CalculateDamageAtDistance(v32, v39)
-			else
-				v38 = v32.Damage
-			end
-			local v40 = v38 * v36
-			local v41 = p16.Resistances
-			if v32.DamageCalculation then
-				v40 = v32.DamageCalculation(v22, v40, p16, v36) or v40
-			end
-			if v41 then
-				if v32.IsMelee and v41.Melee then
-					v40 = v40 * v41.Melee
-					if p19 then
-						p19 = p19 * v41.Melee
-					end
-				elseif not v32.IsMelee and v41.Bullet then
-					v40 = v40 * v41.Bullet
-					if p19 then
-						p19 = p19 * v41.Bullet
-					end
-				end
-			end
-			local v42 = v32.PenetrationReduction or 0.5
-			local v43 = #v23
-			if v43 >= 1 then
-				v40 = v40 * (1 * v42 ^ v43)
-			end
-			local v44 = (v32.Penetration or 0) - v43
-			local v45 = p16.UID
-			if v22.lastZombieHit ~= v45 then
-				v22.lastZombieHit = v45
-				table.insert(v25, v45)
-			end
-			if p16.ArmorHPs and p16.ArmorHPs[p18] then
-				local v46 = p16.ArmorHPs.HPDir[p16.ArmorHPs[p18][1]]
-				local _ = v46.Lvl
-				local v47 = v46.HP
-				if p16.ArmorShot then
-					p16:ArmorShot(p17)
-				end
-				v31 = true
-				local v48 = v46.Lvl
-				local _ = v46.HP
-				local v49 = v32.UsesHP and 0.25 or (v32.ArmorDamageReduction or 0.5)
-				local v50 = v48 - v44
-				local v51 = v49 ^ math.max(v50, 1)
-				local v52
-				if v32.DamageDropoff then
-					local v53 = v26 or (v20 - v29.Position).Magnitude
-					v52 = v_u_6.CalculateDamageAtDistance(v32, v53)
-				else
-					v52 = v32.Damage
-				end
-				local v54 = v52 * v51
-				local v55 = p16.ArmorResistances
-				if v55 then
-					if v32.IsMelee and v55.Melee then
-						v54 = v54 * v55.Melee
-					elseif not v32.IsMelee and v55.Bullet then
-						v54 = v54 * v55.Bullet
-					end
-				end
-				local _ = v40 - v54
-				local v56 = v47 - v54
-				local v57 = math.max(0, v56)
-				v46.HP = v57
-				if v57 <= 0 then
-					if p16.ArmorBroken then
-						p16:ArmorBroken(v29.Parent)
-						v33.BrokeArmor = true
-					end
-					for _, v58 in v29.Parent:GetChildren() do
-						if v58:IsA("BasePart") then
-							v58.CanQuery = false
-						end
-					end
-				end
-				v33.HitArmor = true
-				if v_u_3 then
-					v40 = v40 + 0.01
-				end
-				local v59 = string.format("%.2f", v40)
-				if v_u_3 then
-					local v60 = "h" .. p18 .. "_" .. v59
-					table.insert(v25, v60)
-				end
-			elseif p16.UIDTable and p16.UIDTable[p18] then
-				if p16.FleshShot then
-					p16:FleshShot(p17, v40)
-				end
-				v31 = true
-				if v_u_4 then
-					local v61 = p19 or v40
-					if v40 < v61 then
-						if v40 * 1.25 >= v61 then
-							v40 = v61
-						end
-					end
-					if v28 and v_u_7 then
-						local v62 = require("@game/ReplicatedStorage/common/PlayerHandler"):GetPlayerState(v28)
-						if v33.HitHeadshot then
-							v40 = v40 * v_u_7.getHeadshotDamageMult(v28)
-						end
-						if v_u_7.hasFury(v28) and (v62 and v62.HP / v62.MaxHP <= 0.25) then
-							v40 = v40 * 1.25
-						end
-						if v_u_7.hasDeadEye(v28) and v_u_14(v28) then
-							v40 = v40 * 1.1
-						end
-						if v62 and v62.IsDowned then
-							v62:AddSecondWindDamage(v40)
-						end
-					end
-					local v63 = v61 * 0.03
-					local v64 = math.max(0.5, v63)
-					if v28 and p16.ReconcileDamage then
-						local v65 = v40 - v61
-						if v64 < math.abs(v65) then
-							p16.ReconcileDamage(v28, v40, p18)
-						end
-					end
-					p16:ChangeHealth(-v40)
-				else
-					p16:ClientChangeHealth(-v40)
-				end
-				if v_u_3 then
-					v40 = v40 + 0.01
-				end
-				local v66 = string.format("%.2f", v40)
-				if p16.HP <= 0 then
-					local v67 = "k" .. p18 .. "_" .. v66
-					table.insert(v25, v67)
-					v33.Killed = true
-				else
-					local v68 = "h" .. p18 .. "_" .. v66
-					table.insert(v25, v68)
-				end
-				v33.BloodNPC = { v32, p16.UID, p18 }
-			end
-			if v31 then
-				local v69 = v29.Parent
-				table.insert(v23, v69)
-				local v70 = v29.Parent
-				table.insert(v24, v70)
-				if v_u_3 and (not v32.IsMelee and v32.OnHit) then
-					v32.OnHit(v22, p16.Model)
-				end
-			end
-			if p16.Shot then
-				p16:Shot(p17)
-			end
-			p16.Model:SetAttribute("HP", p16.HP)
-			return v33
-		end
-	end
+local function calcArmorDamage(p1, p2, p3, p4, p5, p6) -- Line: 57 -- upvalues: DamageFalloffUtil (val)
+    local ArmorDamageReduction, Damage
+    if not p2.UsesHP then
+        ArmorDamageReduction = p2.ArmorDamageReduction
+        if not ArmorDamageReduction then
+            ArmorDamageReduction = 0.5
+        end
+    else
+        ArmorDamageReduction = 0.25
+    end
+    local v1 = ArmorDamageReduction ^ math.max(p1.Lvl - p3, 1)
+    if p2.DamageDropoff then
+        local Magnitude = p6
+        if not Magnitude then
+            Magnitude = (p4 - p5.Position).Magnitude
+        end
+        Damage = DamageFalloffUtil.CalculateDamageAtDistance(p2, Magnitude)
+    else
+        Damage = p2.Damage
+    end
+    return Damage * v1
+end
+return function(p1, p2, p3, p4) -- Line: 70 -- upvalues: GameState (val), u43 (val), DamageFalloffUtil (val), u18 (val), u21 (val), u40 (ref), isPlayerStationary (val)
+    if p1._Destroyed then
+        return
+    else
+        local v1
+        if table.isfrozen(p1) then
+            return
+        end
+        local startPos = p2.startPos
+        local weapon = p2.weapon
+        local prevHit = p2.prevHit
+        local ignoreList = p2.ignoreList
+        if not ignoreList then
+            ignoreList = {}
+        end
+        local toNetwork = p2.toNetwork
+        if not toNetwork then
+            toNetwork = {}
+        end
+        local roundedDistance = p2.roundedDistance
+        if roundedDistance then
+            roundedDistance = tonumber(p2.roundedDistance)
+        end
+        local shooter = p2.shooter
+        local Instance = nil
+        local v2 = nil
+        if p3 then
+            local Damage, HP, Name, v3, v4, v5
+            if not p1.Model or not p1.Model.Parent then
+                return
+            end
+            if not p1.ArmorHPs then
+                if not p1.UIDTable then
+                    v1 = p3
+                elseif not (p1.UIDTable[p3]) then
+                    v1 = p3
+                else
+                    Instance = p1.UIDTable[p3]
+                    v1 = p3
+                end
+            elseif p1.ArmorHPs[p3] then
+                Instance = p1.Model[p1.ArmorHPs[p3][2]]
+                v2 = true
+                v1 = p3
+            end
+            if not Instance or not v1 then
+                return
+            end
+            local v6 = false
+            local Config = weapon.Config
+            local v7 = {}
+            local v8 = 1
+            if GameState.Data.Variables.HeadshotOnly then
+                Name = p1.Model.Name
+                if not (u43[Name]) then
+                    u43[Name] = {HasHead = p1.Model:FindFirstChild("Head")}
+                end
+                if u43[Name].HasHead then
+                    v8 = 0
+                end
+            end
+            local v9 = 1
+            local Multipliers = Config.Multipliers
+            if Multipliers and not v2 then
+                if string.find(Instance.Name, "Arm") then
+                    v9 = v8
+                elseif string.find(Instance.Name, "Torso") then
+                    v9 = v8
+                elseif string.find(Instance.Name, "Leg") then
+                    v9 = v8
+                elseif string.find(Instance.Name, "Head") then
+                    v9 = Multipliers.Head or 1
+                    v7.HitHeadshot = true
+                end
+            end
+            if Config.DamageDropoff then
+                local Magnitude = roundedDistance
+                if not Magnitude then
+                    Magnitude = (startPos - Instance.Position).Magnitude
+                end
+                Damage = DamageFalloffUtil.CalculateDamageAtDistance(Config, Magnitude)
+            else
+                Damage = Config.Damage
+            end
+            local v10 = Damage * v9
+            local Resistances = p1.Resistances
+            if Config.DamageCalculation then
+                v10 = Config.DamageCalculation(weapon, v10, p1, v9) or v10
+            end
+            if not Resistances then
+                v4 = p4
+            elseif not Config.IsMelee then
+                if Config.IsMelee then
+                    v4 = p4
+                elseif not Resistances.Bullet then
+                    v4 = p4
+                else
+                    v10 = v10 * Resistances.Bullet
+                    if not p4 then
+                        v4 = p4
+                    else
+                        v4 = p4 * Resistances.Bullet
+                    end
+                end
+            elseif Resistances.Melee then
+                v10 = v10 * Resistances.Melee
+                if not p4 then
+                    v4 = p4
+                else
+                    v4 = p4 * Resistances.Melee
+                end
+            end
+            local v11 = Config.PenetrationReduction or 0.5
+            local v12 = #prevHit
+            if 1 <= v12 then
+                v10 = v10 * (1 * v11 ^ v12)
+            end
+            local UID = p1.UID
+            if weapon.lastZombieHit ~= UID then
+                weapon.lastZombieHit = UID
+                table.insert(toNetwork, UID)
+            end
+            if not p1.ArmorHPs then
+                if p1.UIDTable and p1.UIDTable[v1] then
+                    if p1.FleshShot then
+                        p1:FleshShot(p2, v10)
+                    end
+                    v6 = true
+                    if not u21 then
+                        p1:ClientChangeHealth(-v10)
+                    else
+                        if not v4 then
+                            v4 = v10
+                        end
+                        if v10 < v4 and v10 * 1.25 >= v4 then
+                            v10 = v4
+                        end
+                        if shooter and u40 then
+                            local PlayerState = require("@game/ReplicatedStorage/common/PlayerHandler"):GetPlayerState(shooter)
+                            if v7.HitHeadshot then
+                                v10 = v10 * u40.getHeadshotDamageMult(shooter)
+                            end
+                            if u40.hasFury(shooter) and PlayerState then
+                                v5 = PlayerState.HP / PlayerState.MaxHP
+                                if v5 <= 0.25 then
+                                    v10 = v10 * 1.25
+                                end
+                            end
+                            if u40.hasDeadEye(shooter) and isPlayerStationary(shooter) then
+                                v10 = v10 * 1.1
+                            end
+                            if PlayerState and PlayerState.IsDowned then
+                                PlayerState:AddSecondWindDamage(v10)
+                            end
+                        end
+                        v3 = math.max(0.5, v4 * 0.03)
+                        if shooter and p1.ReconcileDamage and v3 < math.abs(v10 - v4) then
+                            p1.ReconcileDamage(shooter, v10, v1)
+                        end
+                        p1:ChangeHealth(-v10)
+                    end
+                    v3 = v10
+                    if u18 then
+                        v3 = v3 + 0.01
+                    end
+                    local v13 = string.format("%.2f", v3)
+                    if p1.HP > 0 then
+                        table.insert(toNetwork, "h" .. v1 .. "_" .. v13)
+                    else
+                        table.insert(toNetwork, "k" .. v1 .. "_" .. v13)
+                        v7.Killed = true
+                    end
+                    v7.BloodNPC = {Config, p1.UID, v1}
+                end
+            elseif p1.ArmorHPs[v1] then
+                local ArmorDamageReduction, Damage_2
+                v3 = p1.ArmorHPs.HPDir[p1.ArmorHPs[v1][1]]
+                HP = v3.HP
+                if p1.ArmorShot then
+                    p1:ArmorShot(p2)
+                end
+                v6 = true
+                if not Config.UsesHP then
+                    ArmorDamageReduction = Config.ArmorDamageReduction
+                    if not ArmorDamageReduction then
+                        ArmorDamageReduction = 0.5
+                    end
+                else
+                    ArmorDamageReduction = 0.25
+                end
+                local v14 = ArmorDamageReduction ^ math.max(v3.Lvl - ((Config.Penetration or 0) - v12), 1)
+                if Config.DamageDropoff then
+                    local Magnitude_2 = roundedDistance
+                    if not Magnitude_2 then
+                        Magnitude_2 = (startPos - Instance.Position).Magnitude
+                    end
+                    Damage_2 = DamageFalloffUtil.CalculateDamageAtDistance(Config, Magnitude_2)
+                else
+                    Damage_2 = Config.Damage
+                end
+                v5 = Damage_2 * v14
+                local ArmorResistances = p1.ArmorResistances
+                if ArmorResistances then
+                    if not Config.IsMelee then
+                        if not Config.IsMelee and ArmorResistances.Bullet then
+                            v5 = v5 * ArmorResistances.Bullet
+                        end
+                    elseif ArmorResistances.Melee then
+                        v5 = v5 * ArmorResistances.Melee
+                    end
+                end
+                local v15 = math.max(0, HP - v5)
+                v3.HP = v15
+                if v15 <= 0 then
+                    if p1.ArmorBroken then
+                        p1:ArmorBroken(Instance.Parent)
+                        v7.BrokeArmor = true
+                    end
+                    for i, j in Instance.Parent:GetChildren() do
+                        if j:IsA("BasePart") then
+                            j.CanQuery = false
+                        end
+                    end
+                end
+                v7.HitArmor = true
+                local v16 = v10
+                if u18 then
+                    v16 = v16 + 0.01
+                end
+                local v17 = string.format("%.2f", v16)
+                if u18 then
+                    table.insert(toNetwork, "h" .. v1 .. "_" .. v17)
+                end
+            end
+            if v6 then
+                table.insert(prevHit, Instance.Parent)
+                table.insert(ignoreList, Instance.Parent)
+                if u18 and not Config.IsMelee and Config.OnHit then
+                    Config.OnHit(weapon, p1.Model)
+                end
+            end
+            if p1.Shot then
+                p1:Shot(p2)
+            end
+            p1.Model:SetAttribute("HP", p1.HP)
+            return v7
+        else
+            v1 = p2.raycastResult.Instance:GetAttribute("uid")
+        end
+    end
 end

@@ -1,83 +1,88 @@
-local v_u_21 = {
-	["scan"] = function(p_u_1) -- name: scan
-		local v_u_2 = false
-		return function()
-			-- upvalues: (ref) v_u_2, (copy) p_u_1
-			if not v_u_2 then
-				v_u_2 = true
-				return "raw", p_u_1
-			end
-		end
-	end,
-	["navigator"] = function() -- name: navigator
-		-- upvalues: (copy) v_u_21
-		local v_u_20 = {
-			["Source"] = "",
-			["TokenCache"] = nil,
-			["_RealIndex"] = 0,
-			["_UserIndex"] = 0,
-			["_ScanThread"] = nil,
-			["TokenCache"] = table.create(50),
-			["Destroy"] = function(p3) -- name: Destroy
-				p3.Source = nil
-				p3._RealIndex = nil
-				p3._UserIndex = nil
-				p3.TokenCache = nil
-				p3._ScanThread = nil
-			end,
-			["SetSource"] = function(p_u_4, p5) -- name: SetSource
-				-- upvalues: (ref) v_u_21
-				p_u_4.Source = p5
-				p_u_4._RealIndex = 0
-				p_u_4._UserIndex = 0
-				table.clear(p_u_4.TokenCache)
-				p_u_4._ScanThread = coroutine.create(function()
-					-- upvalues: (ref) v_u_21, (copy) p_u_4
-					for v6, v7 in v_u_21.scan(p_u_4.Source) do
-						local v8 = p_u_4
-						v8._RealIndex = v8._RealIndex + 1
-						p_u_4.TokenCache[p_u_4._RealIndex] = { v6, v7 }
-						coroutine.yield(v6, v7)
-					end
-				end)
-			end,
-			["Next"] = function() -- name: Next
-				-- upvalues: (copy) v_u_20
-				local v9 = v_u_20
-				v9._UserIndex = v9._UserIndex + 1
-				if v_u_20._RealIndex >= v_u_20._UserIndex then
-					local v10 = v_u_20.TokenCache[v_u_20._UserIndex]
-					return table.unpack(v10)
-				elseif coroutine.status(v_u_20._ScanThread) ~= "dead" then
-					local v11, v12, v13 = coroutine.resume(v_u_20._ScanThread)
-					if v11 and v12 then
-						return v12, v13
-					end
-				end
-			end,
-			["Peek"] = function(p14) -- name: Peek
-				-- upvalues: (copy) v_u_20
-				local v15 = v_u_20._UserIndex + p14
-				if v15 <= v_u_20._RealIndex then
-					if v15 > 0 then
-						local v16 = v_u_20.TokenCache[v15]
-						return table.unpack(v16)
-					end
-				elseif coroutine.status(v_u_20._ScanThread) ~= "dead" then
-					local v17 = nil
-					local v18 = nil
-					for _ = 1, v15 - v_u_20._RealIndex do
-						local v19
-						v19, v17, v18 = coroutine.resume(v_u_20._ScanThread)
-						if not (v19 or v17) then
-							break
-						end
-					end
-					return v17, v18
-				end
-			end
-		}
-		return v_u_20
-	end
+local u0 = {
+    scan = function(p1) -- Line: 13
+        local u1 = false
+        return function() -- Line: 15 -- upvalues: u1 (ref), p1 (val)
+            if u1 then
+                return
+            end
+            u1 = true
+            return "raw", p1
+        end
+    end,
 }
-return v_u_21
+function u0.navigator() -- Line: 23 -- upvalues: u0 (val)
+    local u0 = {
+        Source = "",
+        _RealIndex = 0,
+        _UserIndex = 0,
+        TokenCache = table.create(50),
+        Destroy = function(p1) -- Line: 33
+            p1.Source = nil
+            p1._RealIndex = nil
+            p1._UserIndex = nil
+            p1.TokenCache = nil
+            p1._ScanThread = nil
+        end,
+    }
+    function u0.SetSource(p1, p2) -- Line: 41 -- upvalues: u0 (upval)
+        p1.Source = p2
+        p1._RealIndex = 0
+        p1._UserIndex = 0
+        table.clear(p1.TokenCache)
+        p1._ScanThread = coroutine.create(function() -- Line: 48 -- upvalues: u0 (upval), p1 (val)
+            local v1
+            for i, j in u0.scan(p1.Source) do
+                v1 = p1
+                v1._RealIndex = v1._RealIndex + 1
+                p1.TokenCache[p1._RealIndex] = {i, j}
+                coroutine.yield(i, j)
+            end
+        end)
+    end
+    function u0.Next() -- Line: 57 -- upvalues: u0 (val)
+        local v1, v2
+        local v3 = u0
+        v3._UserIndex = v3._UserIndex + 1
+        if u0._UserIndex <= u0._RealIndex then
+            return table.unpack(u0.TokenCache[u0._UserIndex])
+        end
+        if coroutine.status(u0._ScanThread) == "dead" then
+            return
+        end
+        v3, v1, v2 = coroutine.resume(u0._ScanThread)
+        if not v3 then
+            return
+        end
+        if v1 then
+            return v1, v2
+        end
+    end
+    function u0.Peek(p1) -- Line: 80 -- upvalues: u0 (val)
+        local v1, v2, v3
+        local v4 = u0._UserIndex + p1
+        if v4 <= u0._RealIndex then
+            if 0 < v4 then
+                return table.unpack(u0.TokenCache[v4])
+            end
+            return
+        end
+        if coroutine.status(u0._ScanThread) == "dead" then
+            return
+        end
+        local v5 = nil
+        local v6 = nil
+        local v7 = v4 - u0._RealIndex
+        local v8 = 1
+        for i = 1, v7, v8 do
+            v3, v1, v2 = coroutine.resume(u0._ScanThread)
+            v5 = v1
+            v6 = v2
+            if not v3 and not v5 then
+                break
+            end
+        end
+        return v5, v6
+    end
+    return u0
+end
+return u0

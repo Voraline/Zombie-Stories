@@ -1,184 +1,292 @@
-local v_u_1 = require("../Controllers/LocalPlayerController")
-local v2 = script:WaitForChild("Resources")
-local v_u_3 = {
-	[Enum.Material.Concrete] = "Concrete",
-	[Enum.Material.Grass] = "Grass",
-	[Enum.Material.Sand] = "Grass",
-	[Enum.Material.Ice] = "Grass",
-	[Enum.Material.LeafyGrass] = "Grass",
-	[Enum.Material.Snow] = "Grass",
-	[Enum.Material.Glacier] = "Grass",
-	[Enum.Material.Mud] = "Dirt",
-	[Enum.Material.Fabric] = "Dirt",
-	[Enum.Material.Ground] = "Dirt",
-	[Enum.Material.Wood] = "Wood",
-	[Enum.Material.WoodPlanks] = "Wood",
-	[Enum.Material.Pebble] = "Gravel",
-	[Enum.Material.Metal] = "Metal",
-	[Enum.Material.CorrodedMetal] = "Metal",
-	[Enum.Material.DiamondPlate] = "Metal",
-	[Enum.Material.Foil] = "Metal"
+local Children_4, Children_5, Name
+local u284 = require("../Controllers/LocalPlayerController")
+local Resources = script:WaitForChild("Resources")
+local u286 = {}
+u286[Enum.Material.Concrete] = "Concrete"
+u286[Enum.Material.Grass] = "Grass"
+u286[Enum.Material.Sand] = "Grass"
+u286[Enum.Material.Ice] = "Grass"
+u286[Enum.Material.LeafyGrass] = "Grass"
+u286[Enum.Material.Snow] = "Grass"
+u286[Enum.Material.Glacier] = "Grass"
+u286[Enum.Material.Mud] = "Dirt"
+u286[Enum.Material.Fabric] = "Dirt"
+u286[Enum.Material.Ground] = "Dirt"
+u286[Enum.Material.Wood] = "Wood"
+u286[Enum.Material.WoodPlanks] = "Wood"
+u286[Enum.Material.Pebble] = "Gravel"
+u286[Enum.Material.Metal] = "Metal"
+u286[Enum.Material.CorrodedMetal] = "Metal"
+u286[Enum.Material.DiamondPlate] = "Metal"
+u286[Enum.Material.Foil] = "Metal"
+local u288 = {}
+u288[Enum.Material.Concrete] = {
+    {27.499095938007, 28.191199290016},
+    {28.191199290016, 28.841360940965},
+    {28.841360940965, 29.459017269974},
+    {29.459017269974, 30.10904514397},
+    {30.10904514397, 30.759077816937},
 }
-local v_u_4 = {
-	[Enum.Material.Concrete] = {
-		{ 27.499095938007, 28.191199290016 },
-		{ 28.191199290016, 28.841360940965 },
-		{ 28.841360940965, 29.459017269974 },
-		{ 29.459017269974, 30.10904514397 },
-		{ 30.10904514397, 30.759077816937 }
-	},
-	[Enum.Material.Ground] = {
-		{ 52.089024086044, 52.865063716015 },
-		{ 52.865063716015, 53.59772350804 },
-		{ 53.59772350804, 54.349850330061 },
-		{ 54.349850330061, 55.049090898034 },
-		{ 55.049090898034, 55.765139073025 }
-	},
-	[Enum.Material.Grass] = {
-		{ 69.490977494005, 70.18383049398 },
-		{ 70.18383049398, 70.883929414011 },
-		{ 70.883929414011, 71.634821655975 },
-		{ 71.634821655975, 72.300559200943 },
-		{ 72.300559200943, 73.001347635015 },
-		{ 73.001347635015, 73.833708473982 }
-	},
-	[Enum.Material.Pebble] = {
-		{ 93.751799195995, 94.861757991969 },
-		{ 94.861757991969, 96.01217642598 },
-		{ 96.01217642598, 96.895755909973 }
-	}
+u288[Enum.Material.Ground] = {
+    {52.089024086044, 52.865063716015},
+    {52.865063716015, 53.59772350804},
+    {53.59772350804, 54.349850330061},
+    {54.349850330061, 55.049090898034},
+    {55.049090898034, 55.765139073025},
 }
-local v_u_5 = {
-	[Enum.Material.SmoothPlastic] = {
-		{ 17.587918779957, 18.247896654019 },
-		{ 18.247896654019, 18.863809216006 },
-		{ 18.863809216006, 19.463111553951 },
-		{ 19.463111553951, 20.064853589997 },
-		{ 20.064853589997, 20.714110644009 },
-		{ 20.714110644009, 21.347603467945 },
-		{ 21.347603467945, 21.979916113962 }
-	},
-	[Enum.Material.Plastic] = {
-		{ 17.587918779957, 18.247896654019 },
-		{ 18.247896654019, 18.863809216006 },
-		{ 18.863809216006, 19.463111553951 },
-		{ 19.463111553951, 20.064853589997 },
-		{ 20.064853589997, 20.714110644009 },
-		{ 20.714110644009, 21.347603467945 },
-		{ 21.347603467945, 21.979916113962 }
-	},
-	[Enum.Material.Metal] = {
-		{ 37.680434650031, 38.475547555016 },
-		{ 38.475547555016, 39.257744491053 },
-		{ 39.257744491053, 40.092227406016 },
-		{ 40.092227406016, 40.923779830011 }
-	}
+u288[Enum.Material.Grass] = {
+    {69.490977494005, 70.18383049398},
+    {70.18383049398, 70.883929414011},
+    {70.883929414011, 71.634821655975},
+    {71.634821655975, 72.300559200943},
+    {72.300559200943, 73.001347635015},
+    {73.001347635015, 73.833708473982},
 }
-v_u_5[Enum.Material.Marble] = v_u_5[Enum.Material.SmoothPlastic]
-v_u_5[Enum.Material.Ice] = v_u_5[Enum.Material.Sand]
-v_u_5[Enum.Material.Snow] = v_u_5[Enum.Material.Sand]
-v_u_5[Enum.Material.Glacier] = v_u_5[Enum.Material.Sand]
-v_u_5[Enum.Material.Foil] = v_u_5[Enum.Material.Metal]
-v_u_4[Enum.Material.Brick] = v_u_4[Enum.Material.Concrete]
-v_u_5[Enum.Material.CorrodedMetal] = v_u_5[Enum.Material.Metal]
-v_u_4[Enum.Material.Wood] = v_u_4[Enum.Material.WoodPlanks]
-v_u_5[Enum.Material.DiamondPlate] = v_u_5[Enum.Material.Metal]
-v_u_4[Enum.Material.Cobblestone] = v_u_4[Enum.Material.Concrete]
-v_u_4[Enum.Material.Slate] = v_u_4[Enum.Material.Concrete]
-v_u_4[Enum.Material.Granite] = v_u_4[Enum.Material.Concrete]
-v_u_5[Enum.Material.Neon] = v_u_5[Enum.Material.Metal]
-v_u_5[Enum.Material.Glass] = v_u_5[Enum.Material.Metal]
-v_u_5[Enum.Material.LeafyGrass] = v_u_4[Enum.Material.Grass]
-v_u_5[Enum.Material.Mud] = v_u_4[Enum.Material.Grass]
-local v_u_6 = {}
-for _, v7 in v2:GetChildren() do
-	v_u_6[v7.Name] = { v7:WaitForChild("Walk"):GetChildren(), v7:FindFirstChild("Run") and v7.Run:GetChildren() or nil }
+local v1 = {
+    {93.751799195995, 94.861757991969},
+    {94.861757991969, 96.01217642598},
+    {96.01217642598, 96.895755909973},
+}
+u288[Enum.Material.Pebble] = v1
+local u290 = {}
+u290[Enum.Material.SmoothPlastic] = {
+    {17.587918779957, 18.247896654019},
+    {18.247896654019, 18.863809216006},
+    {18.863809216006, 19.463111553951},
+    {19.463111553951, 20.064853589997},
+    {20.064853589997, 20.714110644009},
+    {20.714110644009, 21.347603467945},
+    {21.347603467945, 21.979916113962},
+}
+local v2 = {}
+local v3 = {20.714110644009, 21.347603467945}
+local v4 = {21.347603467945, 21.979916113962}
+v2[1] = {17.587918779957, 18.247896654019}
+v2[2] = {18.247896654019, 18.863809216006}
+v2[3] = {18.863809216006, 19.463111553951}
+v2[4] = {19.463111553951, 20.064853589997}
+v2[5] = {20.064853589997, 20.714110644009}
+v2[6] = v3
+v2[7] = v4
+u290[Enum.Material.Plastic] = v2
+v2 = {}
+local v5 = {38.475547555016, 39.257744491053}
+local v6 = {39.257744491053, 40.092227406016}
+v2[1] = {37.680434650031, 38.475547555016}
+v2[2] = v5
+v2[3] = v6
+v2[4] = {40.092227406016, 40.923779830011}
+u290[Enum.Material.Metal] = v2
+u290[Enum.Material.Marble] = u290[Enum.Material.SmoothPlastic]
+u290[Enum.Material.Ice] = u290[Enum.Material.Sand]
+u290[Enum.Material.Snow] = u290[Enum.Material.Sand]
+u290[Enum.Material.Glacier] = u290[Enum.Material.Sand]
+u290[Enum.Material.Foil] = u290[Enum.Material.Metal]
+u288[Enum.Material.Brick] = u288[Enum.Material.Concrete]
+u290[Enum.Material.CorrodedMetal] = u290[Enum.Material.Metal]
+u288[Enum.Material.Wood] = u288[Enum.Material.WoodPlanks]
+u290[Enum.Material.DiamondPlate] = u290[Enum.Material.Metal]
+u288[Enum.Material.Cobblestone] = u288[Enum.Material.Concrete]
+u288[Enum.Material.Slate] = u288[Enum.Material.Concrete]
+u288[Enum.Material.Granite] = u288[Enum.Material.Concrete]
+u290[Enum.Material.Neon] = u290[Enum.Material.Metal]
+u290[Enum.Material.Glass] = u290[Enum.Material.Metal]
+u290[Enum.Material.LeafyGrass] = u288[Enum.Material.Grass]
+u290[Enum.Material.Mud] = u288[Enum.Material.Grass]
+local u280 = {}
+for i, j in Resources:GetChildren() do
+    Name = j.Name
+    v3 = {}
+    Children_4 = j:WaitForChild("Walk"):GetChildren()
+    if not (j:FindFirstChild("Run")) then
+        Children_5 = nil
+    else
+        Children_5 = j.Run:GetChildren()
+    end
+    v3[1] = Children_4
+    v3[2] = Children_5
+    u280[Name] = v3
 end
-local v_u_8 = v_u_1.humanoid
-local v_u_9 = nil
-local v_u_10 = -1
-local function v_u_27(p11, p12, p13, p14) -- name: FootstepPlayer
-	-- upvalues: (copy) v_u_8, (copy) v_u_1, (copy) v_u_3, (copy) v_u_6, (copy) v_u_4, (copy) v_u_5, (ref) v_u_10, (ref) v_u_9
-	if v_u_8.Humanoid then
-		local v15 = p12 or v_u_8.Humanoid.FloorMaterial
-		if not v_u_1.States.IsDead and v15 ~= Enum.Material.Air or p11 == true then
-			if p11 and (p13 and v15 == Enum.Material.Air) then
-				repeat
-					task.wait()
-					v15 = v_u_8.Humanoid.FloorMaterial
-				until v15 ~= Enum.Material.Air
-			end
-			local v16 = v_u_8.WaterSensor
-			local v17 = v16 and v16.TouchingSurface and "Water" or (v_u_3[v15] or "Concrete")
-			local v18 = v_u_6[v17][1]
-			if v_u_8.Humanoid.WalkSpeed > 16 and v_u_6[v17][2] then
-				v18 = v_u_6[v17][2]
-			end
-			local v19 = false
-			if p14 then
-				local v20 = v_u_4[v15]
-				if v20 then
-					v19 = script.Footsteps1
-				else
-					v20 = v_u_5[v15]
-					if v20 then
-						v19 = script.Footsteps2
-					end
-				end
-				v18 = v20 or v18
-			end
-			if v18 and v_u_8.Humanoid.MoveDirection.Magnitude > 0 or v18 and p11 then
-				if v19 then
-					local v21 = math.random(1, #v18)
-					local v22 = v19:Clone()
-					v22.Name = "Yeet"
-					v22.Volume = 0.4
-					v22.Parent = v_u_8.Humanoid.Parent.HumanoidRootPart
-					v22.PlaybackSpeed = v22.PlaybackSpeed + math.random(3, 7) * 0.02 * v_u_10
-					v_u_10 = v_u_10 * -1
-					v22:Play()
-					local v23 = v18[v21][1] - 0.076918916
-					v22.TimePosition = math.max(v23, 0)
-					game.Debris:AddItem(v22, v18[v21][2] - v18[v21][1] - 0.09)
-					v_u_9 = v22
-					return
-				end
-				local v24 = v18[math.random(1, #v18)]:Clone()
-				v24.Name = "Yeet"
-				v24.Volume = 0.4
-				v24.Parent = v_u_8.Humanoid.Parent.HumanoidRootPart
-				v24.PlaybackSpeed = v24.PlaybackSpeed + math.random(3, 7) * 0.02 * v_u_10
-				v_u_10 = v_u_10 * -1
-				v24:Play()
-				game.Debris:AddItem(v24, 3)
-				v_u_9 = v24
-				local v25 = v_u_6.Cloth[1]
-				local v26 = v25[math.random(1, #v25)]:Clone()
-				v26.Name = "Yeet"
-				v26.Volume = 0.4
-				v26.Parent = v_u_8.Humanoid.Parent.HumanoidRootPart
-				v26.PlaybackSpeed = v26.PlaybackSpeed + math.random(3, 7) * 0.02 * v_u_10
-				v26:Play()
-				game.Debris:AddItem(v26, 3)
-			end
-		end
-	end
+local humanoid = u284.humanoid
+local u233 = nil
+local u234 = -1
+local function FootstepPlayer(p1, p2, p3, p4) -- Line: 118 -- upvalues: humanoid (val), u284 (val), u286 (val), u280 (val), u288 (val), u290 (val), u234 (ref), u233 (ref)
+    local FloorMaterial
+    if not humanoid.Humanoid then
+        return
+    end
+    if p2 then
+        FloorMaterial = p2
+    else
+        FloorMaterial = humanoid.Humanoid.FloorMaterial
+    end
+    if u284.States.IsDead then
+        local v1, v2, v3, v4, v5
+        if p1 ~= true then
+            return
+        end
+        if p1 and p3 and FloorMaterial == Enum.Material.Air then
+            while true do
+                task.wait()
+                FloorMaterial = humanoid.Humanoid.FloorMaterial
+                if FloorMaterial ~= Enum.Material.Air then
+                    break
+                end
+            end
+        end
+        local WaterSensor = humanoid.WaterSensor
+        if not WaterSensor then
+            v3 = u286[FloorMaterial] or "Concrete"
+        elseif WaterSensor.TouchingSurface then
+            v3 = "Water"
+        end
+        local v6 = if 16 < humanoid.Humanoid.WalkSpeed and u280[v3][2] then u280[v3][2] else u280[v3][1]
+        local Footsteps1 = false
+        if p4 then
+            v4 = u288[FloorMaterial]
+            if not v4 then
+                v4 = u290[FloorMaterial]
+                if v4 then
+                    Footsteps1 = script.Footsteps2
+                end
+            else
+                Footsteps1 = script.Footsteps1
+            end
+            v6 = v4 or v6
+        end
+        if not v6 then
+            if v6 then
+                if not p1 then
+                    return
+                end
+                if Footsteps1 then
+                    v4 = math.random(1, #v6)
+                    v5 = Footsteps1:Clone()
+                    v5.Name = "Yeet"
+                    v5.Volume = 0.4
+                    v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+                    v2 = math.random(3, 7) * 0.02
+                    v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+                    u234 = u234 * -1
+                    v5:Play()
+                    v5.TimePosition = math.max(v6[v4][1] - 0.076918916, 0)
+                    game.Debris:AddItem(v5, v6[v4][2] - v6[v4][1] - 0.09)
+                    u233 = v5
+                    return
+                end
+                v4 = v6[math.random(1, #v6)]:Clone()
+                v4.Name = "Yeet"
+                v4.Volume = 0.4
+                v4.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+                v1 = math.random(3, 7) * 0.02
+                v4.PlaybackSpeed = v4.PlaybackSpeed + v1 * u234
+                u234 = u234 * -1
+                v4:Play()
+                game.Debris:AddItem(v4, 3)
+                u233 = v4
+                v6 = u280.Cloth[1]
+                v5 = v6[math.random(1, #v6)]:Clone()
+                v5.Name = "Yeet"
+                v5.Volume = 0.4
+                v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+                v2 = math.random(3, 7) * 0.02
+                v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+                v5:Play()
+                game.Debris:AddItem(v5, 3)
+                return
+            end
+            return
+        end
+        if 0 < humanoid.Humanoid.MoveDirection.Magnitude then
+            if Footsteps1 then
+                v4 = math.random(1, #v6)
+                v5 = Footsteps1:Clone()
+                v5.Name = "Yeet"
+                v5.Volume = 0.4
+                v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+                v2 = math.random(3, 7) * 0.02
+                v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+                u234 = u234 * -1
+                v5:Play()
+                v5.TimePosition = math.max(v6[v4][1] - 0.076918916, 0)
+                game.Debris:AddItem(v5, v6[v4][2] - v6[v4][1] - 0.09)
+                u233 = v5
+                return
+            end
+            v4 = v6[math.random(1, #v6)]:Clone()
+            v4.Name = "Yeet"
+            v4.Volume = 0.4
+            v4.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+            v1 = math.random(3, 7) * 0.02
+            v4.PlaybackSpeed = v4.PlaybackSpeed + v1 * u234
+            u234 = u234 * -1
+            v4:Play()
+            game.Debris:AddItem(v4, 3)
+            u233 = v4
+            v6 = u280.Cloth[1]
+            v5 = v6[math.random(1, #v6)]:Clone()
+            v5.Name = "Yeet"
+            v5.Volume = 0.4
+            v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+            v2 = math.random(3, 7) * 0.02
+            v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+            v5:Play()
+            game.Debris:AddItem(v5, 3)
+            return
+        end
+        if not v6 or not p1 then
+            return
+        end
+        if Footsteps1 then
+            v4 = math.random(1, #v6)
+            v5 = Footsteps1:Clone()
+            v5.Name = "Yeet"
+            v5.Volume = 0.4
+            v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+            v2 = math.random(3, 7) * 0.02
+            v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+            u234 = u234 * -1
+            v5:Play()
+            v5.TimePosition = math.max(v6[v4][1] - 0.076918916, 0)
+            game.Debris:AddItem(v5, v6[v4][2] - v6[v4][1] - 0.09)
+            u233 = v5
+            return
+        end
+        v4 = v6[math.random(1, #v6)]:Clone()
+        v4.Name = "Yeet"
+        v4.Volume = 0.4
+        v4.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+        v1 = math.random(3, 7) * 0.02
+        v4.PlaybackSpeed = v4.PlaybackSpeed + v1 * u234
+        u234 = u234 * -1
+        v4:Play()
+        game.Debris:AddItem(v4, 3)
+        u233 = v4
+        v6 = u280.Cloth[1]
+        v5 = v6[math.random(1, #v6)]:Clone()
+        v5.Name = "Yeet"
+        v5.Volume = 0.4
+        v5.Parent = humanoid.Humanoid.Parent.HumanoidRootPart
+        v2 = math.random(3, 7) * 0.02
+        v5.PlaybackSpeed = v5.PlaybackSpeed + v2 * u234
+        v5:Play()
+        game.Debris:AddItem(v5, 3)
+        return
+    elseif FloorMaterial ~= Enum.Material.Air then
+    end
 end
-v_u_1.PlayerMovementUtil.ShuffleEvent:Connect(function()
-	-- upvalues: (copy) v_u_27
-	v_u_27(true, nil, nil, true)
+u284.PlayerMovementUtil.ShuffleEvent:Connect(function() -- Line: 187 -- upvalues: FootstepPlayer (val)
+    FootstepPlayer(true, nil, nil, true)
 end)
-v_u_8.Jumped:Connect(function()
-	-- upvalues: (copy) v_u_8, (ref) v_u_9, (copy) v_u_27
-	if v_u_8.HasLanded == true then
-		if v_u_9 then
-			v_u_9:Stop()
-		end
-		v_u_27(true, nil, nil, true)
-	end
+humanoid.Jumped:Connect(function() -- Line: 191 -- upvalues: humanoid (val), u233 (ref), FootstepPlayer (val)
+    if humanoid.HasLanded == true then
+        if u233 then
+            u233:Stop()
+        end
+        FootstepPlayer(true, nil, nil, true)
+    end
 end)
-v_u_8.Landed:Connect(function()
-	-- upvalues: (copy) v_u_27
-	v_u_27(true, nil, true)
+humanoid.Landed:Connect(function() -- Line: 200 -- upvalues: FootstepPlayer (val)
+    FootstepPlayer(true, nil, true)
 end)
-return v_u_27
+return FootstepPlayer

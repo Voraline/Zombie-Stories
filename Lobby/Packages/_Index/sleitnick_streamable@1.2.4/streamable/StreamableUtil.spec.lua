@@ -1,63 +1,63 @@
-return function()
-	local v_u_1 = require(script.Parent.Streamable)
-	local v_u_2 = require(script.Parent.StreamableUtil)
-	local v_u_3 = nil
-	beforeAll(function()
-		-- upvalues: (ref) v_u_3
-		v_u_3 = Instance.new("Folder")
-		v_u_3.Name = "KnitTest"
-		v_u_3.Archivable = false
-		v_u_3.Parent = workspace
-	end)
-	afterEach(function()
-		-- upvalues: (ref) v_u_3
-		v_u_3:ClearAllChildren()
-	end)
-	afterAll(function()
-		-- upvalues: (ref) v_u_3
-		v_u_3:Destroy()
-	end)
-	describe("Compound", function()
-		-- upvalues: (copy) v_u_1, (ref) v_u_3, (copy) v_u_2
-		it("should capture multiple streams", function()
-			-- upvalues: (ref) v_u_1, (ref) v_u_3, (ref) v_u_2
-			local v4 = v_u_1.new(v_u_3, "ABC")
-			local v5 = v_u_1.new(v_u_3, "XYZ")
-			local v_u_6 = 0
-			local v_u_7 = 0
-			v_u_2.Compound({
-				["S1"] = v4,
-				["S2"] = v5
-			}, function(_, p8)
-				-- upvalues: (ref) v_u_6, (ref) v_u_7
-				v_u_6 = v_u_6 + 1
-				p8:Add(function()
-					-- upvalues: (ref) v_u_7
-					v_u_7 = v_u_7 + 1
-				end)
-			end)
-			local v9 = Instance.new("Folder")
-			v9.Name = "ABC"
-			v9.Archivable = false
-			v9.Parent = v_u_3
-			local v10 = Instance.new("Folder")
-			v10.Name = "XYZ"
-			v10.Archivable = false
-			v10.Parent = v_u_3
-			task.wait()
-			v9.Parent = nil
-			task.wait()
-			v9.Parent = v_u_3
-			task.wait()
-			v9.Parent = nil
-			v10.Parent = nil
-			task.wait()
-			v10.Parent = v_u_3
-			task.wait()
-			expect(v_u_6).to.equal(2)
-			expect(v_u_7).to.equal(2)
-			v4:Destroy()
-			v5:Destroy()
-		end)
-	end)
+return function() -- Line: 1
+    local Streamable = require(script.Parent.Streamable)
+    local StreamableUtil = require(script.Parent.StreamableUtil)
+    local u10 = nil
+    local function CreateInstance(p1) -- Line: 7 -- upvalues: u10 (ref)
+        local Folder = Instance.new("Folder")
+        Folder.Name = p1
+        Folder.Archivable = false
+        Folder.Parent = u10
+        return Folder
+    end
+    beforeAll(function() -- Line: 15 -- upvalues: u10 (ref)
+        u10 = Instance.new("Folder")
+        u10.Name = "KnitTest"
+        u10.Archivable = false
+        u10.Parent = workspace
+    end)
+    afterEach(function() -- Line: 22 -- upvalues: u10 (ref)
+        u10:ClearAllChildren()
+    end)
+    afterAll(function() -- Line: 26 -- upvalues: u10 (ref)
+        u10:Destroy()
+    end)
+    describe("Compound", function() -- Line: 30 -- upvalues: Streamable (val), u10 (ref), StreamableUtil (val)
+        it("should capture multiple streams", function() -- Line: 31 -- upvalues: Streamable (upval), u10 (upval), StreamableUtil (upval)
+            local u10
+            local v1 = Streamable.new(u10, "ABC")
+            local v2 = Streamable.new(u10, "XYZ")
+            u10 = 0
+            local u11 = 0
+            StreamableUtil.Compound({S1 = v1, S2 = v2}, function(p1, p2) -- Line: 36 -- upvalues: u10 (ref), u11 (ref)
+                u10 = u10 + 1
+                p2:Add(function() -- Line: 38 -- upvalues: u11 (upval)
+                    u11 = u11 + 1
+                end)
+            end)
+            local Folder = Instance.new("Folder")
+            Folder.Name = "ABC"
+            Folder.Archivable = false
+            Folder.Parent = u10
+            local v3 = Folder
+            local Folder_2 = Instance.new("Folder")
+            Folder_2.Name = "XYZ"
+            Folder_2.Archivable = false
+            Folder_2.Parent = u10
+            local v4 = Folder_2
+            task.wait()
+            v3.Parent = nil
+            task.wait()
+            v3.Parent = u10
+            task.wait()
+            v3.Parent = nil
+            v4.Parent = nil
+            task.wait()
+            v4.Parent = u10
+            task.wait()
+            expect(u10).to.equal(2)
+            expect(u11).to.equal(2)
+            v1:Destroy()
+            v2:Destroy()
+        end)
+    end)
 end

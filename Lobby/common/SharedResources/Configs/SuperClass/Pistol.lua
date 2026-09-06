@@ -1,6 +1,1 @@
-return {
-	["MuzzleModule"] = "Smg",
-	["ArmRequest"] = "Either",
-	["CanDualWield"] = true,
-	["OneHandedArmRequest"] = "Either"
-}
+return {MuzzleModule = "Smg", ArmRequest = "Either", CanDualWield = true, OneHandedArmRequest = "Either"}

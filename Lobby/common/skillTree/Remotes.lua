@@ -1,23 +1,24 @@
-local v_u_1 = game:GetService("ReplicatedStorage")
-local v2 = {}
-local v_u_3 = nil
-local function v6(p4) -- name: getOrCreateRemote
-	-- upvalues: (ref) v_u_3, (copy) v_u_1
-	v_u_3 = v_u_3 or v_u_1:FindFirstChild("SkillTreeRemotes")
-	if not v_u_3 then
-		v_u_3 = Instance.new("Folder")
-		v_u_3.Name = "SkillTreeRemotes"
-		v_u_3.Parent = v_u_1
-	end
-	local v5 = v_u_3:FindFirstChild(p4)
-	if not v5 then
-		v5 = Instance.new("RemoteEvent")
-		v5.Name = p4
-		v5.Parent = v_u_3
-	end
-	return v5
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local v1 = {}
+local u6 = nil
+local function getOrCreateRemote(p1) -- Line: 11 -- upvalues: u6 (ref), ReplicatedStorage (val)
+    if not u6 then
+        u6 = ReplicatedStorage:FindFirstChild("SkillTreeRemotes")
+        if not u6 then
+            u6 = Instance.new("Folder")
+            u6.Name = "SkillTreeRemotes"
+            u6.Parent = ReplicatedStorage
+        end
+    end
+    local v1 = u6:FindFirstChild(p1)
+    if not v1 then
+        v1 = Instance.new("RemoteEvent")
+        v1.Name = p1
+        v1.Parent = u6
+    end
+    return v1
 end
-v2.PurchaseSkill = v6("PurchaseSkill")
-v2.SkillsUpdated = v6("SkillsUpdated")
-v2.RequestSync = v6("RequestSync")
-return v2
+v1.PurchaseSkill = getOrCreateRemote("PurchaseSkill")
+v1.SkillsUpdated = getOrCreateRemote("SkillsUpdated")
+v1.RequestSync = getOrCreateRemote("RequestSync")
+return v1

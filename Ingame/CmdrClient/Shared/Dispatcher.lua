@@ -1,135 +1,157 @@
-local v_u_1 = game:GetService("RunService")
-local v_u_2 = game:GetService("TeleportService")
-local v_u_3 = game:GetService("Players")
-local v_u_4 = require("./Util")
-local v_u_5 = require("./Command")
-local v_u_6 = false
-local v_u_54 = {
-	["Cmdr"] = nil,
-	["Registry"] = nil,
-	["Evaluate"] = function(p7, p8, p9, p10, p11) -- name: Evaluate
-		-- upvalues: (copy) v_u_1, (copy) v_u_3, (copy) v_u_4, (copy) v_u_5
-		if v_u_1:IsClient() == true and p9 ~= v_u_3.LocalPlayer then
-			error("Can\'t evaluate a command that isn\'t sent by the local player.")
-		end
-		local v12 = v_u_4.SplitString(p8)
-		local v13 = table.remove(v12, 1)
-		local v14 = p7.Registry:GetCommand(v13)
-		if v14 then
-			local v15 = {
-				["Dispatcher"] = p7,
-				["Text"] = p8,
-				["CommandObject"] = v14,
-				["Alias"] = v13,
-				["Executor"] = p9,
-				["Arguments"] = v_u_4.MashExcessArguments(v12, #v14.Args),
-				["Data"] = p11
-			}
-			local v16 = v_u_5.new(v15)
-			local v17, v18 = v16:Parse(p10)
-			if v17 then
-				return v16
-			else
-				return false, v18
-			end
-		else
-			return false, ("%q is not a valid command name. Use the help command to see all available commands."):format((tostring(v13)))
-		end
-	end,
-	["EvaluateAndRun"] = function(p19, p20, p21, p22) -- name: EvaluateAndRun
-		-- upvalues: (copy) v_u_3, (copy) v_u_1
-		local v23 = p21 or v_u_3.LocalPlayer
-		local v24 = p22 or {}
-		if v_u_1:IsClient() and v24.IsHuman then
-			p19:PushHistory(p20)
-		end
-		local v_u_25, v26 = p19:Evaluate(p20, v23, nil, v24.Data)
-		if not v_u_25 then
-			return v26
-		end
-		local v30, v31 = xpcall(function()
-			-- upvalues: (copy) v_u_25
-			local v27, v28 = v_u_25:Validate(true)
-			return v27 and (v_u_25:Run() or "Command executed.") or v28
-		end, function(p29)
-			return debug.traceback((tostring(p29)))
-		end)
-		if not v30 then
-			warn(("Error occurred while evaluating command string %q\n%s"):format(p20, (tostring(v31))))
-		end
-		return v30 and v31 and v31 or "An error occurred while running this command. Check the console for more information."
-	end,
-	["Send"] = function(p32, p33, p34) -- name: Send
-		-- upvalues: (copy) v_u_1
-		if v_u_1:IsClient() == false then
-			error("Dispatcher:Send can only be called from the client.")
-		end
-		return p32.Cmdr.RemoteFunction:InvokeServer(p33, {
-			["Data"] = p34
-		})
-	end,
-	["Run"] = function(p35, ...) -- name: Run
-		-- upvalues: (copy) v_u_3
-		if not v_u_3.LocalPlayer then
-			error("Dispatcher:Run can only be called from the client.")
-		end
-		local v36 = { ... }
-		local v37 = v36[1]
-		for v38 = 2, #v36 do
-			local v39 = v36[v38]
-			v37 = v37 .. " " .. tostring(v39)
-		end
-		local v40, v41 = p35:Evaluate(v37, v_u_3.LocalPlayer)
-		if not v40 then
-			error(v41)
-		end
-		local v42, v43 = v40:Validate(true)
-		if not v42 then
-			error(v43)
-		end
-		return v40:Run()
-	end,
-	["RunHooks"] = function(p44, p45, p46, ...) -- name: RunHooks
-		-- upvalues: (copy) v_u_1, (ref) v_u_6
-		if not p44.Registry.Hooks[p45] then
-			error(("Invalid hook name: %q"):format(p45), 2)
-		end
-		if p45 == "BeforeRun" and (#p44.Registry.Hooks[p45] == 0 and (p46.Group ~= "DefaultUtil" and (p46.Group ~= "UserAlias" and p46:HasImplementation()))) then
-			if not v_u_1:IsStudio() then
-				return "Command blocked for security as no BeforeRun hook is configured."
-			end
-			if v_u_6 == false then
-				p46:Reply((v_u_1:IsServer() and "<Server>" or "<Client>") .. " Commands will not run in-game if no BeforeRun hook is configured. Learn more: https://eryn.io/Cmdr/guide/Hooks.html", Color3.fromRGB(255, 228, 26))
-				v_u_6 = true
-			end
-		end
-		for _, v47 in ipairs(p44.Registry.Hooks[p45]) do
-			local v48 = v47.callback(p46, ...)
-			if v48 ~= nil then
-				return tostring(v48)
-			end
-		end
-	end,
-	["PushHistory"] = function(p49, p50) -- name: PushHistory
-		-- upvalues: (copy) v_u_1, (copy) v_u_4, (copy) v_u_2
-		local v51 = v_u_1:IsClient()
-		assert(v51, "PushHistory may only be used from the client.")
-		local v52 = p49:GetHistory()
-		if v_u_4.TrimString(p50) ~= "" and p50 ~= v52[#v52] then
-			v52[#v52 + 1] = p50
-			v_u_2:SetTeleportSetting("CmdrCommandHistory", v52)
-		end
-	end,
-	["GetHistory"] = function(_) -- name: GetHistory
-		-- upvalues: (copy) v_u_1, (copy) v_u_2
-		local v53 = v_u_1:IsClient()
-		assert(v53, "GetHistory may only be used from the client.")
-		return v_u_2:GetTeleportSetting("CmdrCommandHistory") or {}
-	end
+local RunService = game:GetService("RunService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local u17 = require("./Util")
+local u20 = require("./Command")
+local u21 = false
+local u22 = {
+    Evaluate = function(self, p2, p3, p4, p5) -- Line: 21 -- upvalues: RunService (val), Players (val), u17 (val), u20 (val)
+        local v1, v2
+        if RunService:IsClient() == true and p3 ~= Players.LocalPlayer then
+            error("Can't evaluate a command that isn't sent by the local player.")
+        end
+        local v3 = u17.SplitString(p2)
+        local v4 = table.remove(v3, 1)
+        local Command = self.Registry:GetCommand(v4)
+        if not Command then
+            return false, ("%q is not a valid command name. Use the help command to see all available commands."):format((tostring(v4)))
+        end
+        v3 = u17.MashExcessArguments(v3, #Command.Args)
+        local v5 = u20.new({
+            Dispatcher = self,
+            Text = p2,
+            CommandObject = Command,
+            Alias = v4,
+            Executor = p3,
+            Arguments = v3,
+            Data = p5,
+        })
+        v2, v1 = v5:Parse(p4)
+        if v2 then
+            return v5
+        end
+        return false, v1
+    end,
+    EvaluateAndRun = function(p1, p2, p3, p4) -- Line: 58 -- upvalues: Players (val), RunService (val)
+        local u38, v1, v2, v3, v4
+        local LocalPlayer = p3
+        if not LocalPlayer then
+            LocalPlayer = Players.LocalPlayer
+        end
+        local v5 = p4
+        if not v5 then
+            v5 = {}
+        end
+        local v6 = v5
+        if RunService:IsClient() and v6.IsHuman then
+            p1:PushHistory(p2)
+        end
+        u38, v1 = p1:Evaluate(p2, LocalPlayer, nil, v6.Data)
+        if not u38 then
+            return v1
+        end
+        v2, v3 = xpcall(function() -- Line: 72 -- upvalues: u38 (val)
+            local v1, v2
+            v1, v2 = u38:Validate(true)
+            if not v1 then
+                return v2
+            end
+            return u38:Run() or "Command executed."
+        end, function(p1) -- Line: 80
+            return debug.traceback((tostring(p1)))
+        end)
+        if not v2 then
+            warn(("Error occurred while evaluating command string %q\n%s"):format(p2, (tostring(v3))))
+        end
+        if not v2 then
+            v4 = "An error occurred while running this command. Check the console for more information."
+        else
+            v4 = v3
+            if not v4 then
+                v4 = "An error occurred while running this command. Check the console for more information."
+            end
+        end
+        return v4
+    end,
+    Send = function(p1, p2, p3) -- Line: 92 -- upvalues: RunService (val)
+        if RunService:IsClient() == false then
+            error("Dispatcher:Send can only be called from the client.")
+        end
+        return p1.Cmdr.RemoteFunction:InvokeServer(p2, {Data = p3})
+    end,
+    Run = function(self, ...) -- Line: 104 -- upvalues: Players (val)
+        local v1, v2
+        if not Players.LocalPlayer then
+            error("Dispatcher:Run can only be called from the client.")
+        end
+        local v3 = {...}
+        local v4 = v3[1]
+        local v5 = #v3
+        local v6 = 1
+        for i = 2, v5, v6 do
+            v4 = v4 .. " " .. tostring(v3[i])
+        end
+        v5, v6 = self:Evaluate(v4, Players.LocalPlayer)
+        if not v5 then
+            error(v6)
+        end
+        v1, v2 = v5:Validate(true)
+        if not v1 then
+            error(v2)
+        end
+        return v5:Run()
+    end,
+    RunHooks = function(p1, p2, p3, ...) -- Line: 132 -- upvalues: RunService (val), u21 (ref)
+        if not (p1.Registry.Hooks[p2]) then
+            local v1 = ("Invalid hook name: %q"):format(p2)
+            error(v1, 2)
+        end
+        if p2 ~= "BeforeRun" then
+            local v2
+            for i, v in ipairs(p1.Registry.Hooks[p2]) do
+                v2 = v.callback(p3, ...)
+                if v2 ~= nil then
+                    return (tostring(v2))
+                end
+            end
+            return
+        elseif #p1.Registry.Hooks[p2] == 0 and p3.Group ~= "DefaultUtil" and p3.Group ~= "UserAlias" and p3:HasImplementation() then
+            if not (RunService:IsStudio()) then
+                return "Command blocked for security as no BeforeRun hook is configured."
+            elseif u21 == false then
+                local v3
+                if not (RunService:IsServer()) then
+                    v3 = "<Client>"
+                else
+                    v3 = "<Server>"
+                end
+                p3:Reply(v3 .. " Commands will not run in-game if no BeforeRun hook is configured. Learn more: https://eryn.io/Cmdr/guide/Hooks.html", Color3.fromRGB(255, 228, 26))
+                u21 = true
+            end
+        end
+    end,
+    PushHistory = function(self, p2) -- Line: 164 -- upvalues: RunService (val), u17 (val), TeleportService (val)
+        local v1 = RunService:IsClient()
+        assert(v1, "PushHistory may only be used from the client.")
+        local History = self:GetHistory()
+        if u17.TrimString(p2) == "" or p2 == History[#History] then
+            return
+        end
+        History[#History + 1] = p2
+        TeleportService:SetTeleportSetting("CmdrCommandHistory", History)
+    end,
+    GetHistory = function(p1) -- Line: 179 -- upvalues: RunService (val), TeleportService (val)
+        local v1 = RunService:IsClient()
+        assert(v1, "GetHistory may only be used from the client.")
+        local TeleportSetting = TeleportService:GetTeleportSetting("CmdrCommandHistory")
+        if not TeleportSetting then
+            TeleportSetting = {}
+        end
+        return TeleportSetting
+    end,
 }
-return function(p55)
-	-- upvalues: (copy) v_u_54
-	v_u_54.Cmdr = p55
-	v_u_54.Registry = p55.Registry
-	return v_u_54
+return function(p1) -- Line: 185 -- upvalues: u22 (val)
+    u22.Cmdr = p1
+    u22.Registry = p1.Registry
+    return u22
 end

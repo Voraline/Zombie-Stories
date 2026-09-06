@@ -1,4 +1,4 @@
 return {
-	["VERSION"] = 2,
-	["resolveAsync"] = function(_) -- name: resolveAsync end
+    VERSION = 2,
+    resolveAsync = function(p1) end,
 }

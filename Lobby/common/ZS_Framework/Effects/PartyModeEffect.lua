@@ -1,107 +1,112 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("RunService")
-local v_u_3 = game:GetService("Lighting")
-local v_u_4 = game:GetService("SoundService")
-local v_u_5 = require(v1.common.ZS_Shared.Data.GameState)
-local v_u_6, v_u_7 = require(v1.Packages.Bin)()
-local function v_u_35() -- name: togglePartyMode
-	-- upvalues: (copy) v_u_5, (copy) v_u_7, (copy) v_u_4, (copy) v_u_6, (copy) v_u_3, (copy) v_u_2
-	local v8 = v_u_5.Data.Variables.PartyModeEnabled
-	v_u_7()
-	if v8 then
-		local v9 = v_u_4:WaitForChild("Primary")
-		local v_u_10 = v9:WaitForChild("Music")
-		local v_u_11 = v_u_6(Instance.new("SoundGroup"))
-		v_u_11.Name = "PartyModeMusicGroup"
-		v_u_11.Volume = v_u_10:GetAttribute("Volume") or 1
-		v_u_11.Parent = v9
-		v_u_6(v_u_10:GetAttributeChangedSignal("Volume"):Connect(function()
-			-- upvalues: (copy) v_u_11, (copy) v_u_10
-			v_u_11.Volume = v_u_10:GetAttribute("Volume") or 1
-		end))
-		local v12 = v_u_6(Instance.new("Sound"))
-		v12.Name = "PartyModeMusic"
-		v12.SoundId = "rbxassetid://80336684189373"
-		v12.Looped = true
-		v12.Volume = 1
-		v12.SoundGroup = v_u_11
-		v12.Parent = v_u_4
-		v12.Playing = true
-		local v_u_13 = v_u_3:FindFirstChild("ColorCorrection")
-		if not v_u_13 then
-			v_u_13 = Instance.new("ColorCorrectionEffect")
-			v_u_13.Parent = v_u_3
-		end
-		local v_u_14 = {
-			["R"] = 255,
-			["G"] = 255,
-			["B"] = 255
-		}
-		local v_u_15 = nil
-		local v_u_16 = "Exclude"
-		local v_u_17 = nil
-		local v_u_18 = 1
-		local v_u_19 = 0.25
-		v_u_6(v_u_2.RenderStepped:Connect(function(p20)
-			-- upvalues: (ref) v_u_15, (ref) v_u_17, (copy) v_u_14, (ref) v_u_16, (ref) v_u_18, (ref) v_u_19, (ref) v_u_13
-			local v21 = workspace.CurrentCamera
-			if not v_u_15 then
-				v_u_17 = -1
-				local v22 = {}
-				for v23, _ in v_u_14 do
-					table.insert(v22, v23)
-				end
-				if math.random(1, 2) == 1 then
-					v_u_16 = "Exclude"
-				else
-					v_u_16 = "Include"
-				end
-				v_u_15 = v22[math.random(#v22)]
-			end
-			local v24 = v_u_18 + v_u_17 * 0.4705882352941176 * p20
-			v_u_18 = math.clamp(v24, 0.9, 1)
-			v21.CFrame = v21.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, v_u_18)
-			local v25 = v_u_19 + v_u_17 * -1 * 3.5294117647058822 * p20
-			v_u_19 = math.clamp(v25, 0.25, 1)
-			if v_u_16 == "Exclude" then
-				for v26, v27 in v_u_14 do
-					if v26 ~= v_u_15 then
-						local v28 = v_u_14
-						local v29 = v27 + v_u_17 * 1200 * p20
-						v28[v26] = math.clamp(v29, 0, 255)
-					end
-				end
-				for v30, v31 in v_u_14 do
-					if v30 ~= v_u_15 then
-						if v31 <= 0 then
-							v_u_17 = 1
-						elseif v31 >= 255 then
-							v_u_17 = -1
-							v_u_15 = nil
-						end
-					end
-				end
-			else
-				local v32 = v_u_14
-				local v33 = v_u_15
-				local v34 = v_u_14[v_u_15] + v_u_17 * 1200 * p20
-				v32[v33] = math.clamp(v34, 0, 255)
-				if v_u_14[v_u_15] <= 0 then
-					v_u_17 = 1
-				elseif v_u_14[v_u_15] >= 255 then
-					v_u_17 = -1
-					v_u_15 = nil
-				end
-			end
-			v_u_13.TintColor = Color3.fromRGB(v_u_14.R, v_u_14.G, v_u_14.B)
-			v_u_13.Saturation = v_u_19
-		end))
-	end
+local u31, u32
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+u31, u32 = require(ReplicatedStorage.Packages.Bin)()
+local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (val), SoundService (val), u31 (val), Lighting (val), RunService (val)
+    u32()
+    if not GameState.Data.Variables.PartyModeEnabled then
+        return
+    end
+    local Primary = SoundService:WaitForChild("Primary")
+    local Music = Primary:WaitForChild("Music")
+    local u19 = u31(Instance.new("SoundGroup"))
+    u19.Name = "PartyModeMusicGroup"
+    u19.Volume = Music:GetAttribute("Volume") or 1
+    u19.Parent = Primary
+    local AttributeChangedSignal = Music:GetAttributeChangedSignal("Volume")
+    u31(AttributeChangedSignal:Connect(function() -- Line: 31 -- upvalues: u19 (val), Music (val)
+        u19.Volume = Music:GetAttribute("Volume") or 1
+    end))
+    local v1 = u31(Instance.new("Sound"))
+    v1.Name = "PartyModeMusic"
+    v1.SoundId = "rbxassetid://80336684189373"
+    v1.Looped = true
+    v1.Volume = 1
+    v1.SoundGroup = u19
+    v1.Parent = SoundService
+    v1.Playing = true
+    local ColorCorrection = Lighting:FindFirstChild("ColorCorrection")
+    if not ColorCorrection then
+        ColorCorrection = Instance.new("ColorCorrectionEffect")
+        ColorCorrection.Parent = Lighting
+    end
+    local u57 = {R = 255, G = 255, B = 255}
+    local u58 = nil
+    local u59 = "Exclude"
+    local u60 = nil
+    local u61 = 1
+    local u62 = 0.25
+    local function updateFormula() -- Line: 84 -- upvalues: u61 (ref)
+        return CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, u61)
+    end
+    u31(RunService.RenderStepped:Connect(function(p1) -- Line: 88 -- upvalues: u58 (ref), u60 (ref), u57 (val), u59 (ref), u61 (ref), u62 (ref), ColorCorrection (ref)
+        local v1, v2, v3
+        local CurrentCamera = workspace.CurrentCamera
+        if not u58 then
+            u60 = -1
+            v1 = {}
+            v2 = u57
+            v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                table.insert(v1, i)
+            end
+            if math.random(1, 2) ~= 1 then
+                u59 = "Include"
+            else
+                u59 = "Exclude"
+            end
+            u58 = v1[math.random(#v1)]
+        end
+        u61 = math.clamp(u61 + u60 * 0.4705882352941176 * p1, 0.9, 1)
+        CurrentCamera.CFrame = CurrentCamera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, u61)
+        v2 = u62 + u60 * -1 * 3.5294117647058822 * p1
+        u62 = math.clamp(v2, 0.25, 1)
+        if u59 ~= "Exclude" then
+            u57[u58] = math.clamp(u57[u58] + u60 * 1200 * p1, 0, 255)
+            v1 = u57[u58]
+            if v1 > 0 then
+                v1 = u57[u58]
+                if 255 <= v1 then
+                    u60 = -1
+                    u58 = nil
+                end
+            else
+                u60 = 1
+            end
+        else
+            v1 = u57
+            v2 = nil
+            v3 = nil
+            for k, n in v1, v2, v3 do
+                if k ~= u58 then
+                    u57[k] = math.clamp(n + u60 * 1200 * p1, 0, 255)
+                end
+            end
+            v1 = u57
+            v2 = nil
+            v3 = nil
+            for m, i5 in v1, v2, v3 do
+                if m ~= u58 then
+                    if i5 <= 0 then
+                        u60 = 1
+                    elseif 255 <= i5 then
+                        u60 = -1
+                        u58 = nil
+                    end
+                end
+            end
+        end
+        ColorCorrection.TintColor = Color3.fromRGB(u57.R, u57.G, u57.B)
+        ColorCorrection.Saturation = u62
+    end))
 end
-task.spawn(function()
-	-- upvalues: (copy) v_u_3, (copy) v_u_35
-	v_u_3:WaitForChild("ColorCorrection", 10)
-	v_u_35()
+task.spawn(function() -- Line: 149 -- upvalues: Lighting (val), togglePartyMode (val)
+    Lighting:WaitForChild("ColorCorrection", 10)
+    togglePartyMode()
 end)
-v_u_5.Signals.Variables.PartyModeEnabled:Connect(v_u_35)
+GameState.Signals.Variables.PartyModeEnabled:Connect(togglePartyMode)
 return {}

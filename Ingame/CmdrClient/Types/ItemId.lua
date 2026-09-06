@@ -1,35 +1,27 @@
-local v_u_1 = require("../Shared/Util")
-local v2 = require(game.ReplicatedStorage.common:WaitForChild("ItemData"))
-local v_u_3 = {}
-for _, v4 in pairs(v2.List) do
-	table.insert(v_u_3, v4)
+local u2 = require("../Shared/Util")
+local ItemData = require(game.ReplicatedStorage.common:WaitForChild("ItemData"))
+local u12 = {}
+for k, v in pairs(ItemData.List) do
+    table.insert(u12, v)
 end
-local v_u_9 = {
-	["DisplayName"] = "Item name",
-	["Prefixes"] = "# integer",
-	["Transform"] = nil,
-	["Validate"] = nil,
-	["Autocomplete"] = nil,
-	["Parse"] = nil,
-	["Transform"] = function(p5) -- name: Transform
-		-- upvalues: (copy) v_u_1, (copy) v_u_3
-		return v_u_1.MakeFuzzyFinder(v_u_3)(p5)
-	end,
-	["Validate"] = function(p6) -- name: Validate
-		return #p6 > 0, "No item with that name could be found."
-	end,
-	["Autocomplete"] = function(p7) -- name: Autocomplete
-		-- upvalues: (copy) v_u_1
-		return v_u_1.GetNames(p7)
-	end,
-	["Parse"] = function(p8) -- name: Parse
-		return p8[1].Id
-	end
+local u25 = {
+    DisplayName = "Item name",
+    Prefixes = "# integer",
+    Transform = function(p1) -- Line: 12 -- upvalues: u2 (val), u12 (val)
+        return u2.MakeFuzzyFinder(u12)(p1)
+    end,
+    Validate = function(p1) -- Line: 17
+        local v1 = 0 < #p1
+        return v1, "No item with that name could be found."
+    end,
+    Autocomplete = function(p1) -- Line: 21 -- upvalues: u2 (val)
+        return u2.GetNames(p1)
+    end,
+    Parse = function(p1) -- Line: 25
+        return p1[1].Id
+    end,
 }
-return function(p10)
-	-- upvalues: (copy) v_u_9, (copy) v_u_1
-	p10:RegisterType("itemId", v_u_9)
-	p10:RegisterType("itemIds", v_u_1.MakeListableType(v_u_9, {
-		["Prefixes"] = "# integers"
-	}))
+return function(p1) -- Line: 30 -- upvalues: u25 (val), u2 (val)
+    p1:RegisterType("itemId", u25)
+    p1:RegisterType("itemIds", u2.MakeListableType(u25, {Prefixes = "# integers"}))
 end

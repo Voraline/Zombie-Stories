@@ -1,120 +1,123 @@
 require("./TypeDefinitions")
-local v_u_1 = game:GetService("TestService")
-local v_u_2 = require("./Table")
-local v_u_3 = {}
-v_u_3.__index = v_u_3
-v_u_3.__type = "Signal"
-local v_u_4 = {}
-v_u_4.__index = v_u_4
-v_u_4.__type = "SignalConnection"
-function v_u_3.new(p5) -- name: new
-	-- upvalues: (copy) v_u_3
-	local v6 = v_u_3
-	return setmetatable({
-		["Name"] = p5,
-		["Connections"] = {},
-		["YieldingThreads"] = {}
-	}, v6)
+local TestService = game:GetService("TestService")
+local u10 = require("./Table")
+local u11 = {}
+u11.__index = u11
+u11.__type = "Signal"
+local u13 = {}
+u13.__index = u13
+u13.__type = "SignalConnection"
+function u11.new(p1) -- Line: 44 -- upvalues: u11 (val)
+    local v1 = {Name = p1, Connections = {}, YieldingThreads = {}}
+    return (setmetatable(v1, u11))
 end
-local function v_u_14(p_u_7, p_u_8, p9) -- name: ThreadAndReportError
-	-- upvalues: (copy) v_u_1
-	local v11 = coroutine.create(function()
-		-- upvalues: (copy) p_u_7, (copy) p_u_8
-		local v10 = p_u_8
-		p_u_7(unpack(v10))
-	end)
-	local v12, v13 = coroutine.resume(v11)
-	if not v12 then
-		v_u_1:Error(string.format("Exception thrown in your %s event handler: %s", p9, v13))
-		v_u_1:Checkpoint(debug.traceback(v11))
-	end
+local function NewConnection(p1, p2) -- Line: 53 -- upvalues: u13 (val)
+    local v1 = {Index = -1, Signal = p1, Delegate = p2}
+    return (setmetatable(v1, u13))
 end
-function v_u_3.Connect(p15, p16) -- name: Connect
-	-- upvalues: (copy) v_u_3, (copy) v_u_4, (copy) v_u_2
-	local v17 = getmetatable(p15) == v_u_3
-	assert(v17, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Connect", "Signal.new()"))
-	local v18 = v_u_4
-	local v19 = setmetatable({
-		["Signal"] = nil,
-		["Delegate"] = nil,
-		["Index"] = -1,
-		["Signal"] = p15,
-		["Delegate"] = p16
-	}, v18)
-	v19.Index = #p15.Connections + 1
-	v_u_2.insert(p15.Connections, v19.Index, v19)
-	return v19
+local function ThreadAndReportError(p1, p2, p3) -- Line: 62 -- upvalues: TestService (val)
+    local v1, v2
+    local v3 = coroutine.create(function() -- Line: 63 -- upvalues: p1 (val), p2 (val)
+        p1(unpack(p2))
+    end)
+    v1, v2 = coroutine.resume(v3)
+    if not v1 then
+        TestService:Error(string.format("Exception thrown in your %s event handler: %s", p3, v2))
+        TestService:Checkpoint(debug.traceback(v3))
+    end
 end
-function v_u_3.Fire(p20, ...) -- name: Fire
-	-- upvalues: (copy) v_u_3, (copy) v_u_2, (copy) v_u_14
-	local v21 = getmetatable(p20) == v_u_3
-	assert(v21, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Fire", "Signal.new()"))
-	local v22 = v_u_2.pack(...)
-	local v23 = p20.Connections
-	local v24 = p20.YieldingThreads
-	for v25 = 1, #v23 do
-		local v26 = v23[v25]
-		if v26.Delegate ~= nil then
-			v_u_14(v26.Delegate, v22, v26.Signal.Name)
-		end
-	end
-	for v27 = 1, #v24 do
-		local v28 = v24[v27]
-		if v28 ~= nil then
-			coroutine.resume(v28, ...)
-		end
-	end
+function u11.Connect(p1, p2) -- Line: 75 -- upvalues: u11 (val), u13 (val), u10 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u11
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Connect", "Signal.new()"))
+    local v3 = setmetatable({Index = -1, Signal = p1, Delegate = p2}, u13)
+    v3.Index = #p1.Connections + 1
+    u10.insert(p1.Connections, v3.Index, v3)
+    return v3
 end
-function v_u_3.FireSync(p29, ...) -- name: FireSync
-	-- upvalues: (copy) v_u_3, (copy) v_u_2
-	local v30 = getmetatable(p29) == v_u_3
-	assert(v30, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("FireSync", "Signal.new()"))
-	local v31 = v_u_2.pack(...)
-	local v32 = p29.Connections
-	local v33 = p29.YieldingThreads
-	for v34 = 1, #v32 do
-		local v35 = v32[v34]
-		if v35.Delegate ~= nil then
-			v35.Delegate(unpack(v31))
-		end
-	end
-	for v36 = 1, #v33 do
-		local v37 = v33[v36]
-		if v37 ~= nil then
-			coroutine.resume(v37, ...)
-		end
-	end
+function u11.Fire(p1, ...) -- Line: 83 -- upvalues: u11 (val), u10 (val), ThreadAndReportError (val)
+    local v1
+    local v2 = getmetatable(p1)
+    local v3 = v2 == u11
+    assert(v3, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Fire", "Signal.new()"))
+    local v4 = u10.pack(...)
+    local Connections = p1.Connections
+    local YieldingThreads = p1.YieldingThreads
+    local v5 = #Connections
+    local v6 = 1
+    for i = 1, v5, v6 do
+        v1 = Connections[i]
+        if v1.Delegate ~= nil then
+            ThreadAndReportError(v1.Delegate, v4, v1.Signal.Name)
+        end
+    end
+    v5 = #YieldingThreads
+    v6 = 1
+    for j = 1, v5, v6 do
+        v1 = YieldingThreads[j]
+        if v1 ~= nil then
+            coroutine.resume(v1, ...)
+        end
+    end
 end
-function v_u_3.Wait(p38) -- name: Wait
-	-- upvalues: (copy) v_u_3, (copy) v_u_2
-	local v39 = getmetatable(p38) == v_u_3
-	assert(v39, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Wait", "Signal.new()"))
-	local v40 = coroutine.running()
-	v_u_2.insert(p38.YieldingThreads, v40)
-	local v41 = { coroutine.yield() }
-	v_u_2.removeObject(p38.YieldingThreads, v40)
-	return unpack(v41)
+function u11.FireSync(p1, ...) -- Line: 103 -- upvalues: u11 (val), u10 (val)
+    local v1
+    local v2 = getmetatable(p1)
+    local v3 = v2 == u11
+    assert(v3, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("FireSync", "Signal.new()"))
+    local v4 = u10.pack(...)
+    local Connections = p1.Connections
+    local YieldingThreads = p1.YieldingThreads
+    local v5 = #Connections
+    local v6 = 1
+    for i = 1, v5, v6 do
+        v1 = Connections[i]
+        if v1.Delegate ~= nil then
+            v1.Delegate(unpack(v4))
+        end
+    end
+    v5 = #YieldingThreads
+    v6 = 1
+    for j = 1, v5, v6 do
+        v1 = YieldingThreads[j]
+        if v1 ~= nil then
+            coroutine.resume(v1, ...)
+        end
+    end
 end
-function v_u_3.Dispose(p42) -- name: Dispose
-	-- upvalues: (copy) v_u_3
-	local v43 = getmetatable(p42) == v_u_3
-	assert(v43, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Dispose", "Signal.new()"))
-	local v44 = p42.Connections
-	for v45 = 1, #v44 do
-		v44[v45]:Disconnect()
-	end
-	p42.Connections = {}
-	setmetatable(p42, nil)
+function u11.Wait(p1) -- Line: 123 -- upvalues: u11 (val), u10 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u11
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Wait", "Signal.new()"))
+    local v3 = {}
+    v2 = coroutine.running()
+    u10.insert(p1.YieldingThreads, v2)
+    v3 = {coroutine.yield()}
+    u10.removeObject(p1.YieldingThreads, v2)
+    return unpack(v3)
 end
-function v_u_4.Disconnect(p46) -- name: Disconnect
-	-- upvalues: (copy) v_u_4, (copy) v_u_2
-	local v47 = getmetatable(p46) == v_u_4
-	assert(v47, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Disconnect", "private function NewConnection()"))
-	v_u_2.remove(p46.Signal.Connections, p46.Index)
-	p46.SignalStatic = nil
-	p46.Delegate = nil
-	p46.YieldingThreads = {}
-	p46.Index = -1
-	setmetatable(p46, nil)
+function u11.Dispose(p1) -- Line: 133 -- upvalues: u11 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u11
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Dispose", "Signal.new()"))
+    local Connections = p1.Connections
+    v2 = #Connections
+    v1 = 1
+    for i = 1, v2, v1 do
+        Connections[i]:Disconnect()
+    end
+    p1.Connections = {}
+    setmetatable(p1, nil)
 end
-return v_u_3
+function u13:Disconnect() -- Line: 143 -- upvalues: u13 (val), u10 (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u13
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Disconnect", "private function NewConnection()"))
+    u10.remove(self.Signal.Connections, self.Index)
+    self.SignalStatic = nil
+    self.Delegate = nil
+    self.YieldingThreads = {}
+    self.Index = -1
+    setmetatable(self, nil)
+end
+return u11

@@ -1,192 +1,217 @@
-local v1 = game:GetService("Players")
-local v2 = game.ReplicatedStorage.common
-local v3 = game.ReplicatedStorage.common.RedEvents
-require(v2.TableKit)
-local v4 = require(v2.Signal)
-local v_u_5 = {}
-local v_u_6 = {}
-local v_u_7 = game:GetService("ReplicatedStorage")
-local v_u_8 = game:GetService("RunService"):IsServer()
-local v_u_9 = require(v3.Framework.StatusEffectsEvent)
-local v_u_10 = {
-	["Downed"] = true
-}
-local v_u_39 = {
-	["StateAdded"] = v4.new(),
-	["__index"] = function(p11, p12) -- name: __index
-		-- upvalues: (copy) v_u_39, (copy) v_u_10
-		local v13 = rawget(p11, p12)
-		if p11.EffectObjects[p12] == nil then
-			if v13 == nil then
-				if v_u_39[p12] then
-					return v_u_39[p12]
-				elseif v_u_10[p12] then
-					return nil
-				else
-					return nil
-				end
-			else
-				return v13
-			end
-		elseif p11.EffectObjects[p12].Inactive then
-			return false
-		else
-			return p11.EffectObjects[p12]
-		end
-	end,
-	["new"] = function(p14, _) -- name: new
-		-- upvalues: (copy) v_u_39, (copy) v_u_5, (copy) v_u_10, (copy) v_u_7, (copy) v_u_6
-		local v15 = {
-			["Player"] = p14,
-			["_Events"] = {},
-			["EffectObjects"] = {}
-		}
-		local v16 = v_u_39
-		setmetatable(v15, v16)
-		v_u_5[p14] = v15
-		for v17, _ in v_u_10 do
-			local v18 = v_u_7.common.StatusEffects:FindFirstChild(v17, true)
-			v_u_6[v17] = v18
-			require(v18)
-		end
-		return v15
-	end,
-	["CopyEffects"] = function(p19, p20) -- name: CopyEffects
-		for v21 in p19.EffectObjects do
-			p19:RemoveStatus(v21)
-		end
-		for v22, v23 in p20.EffectObjects do
-			local v24 = getStatusModule(v22)
-			local v25 = require(v24).new(p19)
-			p19.EffectObjects[v22] = v25
-			v25:CopyStatus(v23, p19)
-		end
-	end,
-	["Apply"] = function(p26, p27, ...) -- name: Apply
-		-- upvalues: (copy) v_u_8, (copy) v_u_9
-		if p26.EffectObjects[p27] then
-			if p26.EffectObjects[p27].Apply then
-				p26.EffectObjects[p27]:Apply(p26, ...)
-			end
-		else
-			local v28 = getStatusModule(p27)
-			p26.EffectObjects[p27] = require(v28).new(p26)
-			p26.EffectObjects[p27]:Apply(p26, ...)
-		end
-		local v29 = p26._Events[p27]
-		if v29 then
-			v29:Fire(p26[p27])
-		end
-		if v_u_8 then
-			v_u_9:FireAllClients({
-				["Type"] = "StatusApplied",
-				["Player"] = nil,
-				["Status"] = nil,
-				["Params"] = nil,
-				["Player"] = p26.Player,
-				["Status"] = p27,
-				["Params"] = { ... }
-			})
-		end
-	end,
-	["RemoveStatus"] = function(p30, p31) -- name: RemoveStatus
-		-- upvalues: (copy) v_u_8, (copy) v_u_9
-		local v32 = p30.EffectObjects[p31]
-		if v32 then
-			v32:Destroy()
-			p30.EffectObjects[p31] = nil
-		end
-		if v_u_8 then
-			v_u_9:FireAllClients({
-				["Type"] = "StatusRemoved",
-				["Player"] = nil,
-				["Status"] = nil,
-				["Player"] = p30.Player,
-				["Status"] = p31
-			})
-		end
-	end,
-	["Update"] = function(p33, p34) -- name: Update
-		for _, v35 in p33.EffectObjects do
-			if not v35.Inactive and v35.Update then
-				v35:Update(p34)
-			end
-		end
-	end,
-	["Destroy"] = function(p36) -- name: Destroy
-		-- upvalues: (copy) v_u_5
-		v_u_5[p36.Player] = nil
-		rawset(p36, "_Destroyed", true)
-		for _, v37 in p36.EffectObjects do
-			v37:Destroy()
-		end
-		for _, v38 in p36._Events do
-			v38:DisconnectAll()
-		end
-	end
-}
-function getStatusModule(p40) -- name: getStatusModule
-	-- upvalues: (copy) v_u_6, (copy) v_u_7
-	local v41 = v_u_6[p40] or v_u_7.common.StatusEffects:FindFirstChild(p40, true)
-	assert(v41, ("Status Module %s does not exist"):format(p40))
-	if not v_u_6[p40] then
-		v_u_6[p40] = v41
-	end
-	return v41
+local Players = game:GetService("Players")
+local common = game.ReplicatedStorage.common
+require(common.TableKit)
+local Signal = require(common.Signal)
+local u18 = {}
+local u19 = {}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u32 = game:GetService("RunService"):IsServer()
+local StatusEffectsEvent = require(game.ReplicatedStorage.common.RedEvents.Framework.StatusEffectsEvent)
+local u37 = {Downed = true}
+local u39 = {StateAdded = Signal.new()}
+function u39.__index(p1, p2) -- Line: 40 -- upvalues: u39 (val), u37 (val)
+    local v1 = rawget(p1, p2)
+    if p1.EffectObjects[p2] ~= nil then
+        if p1.EffectObjects[p2].Inactive then
+            return false
+        end
+        return p1.EffectObjects[p2]
+    end
+    if v1 ~= nil then
+        return v1
+    end
+    if u39[p2] then
+        return u39[p2]
+    end
+    if u37[p2] then
+        return nil
+    end
+    return nil
 end
-if v_u_8 then
-	return v_u_39
+function u39.new(p1, p2) -- Line: 74 -- upvalues: u39 (val), u18 (val), u37 (val), ReplicatedStorage (val), u19 (val)
+    local v1
+    local v2 = {Player = p1, _Events = {}, EffectObjects = {}}
+    setmetatable(v2, u39)
+    u18[p1] = v2
+    local v3 = u37
+    local v4 = nil
+    local v5 = nil
+    for i, j in v3, v4, v5 do
+        v1 = ReplicatedStorage.common.StatusEffects:FindFirstChild(i, true)
+        u19[i] = v1
+        require(v1)
+    end
+    return v2
 end
-local v_u_42 = {}
-local v_u_43 = {}
-local function v_u_49(p44, p45) -- name: handlePacket
-	local v46 = p44.Type
-	if v46 == "StatusApplied" then
-		local v47 = p44.Status
-		local v48 = p44.Params or {}
-		p45:Apply(v47, unpack(v48))
-	elseif v46 == "StatusRemoved" then
-		p45:RemoveStatus(p44.Status)
-	end
+function u39.CopyEffects(p1, p2) -- Line: 94
+    local v1, v2
+    local EffectObjects = p1.EffectObjects
+    local v3 = nil
+    local v4 = nil
+    for i in EffectObjects, v3, v4 do
+        p1:RemoveStatus(i)
+    end
+    local EffectObjects_2 = p2.EffectObjects
+    v3 = nil
+    v4 = nil
+    for j, k in EffectObjects_2, v3, v4 do
+        v1 = getStatusModule(j)
+        v2 = require(v1).new(p1)
+        p1.EffectObjects[j] = v2
+        v2:CopyStatus(k, p1)
+    end
 end
-v_u_9:SetClientListener(function(p50) -- name: newPacket
-	-- upvalues: (copy) v_u_5, (copy) v_u_43, (copy) v_u_49, (copy) v_u_42
-	if p50 then
-		local v51 = p50.Player
-		local v52 = v_u_5[v51]
-		if v52 and v_u_43[v51] then
-			v_u_49(p50, v52)
-		else
-			v_u_42[v51] = v_u_42[v51] or {}
-			local v53 = v_u_42[v51]
-			table.insert(v53, p50)
-		end
-	else
-		return
-	end
+function u39:Apply(p2, ...) -- Line: 106 -- upvalues: u32 (val), StatusEffectsEvent (val)
+    local v1
+    if not (self.EffectObjects[p2]) then
+        v1 = getStatusModule(p2)
+        self.EffectObjects[p2] = require(v1).new(self)
+        self.EffectObjects[p2]:Apply(self, ...)
+    elseif self.EffectObjects[p2].Apply then
+        self.EffectObjects[p2]:Apply(self, ...)
+    end
+    v1 = self._Events[p2]
+    if v1 then
+        v1:Fire(self[p2])
+    end
+    if u32 then
+        StatusEffectsEvent:FireAllClients({
+            Type = "StatusApplied",
+            Player = self.Player,
+            Status = p2,
+            Params = {...},
+        })
+    end
+end
+function u39:RemoveStatus(p2) -- Line: 133 -- upvalues: u32 (val), StatusEffectsEvent (val)
+    local v1 = self.EffectObjects[p2]
+    if v1 then
+        v1:Destroy()
+        self.EffectObjects[p2] = nil
+    end
+    if u32 then
+        StatusEffectsEvent:FireAllClients({Type = "StatusRemoved", Player = self.Player, Status = p2})
+    end
+end
+function u39:Update(p2) -- Line: 148
+    local EffectObjects = self.EffectObjects
+    local v1 = nil
+    local v2 = nil
+    for i, j in EffectObjects, v1, v2 do
+        if not j.Inactive and j.Update then
+            j:Update(p2)
+        end
+    end
+end
+function u39:Destroy() -- Line: 155 -- upvalues: u18 (val)
+    u18[self.Player] = nil
+    rawset(self, "_Destroyed", true)
+    local EffectObjects = self.EffectObjects
+    local v1 = nil
+    local v2 = nil
+    for i, j in EffectObjects, v1, v2 do
+        j:Destroy()
+    end
+    local _Events = self._Events
+    v1 = nil
+    v2 = nil
+    for k, n in _Events, v1, v2 do
+        n:DisconnectAll()
+    end
+end
+function getStatusModule(p1) -- Line: 169 -- upvalues: u19 (val), ReplicatedStorage (val)
+    local v1 = u19[p1]
+    if not v1 then
+        v1 = ReplicatedStorage.common.StatusEffects:FindFirstChild(p1, true)
+    end
+    assert(v1, ("Status Module %s does not exist"):format(p1))
+    if not (u19[p1]) then
+        u19[p1] = v1
+    end
+    return v1
+end
+if u32 then
+    return u39
+end
+local u50 = {}
+local u51 = {}
+local function handlePacket(p1, p2) -- Line: 213
+    local Type = p1.Type
+    if Type ~= "StatusApplied" then
+        if Type == "StatusRemoved" then
+            p2:RemoveStatus(p1.Status)
+        end
+        return
+    end
+    local Params = p1.Params
+    if not Params then
+        Params = {}
+    end
+    p2:Apply(p1.Status, unpack(Params))
+end
+local function tryFlushPending(p1) -- Line: 223 -- upvalues: u18 (val), u51 (val), u50 (val), handlePacket (val)
+    local v1 = u18[p1]
+    if not v1 or not (u51[p1]) then
+        return
+    end
+    local v2 = u50[p1]
+    if v2 then
+        local v3 = v2
+        local v4 = nil
+        local v5 = nil
+        for i, j in v3, v4, v5 do
+            handlePacket(j, v1)
+        end
+        u50[p1] = nil
+    end
+end
+StatusEffectsEvent:SetClientListener(function(p1) -- Line: 240 -- upvalues: u18 (val), u51 (val), handlePacket (val), u50 (val)
+    local v1
+    if not p1 then
+        return
+    end
+    local Player = p1.Player
+    local v2 = u18[Player]
+    if not v2 then
+        v1 = u50[Player]
+        if not v1 then
+            v1 = {}
+        end
+        u50[Player] = v1
+        table.insert(u50[Player], p1)
+        return
+    end
+    if u51[Player] then
+        handlePacket(p1, v2)
+        return
+    end
+    v1 = u50[Player]
+    if not v1 then
+        v1 = {}
+    end
+    u50[Player] = v1
+    table.insert(u50[Player], p1)
 end)
-v_u_39.StateAdded:Connect(function(p54)
-	-- upvalues: (copy) v_u_43, (copy) v_u_5, (copy) v_u_42, (copy) v_u_49
-	v_u_43[p54.Player] = true
-	local v55 = p54.Player
-	local v56 = v_u_5[v55]
-	if v56 then
-		if v_u_43[v55] then
-			local v57 = v_u_42[v55]
-			if v57 then
-				for _, v58 in v57 do
-					v_u_49(v58, v56)
-				end
-				v_u_42[v55] = nil
-			end
-		end
-	else
-		return
-	end
+u39.StateAdded:Connect(function(p1) -- Line: 261 -- upvalues: u51 (val), u18 (val), u50 (val), handlePacket (val)
+    u51[p1.Player] = true
+    local Player = p1.Player
+    local v1 = u18[Player]
+    if not v1 or not (u51[Player]) then
+        return
+    end
+    local v2 = u50[Player]
+    if v2 then
+        local v3 = v2
+        local v4 = nil
+        local v5 = nil
+        for i, j in v3, v4, v5 do
+            handlePacket(j, v1)
+        end
+        u50[Player] = nil
+    end
 end)
-v1.PlayerRemoving:Connect(function(p59)
-	-- upvalues: (copy) v_u_42, (copy) v_u_43
-	v_u_42[p59] = nil
-	v_u_43[p59] = nil
+Players.PlayerRemoving:Connect(function(p1) -- Line: 267 -- upvalues: u50 (val), u51 (val)
+    u50[p1] = nil
+    u51[p1] = nil
 end)
-return v_u_39
+return u39

@@ -1,95 +1,115 @@
-return function(p_u_1, p_u_2)
-	local v_u_3 = Instance.new("Frame")
-	v_u_3.Name = "Notice"
-	v_u_3.ZIndex = 25
-	v_u_3.AutomaticSize = Enum.AutomaticSize.X
-	v_u_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_3.BorderSizePixel = 0
-	v_u_3.BackgroundTransparency = 0.1
-	v_u_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	v_u_3.Visible = false
-	v_u_3.Parent = p_u_1.widget
-	local v4 = Instance.new("UICorner")
-	v4.CornerRadius = UDim.new(1, 0)
-	v4.Parent = v_u_3
-	Instance.new("UIStroke").Parent = v_u_3
-	local v_u_5 = Instance.new("TextLabel")
-	v_u_5.Name = "NoticeLabel"
-	v_u_5.ZIndex = 26
-	v_u_5.AnchorPoint = Vector2.new(0.5, 0.5)
-	v_u_5.AutomaticSize = Enum.AutomaticSize.X
-	v_u_5.Size = UDim2.new(1, 0, 1, 0)
-	v_u_5.BackgroundTransparency = 1
-	v_u_5.Position = UDim2.new(0.5, 0, 0.515, 0)
-	v_u_5.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_5.FontSize = Enum.FontSize.Size14
-	v_u_5.TextColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_5.Text = "1"
-	v_u_5.TextWrapped = true
-	v_u_5.TextWrap = true
-	v_u_5.Font = Enum.Font.Arial
-	v_u_5.Parent = v_u_3
-	local v6 = script.Parent.Parent
-	local v7 = v6.Packages
-	local v_u_8 = require(v7.Janitor)
-	local v_u_9 = require(v7.GoodSignal)
-	local v_u_10 = require(v6.Utility)
-	p_u_1.noticeChanged:Connect(function(p11)
-		-- upvalues: (copy) v_u_5, (copy) p_u_2, (copy) p_u_1, (copy) v_u_10, (copy) v_u_3
-		if p11 then
-			local v12 = p11 > 99
-			v_u_5.Text = v12 and "99+" or p11
-			if v12 then
-				v_u_5.TextSize = 11
-			end
-			local v13 = p11 >= 1
-			local v14 = p_u_2.getIconByUID(p_u_1.parentIconUID)
-			local v15 = #p_u_1.dropdownIcons > 0 and true or #p_u_1.menuIcons > 0
-			if p_u_1.isSelected and v15 then
-				v13 = false
-			elseif v14 and not v14.isSelected then
-				v13 = false
-			end
-			v_u_10.setVisible(v_u_3, v13, "NoticeHandler")
-		end
-	end)
-	p_u_1.noticeStarted:Connect(function(p16, p17)
-		-- upvalues: (copy) p_u_1, (copy) p_u_2, (copy) v_u_8, (copy) v_u_9, (copy) v_u_10
-		local v18 = p16 or p_u_1.deselected
-		local v19 = p_u_2.getIconByUID(p_u_1.parentIconUID)
-		if v19 then
-			v19:notify(v18)
-		end
-		local v_u_20 = p_u_1.janitor:add(v_u_8.new())
-		local v_u_21 = v_u_20:add(v_u_9.new())
-		v_u_20:add(p_u_1.endNotices:Connect(function()
-			-- upvalues: (copy) v_u_21
-			v_u_21:Fire()
-		end))
-		v_u_20:add(v18:Connect(function()
-			-- upvalues: (copy) v_u_21
-			v_u_21:Fire()
-		end))
-		local v_u_22 = p17 or v_u_10.generateUID()
-		p_u_1.notices[v_u_22] = {
-			["completeSignal"] = v_u_21,
-			["clearNoticeEvent"] = v18
-		}
-		p_u_1:getInstance("NoticeLabel")
-		p_u_1.notified:Fire(v_u_22)
-		local v23 = p_u_1
-		v23.totalNotices = v23.totalNotices + 1
-		p_u_1.noticeChanged:Fire(p_u_1.totalNotices)
-		v_u_21:Once(function()
-			-- upvalues: (copy) v_u_20, (ref) p_u_1, (ref) v_u_22
-			v_u_20:destroy()
-			local v24 = p_u_1
-			v24.totalNotices = v24.totalNotices - 1
-			p_u_1.notices[v_u_22] = nil
-			p_u_1.noticeChanged:Fire(p_u_1.totalNotices)
-		end)
-	end)
-	v_u_3:SetAttribute("ClipToJoinedParent", true)
-	p_u_1:clipOutside(v_u_3)
-	return v_u_3
+return function(p1, p2) -- Line: 1
+    local Frame = Instance.new("Frame")
+    Frame.Name = "Notice"
+    Frame.ZIndex = 25
+    Frame.AutomaticSize = Enum.AutomaticSize.X
+    Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BorderSizePixel = 0
+    Frame.BackgroundTransparency = 0.1
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.Visible = false
+    Frame.Parent = p1.widget
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Frame
+    Instance.new("UIStroke").Parent = Frame
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Name = "NoticeLabel"
+    TextLabel.ZIndex = 26
+    TextLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    TextLabel.AutomaticSize = Enum.AutomaticSize.X
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Position = UDim2.new(0.5, 0, 0.515, 0)
+    TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    TextLabel.FontSize = Enum.FontSize.Size14
+    TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+    TextLabel.Text = "1"
+    TextLabel.TextWrapped = true
+    TextLabel.TextWrap = true
+    TextLabel.Font = Enum.Font.Arial
+    TextLabel.Parent = Frame
+    local Parent = script.Parent.Parent
+    local Packages = Parent.Packages
+    local Janitor = require(Packages.Janitor)
+    local GoodSignal = require(Packages.GoodSignal)
+    local Utility = require(Parent.Utility)
+    p1.noticeChanged:Connect(function(a1) -- Line: 43 -- upvalues: TextLabel (val), p2 (val), p1 (val), Utility (val), Frame (val)
+        local v1
+        if not a1 then
+            return
+        end
+        local v2 = 99 < a1
+        if not v2 then
+            v1 = a1
+        else
+            v1 = "99+"
+        end
+        TextLabel.Text = v1
+        if v2 then
+            TextLabel.TextSize = 11
+        end
+        local v3 = not (a1 < 1)
+        local v4 = p2.getIconByUID(p1.parentIconUID)
+        local v5 = true
+        local v6 = #p1.dropdownIcons
+        if 0 >= v6 then
+            v6 = #p1.menuIcons
+            v5 = 0 < v6
+        end
+        if not p1.isSelected then
+            if v4 and not v4.isSelected then
+                v3 = false
+            end
+        elseif v5 then
+            v3 = false
+        elseif v4 and not v4.isSelected then
+            v3 = false
+        end
+        Utility.setVisible(Frame, v3, "NoticeHandler")
+    end)
+    p1.noticeStarted:Connect(function(a1, a2) -- Line: 71 -- upvalues: p1 (val), p2 (val), Janitor (val), GoodSignal (val), Utility (val)
+        local deselected
+        if a1 then
+            deselected = a1
+        else
+            deselected = p1.deselected
+        end
+        local v1 = p2.getIconByUID(p1.parentIconUID)
+        if v1 then
+            v1:notify(deselected)
+        end
+        local u21 = p1.janitor:add(Janitor.new())
+        local u27 = u21:add(GoodSignal.new())
+        u21:add(p1.endNotices:Connect(function() -- Line: 83 -- upvalues: u27 (val)
+            u27:Fire()
+        end))
+        u21:add(deselected:Connect(function() -- Line: 86 -- upvalues: u27 (val)
+            u27:Fire()
+        end))
+        local v2 = a2
+        if not v2 then
+            v2 = Utility.generateUID()
+        end
+        local u52 = v2
+        p1.notices[u52] = {completeSignal = u27, clearNoticeEvent = deselected}
+        p1:getInstance("NoticeLabel")
+        local function updateNotice() -- Line: 95 -- upvalues: p1 (upval)
+            p1.noticeChanged:Fire(p1.totalNotices)
+        end
+        p1.notified:Fire(u52)
+        local v3 = p1
+        v3.totalNotices = v3.totalNotices + 1
+        p1.noticeChanged:Fire(p1.totalNotices)
+        u27:Once(function() -- Line: 101 -- upvalues: u21 (val), p1 (upval), u52 (ref)
+            u21:destroy()
+            local v1 = p1
+            v1.totalNotices = v1.totalNotices - 1
+            p1.notices[u52] = nil
+            p1.noticeChanged:Fire(p1.totalNotices)
+        end)
+    end)
+    Frame:SetAttribute("ClipToJoinedParent", true)
+    p1:clipOutside(Frame)
+    return Frame
 end

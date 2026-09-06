@@ -1,19 +1,33 @@
-local v_u_1 = require(script.Parent.Parent.Parent:WaitForChild("Controllers"):WaitForChild("LocalPlayerController"))
-return function(p2) -- name: BobCalculate
-	-- upvalues: (copy) v_u_1
-	local v3 = v_u_1.PlayerVelocity / 3.0001 * 0.1
-	local v4 = p2.BobCycle and p2.BobCycle(v_u_1.PlayerVelocityDT, v3) or Vector3.new()
-	local v5 = p2.BobCycle2 and p2.BobCycle2(v_u_1.PlayerVelocityDT, v3) or CFrame.new()
-	local v6 = (v4.magnitude > 0.0001 and CFrame.fromAxisAngle(v4, v4.magnitude / 15) or CFrame.new()) * v5
-	local v7
-	if v3 == nil or tonumber(v3) ~= v3 then
-		v7 = 0
-	else
-		local v8 = math.max(v3, 0)
-		v7 = math.min(1, v8)
-	end
-	if v7 <= 0.0001 then
-		v6 = CFrame.new()
-	end
-	return v6
+local Controllers = script.Parent.Parent.Parent:WaitForChild("Controllers")
+local LocalPlayerController = require(Controllers:WaitForChild("LocalPlayerController"))
+return function(p1) -- Line: 3 -- upvalues: LocalPlayerController (val)
+    local v1, v2, v3
+    local v4 = LocalPlayerController.PlayerVelocity / 3.0001 * 0.1
+    if not p1.BobCycle then
+        v1 = Vector3.new()
+    else
+        v1 = p1.BobCycle(LocalPlayerController.PlayerVelocityDT, v4)
+    end
+    if not p1.BobCycle2 then
+        v2 = CFrame.new()
+    else
+        v2 = p1.BobCycle2(LocalPlayerController.PlayerVelocityDT, v4)
+    end
+    if 0.0001 >= v1.magnitude then
+        v3 = CFrame.new()
+    else
+        v3 = CFrame.fromAxisAngle(v1, v1.magnitude / 15)
+    end
+    v3 = v3 * v2
+    if v4 == nil then
+        v4 = 0
+    elseif tonumber(v4) == v4 then
+        v4 = math.min(1, (math.max(v4, 0)))
+    else
+        v4 = 0
+    end
+    if v4 <= 0.0001 then
+        v3 = CFrame.new()
+    end
+    return v3
 end

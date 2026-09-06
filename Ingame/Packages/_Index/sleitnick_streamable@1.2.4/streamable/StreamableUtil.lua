@@ -1,39 +1,45 @@
-local v_u_1 = require(script.Parent.Parent.Trove)
+local Trove = require(script.Parent.Parent.Trove)
 require(script.Parent.Streamable)
-return {
-	["Compound"] = function(p_u_2, p_u_3) -- name: Compound
-		-- upvalues: (copy) v_u_1
-		local v4 = v_u_1.new()
-		local v_u_5 = v_u_1.new()
-		local v_u_6 = false
-		local function v_u_7() -- name: Cleanup
-			-- upvalues: (ref) v_u_6, (copy) v_u_5
-			if v_u_6 then
-				v_u_6 = false
-				v_u_5:Clean()
-			end
-		end
-		local v_u_8 = v_u_6
-		for _, v9 in pairs(p_u_2) do
-			v4:Add(v9:Observe(function(_, p10)
-				-- upvalues: (ref) v_u_8, (copy) p_u_2, (copy) p_u_3, (copy) v_u_5, (copy) v_u_7
-				if v_u_8 then
-					::l3::
-					p10:Add(v_u_7)
-					return
-				else
-					for _, v11 in pairs(p_u_2) do
-						if not v11.Instance then
-							goto l3
-						end
-					end
-					v_u_8 = true
-					p_u_3(p_u_2, v_u_5)
-					goto l3
-				end
-			end))
-		end
-		v4:Add(v_u_7)
-		return v4
-	end
-}
+local v1 = {}
+function v1.Compound(p1, p2) -- Line: 47 -- upvalues: Trove (val)
+    local v1 = Trove.new()
+    local u7 = Trove.new()
+    local u8 = false
+    local function Check() -- Line: 51 -- upvalues: u8 (ref), p1 (val), p2 (val), u7 (val)
+        if u8 then
+            return
+        end
+        for k, v in pairs(p1) do
+            if not v.Instance then
+                return
+            end
+        end
+        u8 = true
+        p2(p1, u7)
+    end
+    local function Cleanup() -- Line: 63 -- upvalues: u8 (ref), u7 (val)
+        if not u8 then
+            return
+        end
+        u8 = false
+        u7:Clean()
+    end
+    for k, v in pairs(p1) do
+        v1:Add(v:Observe(function(a1, a2) -- Line: 71 -- upvalues: u8 (ref), p1 (val), p2 (val), u7 (val), Cleanup (val)
+            if not u8 then
+                for k, v in pairs(p1) do
+                    if not v.Instance then
+                        a2:Add(Cleanup)
+                        return
+                    end
+                end
+                u8 = true
+                p2(p1, u7)
+            end
+            a2:Add(Cleanup)
+        end))
+    end
+    v1:Add(Cleanup)
+    return v1
+end
+return v1

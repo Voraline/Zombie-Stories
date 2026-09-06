@@ -1,266 +1,271 @@
-local v_u_1 = game:GetService("RunService")
-local v_u_2 = require("./Util")
-local v_u_19 = {
-	["TypeMethods"] = nil,
-	["CommandMethods"] = nil,
-	["CommandArgProps"] = nil,
-	["Types"] = nil,
-	["TypeAliases"] = nil,
-	["Commands"] = nil,
-	["CommandsArray"] = nil,
-	["Cmdr"] = nil,
-	["Hooks"] = nil,
-	["Stores"] = nil,
-	["AutoExecBuffer"] = nil,
-	["TypeMethods"] = v_u_2.MakeDictionary({
-		"Transform",
-		"Validate",
-		"Autocomplete",
-		"Parse",
-		"DisplayName",
-		"Listable",
-		"ValidateOnce",
-		"Prefixes",
-		"Default",
-		"ArgumentOperatorAliases"
-	}),
-	["CommandMethods"] = v_u_2.MakeDictionary({
-		"Name",
-		"Aliases",
-		"AutoExec",
-		"Description",
-		"Args",
-		"Run",
-		"ClientRun",
-		"Data",
-		"Group"
-	}),
-	["CommandArgProps"] = v_u_2.MakeDictionary({
-		"Name",
-		"Type",
-		"Description",
-		"Optional",
-		"Default"
-	}),
-	["Types"] = {},
-	["TypeAliases"] = {},
-	["Commands"] = {},
-	["CommandsArray"] = {},
-	["Hooks"] = {
-		["BeforeRun"] = {},
-		["AfterRun"] = {}
-	},
-	["Stores"] = setmetatable({}, {
-		["__index"] = function(p3, p4) -- name: __index
-			p3[p4] = {}
-			return p3[p4]
-		end
-	}),
-	["AutoExecBuffer"] = {},
-	["RegisterType"] = function(p5, p6, p7) -- name: RegisterType
-		if not p6 or typeof(p6) ~= "string" then
-			error("Invalid type name provided: nil")
-		end
-		if not p6:find("^[%d%l]%w*$") then
-			error(("Invalid type name provided: \"%s\", type names must be alphanumeric and start with a lower-case letter or a digit."):format(p6))
-		end
-		for v8 in pairs(p7) do
-			if p5.TypeMethods[v8] == nil then
-				error("Unknown key/method in type \"" .. p6 .. "\": " .. v8)
-			end
-		end
-		if p5.Types[p6] ~= nil then
-			error(("Type \"%s\" has already been registered."):format(p6))
-		end
-		p7.Name = p6
-		p7.DisplayName = p7.DisplayName or p6
-		p5.Types[p6] = p7
-		if p7.Prefixes then
-			p5:RegisterTypePrefix(p6, p7.Prefixes)
-		end
-	end,
-	["RegisterTypePrefix"] = function(p9, p10, p11) -- name: RegisterTypePrefix
-		if not p9.TypeAliases[p10] then
-			p9.TypeAliases[p10] = p10
-		end
-		p9.TypeAliases[p10] = ("%s %s"):format(p9.TypeAliases[p10], p11)
-	end,
-	["RegisterTypeAlias"] = function(p12, p13, p14) -- name: RegisterTypeAlias
-		local v15 = p12.TypeAliases[p13] == nil
-		assert(v15, ("Type alias %s already exists!"):format(p14))
-		p12.TypeAliases[p13] = p14
-	end,
-	["RegisterTypesIn"] = function(p16, p17) -- name: RegisterTypesIn
-		for _, v18 in pairs(p17:GetChildren()) do
-			if v18:IsA("ModuleScript") then
-				v18.Parent = p16.Cmdr.ReplicatedRoot.Types
-				require(v18)(p16)
-			else
-				p16:RegisterTypesIn(v18)
-			end
-		end
-	end
+local RunService = game:GetService("RunService")
+local u7 = require("./Util")
+local u8 = {
+    TypeMethods = u7.MakeDictionary({
+        "Transform",
+        "Validate",
+        "Autocomplete",
+        "Parse",
+        "DisplayName",
+        "Listable",
+        "ValidateOnce",
+        "Prefixes",
+        "Default",
+        "ArgumentOperatorAliases",
+    }),
+    CommandMethods = u7.MakeDictionary({
+        "Name",
+        "Aliases",
+        "AutoExec",
+        "Description",
+        "Args",
+        "Run",
+        "ClientRun",
+        "Data",
+        "Group",
+    }),
+    CommandArgProps = u7.MakeDictionary({
+        "Name",
+        "Type",
+        "Description",
+        "Optional",
+        "Default",
+    }),
+    Types = {},
+    TypeAliases = {},
+    Commands = {},
+    CommandsArray = {},
+    Hooks = {BeforeRun = {}, AfterRun = {}},
 }
-v_u_19.RegisterHooksIn = v_u_19.RegisterTypesIn
-function v_u_19.RegisterCommandObject(p20, p21, _) -- name: RegisterCommandObject
-	-- upvalues: (copy) v_u_1
-	for v22 in pairs(p21) do
-		if p20.CommandMethods[v22] == nil then
-			error("Unknown key/method in command " .. (p21.Name or "unknown command") .. ": " .. v22)
-		end
-	end
-	if p21.Args then
-		for v23, v24 in pairs(p21.Args) do
-			if type(v24) == "table" then
-				for v25 in pairs(v24) do
-					if p20.CommandArgProps[v25] == nil then
-						error(("Unknown property in command \"%s\" argument #%d: %s"):format(p21.Name or "unknown", v23, v25))
-					end
-				end
-			end
-		end
-	end
-	if p21.AutoExec and v_u_1:IsClient() then
-		local v26 = p20.AutoExecBuffer
-		local v27 = p21.AutoExec
-		table.insert(v26, v27)
-		p20:FlushAutoExecBufferDeferred()
-	end
-	local v28 = p20.Commands[p21.Name:lower()]
-	if v28 and v28.Aliases then
-		for _, v29 in pairs(v28.Aliases) do
-			p20.Commands[v29:lower()] = nil
-		end
-	elseif not v28 then
-		local v30 = p20.CommandsArray
-		table.insert(v30, p21)
-	end
-	p20.Commands[p21.Name:lower()] = p21
-	if p21.Aliases then
-		for _, v31 in pairs(p21.Aliases) do
-			p20.Commands[v31:lower()] = p21
-		end
-	end
+local v1 = {}
+u8.Stores = setmetatable(v1, {
+    __index = function(p1, p2) -- Line: 20
+        p1[p2] = {}
+        return p1[p2]
+    end,
+})
+local v2 = {}
+u8.AutoExecBuffer = v2
+function u8.RegisterType(p1, p2, p3) -- Line: 30
+    if not p2 then
+        error("Invalid type name provided: nil")
+    elseif typeof(p2) == "string" then
+    end
+    if not (p2:find("^[%d%l]%w*$")) then
+        error(("Invalid type name provided: \"%s\", type names must be alphanumeric and start with a lower-case letter or a digit."):format(p2))
+    end
+    for k in pairs(p3) do
+        if p1.TypeMethods[k] == nil then
+            error("Unknown key/method in type \"" .. p2 .. "\": " .. k)
+        end
+    end
+    if p1.Types[p2] ~= nil then
+        error(("Type \"%s\" has already been registered."):format(p2))
+    end
+    p3.Name = p2
+    p3.DisplayName = p3.DisplayName or p2
+    p1.Types[p2] = p3
+    if p3.Prefixes then
+        p1:RegisterTypePrefix(p2, p3.Prefixes)
+    end
 end
-function v_u_19.RegisterCommand(p32, p33, p34, p35) -- name: RegisterCommand
-	-- upvalues: (copy) v_u_1
-	local v36 = require(p33)
-	local v37 = typeof(v36) == "table"
-	local v38 = ("Invalid return value from command script \"%*\" (CommandDefinition expected, got %*)"):format(p33.Name, (typeof(v36)))
-	assert(v37, v38)
-	if p34 then
-		local v39 = v_u_1:IsServer()
-		assert(v39, "The commandServerScript parameter is not valid for client usage.")
-		v36.Run = require(p34)
-	end
-	if not p35 or p35(v36) then
-		p32:RegisterCommandObject(v36)
-		p33.Parent = p32.Cmdr.ReplicatedRoot.Commands
-	end
+function u8:RegisterTypePrefix(p2, p3) -- Line: 59
+    if not (self.TypeAliases[p2]) then
+        self.TypeAliases[p2] = p2
+    end
+    self.TypeAliases[p2] = ("%s %s"):format(self.TypeAliases[p2], p3)
 end
-function v_u_19.RegisterCommandsIn(p40, p41, p42) -- name: RegisterCommandsIn
-	local v43 = {}
-	local v44 = {}
-	for _, v45 in pairs(p41:GetChildren()) do
-		if v45:IsA("ModuleScript") then
-			if v45.Name:find("Server") then
-				v43[v45] = true
-			else
-				local v46 = p41:FindFirstChild(v45.Name .. "Server")
-				if v46 then
-					v44[v46] = true
-				end
-				p40:RegisterCommand(v45, v46, p42)
-			end
-		else
-			p40:RegisterCommandsIn(v45, p42)
-		end
-	end
-	for v47 in pairs(v43) do
-		if not v44[v47] then
-			warn("Command script " .. v47.Name .. " was skipped because it has \'Server\' in its name, and has no equivalent shared script.")
-		end
-	end
+function u8.RegisterTypeAlias(p1, p2, p3) -- Line: 67
+    local v1 = p1.TypeAliases[p2] == nil
+    assert(v1, ("Type alias %s already exists!"):format(p3))
+    p1.TypeAliases[p2] = p3
 end
-function v_u_19.RegisterDefaultCommands(p48, p_u_49) -- name: RegisterDefaultCommands
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	local v50 = v_u_1:IsServer()
-	assert(v50, "RegisterDefaultCommands cannot be called from the client.")
-	local v51 = type(p_u_49) == "table"
-	if v51 then
-		p_u_49 = v_u_2.MakeDictionary(p_u_49)
-	end
-	p48:RegisterCommandsIn(p48.Cmdr.DefaultCommandsFolder, v51 and function(p52)
-		-- upvalues: (ref) p_u_49
-		return p_u_49[p52.Group] or false
-	end or p_u_49)
+function u8:RegisterTypesIn(p2) -- Line: 73
+    local v1
+    for k, v in pairs(p2:GetChildren()) do
+        if not (v:IsA("ModuleScript")) then
+            self:RegisterTypesIn(v)
+        else
+            v.Parent = self.Cmdr.ReplicatedRoot.Types
+            v1 = require(v)
+            v1(self)
+        end
+    end
 end
-function v_u_19.GetCommand(p53, p54) -- name: GetCommand
-	return p53.Commands[(p54 or ""):lower()]
+u8.RegisterHooksIn = u8.RegisterTypesIn
+function u8:RegisterCommandObject(p2, p3) -- Line: 90 -- upvalues: RunService (val)
+    local v1, v2
+    for k in pairs(p2) do
+        if self.CommandMethods[k] == nil then
+            error("Unknown key/method in command " .. (p2.Name or "unknown command") .. ": " .. k)
+        end
+    end
+    if not p2.Args then
+        v2, v1 = p2, self
+    else
+        v1, v2 = self, p2
+        for k2, v in pairs(p2.Args) do
+            if type(v) == "table" then
+                for k3 in pairs(v) do
+                    if v1.CommandArgProps[k3] == nil then
+                        error(("Unknown property in command \"%s\" argument #%d: %s"):format(v2.Name or "unknown", k2, k3))
+                    end
+                end
+            end
+        end
+    end
+    if v2.AutoExec and RunService:IsClient() then
+        table.insert(v1.AutoExecBuffer, v2.AutoExec)
+        v1:FlushAutoExecBufferDeferred()
+    end
+    local v3 = v1.Commands[v2.Name:lower()]
+    if not v3 then
+        if not v3 then
+            table.insert(v1.CommandsArray, v2)
+        end
+    elseif v3.Aliases then
+        local v4
+        for k4, i in pairs(v3.Aliases) do
+            v4 = i:lower()
+            v1.Commands[v4] = nil
+        end
+    end
+    v1.Commands[v2.Name:lower()] = v2
+    if v2.Aliases then
+        for k5, j in pairs(v2.Aliases) do
+            v1.Commands[j:lower()] = v2
+        end
+    end
 end
-function v_u_19.GetCommands(p55) -- name: GetCommands
-	return p55.CommandsArray
+function u8:RegisterCommand(p2, p3, p4) -- Line: 135 -- upvalues: RunService (val)
+    local v1 = require(p2)
+    local v2 = typeof(v1) == "table"
+    assert(v2, (("Invalid return value from command script \"%*\" (CommandDefinition expected, got %*)"):format(p2.Name, (typeof(v1)))))
+    if p3 then
+        v2 = RunService:IsServer()
+        assert(v2, "The commandServerScript parameter is not valid for client usage.")
+        v1.Run = require(p3)
+    end
+    if not p4 then
+        self:RegisterCommandObject(v1)
+        p2.Parent = self.Cmdr.ReplicatedRoot.Commands
+        return
+    end
+    if not (p4(v1)) then
+        return
+    end
+    self:RegisterCommandObject(v1)
+    p2.Parent = self.Cmdr.ReplicatedRoot.Commands
 end
-function v_u_19.GetCommandNames(p56) -- name: GetCommandNames
-	local v57 = {}
-	for _, v58 in pairs(p56.CommandsArray) do
-		local v59 = v58.Name
-		table.insert(v57, v59)
-	end
-	return v57
+function u8:RegisterCommandsIn(p2, p3) -- Line: 157
+    local v1, v2, v3, v4
+    local v5 = {}
+    local v6 = {}
+    v2, v4, v1 = p2, p3, self
+    for k, v in pairs(p2:GetChildren()) do
+        if not (v:IsA("ModuleScript")) then
+            v1:RegisterCommandsIn(v, v4)
+        elseif v.Name:find("Server") then
+            v5[v] = true
+        else
+            v3 = v2:FindFirstChild(v.Name .. "Server")
+            if v3 then
+                v6[v3] = true
+            end
+            v1:RegisterCommand(v, v3, v4)
+        end
+    end
+    for k2 in pairs(v5) do
+        if not (v6[k2]) then
+            warn("Command script " .. k2.Name .. " was skipped because it has 'Server' in its name, and has no equivalent shared script.")
+        end
+    end
 end
-v_u_19.GetCommandsAsStrings = v_u_19.GetCommandNames
-function v_u_19.GetTypeNames(p60) -- name: GetTypeNames
-	local v61 = {}
-	for v62 in pairs(p60.Types) do
-		table.insert(v61, v62)
-	end
-	return v61
+function u8.RegisterDefaultCommands(p1, p2) -- Line: 187 -- upvalues: RunService (val), u7 (val)
+    local u20, v1
+    local v2 = RunService:IsServer()
+    assert(v2, "RegisterDefaultCommands cannot be called from the client.")
+    local v3 = type(p2) == "table"
+    if not v3 then
+        u20 = p2
+    else
+        u20 = u7.MakeDictionary(p2)
+    end
+    local DefaultCommandsFolder = p1.Cmdr.DefaultCommandsFolder
+    if not v3 then
+        v1 = u20
+    else
+        function v1(p1) -- Line: 196 -- upvalues: u20 (ref)
+            return u20[p1.Group] or false
+        end
+        if not v1 then
+            v1 = u20
+        end
+    end
+    p1:RegisterCommandsIn(DefaultCommandsFolder, v1)
 end
-function v_u_19.GetType(p63, p64) -- name: GetType
-	return p63.Types[p64]
+function u8.GetCommand(p1, p2) -- Line: 202
+    return p1.Commands[(p2 or ""):lower()]
 end
-function v_u_19.GetTypeName(p65, p66) -- name: GetTypeName
-	return p65.TypeAliases[p66] or p66
+function u8.GetCommands(p1) -- Line: 208
+    return p1.CommandsArray
 end
-function v_u_19.RegisterHook(p67, p68, p69, p70) -- name: RegisterHook
-	if not p67.Hooks[p68] then
-		error(("Invalid hook name: %q"):format(p68), 2)
-	end
-	local v71 = p67.Hooks[p68]
-	table.insert(v71, {
-		["callback"] = p69,
-		["priority"] = p70 or 0
-	})
-	table.sort(p67.Hooks[p68], function(p72, p73)
-		return p72.priority < p73.priority
-	end)
+function u8.GetCommandNames(p1) -- Line: 213
+    local v1 = {}
+    for k, v in pairs(p1.CommandsArray) do
+        table.insert(v1, v.Name)
+    end
+    return v1
 end
-v_u_19.AddHook = v_u_19.RegisterHook
-function v_u_19.GetStore(p74, p75) -- name: GetStore
-	return p74.Stores[p75]
+u8.GetCommandsAsStrings = u8.GetCommandNames
+function u8.GetTypeNames(p1) -- Line: 226
+    local v1 = {}
+    for k in pairs(p1.Types) do
+        table.insert(v1, k)
+    end
+    return v1
 end
-function v_u_19.FlushAutoExecBufferDeferred(p_u_76) -- name: FlushAutoExecBufferDeferred
-	-- upvalues: (copy) v_u_1
-	if not p_u_76.AutoExecFlushConnection then
-		p_u_76.AutoExecFlushConnection = v_u_1.Heartbeat:Connect(function()
-			-- upvalues: (copy) p_u_76
-			p_u_76.AutoExecFlushConnection:Disconnect()
-			p_u_76.AutoExecFlushConnection = nil
-			p_u_76:FlushAutoExecBuffer()
-		end)
-	end
+function u8.GetType(p1, p2) -- Line: 238
+    return p1.Types[p2]
 end
-function v_u_19.FlushAutoExecBuffer(p77) -- name: FlushAutoExecBuffer
-	for _, v78 in ipairs(p77.AutoExecBuffer) do
-		for _, v79 in ipairs(v78) do
-			p77.Cmdr.Dispatcher:EvaluateAndRun(v79)
-		end
-	end
-	p77.AutoExecBuffer = {}
+function u8.GetTypeName(p1, p2) -- Line: 243
+    return p1.TypeAliases[p2] or p2
 end
-return function(p80)
-	-- upvalues: (copy) v_u_19
-	v_u_19.Cmdr = p80
-	return v_u_19
+function u8.RegisterHook(p1, p2, p3, p4) -- Line: 248
+    if not (p1.Hooks[p2]) then
+        local v1 = ("Invalid hook name: %q"):format(p2)
+        error(v1, 2)
+    end
+    table.insert(p1.Hooks[p2], {callback = p3, priority = p4 or 0})
+    table.sort(p1.Hooks[p2], function(p1, p2) -- Line: 254
+        local v1 = p1.priority < p2.priority
+        return v1
+    end)
+end
+u8.AddHook = u8.RegisterHook
+function u8.GetStore(p1, p2) -- Line: 262
+    return p1.Stores[p2]
+end
+function u8:FlushAutoExecBufferDeferred() -- Line: 267 -- upvalues: RunService (val)
+    if self.AutoExecFlushConnection then
+        return
+    end
+    self.AutoExecFlushConnection = RunService.Heartbeat:Connect(function() -- Line: 272 -- upvalues: self (val)
+        self.AutoExecFlushConnection:Disconnect()
+        self.AutoExecFlushConnection = nil
+        self:FlushAutoExecBuffer()
+    end)
+end
+function u8:FlushAutoExecBuffer() -- Line: 280
+    local v1 = self
+    for i, v in ipairs(self.AutoExecBuffer) do
+        for i2, i3 in ipairs(v) do
+            v1.Cmdr.Dispatcher:EvaluateAndRun(i3)
+        end
+    end
+    v1.AutoExecBuffer = {}
+end
+return function(p1) -- Line: 290 -- upvalues: u8 (val)
+    u8.Cmdr = p1
+    return u8
 end

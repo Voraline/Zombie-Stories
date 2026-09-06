@@ -1,25 +1,22 @@
-local v_u_1 = require("./ClientProcess")
-local v2 = {}
-local v_u_3 = {
-	["__index"] = v2,
-	["__tostring"] = function(_) -- name: __tostring
-		return "ClientConnection"
-	end
+local u2 = require("./ClientProcess")
+local v1 = {}
+local u4 = {
+    __index = v1,
+    __tostring = function(p1) -- Line: 9
+        return "ClientConnection"
+    end,
 }
-function v2.Disconnect(p4) -- name: Disconnect
-	p4.Connected = nil
-	p4._disconnectCallback()
-	table.clear(p4)
-	setmetatable(p4, nil)
+function v1.Disconnect(p1) -- Line: 13
+    p1.Connected = nil
+    p1._disconnectCallback()
+    table.clear(p1)
+    setmetatable(p1, nil)
 end
-return function(p5, p6)
-	-- upvalues: (copy) v_u_3, (copy) v_u_1
-	local v7 = v_u_3
-	local v8 = setmetatable({
-		["Connected"] = true,
-		["_disconnectCallback"] = nil,
-		["_disconnectCallback"] = function() -- name: _disconnectCallback end
-	}, v7)
-	v8._disconnectCallback = v_u_1.connect(p5, p6)
-	return v8
+return function(p1, p2) -- Line: 22 -- upvalues: u4 (val), u2 (val)
+    local v1 = setmetatable({
+        Connected = true,
+        _disconnectCallback = function() end,
+    }, u4)
+    v1._disconnectCallback = u2.connect(p1, p2)
+    return v1
 end

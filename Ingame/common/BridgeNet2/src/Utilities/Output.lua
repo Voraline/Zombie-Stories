@@ -1,48 +1,48 @@
-local v_u_1 = game:GetService("RunService")
-local v_u_2 = v_u_1:IsServer() and "[BridgeNet2:S]: " or "[BridgeNet2:C]: "
-local v_u_18 = {
-	["silent"] = function(p3) -- name: silent
-		-- upvalues: (copy) v_u_1, (copy) v_u_2
-		if v_u_1:IsStudio() then
-			print((("%*%*"):format(v_u_2, p3)))
-		end
-	end,
-	["log"] = function(p4) -- name: log
-		-- upvalues: (copy) v_u_2
-		print((("%*%*"):format(v_u_2, p4)))
-	end,
-	["logAssert"] = function(p5, p6) -- name: logAssert
-		-- upvalues: (copy) v_u_18
-		if not p5 then
-			v_u_18.log(p6)
-		end
-	end,
-	["warn"] = function(p7) -- name: warn
-		-- upvalues: (copy) v_u_2
-		warn((("%*%*"):format(v_u_2, p7)))
-	end,
-	["warnAssert"] = function(p8, p9) -- name: warnAssert
-		-- upvalues: (copy) v_u_18
-		if not p8 then
-			v_u_18.warn(p9)
-		end
-	end,
-	["typecheck"] = function(p10, p11, p12, p13) -- name: typecheck
-		-- upvalues: (copy) v_u_2
-		local v14 = typeof(p13)
-		if v14 ~= p10 then
-			error(("%*%* parameter %* takes %*, got %*"):format(v_u_2, p11, p12, p10, v14), 0)
-		end
-	end,
-	["fatal"] = function(p15) -- name: fatal
-		-- upvalues: (copy) v_u_2
-		error(("%*%*"):format(v_u_2, p15), 0)
-	end,
-	["fatalAssert"] = function(p16, p17) -- name: fatalAssert
-		-- upvalues: (copy) v_u_2
-		if not p16 then
-			error(("%*%*"):format(v_u_2, p17), 0)
-		end
-	end
+local u9
+local RunService = game:GetService("RunService")
+if not (RunService:IsServer()) then
+    u9 = "[BridgeNet2:C]: "
+else
+    u9 = "[BridgeNet2:S]: "
+end
+local u10 = {
+    silent = function(p1) -- Line: 10 -- upvalues: RunService (val), u9 (val)
+        if RunService:IsStudio() then
+            print((("%*%*"):format(u9, p1)))
+        end
+    end,
+    log = function(p1) -- Line: 16 -- upvalues: u9 (val)
+        print((("%*%*"):format(u9, p1)))
+    end,
 }
-return v_u_18
+function u10.logAssert(p1, p2) -- Line: 20 -- upvalues: u10 (val)
+    if not p1 then
+        u10.log(p2)
+    end
+end
+function u10.warn(p1) -- Line: 26 -- upvalues: u9 (val)
+    warn((("%*%*"):format(u9, p1)))
+end
+function u10.warnAssert(p1, p2) -- Line: 30 -- upvalues: u10 (val)
+    if not p1 then
+        u10.warn(p2)
+    end
+end
+function u10.typecheck(p1, p2, p3, p4) -- Line: 43 -- upvalues: u9 (val)
+    local v1 = typeof(p4)
+    if v1 ~= p1 then
+        local v2 = ("%*%* parameter %* takes %*, got %*"):format(u9, p2, p3, p1, v1)
+        error(v2, 0)
+    end
+end
+function u10.fatal(p1) -- Line: 51 -- upvalues: u9 (val)
+    local v1 = ("%*%*"):format(u9, p1)
+    error(v1, 0)
+end
+function u10.fatalAssert(p1, p2) -- Line: 55 -- upvalues: u9 (val)
+    if not p1 then
+        local v1 = ("%*%*"):format(u9, p2)
+        error(v1, 0)
+    end
+end
+return u10

@@ -1,11 +1,9 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Instances.applyInstanceProps)
-return function(p_u_3) -- name: Hydrate
-	-- upvalues: (copy) v_u_2
-	return function(p4)
-		-- upvalues: (ref) v_u_2, (copy) p_u_3
-		v_u_2(p4, p_u_3)
-		return p_u_3
-	end
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local applyInstanceProps = require(Parent.Instances.applyInstanceProps)
+return function(p1) -- Line: 12 -- upvalues: applyInstanceProps (val)
+    return function(a1) -- Line: 13 -- upvalues: applyInstanceProps (upval), p1 (val)
+        applyInstanceProps(a1, p1)
+        return p1
+    end
 end

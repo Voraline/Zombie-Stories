@@ -1,36 +1,36 @@
 game:GetService("ReplicatedStorage")
-local v_u_1 = game:GetService("Debris")
-require("@game/ReplicatedStorage/common/zap").RenderExplosionEvent.On(function(p2)
-	-- upvalues: (copy) v_u_1
-	local v3 = Instance.new("Explosion")
-	v3.Position = p2.Position
-	v3.BlastRadius = p2.BlastRadius or 10
-	v3.BlastPressure = 0
-	v3.DestroyJointRadiusPercent = 0
-	v3.ExplosionType = Enum.ExplosionType.NoCraters
-	local v4 = Instance.new("PointLight")
-	v4.Color = Color3.fromRGB(255, 175, 100)
-	v4.Range = p2.BlastRadius * 2
-	v4.Brightness = 5
-	v4.Parent = v3
-	v3.Parent = workspace
-	local v5 = Instance.new("Part")
-	v5.Size = Vector3.new(0.1, 0.1, 0.1)
-	v5.Transparency = 1
-	v5.CanCollide = false
-	v5.CanQuery = false
-	v5.Anchored = true
-	v5.Position = p2.Position
-	local v6 = Instance.new("Sound")
-	v6.SoundId = "rbxassetid://5153734048"
-	v6.Volume = 2
-	v6.RollOffMinDistance = 20
-	v6.RollOffMaxDistance = 150
-	v6.RollOffMode = Enum.RollOffMode.InverseTapered
-	v6.Parent = v5
-	v5.Parent = workspace
-	v6:Play()
-	v_u_1:AddItem(v5, 5)
-	v_u_1:AddItem(v3, 5)
+local Debris = game:GetService("Debris")
+local v1 = require("@game/ReplicatedStorage/common/zap")
+v1.RenderExplosionEvent.On(function(p1) -- Line: 8 -- upvalues: Debris (val)
+    local Explosion = Instance.new("Explosion")
+    Explosion.Position = p1.Position
+    Explosion.BlastRadius = p1.BlastRadius or 10
+    Explosion.BlastPressure = 0
+    Explosion.DestroyJointRadiusPercent = 0
+    Explosion.ExplosionType = Enum.ExplosionType.NoCraters
+    local PointLight = Instance.new("PointLight")
+    PointLight.Color = Color3.fromRGB(255, 175, 100)
+    PointLight.Range = p1.BlastRadius * 2
+    PointLight.Brightness = 5
+    PointLight.Parent = Explosion
+    Explosion.Parent = workspace
+    local Part = Instance.new("Part")
+    Part.Size = Vector3.new(0.10000000149011612, 0.10000000149011612, 0.10000000149011612)
+    Part.Transparency = 1
+    Part.CanCollide = false
+    Part.CanQuery = false
+    Part.Anchored = true
+    Part.Position = p1.Position
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = "rbxassetid://5153734048"
+    Sound.Volume = 2
+    Sound.RollOffMinDistance = 20
+    Sound.RollOffMaxDistance = 150
+    Sound.RollOffMode = Enum.RollOffMode.InverseTapered
+    Sound.Parent = Part
+    Part.Parent = workspace
+    Sound:Play()
+    Debris:AddItem(Part, 5)
+    Debris:AddItem(Explosion, 5)
 end)
 return {}

@@ -1,186 +1,161 @@
-return function()
-	local v_u_1 = require(script.Parent)
-	describe("Trove", function()
-		-- upvalues: (copy) v_u_1
-		local v_u_2 = nil
-		beforeEach(function()
-			-- upvalues: (ref) v_u_2, (ref) v_u_1
-			v_u_2 = v_u_1.new()
-		end)
-		afterEach(function()
-			-- upvalues: (ref) v_u_2
-			if v_u_2 then
-				v_u_2:Destroy()
-				v_u_2 = nil
-			end
-		end)
-		it("should add and clean up roblox instance", function()
-			-- upvalues: (ref) v_u_2
-			local v3 = Instance.new("Part")
-			v3.Parent = workspace
-			v_u_2:Add(v3)
-			v_u_2:Destroy()
-			expect(v3.Parent).to.equal(nil)
-		end)
-		it("should add and clean up roblox connection", function()
-			-- upvalues: (ref) v_u_2
-			local v4 = workspace.Changed:Connect(function() end)
-			v_u_2:Add(v4)
-			v_u_2:Destroy()
-			expect(v4.Connected).to.equal(false)
-		end)
-		it("should add and clean up a table with a destroy method", function()
-			-- upvalues: (ref) v_u_2
-			local v6 = {
-				["Destroyed"] = false,
-				["Destroy"] = function(p5) -- name: Destroy
-					p5.Destroyed = true
-				end
-			}
-			v_u_2:Add(v6)
-			v_u_2:Destroy()
-			expect(v6.Destroyed).to.equal(true)
-		end)
-		it("should add and clean up a table with a disconnect method", function()
-			-- upvalues: (ref) v_u_2
-			local v8 = {
-				["Connected"] = true,
-				["Disconnect"] = function(p7) -- name: Disconnect
-					p7.Connected = false
-				end
-			}
-			v_u_2:Add(v8)
-			v_u_2:Destroy()
-			expect(v8.Connected).to.equal(false)
-		end)
-		it("should add and clean up a function", function()
-			-- upvalues: (ref) v_u_2
-			local v_u_9 = false
-			v_u_2:Add(function()
-				-- upvalues: (ref) v_u_9
-				v_u_9 = true
-			end)
-			v_u_2:Destroy()
-			expect(v_u_9).to.equal(true)
-		end)
-		it("should allow a custom cleanup method", function()
-			-- upvalues: (ref) v_u_2
-			local v11 = {
-				["Cleaned"] = false,
-				["Cleanup"] = function(p10) -- name: Cleanup
-					p10.Cleaned = true
-				end
-			}
-			v_u_2:Add(v11, "Cleanup")
-			v_u_2:Destroy()
-			expect(v11.Cleaned).to.equal(true)
-		end)
-		it("should return the object passed to add", function()
-			-- upvalues: (ref) v_u_2
-			local v12 = Instance.new("Part")
-			local v13 = v_u_2:Add(v12)
-			expect(v12).to.equal(v13)
-			v_u_2:Destroy()
-		end)
-		it("should fail to add object without proper cleanup method", function()
-			-- upvalues: (ref) v_u_2
-			local v_u_14 = {}
-			expect(function()
-				-- upvalues: (ref) v_u_2, (copy) v_u_14
-				v_u_2:Add(v_u_14)
-			end).to.throw()
-		end)
-		it("should construct an object and add it", function()
-			-- upvalues: (ref) v_u_2
-			local v_u_15 = {}
-			v_u_15.__index = v_u_15
-			function v_u_15.new(p16) -- name: new
-				-- upvalues: (copy) v_u_15
-				local v17 = v_u_15
-				local v18 = setmetatable({}, v17)
-				v18._msg = p16
-				v18._destroyed = false
-				return v18
-			end
-			function v_u_15.Destroy(p19) -- name: Destroy
-				p19._destroyed = true
-			end
-			local v20 = v_u_2:Construct(v_u_15, "abc")
-			expect((typeof(v20))).to.equal("table")
-			expect((getmetatable(v20))).to.equal(v_u_15)
-			expect(v20._msg).to.equal("abc")
-			expect(v20._destroyed).to.equal(false)
-			v_u_2:Destroy()
-			expect(v20._destroyed).to.equal(true)
-		end)
-		it("should connect to a signal", function()
-			-- upvalues: (ref) v_u_2
-			local v21 = v_u_2:Connect(workspace.Changed, function() end)
-			expect((typeof(v21))).to.equal("RBXScriptConnection")
-			expect(v21.Connected).to.equal(true)
-			v_u_2:Destroy()
-			expect(v21.Connected).to.equal(false)
-		end)
-		it("should remove an object", function()
-			-- upvalues: (ref) v_u_2
-			local v22 = v_u_2:Connect(workspace.Changed, function() end)
-			expect(v_u_2:Remove(v22)).to.equal(true)
-			expect(v22.Connected).to.equal(false)
-		end)
-		it("should not remove an object not in the trove", function()
-			-- upvalues: (ref) v_u_2
-			local v23 = workspace.Changed:Connect(function() end)
-			expect(v_u_2:Remove(v23)).to.equal(false)
-			expect(v23.Connected).to.equal(true)
-			v23:Disconnect()
-		end)
-		it("should attach to instance", function()
-			-- upvalues: (ref) v_u_2
-			local v24 = Instance.new("Part")
-			v24.Parent = workspace
-			local v25 = v_u_2:AttachToInstance(v24)
-			expect(v25.Connected).to.equal(true)
-			v24:Destroy()
-			expect(v25.Connected).to.equal(false)
-		end)
-		it("should fail to attach to instance not in hierarchy", function()
-			-- upvalues: (ref) v_u_2
-			local v_u_26 = Instance.new("Part")
-			expect(function()
-				-- upvalues: (ref) v_u_2, (copy) v_u_26
-				v_u_2:AttachToInstance(v_u_26)
-			end).to.throw()
-		end)
-		it("should extend itself", function()
-			-- upvalues: (ref) v_u_2, (ref) v_u_1
-			local v27 = v_u_2:Extend()
-			local v_u_28 = false
-			v27:Add(function()
-				-- upvalues: (ref) v_u_28
-				v_u_28 = true
-			end)
-			expect(v27).to.be.a("table")
-			expect((getmetatable(v27))).to.equal(v_u_1)
-			v_u_2:Clean()
-			expect(v_u_28).to.equal(true)
-		end)
-		it("should clone an instance", function()
-			-- upvalues: (ref) v_u_2
-			local v29 = v_u_2:Construct(Instance.new, "Part")
-			v29.Name = "TroveCloneTest"
-			local v30 = v_u_2:Clone(v29)
-			expect((typeof(v30))).to.equal("Instance")
-			expect(v30).to.never.equal(v29)
-			expect(v30.Name).to.equal("TroveCloneTest")
-			expect(v29.Name).to.equal(v30.Name)
-		end)
-		it("should clean up a thread", function()
-			-- upvalues: (ref) v_u_2
-			local v31 = coroutine.create(function() end)
-			v_u_2:Add(v31)
-			expect(coroutine.status(v31)).to.equal("suspended")
-			v_u_2:Clean()
-			expect(coroutine.status(v31)).to.equal("dead")
-		end)
-	end)
+return function() -- Line: 1
+    local Parent = require(script.Parent)
+    describe("Trove", function() -- Line: 4 -- upvalues: Parent (val)
+        local u0 = nil
+        beforeEach(function() -- Line: 7 -- upvalues: u0 (ref), Parent (upval)
+            u0 = Parent.new()
+        end)
+        afterEach(function() -- Line: 11 -- upvalues: u0 (ref)
+            if u0 then
+                u0:Destroy()
+                u0 = nil
+            end
+        end)
+        it("should add and clean up roblox instance", function() -- Line: 18 -- upvalues: u0 (ref)
+            local Part = Instance.new("Part")
+            Part.Parent = workspace
+            u0:Add(Part)
+            u0:Destroy()
+            expect(Part.Parent).to.equal(nil)
+        end)
+        it("should add and clean up roblox connection", function() -- Line: 26 -- upvalues: u0 (ref)
+            local v1 = workspace.Changed:Connect(function() end)
+            u0:Add(v1)
+            u0:Destroy()
+            expect(v1.Connected).to.equal(false)
+        end)
+        it("should add and clean up a table with a destroy method", function() -- Line: 33 -- upvalues: u0 (ref)
+            local v1 = {
+                Destroyed = false,
+                Destroy = function(self) -- Line: 35
+                    self.Destroyed = true
+                end,
+            }
+            u0:Add(v1)
+            u0:Destroy()
+            expect(v1.Destroyed).to.equal(true)
+        end)
+        it("should add and clean up a table with a disconnect method", function() -- Line: 43 -- upvalues: u0 (ref)
+            local v1 = {
+                Connected = true,
+                Disconnect = function(self) -- Line: 45
+                    self.Connected = false
+                end,
+            }
+            u0:Add(v1)
+            u0:Destroy()
+            expect(v1.Connected).to.equal(false)
+        end)
+        it("should add and clean up a function", function() -- Line: 53 -- upvalues: u0 (ref)
+            local u0 = false
+            u0:Add(function() -- Line: 55 -- upvalues: u0 (ref)
+                u0 = true
+            end)
+            u0:Destroy()
+            expect(u0).to.equal(true)
+        end)
+        it("should allow a custom cleanup method", function() -- Line: 62 -- upvalues: u0 (ref)
+            local v1 = {
+                Cleaned = false,
+                Cleanup = function(p1) -- Line: 64
+                    p1.Cleaned = true
+                end,
+            }
+            u0:Add(v1, "Cleanup")
+            u0:Destroy()
+            expect(v1.Cleaned).to.equal(true)
+        end)
+        it("should return the object passed to add", function() -- Line: 72 -- upvalues: u0 (ref)
+            local Part = Instance.new("Part")
+            local v1 = u0:Add(Part)
+            expect(Part).to.equal(v1)
+            u0:Destroy()
+        end)
+        it("should fail to add object without proper cleanup method", function() -- Line: 79 -- upvalues: u0 (ref)
+            local u0 = {}
+            expect(function() -- Line: 81 -- upvalues: u0 (upval), u0 (val)
+                u0:Add(u0)
+            end).to.throw()
+        end)
+        it("should construct an object and add it", function() -- Line: 86 -- upvalues: u0 (ref)
+            local v1
+            local u0 = {}
+            u0.__index = u0
+            function u0.new(p1) -- Line: 89 -- upvalues: u0 (val)
+                local v1 = setmetatable({}, u0)
+                v1._msg = p1
+                v1._destroyed = false
+                return v1
+            end
+            function u0:Destroy() -- Line: 95
+                self._destroyed = true
+            end
+            v1 = u0:Construct(u0, "abc")
+            expect((typeof(v1))).to.equal("table")
+            expect((getmetatable(v1))).to.equal(u0)
+            expect(v1._msg).to.equal("abc")
+            expect(v1._destroyed).to.equal(false)
+            u0:Destroy()
+            expect(v1._destroyed).to.equal(true)
+        end)
+        it("should connect to a signal", function() -- Line: 108 -- upvalues: u0 (ref)
+            local v1 = u0:Connect(workspace.Changed, function() end)
+            expect((typeof(v1))).to.equal("RBXScriptConnection")
+            expect(v1.Connected).to.equal(true)
+            u0:Destroy()
+            expect(v1.Connected).to.equal(false)
+        end)
+        it("should remove an object", function() -- Line: 116 -- upvalues: u0 (ref)
+            local v1 = u0:Connect(workspace.Changed, function() end)
+            expect(u0:Remove(v1)).to.equal(true)
+            expect(v1.Connected).to.equal(false)
+        end)
+        it("should not remove an object not in the trove", function() -- Line: 122 -- upvalues: u0 (ref)
+            local v1 = workspace.Changed:Connect(function() end)
+            expect(u0:Remove(v1)).to.equal(false)
+            expect(v1.Connected).to.equal(true)
+            v1:Disconnect()
+        end)
+        it("should attach to instance", function() -- Line: 129 -- upvalues: u0 (ref)
+            local Part = Instance.new("Part")
+            Part.Parent = workspace
+            local v1 = u0:AttachToInstance(Part)
+            expect(v1.Connected).to.equal(true)
+            Part:Destroy()
+            expect(v1.Connected).to.equal(false)
+        end)
+        it("should fail to attach to instance not in hierarchy", function() -- Line: 138 -- upvalues: u0 (ref)
+            local Part = Instance.new("Part")
+            expect(function() -- Line: 140 -- upvalues: u0 (upval), Part (val)
+                u0:AttachToInstance(Part)
+            end).to.throw()
+        end)
+        it("should extend itself", function() -- Line: 145 -- upvalues: u0 (ref), Parent (upval)
+            local u4
+            local v1 = u0:Extend()
+            v1:Add(function() -- Line: 148 -- upvalues: u4 (ref)
+                u4 = true
+            end)
+            expect(v1).to.be.a("table")
+            expect((getmetatable(v1))).to.equal(Parent)
+            u0:Clean()
+            expect(false).to.equal(true)
+        end)
+        it("should clone an instance", function() -- Line: 157 -- upvalues: u0 (ref)
+            local v1 = u0:Construct(Instance.new, "Part")
+            v1.Name = "TroveCloneTest"
+            local v2 = u0:Clone(v1)
+            expect((typeof(v2))).to.equal("Instance")
+            expect(v2).to.never.equal(v1)
+            expect(v2.Name).to.equal("TroveCloneTest")
+            expect(v1.Name).to.equal(v2.Name)
+        end)
+        it("should clean up a thread", function() -- Line: 168 -- upvalues: u0 (ref)
+            local v1 = coroutine.create(function() end)
+            u0:Add(v1)
+            expect(coroutine.status(v1)).to.equal("suspended")
+            u0:Clean()
+            expect(coroutine.status(v1)).to.equal("dead")
+        end)
+    end)
 end

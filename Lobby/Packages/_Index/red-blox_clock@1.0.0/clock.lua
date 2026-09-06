@@ -1,21 +1,20 @@
-local v_u_1 = game:GetService("RunService")
-return function(p_u_2, p_u_3)
-	-- upvalues: (copy) v_u_1
-	local v_u_4 = 0
-	local v_u_5 = p_u_2 * 10
-	local v_u_7 = v_u_1.Heartbeat:Connect(function(p6)
-		-- upvalues: (ref) v_u_4, (copy) v_u_5, (copy) p_u_3, (copy) p_u_2
-		v_u_4 = v_u_4 + p6
-		if v_u_5 < v_u_4 then
-			v_u_4 = 0
-			p_u_3()
-		elseif p_u_2 < v_u_4 then
-			v_u_4 = v_u_4 - p_u_2
-			p_u_3()
-		end
-	end)
-	return function()
-		-- upvalues: (copy) v_u_7
-		v_u_7:Disconnect()
-	end
+local RunService = game:GetService("RunService")
+return function(p1, p2) -- Line: 3 -- upvalues: RunService (val)
+    local u2 = 0
+    local u3 = p1 * 10
+    local u9 = RunService.Heartbeat:Connect(function(a1) -- Line: 7 -- upvalues: u2 (ref), u3 (val), p2 (val), p1 (val)
+        u2 = u2 + a1
+        if u3 < u2 then
+            u2 = 0
+            p2()
+            return
+        end
+        if p1 < u2 then
+            u2 = u2 - p1
+            p2()
+        end
+    end)
+    return function() -- Line: 21 -- upvalues: u9 (val)
+        u9:Disconnect()
+    end
 end

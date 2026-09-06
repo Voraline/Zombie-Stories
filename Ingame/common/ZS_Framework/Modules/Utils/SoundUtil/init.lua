@@ -1,89 +1,87 @@
-local v_u_1 = game:GetService("SoundService")
-local v_u_2 = Instance.new("Folder")
-v_u_2.Name = "SoundHolder"
-v_u_2.Parent = workspace.Ignore
-return {
-	["SoundCache"] = {},
-	["CreateSound"] = function(_, p3) -- name: CreateSound
-		-- upvalues: (copy) v_u_2
-		if p3 then
-			local v4 = Instance.new("Sound")
-			local v5
-			if typeof(p3) == "table" then
-				v5 = p3.SoundId or ""
-				local v6 = p3.Volume
-				v4.Volume = math.min(v6, 0.75)
-				v4.PlaybackRegionsEnabled = p3.PlaybackStart ~= nil
-				if v4.PlaybackRegionsEnabled then
-					v4.PlaybackRegion = NumberRange.new(p3.PlaybackStart, 999999)
-				end
-			else
-				v5 = p3
-			end
-			v4.SoundId = (string.find(v5, "rbxassetid://") and "" or "rbxassetid://") .. v5
-			v4.Parent = v_u_2
-			for _, v7 in script.Effects:GetChildren() do
-				v7:Clone().Parent = v4
-			end
-			return {
-				["Sound"] = v4
-			}
-		end
-	end,
-	["CreateSoundGroup"] = function(p8, p9) -- name: CreateSoundGroup
-		local v10 = {
-			["SFX"] = nil,
-			["SoundIndex"] = 1,
-			["SFX"] = {}
-		}
-		local v11
-		if typeof(p9) == "table" then
-			v11 = p9.SoundId or p9
-		else
-			v11 = p9
-		end
-		for _ = 1, 15 do
-			local v12 = p8:CreateSound(p9)
-			local v13 = v10.SFX
-			table.insert(v13, v12)
-		end
-		p8.SoundCache[v11] = v10
-	end,
-	["PlaySound"] = function(p14, p15, p16) -- name: PlaySound
-		-- upvalues: (copy) v_u_2, (copy) v_u_1
-		if p15 then
-			local v17
-			if typeof(p15) == "table" then
-				v17 = p15.SoundId or p15
-			else
-				v17 = p15
-			end
-			if not p14.SoundCache[v17] then
-				p14:CreateSoundGroup(p15)
-			end
-			local v18 = p14.SoundCache[v17]
-			local v_u_19 = v18.SFX[v18.SoundIndex]
-			v_u_19.Sound.Pitch = 1 + math.random(-100, 100) * 0.001
-			v18.SoundIndex = v18.SoundIndex % #v18.SFX + 1
-			if p16 then
-				local v_u_20 = Instance.new("Attachment")
-				v_u_20.Position = p16
-				v_u_20.Parent = workspace.Terrain
-				v_u_19.Sound.Parent = v_u_20
-				v_u_19.Sound:Play()
-				task.delay(5, function()
-					-- upvalues: (copy) v_u_19, (copy) v_u_20, (ref) v_u_2
-					if v_u_19.Sound.Parent == v_u_20 then
-						v_u_19.Sound.Parent = v_u_2
-					end
-					v_u_20:Destroy()
-				end)
-			else
-				v_u_19.Sound.Parent = v_u_2
-				v_u_1:PlayLocalSound(v_u_19.Sound)
-			end
-		else
-			return
-		end
-	end
-}
+local SoundService = game:GetService("SoundService")
+local Folder = Instance.new("Folder")
+Folder.Name = "SoundHolder"
+Folder.Parent = workspace.Ignore
+local v1 = {}
+local v2 = {}
+v1.SoundCache = v2
+function v1.CreateSound(p1, p2) -- Line: 14 -- upvalues: Folder (val)
+    local v1
+    if not p2 then
+        return
+    end
+    local Sound = Instance.new("Sound")
+    local v2 = p2
+    if typeof(p2) == "table" then
+        v2 = p2.SoundId or ""
+        Sound.Volume = math.min(p2.Volume, 0.75)
+        v1 = p2.PlaybackStart ~= nil
+        Sound.PlaybackRegionsEnabled = v1
+        if Sound.PlaybackRegionsEnabled then
+            Sound.PlaybackRegion = NumberRange.new(p2.PlaybackStart, 999999)
+        end
+    end
+    if string.find(v2, "rbxassetid://") then
+        v1 = ""
+    else
+        v1 = "rbxassetid://"
+    end
+    Sound.SoundId = v1 .. v2
+    Sound.Parent = Folder
+    for i, j in script.Effects:GetChildren() do
+        j:Clone().Parent = Sound
+    end
+    return {Sound = Sound}
+end
+function v1:CreateSoundGroup(p2) -- Line: 45
+    local SoundId, v1
+    local v2 = {SoundIndex = 1, SFX = {}}
+    if typeof(p2) ~= "table" then
+        SoundId = p2
+    else
+        SoundId = p2.SoundId
+    end
+    local v3 = 15
+    local v4 = 1
+    for i = 1, v3, v4 do
+        v1 = self:CreateSound(p2)
+        table.insert(v2.SFX, v1)
+    end
+    self.SoundCache[SoundId] = v2
+end
+function v1.PlaySound(p1, p2, p3) -- Line: 64 -- upvalues: Folder (val), SoundService (val)
+    local SoundId
+    if not p2 then
+        return
+    end
+    if typeof(p2) ~= "table" then
+        SoundId = p2
+    else
+        SoundId = p2.SoundId
+    end
+    if not (p1.SoundCache[SoundId]) then
+        p1:CreateSoundGroup(p2)
+    end
+    local v1 = p1.SoundCache[SoundId]
+    local u25 = v1.SFX[v1.SoundIndex]
+    local Sound = u25.Sound
+    Sound.Pitch = 1 + math.random(-100, 100) * 0.001
+    v1.SoundIndex = v1.SoundIndex % #v1.SFX + 1
+    if not p3 then
+        u25.Sound.Parent = Folder
+        SoundService:PlayLocalSound(u25.Sound)
+        return
+    end
+    local Attachment = Instance.new("Attachment")
+    Attachment.Position = p3
+    Attachment.Parent = workspace.Terrain
+    u25.Sound.Parent = Attachment
+    u25.Sound:Play()
+    task.delay(5, function() -- Line: 97 -- upvalues: u25 (val), Attachment (val), Folder (upval)
+        if u25.Sound.Parent == Attachment then
+            u25.Sound.Parent = Folder
+        end
+        Attachment:Destroy()
+    end)
+end
+return v1

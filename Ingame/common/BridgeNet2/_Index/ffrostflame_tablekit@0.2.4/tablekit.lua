@@ -1,160 +1,224 @@
-local v_u_61 = {
-	["DeepCopy"] = function(p1) -- name: DeepCopy
-		-- upvalues: (copy) v_u_61
-		local v2 = table.clone(p1)
-		for v3, v4 in v2 do
-			if typeof(v4) == "table" then
-				v2[v3] = v_u_61.DeepCopy(v4)
-			end
-		end
-		return v2
-	end,
-	["MergeDictionary"] = function(p5, p6) -- name: MergeDictionary
-		local v7 = table.clone(p5)
-		for v8, v9 in p6 do
-			v7[v8] = v9
-		end
-		return v7
-	end,
-	["Keys"] = function(p10) -- name: Keys
-		local v11 = {}
-		for v12 in p10 do
-			table.insert(v11, v12)
-		end
-		return v11
-	end,
-	["Values"] = function(p13) -- name: Values
-		local v14 = {}
-		for _, v15 in p13 do
-			table.insert(v14, v15)
-		end
-		return v14
-	end,
-	["MergeArrays"] = function(p16, p17) -- name: MergeArrays
-		local v18 = table.clone(p16)
-		table.move(p17, 1, #p17, #v18 + 1, v18)
-		return v18
-	end,
-	["Reconcile"] = function(p19, p20) -- name: Reconcile
-		-- upvalues: (copy) v_u_61
-		local v21 = table.clone(p19)
-		for v22, v23 in p20 do
-			if v21[v22] == nil then
-				if typeof(v23) == "table" then
-					v21[v22] = v_u_61.DeepCopy(v23)
-				else
-					v21[v22] = v23
-				end
-			else
-				local v24 = p20[v22]
-				if typeof(v24) == "table" then
-					if typeof(v23) == "table" then
-						v21[v22] = v_u_61.Reconcile(v23, p20[v22])
-					else
-						v21[v22] = v_u_61.DeepCopy(p20[v22])
-					end
-				end
-			end
-		end
-		return v21
-	end,
-	["IsArray"] = function(p25) -- name: IsArray
-		local v26 = 0
-		for _ in p25 do
-			v26 = v26 + 1
-		end
-		return v26 == #p25
-	end,
-	["IsDictionary"] = function(p27) -- name: IsDictionary
-		local v28 = 0
-		for _ in p27 do
-			v28 = v28 + 1
-		end
-		return v28 ~= #p27
-	end,
-	["ToString"] = function(p29) -- name: ToString
-		local v30 = {}
-		for v31, v32 in p29 do
-			local v33
-			if typeof(v31) == "string" then
-				v33 = ("\"%*\""):format((tostring(v31)))
-			else
-				v33 = tostring(v31)
-			end
-			local v34 = tostring(v32)
-			if typeof(v32) == "string" then
-				v34 = ("\"%*\""):format(v34)
-			end
-			local v35 = ("\t[%*] = %*"):format(v33, v34)
-			table.insert(v30, v35)
-		end
-		return "{\n" .. table.concat(v30, "\n") .. "\n}"
-	end,
-	["ToArrayString"] = function(p36) -- name: ToArrayString
-		local v37 = {}
-		for _, v38 in p36 do
-			local v39 = tostring(v38)
-			if typeof(v38) == "string" then
-				v39 = ("\"%*\""):format(v39)
-			end
-			table.insert(v37, v39)
-		end
-		return "{" .. table.concat(v37, ", ") .. "}"
-	end,
-	["From"] = function(p40) -- name: From
-		local v41 = typeof(p40)
-		if v41 == "string" then
-			return string.split(p40, "")
-		else
-			return v41 == "Color3" and { p40.R, p40.G, p40.B } or (v41 == "Vector2" and { p40.X, p40.Y } or (v41 == "Vector3" and { p40.X, p40.Y, p40.Z } or (v41 ~= "NumberSequence" and (v41 == "Vector3int16" and { p40.X, p40.Y, p40.Z } or (v41 == "Vector2int16" and { p40.X, p40.Y } or { p40 })) or p40.Keypoints)))
-		end
-	end,
-	["Filter"] = function(p42, p43) -- name: Filter
-		local v44 = {}
-		for _, v45 in p42 do
-			if p43(v45) then
-				table.insert(v44, v45)
-			end
-		end
-		return v44
-	end,
-	["Some"] = function(p46, p47) -- name: Some
-		for _, v48 in p46 do
-			if p47(v48) == true then
-				return true
-			end
-		end
-		return false
-	end,
-	["IsFlat"] = function(p49) -- name: IsFlat
-		for _, v50 in p49 do
-			if typeof(v50) == "table" then
-				return false
-			end
-		end
-		return true
-	end,
-	["Every"] = function(p51, p52) -- name: Every
-		for v53, v54 in p51 do
-			if not p52(v54) then
-				return false, v53
-			end
-		end
-		return true
-	end,
-	["HasKey"] = function(p55, p56) -- name: HasKey
-		return p55[p56] ~= nil
-	end,
-	["HasValue"] = function(p57, p58) -- name: HasValue
-		for _, v59 in p57 do
-			if v59 == p58 then
-				return true
-			end
-		end
-		return false
-	end,
-	["IsEmpty"] = function(p60) -- name: IsEmpty
-		return next(p60) == nil
-	end
-}
-return table.freeze(v_u_61)
+local u0 = {}
+function u0.DeepCopy(p1) -- Line: 27 -- upvalues: u0 (val)
+    local v1 = table.clone(p1)
+    local v2 = v1
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        if typeof(j) == "table" then
+            v1[i] = u0.DeepCopy(j)
+        end
+    end
+    return v1
+end
+function u0.MergeDictionary(p1, p2) -- Line: 63
+    local v1 = table.clone(p1)
+    local v2 = p2
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        v1[i] = j
+    end
+    return v1
+end
+function u0.Keys(p1) -- Line: 93
+    local v1 = {}
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i in v2, v3, v4 do
+        table.insert(v1, i)
+    end
+    return v1
+end
+function u0.Values(p1) -- Line: 120
+    local v1 = {}
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        table.insert(v1, j)
+    end
+    return v1
+end
+function u0.MergeArrays(p1, p2) -- Line: 145
+    local v1 = table.clone(p1)
+    table.move(p2, 1, #p2, #v1 + 1, v1)
+    return v1
+end
+function u0.Reconcile(p1, p2) -- Line: 177 -- upvalues: u0 (val)
+    local v1 = table.clone(p1)
+    local v2 = p2
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        if v1[i] ~= nil then
+            if typeof(p2[i]) == "table" then
+                if typeof(j) ~= "table" then
+                    v1[i] = u0.DeepCopy(p2[i])
+                else
+                    v1[i] = u0.Reconcile(j, p2[i])
+                end
+            end
+        elseif typeof(j) ~= "table" then
+            v1[i] = j
+        else
+            v1[i] = u0.DeepCopy(j)
+        end
+    end
+    return v1
+end
+function u0.IsArray(p1) -- Line: 213
+    local v1 = 0
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i in v2, v3, v4 do
+        v1 = v1 + 1
+    end
+    v2 = v1 == #p1
+    return v2
+end
+function u0.IsDictionary(p1) -- Line: 235
+    local v1 = 0
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i in v2, v3, v4 do
+        v1 = v1 + 1
+    end
+    v2 = v1 ~= #p1
+    return v2
+end
+function u0.ToString(p1) -- Line: 264
+    local v1, v2, v3, v4
+    local v5 = {}
+    local v6 = p1
+    local v7 = nil
+    local v8 = nil
+    for i, j in v6, v7, v8 do
+        if typeof(i) ~= "string" then
+            v2 = tostring(i)
+        else
+            v2 = ("\"%*\""):format((tostring(i)))
+        end
+        v4 = tostring(j)
+        if typeof(j) ~= "string" then
+            v3 = v4
+        else
+            v3 = ("\"%*\""):format(v4)
+        end
+        v1 = ("\t[%*] = %*"):format(v2, v3)
+        table.insert(v5, v1)
+    end
+    v8 = table.concat(v5, "\n")
+    return "{\n" .. v8 .. "\n}"
+end
+function u0.ToArrayString(p1) -- Line: 288
+    local v1, v2
+    local v3 = {}
+    local v4 = p1
+    local v5 = nil
+    local v6 = nil
+    for i, j in v4, v5, v6 do
+        v2 = tostring(j)
+        if typeof(j) ~= "string" then
+            v1 = v2
+        else
+            v1 = ("\"%*\""):format(v2)
+        end
+        table.insert(v3, v1)
+    end
+    v6 = table.concat(v3, ", ")
+    return "{" .. v6 .. "}"
+end
+function u0.From(p1) -- Line: 317
+    local v1 = typeof(p1)
+    if v1 == "string" then
+        return string.split(p1, "")
+    end
+    if v1 == "Color3" then
+        return {p1.R, p1.G, p1.B}
+    end
+    if v1 == "Vector2" then
+        return {p1.X, p1.Y}
+    end
+    if v1 == "Vector3" then
+        return {p1.X, p1.Y, p1.Z}
+    end
+    if v1 == "NumberSequence" then
+        return p1.Keypoints
+    end
+    if v1 == "Vector3int16" then
+        return {p1.X, p1.Y, p1.Z}
+    end
+    if v1 == "Vector2int16" then
+        return {p1.X, p1.Y}
+    end
+    return {p1}
+end
+function u0.Filter(p1, p2) -- Line: 360
+    local v1 = {}
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        if p2(j) then
+            table.insert(v1, j)
+        end
+    end
+    return v1
+end
+function u0.Some(p1, p2) -- Line: 387
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if p2(j) == true then
+            return true
+        end
+    end
+    return false
+end
+function u0.IsFlat(p1) -- Line: 411
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if typeof(j) == "table" then
+            return false
+        end
+    end
+    return true
+end
+function u0.Every(p1, p2) -- Line: 437
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if not (p2(j)) then
+            return false, i
+        end
+    end
+    return true
+end
+function u0.HasKey(p1, p2) -- Line: 465
+    local v1 = p1[p2] ~= nil
+    return v1
+end
+function u0.HasValue(p1, p2) -- Line: 483
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if j == p2 then
+            return true
+        end
+    end
+    return false
+end
+function u0.IsEmpty(p1) -- Line: 506
+    local v1 = next(p1) == nil
+    return v1
+end
+return table.freeze(u0)

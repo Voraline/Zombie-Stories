@@ -1,453 +1,660 @@
-if workspace:WaitForChild("Values"):WaitForChild("IsLobby").Value then
-	return nil
+local Values = workspace:WaitForChild("Values")
+if Values:WaitForChild("IsLobby").Value then
+    return nil
 end
-local v_u_1 = game:GetService("RunService"):IsServer()
-local v_u_2 = game:GetService("Players")
-local v3 = game:GetService("ReplicatedStorage")
-local v_u_4 = game.ReplicatedStorage.common
-local v5 = game.ReplicatedStorage.common.RedEvents
-local v_u_6 = require(v_u_4.ProximityPromptZS)
-local v_u_7 = require("@game/ReplicatedStorage/common/PlayerHandler")
-local v_u_8 = require("@game/ReplicatedStorage/common/Objective")
-local v_u_9 = require("@game/ReplicatedStorage/common/Table")
-local v_u_10 = require(v3.common.ZS_Shared.Data.GameState)
-local v_u_11
-if v_u_1 then
-	v_u_11 = require(v3.common.skillTree.SkillTreeData)
+local u18 = game:GetService("RunService"):IsServer()
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local common = game.ReplicatedStorage.common
+local ProximityPromptZS = require(common.ProximityPromptZS)
+local u46 = require("@game/ReplicatedStorage/common/PlayerHandler")
+local u49 = require("@game/ReplicatedStorage/common/Objective")
+local u52 = require("@game/ReplicatedStorage/common/Table")
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+local MonetizationCatalog = require(ReplicatedStorage.common.ZS_Shared.Data.MonetizationCatalog)
+local CurrencyFormat = require(ReplicatedStorage.common.ZS_Framework.UI.CurrencyFormat)
+local PurchasePrompt = require(ReplicatedStorage.common.ZS_Shared.Util.PurchasePrompt)
+local u83 = if u18 then require(ReplicatedStorage.common.skillTree.SkillTreeData) else nil
+local DoReviveEvent = require(game.ReplicatedStorage.common.RedEvents.Framework.DoReviveEvent)
+local u152 = nil
+local u90 = nil
+local u91 = {}
+local u92 = {}
+local u93 = {}
+local u94 = nil
+local u95 = {}
+local u96 = nil
+if u18 then
+    Players.PlayerRemoving:Connect(function(p1) -- Line: 46 -- upvalues: u95 (val)
+        u95[p1] = nil
+    end)
+end
+local function getSelfRevives(p1) -- Line: 51
+    local v1, v2
+    v1, v2 = pcall(function() -- Line: 52 -- upvalues: p1 (val)
+        return game.ServerScriptService.common.Data.Bindables.GetData:Invoke(p1)
+    end)
+    if not v1 then
+        return 0
+    end
+    if type(v2) == "table" then
+        return tonumber(v2.SelfRevives) or 0
+    end
+    return 0
+end
+local function getReviveProductPrice() -- Line: 61 -- upvalues: u96 (ref), MonetizationCatalog (val), MarketplaceService (val)
+    if u96 then
+        return u96
+    end
+    local v1 = 35
+    local Revive1 = MonetizationCatalog.GetProduct("Revive1")
+    if Revive1 then
+        local v2, v3
+        v2, v3 = pcall(function() -- Line: 69 -- upvalues: MarketplaceService (upval), Revive1 (val)
+            return MarketplaceService:GetProductInfo(Revive1, Enum.InfoType.Product)
+        end)
+        if v2 and type(v3) == "table" then
+            v1 = tonumber(v3.PriceInRobux) or v1
+        end
+    end
+    u96 = v1
+    return u96
+end
+local function updateDownedMarkers() -- Line: 81 -- upvalues: u52 (val), u93 (val), u94 (ref), u49 (val)
+    local v1 = #u52.keys(u93)
+    if 0 >= v1 then
+        if u94 then
+            u94:Destroy()
+            u94 = nil
+        end
+        return
+    end
+    if not u94 then
+        u94 = u49.new({
+            Type = "interact",
+            Text = "Revive teammates",
+            ImageID = "rbxassetid://2706886795",
+            IsPrimary = false,
+            ProgressFormat = "",
+            AccentColor = Color3.fromRGB(255, 73, 73),
+        })
+    end
+    v1 = {}
+    local v2 = u93
+    local v3 = nil
+    local v4 = nil
+    for i in v2, v3, v4 do
+        if i.Parent and i.Character and i.Character.PrimaryPart then
+            table.insert(v1, i.Character.PrimaryPart)
+        end
+    end
+    u94.MarkerParts = v1
+end
+if u18 then
+    local ServerStorage = game:GetService("ServerStorage")
+    local common_2 = ServerStorage:FindFirstChild("common")
+    if common_2 then
+        common_2 = game:GetService("ServerStorage").common:FindFirstChild("ProgressionTracker")
+    end
+    if common_2 then
+        u152 = require(common_2)
+    end
+    local Data = game.ServerScriptService.common:FindFirstChild("Data")
+    if Data then
+        local Bindables = Data:FindFirstChild("Bindables")
+        local BoughtToken = Bindables
+        if BoughtToken then
+            BoughtToken = Bindables:FindFirstChild("BoughtToken")
+        end
+        if BoughtToken then
+            BoughtToken.Event:Connect(function(p1, p2) -- Line: 162 -- upvalues: u92 (val), u91 (val)
+                if p2 then
+                    local v1 = u92[p1]
+                    if v1 then
+                        v1:RefreshSelfPrompt()
+                    end
+                    if u91[p1] then
+                        u91[p1][p1].Triggered:Fire(p1)
+                    end
+                end
+            end)
+        end
+    end
 else
-	v_u_11 = nil
+    DoReviveEvent:SetClientListener(function(p1) -- Line: 110 -- upvalues: ProximityPromptZS (val), CurrencyFormat (val), u90 (ref), u93 (val), updateDownedMarkers (val)
+        local v1
+        local v2 = p1[1]
+        if v2 ~= "ChangeSelfPrompt" then
+            if v2 == "BeingRevived" then
+                v1 = tonumber(p1[2])
+                u90._PlayersReviving[p1[3]] = v1
+                return
+            end
+            if v2 == "StoppedReviving" then
+                u90._PlayersReviving[p1[2]] = nil
+                return
+            end
+            if v2 == "NotDowned" then
+                u93[p1[2]] = nil
+                updateDownedMarkers()
+            end
+            return
+        end
+        v1 = p1[2]
+        local v3 = tonumber(p1[3])
+        local v4 = p1[4]
+        local v5 = tonumber(p1[5]) or 35
+        if not (ProximityPromptZS:GetPromptByIdentifier(v1)) then
+            while not (ProximityPromptZS:GetPromptByIdentifier(v1)) do
+                task.wait()
+            end
+        end
+        local PromptByIdentifier = ProximityPromptZS:GetPromptByIdentifier(v1)
+        if not v4 then
+            if v4 then
+                PromptByIdentifier.ActionText = "Use AED+"
+                PromptByIdentifier.ObjectText = "(+1 AED) " .. v3 .. " Tokens"
+            elseif 0 >= v3 then
+                PromptByIdentifier.ActionText = "Buy Revive Token"
+                PromptByIdentifier.ObjectText = CurrencyFormat.Robux(v5)
+            else
+                PromptByIdentifier.ActionText = "Use Revive Token"
+                PromptByIdentifier.ObjectText = v3 .. " Left"
+            end
+        elseif v3 <= 0 then
+            PromptByIdentifier.ObjectText = "Self Revive"
+            PromptByIdentifier.ActionText = "Use AED+"
+        elseif v4 then
+            PromptByIdentifier.ActionText = "Use AED+"
+            PromptByIdentifier.ObjectText = "(+1 AED) " .. v3 .. " Tokens"
+        elseif 0 >= v3 then
+            PromptByIdentifier.ActionText = "Buy Revive Token"
+            PromptByIdentifier.ObjectText = CurrencyFormat.Robux(v5)
+        else
+            PromptByIdentifier.ActionText = "Use Revive Token"
+            PromptByIdentifier.ObjectText = v3 .. " Left"
+        end
+        PromptByIdentifier.HoldTime = 0.25
+        PromptByIdentifier.ResetOnRelease = false
+    end)
 end
-local v_u_12 = require(v5.Framework.DoReviveEvent)
-local v_u_13 = nil
-local v_u_14 = nil
-local v_u_15 = nil
-local v_u_16 = {}
-local v_u_17 = {}
-local v_u_18 = nil
-local function v_u_22() -- name: updateDownedMarkers
-	-- upvalues: (copy) v_u_9, (copy) v_u_17, (ref) v_u_18, (copy) v_u_8
-	if #v_u_9.keys(v_u_17) > 0 then
-		if not v_u_18 then
-			v_u_18 = v_u_8.new({
-				["Type"] = "interact",
-				["Text"] = "Revive teammates",
-				["ImageID"] = "rbxassetid://2706886795",
-				["AccentColor"] = nil,
-				["IsPrimary"] = false,
-				["ProgressFormat"] = "",
-				["AccentColor"] = Color3.fromRGB(255, 73, 73)
-			})
-		end
-		local v19 = {}
-		for v20 in v_u_17 do
-			if v20.Parent and (v20.Character and v20.Character.PrimaryPart) then
-				local v21 = v20.Character.PrimaryPart
-				table.insert(v19, v21)
-			end
-		end
-		v_u_18.MarkerParts = v19
-	elseif v_u_18 then
-		v_u_18:Destroy()
-		v_u_18 = nil
-	end
+local u183 = {}
+u183.__index = u183
+function u183.new(p1) -- Line: 180 -- upvalues: u183 (val), u18 (val), u90 (ref), common (val), u95 (val), MonetizationCatalog (val), MarketplaceService (val)
+    local u4 = setmetatable({}, u183)
+    if not u18 and p1.Player == game.Players.LocalPlayer then
+        u90 = u4
+    end
+    u4._PlayerState = require(common.PlayerHandler):WaitForPlayerState(p1.Player)
+    local v1 = {}
+    u4._PlayersReviving = v1
+    u4._Player = p1.Player
+    u4._UsedAED = false
+    u4._HasAED = false
+    u4.JoinConnection = nil
+    u4.EntitlementConnection = nil
+    if u18 then
+        v1 = u95[u4._Player]
+        if v1 == nil then
+            task.defer(function() -- Line: 198 -- upvalues: u4 (val), MonetizationCatalog (upval), MarketplaceService (upval), u95 (upval)
+                local u7 = u4._Player:GetAttribute("HasRevivePlusEntitlement") == true
+                pcall(function() -- Line: 200 -- upvalues: MonetizationCatalog (upval), MarketplaceService (upval), u4 (upval), u7 (ref)
+                    for i, v in ipairs(MonetizationCatalog.GetPassIds("RevivePlus")) do
+                        if MarketplaceService:UserOwnsGamePassAsync(u4._Player.UserId, v) then
+                            u7 = true
+                            return
+                        end
+                    end
+                end)
+                u95[u4._Player] = u7
+                u4._HasAED = u7
+                u4:RefreshSelfPrompt()
+            end)
+        else
+            u4._HasAED = v1
+        end
+        local AttributeChangedSignal = u4._Player:GetAttributeChangedSignal("HasRevivePlusEntitlement")
+        u4.EntitlementConnection = AttributeChangedSignal:Connect(function() -- Line: 213 -- upvalues: u4 (val), u95 (upval)
+            local v1 = u4._Player:GetAttribute("HasRevivePlusEntitlement") == true
+            u95[u4._Player] = v1
+            u4._HasAED = v1
+            u4:RefreshSelfPrompt()
+        end)
+    end
+    u4.ReviveProgress = 0
+    u4.Inactive = true
+    return u4
 end
-if v_u_1 then
-	local v23 = game:GetService("ServerStorage"):FindFirstChild("common")
-	if v23 then
-		v23 = game:GetService("ServerStorage").common:FindFirstChild("ProgressionTracker")
-	end
-	if v23 then
-		v_u_13 = require(v23)
-	end
-	local v24 = game.ServerScriptService.common:FindFirstChild("Data")
-	if v24 then
-		local v25 = v24:FindFirstChild("Bindables")
-		if v25 then
-			v25 = v25:FindFirstChild("BoughtToken")
-		end
-		if v25 then
-			v25.Event:Connect(function(p26, p27)
-				-- upvalues: (copy) v_u_16
-				if p27 and v_u_16[p26] then
-					v_u_16[p26][p26].Triggered:Fire(p26)
-				end
-			end)
-		end
-	end
-else
-	v_u_12:SetClientListener(function(p28)
-		-- upvalues: (copy) v_u_6, (ref) v_u_15, (ref) v_u_14, (copy) v_u_17, (copy) v_u_22
-		local v29 = p28[1]
-		if v29 == "ChangeSelfPrompt" then
-			local v30 = p28[2]
-			local v31 = p28[3]
-			local v32 = tonumber(v31)
-			local v33 = p28[4]
-			if not v_u_6:GetPromptByIdentifier(v30) then
-				while not v_u_6:GetPromptByIdentifier(v30) do
-					task.wait()
-				end
-			end
-			local v34 = v_u_6:GetPromptByIdentifier(v30)
-			if v33 then
-				if not v_u_15 then
-					v_u_15 = v32 - 1
-				end
-				if v_u_15 == 0 then
-					v34.ObjectText = "Self Revive"
-				else
-					v34.ObjectText = "(+1 AED) " .. v32 .. "/" .. v_u_15 .. " Tokens"
-				end
-				v34.ActionText = "Use AED+"
-			elseif v32 > 0 then
-				if not v_u_15 then
-					v_u_15 = v32
-				end
-				v34.ActionText = "Use Revive Token"
-				v34.ObjectText = v32 .. "/" .. v_u_15 .. " Left"
-			else
-				v34.ActionText = "Buy Revive Token"
-				v34.ObjectText = "35 R$"
-			end
-			v34.HoldTime = 0.25
-			v34.ResetOnRelease = false
-			return
-		elseif v29 == "BeingRevived" then
-			local v35 = p28[2]
-			local v36 = tonumber(v35)
-			local v37 = p28[3]
-			v_u_14._PlayersReviving[v37] = v36
-			return
-		elseif v29 == "StoppedReviving" then
-			local v38 = p28[2]
-			v_u_14._PlayersReviving[v38] = nil
-		elseif v29 == "NotDowned" then
-			v_u_17[p28[2]] = nil
-			v_u_22()
-		end
-	end)
+function u183.Serialize(p1) -- Line: 225
+    return {p1.Duration}
 end
-local v_u_39 = {}
-v_u_39.__index = v_u_39
-function v_u_39.new(p40) -- name: new
-	-- upvalues: (copy) v_u_39, (copy) v_u_1, (ref) v_u_14, (copy) v_u_4
-	local v41 = v_u_39
-	local v_u_42 = setmetatable({}, v41)
-	if not v_u_1 and p40.Player == game.Players.LocalPlayer then
-		v_u_14 = v_u_42
-	end
-	v_u_42._PlayerState = require(v_u_4.PlayerHandler):WaitForPlayerState(p40.Player)
-	v_u_42._PlayersReviving = {}
-	v_u_42._Player = p40.Player
-	v_u_42._UsedAED = false
-	v_u_42._HasAED = false
-	v_u_42.JoinConnection = nil
-	if v_u_1 then
-		task.defer(function()
-			-- upvalues: (copy) v_u_42
-			local v_u_43 = false
-			local _, _ = pcall(function()
-				-- upvalues: (ref) v_u_42, (ref) v_u_43
-				local v44 = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(v_u_42._Player.UserId, 10504574) or game:GetService("MarketplaceService"):UserOwnsGamePassAsync(v_u_42._Player.UserId, 6934680)
-				if v44 then
-					v_u_43 = v44
-				end
-			end)
-			v_u_42._HasAED = v_u_43
-		end)
-	end
-	v_u_42.ReviveProgress = 0
-	v_u_42.Inactive = true
-	return v_u_42
+function u183.CopyStatus(p1, p2, p3) -- Line: 231
+    p1._UsedAED = p2._UsedAED
+    p1._HasAED = p2._HasAED
+    p1._RevivesLeft = p2._RevivesLeft
+    p1.Duration = p2.Duration
+    p1.ReviveProgress = p2.ReviveProgress
+    p1.Inactive = p2.Inactive
+    if not p1.Inactive then
+        p1:Apply(p3, p1.Duration)
+    end
 end
-function v_u_39.Serialize(p45) -- name: Serialize
-	return { p45.Duration }
+function u183:DeletePrompts() -- Line: 243 -- upvalues: u91 (val), u92 (val)
+    local _RevivePrompts
+    if self._RevivePrompts then
+        _RevivePrompts = self._RevivePrompts
+        local v1 = nil
+        local v2 = nil
+        for i, j in _RevivePrompts, v1, v2 do
+            j:Destroy()
+        end
+        u91[self._Player] = nil
+        u92[self._Player] = nil
+        self._RevivePrompts = nil
+    end
+    table.clear(self._PlayersReviving)
 end
-function v_u_39.CopyStatus(p46, p47, p48) -- name: CopyStatus
-	p46._UsedAED = p47._UsedAED
-	p46._HasAED = p47._HasAED
-	p46._RevivesLeft = p47._RevivesLeft
-	p46.Duration = p47.Duration
-	p46.ReviveProgress = p47.ReviveProgress
-	p46.Inactive = p47.Inactive
-	if not p46.Inactive then
-		p46:Apply(p48, p46.Duration)
-	end
+function u183:InitalizeRevives() -- Line: 255 -- upvalues: u18 (val), GameState (val), u83 (ref)
+    if u18 then
+        local v1
+        local v2 = GameState.Data.Variables.PlayerDowns or 3
+        if not u83 then
+            v1 = 0
+        else
+            v1 = u83.getExtraDowns(self._Player)
+            if not v1 then
+                v1 = 0
+            end
+        end
+        self._RevivesLeft = v2 + v1
+    end
 end
-function v_u_39.DeletePrompts(p49) -- name: DeletePrompts
-	-- upvalues: (copy) v_u_16
-	if p49._RevivePrompts then
-		for _, v50 in p49._RevivePrompts do
-			v50:Destroy()
-		end
-		v_u_16[p49._Player] = nil
-		p49._RevivePrompts = nil
-	end
-	table.clear(p49._PlayersReviving)
+function u183.ResetRunState(p1) -- Line: 264
+    p1:InitalizeRevives()
+    p1._UsedAED = false
 end
-function v_u_39.InitalizeRevives(p51) -- name: InitalizeRevives
-	-- upvalues: (copy) v_u_1, (copy) v_u_10, (ref) v_u_11
-	if v_u_1 then
-		p51._RevivesLeft = (v_u_10.Data.Variables.PlayerDowns or 3) + (v_u_11 and (v_u_11.getExtraDowns(p51._Player) or 0) or 0)
-	end
+function u183:RefreshSelfPrompt() -- Line: 269 -- upvalues: u18 (val), DoReviveEvent (val), getReviveProductPrice (val)
+    local v1, v2, v3
+    if not u18 or self.Inactive then
+        return
+    end
+    local _RevivePrompts = self._RevivePrompts
+    if _RevivePrompts then
+        _RevivePrompts = self._RevivePrompts[self._Player]
+    end
+    if not _RevivePrompts or not _RevivePrompts.Enabled then
+        return
+    end
+    local _Player = self._Player
+    v2, v3 = pcall(function() -- Line: 52 -- upvalues: _Player (val)
+        return game.ServerScriptService.common.Data.Bindables.GetData:Invoke(_Player)
+    end)
+    if not v2 then
+        v1 = 0
+    elseif type(v3) ~= "table" then
+        v1 = 0
+    else
+        v1 = tonumber(v3.SelfRevives) or 0
+    end
+    local _HasAED = self._HasAED
+    if _HasAED then
+        _HasAED = not self._UsedAED
+    end
+    local v4 = {}
+    local v5 = tostring(v1)
+    v4[1] = "ChangeSelfPrompt"
+    v4[2] = _RevivePrompts._Identifier
+    v4[3] = v5
+    v4[4] = _HasAED or nil
+    v4[5] = (tostring((getReviveProductPrice())))
+    DoReviveEvent:FireClient(self._Player, v4)
 end
-function v_u_39.Apply(p_u_52, p53, p54) -- name: Apply
-	-- upvalues: (copy) v_u_1, (ref) v_u_13, (copy) v_u_7, (copy) v_u_12, (copy) v_u_6, (copy) v_u_2, (copy) v_u_16, (copy) v_u_17, (copy) v_u_22
-	p_u_52.Duration = p54 or 30
-	p_u_52.Inactive = false
-	p_u_52._MaxReviveTime = 5
-	if v_u_1 and not p_u_52._RevivesLeft then
-		p_u_52:InitalizeRevives()
-	end
-	p_u_52:DeletePrompts()
-	local v_u_55 = p53.Player
-	local v56
-	if v_u_55.Character and v_u_55.Character.Parent then
-		v56 = v_u_55.Character.PrimaryPart ~= nil
-	else
-		v56 = false
-	end
-	if v56 then
-		if v_u_1 then
-			local v_u_57 = v_u_55.Character.PrimaryPart
-			if v_u_57 then
-				if v_u_13 then
-					v_u_13:AddToLeaderStat(v_u_55, "Downs", 1)
-				end
-				table.clear(p_u_52._PlayersReviving)
-				local function v_u_62(p58) -- name: onInteractBegan
-					-- upvalues: (ref) v_u_7, (copy) v_u_55, (copy) p_u_52, (ref) v_u_13, (ref) v_u_12
-					local v59 = v_u_7:GetPlayerState(p58)
-					if v59 and (not v59.IsDowned and (not v59.IsDead and (p58 ~= v_u_55 and not p_u_52._PlayersReviving[p58]))) then
-						local v60 = v_u_13
-						if v60 then
-							v60 = v_u_13:GetClass(p58)
-						end
-						local v61 = (v60 == "Medic" and 2.5 or 5) - 0.33
-						p_u_52._PlayersReviving[p58] = v61
-						v_u_12:FireClient(v_u_55, { "BeingRevived", tostring(v61), p58 })
-					end
-				end
-				local function v_u_65(p63) -- name: onInteractEnded
-					-- upvalues: (ref) v_u_7, (copy) v_u_55, (copy) p_u_52, (ref) v_u_12
-					local v64 = v_u_7:GetPlayerState(p63)
-					if v64 and (not v64.IsDowned and (not v64.IsDead and (p63 ~= v_u_55 and p_u_52._PlayersReviving[p63]))) then
-						p_u_52._PlayersReviving[p63] = nil
-						v_u_12:FireClient(v_u_55, { "StoppedReviving", p63 })
-					end
-				end
-				local function v_u_75(p66) -- name: onTriggered
-					-- upvalues: (copy) v_u_55, (copy) p_u_52, (ref) v_u_12, (copy) v_u_57
-					if p66 == v_u_55 then
-						local v67 = p_u_52._HasAED
-						if v67 then
-							v67 = not p_u_52._UsedAED
-						end
-						local v68, v69 = game.ServerScriptService.common.Data.Bindables.GetData:Invoke(p66)
-						if not v69 or v67 then
-							if v67 or v68.SelfRevives and v68.SelfRevives > 0 then
-								p_u_52._PlayersReviving[p66] = 5
-								v_u_12:FireClient(v_u_55, { "BeingRevived", tostring(5), p66 })
-								p_u_52._RevivePrompts[p66].Enabled = false
-								local v70 = p_u_52
-								v70._RevivesLeft = v70._RevivesLeft + 1
-								if v67 then
-									p_u_52._UsedAED = true
-								else
-									require("@game/ServerStorage/common/DataStore2")(game.ServerScriptService.common.Data.MAIN_DATASTORE_NAME.Value, v_u_55):Update(function(p71)
-										if not p71.SelfRevives then
-											p71.SelfRevives = 0
-										end
-										p71.SelfRevives = p71.SelfRevives - 1
-										return p71
-									end)
-								end
-								local v_u_72 = Instance.new("Sound")
-								v_u_72.SoundId = "rbxassetid://9057348814"
-								v_u_72.Volume = 1
-								local v_u_73 = Instance.new("Sound")
-								v_u_73.SoundId = "rbxassetid://9057349072"
-								v_u_73.Volume = 2
-								v_u_72.Parent = v_u_57
-								v_u_73.Parent = v_u_57
-								v_u_72:Play()
-								v_u_73:Play()
-								task.delay(5, function()
-									-- upvalues: (ref) v_u_57, (copy) v_u_72, (copy) v_u_73
-									if v_u_57.Parent then
-										v_u_72:Destroy()
-										v_u_73:Destroy()
-										local v74 = Instance.new("Sound")
-										v74.SoundId = "rbxassetid://4879269872"
-										v74.Volume = 1
-										v74.Parent = v_u_57
-										v74:Play()
-										task.wait(10)
-										v74:Destroy()
-									end
-								end)
-								return
-							end
-							game:GetService("MarketplaceService"):PromptProductPurchase(p66, 972288148)
-						end
-					end
-				end
-				p_u_52._RevivePrompts = {}
-				local function v79(p76) -- name: createPrompt
-					-- upvalues: (ref) v_u_13, (ref) v_u_6, (copy) v_u_55, (copy) v_u_57, (copy) p_u_52, (copy) v_u_62, (copy) v_u_65, (copy) v_u_75
-					local v77 = v_u_13
-					if v77 then
-						v77 = v_u_13:GetClass(p76)
-					end
-					local v78 = v_u_6.new({
-						["ActionText"] = "REVIVE",
-						["ObjectText"] = nil,
-						["Part"] = nil,
-						["Range"] = 6,
-						["Obstructable"] = false,
-						["HoldTime"] = nil,
-						["ResetOnRelease"] = true,
-						["Players"] = nil,
-						["ObjectText"] = v_u_55.Name,
-						["Part"] = v_u_57,
-						["HoldTime"] = v77 == "Medic" and 2.5 or 5,
-						["Players"] = { p76 }
-					})
-					p_u_52._RevivePrompts[p76] = v78
-					v78.InteractBegan:Connect(v_u_62)
-					v78.InteractEnded:Connect(v_u_65)
-					v78.Triggered:Connect(v_u_75)
-				end
-				for _, v80 in v_u_2:GetPlayers() do
-					v79(v80)
-				end
-				p_u_52.JoinConnection = v_u_2.PlayerAdded:Connect(v79)
-				v_u_16[v_u_55] = p_u_52._RevivePrompts
-				local v81, v82 = game.ServerScriptService.common.Data.Bindables.GetData:Invoke(v_u_55)
-				local v83 = (v82 or not v81.SelfRevives) and 0 or v81.SelfRevives
-				if p_u_52._HasAED and not p_u_52._UsedAED then
-					v83 = v83 + 1
-				end
-				v_u_12:FireClient(v_u_55, {
-					"ChangeSelfPrompt",
-					p_u_52._RevivePrompts[v_u_55]._Identifier,
-					tostring(v83),
-					p_u_52._HasAED and not p_u_52._UsedAED or nil
-				})
-			end
-		end
-		if v_u_55 ~= game.Players.LocalPlayer then
-			v_u_17[v_u_55] = true
-			v_u_22()
-		end
-	end
+function u183:Apply(p2, p3) -- Line: 290 -- upvalues: u18 (val), u152 (ref), u46 (val), DoReviveEvent (val), MonetizationCatalog (val), PurchasePrompt (val), ProximityPromptZS (val), Players (val), u91 (val), u92 (val), u93 (val), updateDownedMarkers (val)
+    local PrimaryPart
+    self.Duration = p3 or 30
+    self.Inactive = false
+    self._MaxReviveTime = 5
+    if u18 and not self._RevivesLeft then
+        self:InitalizeRevives()
+    end
+    self:DeletePrompts()
+    local Player = p2.Player
+    local v1 = if Player.Character and Player.Character.Parent then Player.Character.PrimaryPart ~= nil else false
+    if not v1 then
+        return
+    end
+    if not u18 then
+        if Player ~= game.Players.LocalPlayer then
+            u93[Player] = true
+            updateDownedMarkers()
+        end
+        return
+    end
+    PrimaryPart = Player.Character.PrimaryPart
+    if not PrimaryPart then
+        return
+    end
+    if u152 then
+        u152:AddToLeaderStat(Player, "Downs", 1)
+    end
+    table.clear(self._PlayersReviving)
+    local function onInteractBegan(p1) -- Line: 322 -- upvalues: u46 (upval), Player (val), self (val), u152 (upval), DoReviveEvent (upval)
+        local PlayerState = u46:GetPlayerState(p1)
+        if PlayerState and not PlayerState.IsDowned and not PlayerState.IsDead and p1 ~= Player and not (self._PlayersReviving[p1]) then
+            local v1
+            local Class = u152
+            if Class then
+                Class = u152:GetClass(p1)
+            end
+            if Class ~= "Medic" then
+                v1 = 5
+            else
+                v1 = 2.5
+            end
+            local v2 = v1 - 0.33
+            self._PlayersReviving[p1] = v2
+            local v3 = {}
+            local v4 = tostring(v2)
+            v3[1] = "BeingRevived"
+            v3[2] = v4
+            v3[3] = p1
+            DoReviveEvent:FireClient(Player, v3)
+        end
+    end
+    local function onInteractEnded(p1) -- Line: 336 -- upvalues: u46 (upval), Player (val), self (val), DoReviveEvent (upval)
+        local PlayerState = u46:GetPlayerState(p1)
+        if PlayerState and not PlayerState.IsDowned and not PlayerState.IsDead and p1 ~= Player and self._PlayersReviving[p1] then
+            self._PlayersReviving[p1] = nil
+            DoReviveEvent:FireClient(Player, {"StoppedReviving", p1})
+        end
+    end
+    local function onTriggered(p1) -- Line: 347 -- upvalues: Player (val), self (val), DoReviveEvent (upval), PrimaryPart (val), MonetizationCatalog (upval), PurchasePrompt (upval)
+        local Sound, Sound_2, v1, v2, v3, v4, v5
+        if p1 ~= Player then
+            return
+        end
+        local _HasAED = self._HasAED
+        if _HasAED then
+            _HasAED = not self._UsedAED
+        end
+        v2, v3 = pcall(function() -- Line: 52 -- upvalues: p1 (val)
+            return game.ServerScriptService.common.Data.Bindables.GetData:Invoke(p1)
+        end)
+        if not v2 then
+            v1 = 0
+        elseif type(v3) == "table" then
+            v1 = tonumber(v3.SelfRevives) or 0
+        end
+        if _HasAED then
+            self._PlayersReviving[p1] = 5
+            v4 = {}
+            v5 = tostring(5)
+            v4[1] = "BeingRevived"
+            v4[2] = v5
+            v4[3] = p1
+            DoReviveEvent:FireClient(Player, v4)
+            v2 = self._RevivePrompts[p1]
+            v2.Enabled = false
+            v2 = self
+            v2._RevivesLeft = v2._RevivesLeft + 1
+            if _HasAED then
+                self._UsedAED = true
+            else
+                v2 = require("@game/ServerStorage/common/DataStore2")
+                v2(game.ServerScriptService.common.Data.MAIN_DATASTORE_NAME.Value, Player):Update(function(p1) -- Line: 365
+                    if not p1.SelfRevives then
+                        p1.SelfRevives = 0
+                    end
+                    p1.SelfRevives = p1.SelfRevives - 1
+                    return p1
+                end)
+            end
+            Sound = Instance.new("Sound")
+            Sound.SoundId = "rbxassetid://9057348814"
+            Sound.Volume = 1
+            Sound_2 = Instance.new("Sound")
+            Sound_2.SoundId = "rbxassetid://9057349072"
+            Sound_2.Volume = 2
+            Sound.Parent = PrimaryPart
+            Sound_2.Parent = PrimaryPart
+            Sound:Play()
+            Sound_2:Play()
+            task.delay(5, function() -- Line: 390 -- upvalues: PrimaryPart (upval), Sound (val), Sound_2 (val)
+                if not PrimaryPart.Parent then
+                    return
+                end
+                Sound:Destroy()
+                Sound_2:Destroy()
+                local Sound_3 = Instance.new("Sound")
+                Sound_3.SoundId = "rbxassetid://4879269872"
+                Sound_3.Volume = 1
+                Sound_3.Parent = PrimaryPart
+                Sound_3:Play()
+                task.wait(10)
+                Sound_3:Destroy()
+            end)
+            return
+        end
+        if 0 >= v1 then
+            local Revive1 = MonetizationCatalog.GetProduct("Revive1")
+            if Revive1 then
+                PurchasePrompt.Product(p1, Revive1)
+            end
+            return
+        end
+        self._PlayersReviving[p1] = 5
+        v4 = {}
+        v5 = tostring(5)
+        v4[1] = "BeingRevived"
+        v4[2] = v5
+        v4[3] = p1
+        DoReviveEvent:FireClient(Player, v4)
+        v2 = self._RevivePrompts[p1]
+        v2.Enabled = false
+        v2 = self
+        v2._RevivesLeft = v2._RevivesLeft + 1
+        if _HasAED then
+            self._UsedAED = true
+        else
+            v2 = require("@game/ServerStorage/common/DataStore2")
+            v2(game.ServerScriptService.common.Data.MAIN_DATASTORE_NAME.Value, Player):Update(function(p1) -- Line: 365
+                if not p1.SelfRevives then
+                    p1.SelfRevives = 0
+                end
+                p1.SelfRevives = p1.SelfRevives - 1
+                return p1
+            end)
+        end
+        Sound = Instance.new("Sound")
+        Sound.SoundId = "rbxassetid://9057348814"
+        Sound.Volume = 1
+        Sound_2 = Instance.new("Sound")
+        Sound_2.SoundId = "rbxassetid://9057349072"
+        Sound_2.Volume = 2
+        Sound.Parent = PrimaryPart
+        Sound_2.Parent = PrimaryPart
+        Sound:Play()
+        Sound_2:Play()
+        task.delay(5, function() -- Line: 390 -- upvalues: PrimaryPart (upval), Sound (val), Sound_2 (val)
+            if not PrimaryPart.Parent then
+                return
+            end
+            Sound:Destroy()
+            Sound_2:Destroy()
+            local Sound_3 = Instance.new("Sound")
+            Sound_3.SoundId = "rbxassetid://4879269872"
+            Sound_3.Volume = 1
+            Sound_3.Parent = PrimaryPart
+            Sound_3:Play()
+            task.wait(10)
+            Sound_3:Destroy()
+        end)
+    end
+    self._RevivePrompts = {}
+    local function createPrompt(p1) -- Line: 416 -- upvalues: u152 (upval), ProximityPromptZS (upval), Player (val), PrimaryPart (val), self (val), onInteractBegan (val), onInteractEnded (val), onTriggered (val)
+        local v1
+        local Class = u152
+        if Class then
+            Class = u152:GetClass(p1)
+        end
+        local v2 = {
+            ActionText = "REVIVE",
+            Range = 6,
+            Obstructable = false,
+            ResetOnRelease = true,
+            ObjectText = Player.Name,
+            Part = PrimaryPart,
+        }
+        if Class ~= "Medic" then
+            v1 = 5
+        else
+            v1 = 2.5
+        end
+        v2.HoldTime = v1
+        v2.Players = {p1}
+        local v3 = ProximityPromptZS.new(v2)
+        self._RevivePrompts[p1] = v3
+        v3.InteractBegan:Connect(onInteractBegan)
+        v3.InteractEnded:Connect(onInteractEnded)
+        v3.Triggered:Connect(onTriggered)
+    end
+    for i, j in Players:GetPlayers() do
+        createPrompt(j)
+    end
+    self.JoinConnection = Players.PlayerAdded:Connect(createPrompt)
+    u91[Player] = self._RevivePrompts
+    u92[Player] = self
+    self:RefreshSelfPrompt()
 end
-function v_u_39.Update(p_u_84, p85) -- name: Update
-	-- upvalues: (copy) v_u_1, (copy) v_u_12
-	if p_u_84.Duration <= 0 or p_u_84.Inactive then
-		return
-	else
-		if v_u_1 then
-			for v86, _ in p_u_84._PlayersReviving do
-				if not v86.Parent then
-					p_u_84._PlayersReviving[v86] = nil
-				end
-			end
-			p_u_84._PlayerState.BeingRevived = next(p_u_84._PlayersReviving) ~= nil
-		end
-		if not p_u_84._PlayerState.BeingRevived then
-			p_u_84.Duration = p_u_84.Duration - p85
-		end
-		if p_u_84.Duration <= 0 then
-			p_u_84.Duration = 0
-		end
-		if v_u_1 and p_u_84._PlayerState.HP > 0 then
-			if p_u_84.JoinConnection then
-				p_u_84.JoinConnection:Disconnect()
-				p_u_84.JoinConnection = nil
-			end
-			p_u_84._PlayerState.IsDowned = false
-			p_u_84._PlayerState.BeingRevived = false
-			p_u_84.Inactive = true
-			p_u_84:DeletePrompts()
-			v_u_12:FireAllClients({ "NotDowned", p_u_84._PlayerState.Player })
-			return
-		else
-			if next(p_u_84._PlayersReviving) then
-				local v87 = p_u_84._MaxReviveTime
-				for v88, v89 in p_u_84._PlayersReviving do
-					if p_u_84._MaxReviveTime < v89 then
-						p_u_84._MaxReviveTime = v89
-					end
-					local v90 = p_u_84._PlayersReviving
-					v90[v88] = v90[v88] - p85
-					if p_u_84._PlayersReviving[v88] <= 0 then
-						p_u_84._PlayersReviving[v88] = 0
-					end
-					if p_u_84._PlayersReviving[v88] <= v87 then
-						v87 = p_u_84._PlayersReviving[v88]
-					end
-				end
-				local v91 = 1 - v87 / p_u_84._MaxReviveTime
-				p_u_84.ReviveProgress = math.clamp(v91, 0, 1)
-			else
-				p_u_84.ReviveProgress = 0
-			end
-			if v_u_1 and p_u_84.ReviveProgress >= 1 then
-				if game.ReplicatedStorage:FindFirstChild("place") then
-					local v92 = require("@game/ServerStorage/place/StoryModule")
-					local v93 = p_u_84._Player
-					for _, v94 in v92:GetAllNPCs() do
-						if v93:DistanceFromCharacter(v94.HRP.Position) < 10 then
-							v94:Stun(3)
-						end
-					end
-				end
-				local v95 = p_u_84._PlayerState.GodMode
-				local v96 = p_u_84._Player
-				local v_u_97 = Instance.new("ForceField", v96.Character)
-				if not v95 then
-					p_u_84._PlayerState.GodMode = true
-					task.delay(5, function()
-						-- upvalues: (copy) v_u_97, (copy) p_u_84
-						v_u_97:Destroy()
-						p_u_84._PlayerState.GodMode = false
-					end)
-				end
-				p_u_84._PlayerState.HP = 100
-				p_u_84._RevivesLeft = p_u_84._RevivesLeft - 1
-				v_u_12:FireAllClients({ "NotDowned", p_u_84._PlayerState.Player })
-				return
-			elseif p_u_84.Duration <= 0 or v_u_1 and p_u_84._RevivesLeft <= 0 then
-				if v_u_1 then
-					if p_u_84._PlayerState.HP <= 0 then
-						p_u_84._PlayerState.IsDead = true
-					end
-					p_u_84._PlayerState.IsDowned = false
-					p_u_84._PlayerState.BeingRevived = false
-					if p_u_84.JoinConnection then
-						p_u_84.JoinConnection:Disconnect()
-						p_u_84.JoinConnection = nil
-					end
-					v_u_12:FireAllClients({ "NotDowned", p_u_84._PlayerState.Player })
-				end
-				p_u_84.Inactive = true
-				p_u_84:DeletePrompts()
-			end
-		end
-	end
+function u183:Update(p2) -- Line: 454 -- upvalues: u18 (val), DoReviveEvent (val)
+    if self.Duration <= 0 then
+        return
+    else
+        local _PlayersReviving, v1, v2
+        if self.Inactive then
+            return
+        end
+        if u18 then
+            _PlayersReviving = self._PlayersReviving
+            v1 = nil
+            v2 = nil
+            for i, j in _PlayersReviving, v1, v2 do
+                if not i.Parent then
+                    self._PlayersReviving[i] = nil
+                end
+            end
+            v1 = next(self._PlayersReviving) ~= nil
+            self._PlayerState.BeingRevived = v1
+        end
+        if not self._PlayerState.BeingRevived then
+            self.Duration = self.Duration - p2
+        end
+        if self.Duration <= 0 then
+            self.Duration = 0
+        end
+        if not u18 then
+            local u163
+            if not (next(self._PlayersReviving)) then
+                self.ReviveProgress = 0
+                u163 = self
+            else
+                local _PlayersReviving_3, v3
+                local _MaxReviveTime = self._MaxReviveTime
+                local _PlayersReviving_2 = self._PlayersReviving
+                v2 = nil
+                local v4 = nil
+                u163 = self
+                for k, n in _PlayersReviving_2, v2, v4 do
+                    if u163._MaxReviveTime < n then
+                        u163._MaxReviveTime = n
+                    end
+                    _PlayersReviving_3 = u163._PlayersReviving
+                    _PlayersReviving_3[k] = _PlayersReviving_3[k] - v5
+                    v3 = u163._PlayersReviving[k]
+                    if v3 <= 0 then
+                        u163._PlayersReviving[k] = 0
+                    end
+                    if u163._PlayersReviving[k] <= _MaxReviveTime then
+                        _MaxReviveTime = u163._PlayersReviving[k]
+                    end
+                end
+                u163.ReviveProgress = math.clamp(1 - _MaxReviveTime / u163._MaxReviveTime, 0, 1)
+            end
+            if not u18 then
+                if u163.Duration <= 0 then
+                    if u18 then
+                        if u163._PlayerState.HP <= 0 then
+                            u163._PlayerState.IsDead = true
+                        end
+                        u163._PlayerState.IsDowned = false
+                        u163._PlayerState.BeingRevived = false
+                        if u163.JoinConnection then
+                            u163.JoinConnection:Disconnect()
+                            u163.JoinConnection = nil
+                        end
+                        DoReviveEvent:FireAllClients({"NotDowned", u163._PlayerState.Player})
+                    end
+                    u163.Inactive = true
+                    u163:DeletePrompts()
+                    return
+                elseif not u18 then
+                    return
+                elseif u163._RevivesLeft > 0 then
+                    return
+                end
+            elseif 1 <= u163.ReviveProgress then
+                if game.ReplicatedStorage:FindFirstChild("place") then
+                    local v6
+                    v1 = require("@game/ServerStorage/place/StoryModule")
+                    for m, i5 in v1:GetAllNPCs() do
+                        v6 = u163._Player:DistanceFromCharacter(i5.HRP.Position)
+                        if v6 < 10 then
+                            i5:Stun(3)
+                        end
+                    end
+                end
+                local u170 = Instance.new("ForceField", u163._Player.Character)
+                if not u163._PlayerState.GodMode then
+                    u163._PlayerState.GodMode = true
+                    task.delay(5, function() -- Line: 552 -- upvalues: u170 (val), u163 (val)
+                        u170:Destroy()
+                        u163._PlayerState.GodMode = false
+                    end)
+                end
+                u163._PlayerState.HP = 100
+                u163._RevivesLeft = u163._RevivesLeft - 1
+                DoReviveEvent:FireAllClients({"NotDowned", u163._PlayerState.Player})
+                return
+            end
+        elseif 0 < self._PlayerState.HP then
+            if self.JoinConnection then
+                self.JoinConnection:Disconnect()
+                self.JoinConnection = nil
+            end
+            self._PlayerState.IsDowned = false
+            self._PlayerState.BeingRevived = false
+            self.Inactive = true
+            self:DeletePrompts()
+            DoReviveEvent:FireAllClients({"NotDowned", self._PlayerState.Player})
+            return
+        end
+    end
 end
-function v_u_39.Destroy(p98) -- name: Destroy
-	-- upvalues: (copy) v_u_17, (copy) v_u_22
-	if p98.JoinConnection then
-		p98.JoinConnection:Disconnect()
-		p98.JoinConnection = nil
-	end
-	p98:DeletePrompts()
-	v_u_17[p98._PlayerState.Player] = nil
-	v_u_22()
-	setmetatable(p98, nil)
-	table.clear(p98)
-	table.freeze(p98)
+function u183:Destroy() -- Line: 593 -- upvalues: u93 (val), updateDownedMarkers (val)
+    if self.JoinConnection then
+        self.JoinConnection:Disconnect()
+        self.JoinConnection = nil
+    end
+    self:DeletePrompts()
+    if self.EntitlementConnection then
+        self.EntitlementConnection:Disconnect()
+        self.EntitlementConnection = nil
+    end
+    u93[self._PlayerState.Player] = nil
+    updateDownedMarkers()
+    setmetatable(self, nil)
+    table.clear(self)
+    table.freeze(self)
 end
-return v_u_39
+return u183

@@ -1,197 +1,171 @@
-local v1 = game:GetService("Players")
-local v_u_2 = game:GetService("TweenService")
-local v_u_3 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local v_u_4 = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local v5 = Instance.new("ScreenGui")
-v5.Name = "HintSystem"
-v5.ResetOnSpawn = false
-v5.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-v5.IgnoreGuiInset = true
-v5.DisplayOrder = 10
-v5.Parent = v1.LocalPlayer:WaitForChild("PlayerGui")
-local v_u_6 = Instance.new("Frame")
-v_u_6.Name = "Messages"
-v_u_6.AnchorPoint = Vector2.new(0.5, 0)
-v_u_6.BackgroundTransparency = 1
-v_u_6.Position = UDim2.fromScale(0.5, 0.15)
-v_u_6.Size = UDim2.fromScale(0.7, 0.18)
-v_u_6.Parent = v5
-local v7 = Instance.new("UIListLayout")
-v7.HorizontalAlignment = Enum.HorizontalAlignment.Center
-v7.SortOrder = Enum.SortOrder.LayoutOrder
-v7.Padding = UDim.new(0, 4)
-v7.Parent = v_u_6
-local v_u_8 = Instance.new("Sound")
-v_u_8.Name = "Bleep"
-v_u_8.SoundId = "rbxassetid://9125938067"
-v_u_8.Parent = v5
-local v_u_9 = Instance.new("Sound")
-v_u_9.Name = "Error"
-v_u_9.SoundId = "rbxassetid://97329712338974"
-v_u_9.Parent = v5
-local v_u_10 = {}
-local v_u_11 = {}
-local function v_u_16(p12) -- name: createMessageFrame
-	-- upvalues: (copy) v_u_6, (copy) v_u_2, (copy) v_u_3
-	local v13 = Instance.new("Frame")
-	v13.BackgroundTransparency = 1
-	v13.Size = UDim2.new(1, 0, 0, 30)
-	v13.AutomaticSize = Enum.AutomaticSize.Y
-	local v14 = Instance.new("TextLabel")
-	v14.AnchorPoint = Vector2.new(0.5, 0)
-	v14.BackgroundTransparency = 1
-	v14.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold)
-	v14.Position = UDim2.fromScale(0.5, 0)
-	v14.RichText = true
-	v14.Size = UDim2.fromScale(1, 1)
-	v14.Text = p12
-	v14.TextColor3 = Color3.fromRGB(245, 245, 245)
-	v14.TextScaled = true
-	v14.TextTransparency = 1
-	v14.Parent = v13
-	local v15 = Instance.new("UIStroke")
-	v15.Thickness = 2
-	v15.Transparency = 1
-	v15.StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize
-	v15.Thickness = 0.05
-	v15.Parent = v14
-	v13.Parent = v_u_6
-	v_u_2:Create(v14, v_u_3, {
-		["TextTransparency"] = 0
-	}):Play()
-	v_u_2:Create(v15, v_u_3, {
-		["Transparency"] = 0.7
-	}):Play()
-	return {
-		["frame"] = nil,
-		["label"] = nil,
-		["stroke"] = nil,
-		["count"] = 1,
-		["timerThread"] = nil,
-		["frame"] = v13,
-		["label"] = v14,
-		["stroke"] = v15
-	}
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local u14 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local u19 = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HintSystem"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.DisplayOrder = 10
+ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+local Frame = Instance.new("Frame")
+Frame.Name = "Messages"
+Frame.AnchorPoint = Vector2.new(0.5, 0)
+Frame.BackgroundTransparency = 1
+Frame.Position = UDim2.fromScale(0.5, 0.15)
+Frame.Size = UDim2.fromScale(0.7, 0.18)
+Frame.Parent = ScreenGui
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 4)
+UIListLayout.Parent = Frame
+local Sound = Instance.new("Sound")
+Sound.Name = "Bleep"
+Sound.SoundId = "rbxassetid://9125938067"
+Sound.Parent = ScreenGui
+local Sound_2 = Instance.new("Sound")
+Sound_2.Name = "Error"
+Sound_2.SoundId = "rbxassetid://97329712338974"
+Sound_2.Parent = ScreenGui
+local u69 = {}
+local u70 = {}
+local function createMessageFrame(p1) -- Line: 57 -- upvalues: Frame (val), TweenService (val), u14 (val)
+    local Frame_2 = Instance.new("Frame")
+    Frame_2.BackgroundTransparency = 1
+    Frame_2.Size = UDim2.new(1, 0, 0, 30)
+    Frame_2.AutomaticSize = Enum.AutomaticSize.Y
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.AnchorPoint = Vector2.new(0.5, 0)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold)
+    TextLabel.Position = UDim2.fromScale(0.5, 0)
+    TextLabel.RichText = true
+    TextLabel.Size = UDim2.fromScale(1, 1)
+    TextLabel.Text = p1
+    TextLabel.TextColor3 = Color3.fromRGB(245, 245, 245)
+    TextLabel.TextScaled = true
+    TextLabel.TextTransparency = 1
+    TextLabel.Parent = Frame_2
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Thickness = 2
+    UIStroke.Transparency = 1
+    UIStroke.StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize
+    UIStroke.Thickness = 0.05
+    UIStroke.Parent = TextLabel
+    Frame_2.Parent = Frame
+    TweenService:Create(TextLabel, u14, {TextTransparency = 0}):Play()
+    TweenService:Create(UIStroke, u14, {Transparency = 0.7}):Play()
+    return {count = 1, frame = Frame_2, label = TextLabel, stroke = UIStroke}
 end
-local function v_u_18(p_u_17) -- name: fadeOutAndDestroy
-	-- upvalues: (copy) v_u_2, (copy) v_u_4
-	if p_u_17.timerThread then
-		task.cancel(p_u_17.timerThread)
-		p_u_17.timerThread = nil
-	end
-	v_u_2:Create(p_u_17.label, v_u_4, {
-		["TextTransparency"] = 1
-	}):Play()
-	v_u_2:Create(p_u_17.stroke, v_u_4, {
-		["Transparency"] = 1
-	}):Play()
-	task.delay(0.5, function()
-		-- upvalues: (copy) p_u_17
-		p_u_17.frame:Destroy()
-	end)
+local function fadeOutAndDestroy(p1) -- Line: 98 -- upvalues: TweenService (val), u19 (val)
+    if p1.timerThread then
+        task.cancel(p1.timerThread)
+        p1.timerThread = nil
+    end
+    TweenService:Create(p1.label, u19, {TextTransparency = 1}):Play()
+    TweenService:Create(p1.stroke, u19, {Transparency = 1}):Play()
+    task.delay(0.5, function() -- Line: 107 -- upvalues: p1 (val)
+        p1.frame:Destroy()
+    end)
 end
-local v_u_48 = {
-	["Show"] = function(_, p_u_19, p20) -- name: Show
-		-- upvalues: (copy) v_u_10, (copy) v_u_48, (copy) v_u_8, (copy) v_u_9, (copy) v_u_16
-		local v21 = p20 or 3
-		if v_u_10[p_u_19] then
-			local v_u_22 = v_u_10[p_u_19]
-			v_u_22.count = v_u_22.count + 1
-			v_u_22.label.Text = p_u_19 .. " x" .. v_u_22.count
-			if v_u_22.timerThread then
-				task.cancel(v_u_22.timerThread)
-			end
-			v_u_22.timerThread = task.delay(v21, function()
-				-- upvalues: (copy) v_u_22, (ref) v_u_48, (copy) p_u_19
-				v_u_22.timerThread = nil
-				v_u_48:_remove(p_u_19)
-			end)
-			v_u_8:Play()
-			return
-		end
-		local v23 = false
-		for v24, v25, v26 in p_u_19:gmatch("rgb%((%d+)%s*,%s*(%d+)%s*,%s*(%d+)%)") do
-			local v27 = tonumber(v24)
-			local v28 = tonumber(v25)
-			local v29 = tonumber(v26)
-			if v27 and (v28 and (v29 and (v27 > 150 and (v28 + 50 < v27 and v29 + 50 < v27)))) then
-				v23 = true
-				break
-			end
-		end
-		if not v23 then
-			for v30 in p_u_19:gmatch("#(%x%x%x%x%x%x)") do
-				local v31 = v30:sub(1, 2)
-				local v32 = tonumber(v31, 16)
-				local v33 = v30:sub(3, 4)
-				local v34 = tonumber(v33, 16)
-				local v35 = v30:sub(5, 6)
-				local v36 = tonumber(v35, 16)
-				if v32 and (v34 and (v36 and (v32 > 150 and (v34 + 50 < v32 and v36 + 50 < v32)))) then
-					v23 = true
-					break
-				end
-			end
-		end
-		if v23 then
-			v_u_9:Play()
-		else
-			v_u_8:Play()
-		end
-		local v_u_37 = v_u_16(p_u_19)
-		v_u_37.timerThread = task.delay(v21, function()
-			-- upvalues: (copy) v_u_37, (ref) v_u_48, (copy) p_u_19
-			v_u_37.timerThread = nil
-			v_u_48:_remove(p_u_19)
-		end)
-		v_u_10[p_u_19] = v_u_37
-	end,
-	["_remove"] = function(_, p38) -- name: _remove
-		-- upvalues: (copy) v_u_10, (copy) v_u_18
-		local v39 = v_u_10[p38]
-		if v39 then
-			v_u_10[p38] = nil
-			v_u_18(v39)
-		end
-	end,
-	["ShowKeyed"] = function(_, p_u_40, p41, p42) -- name: ShowKeyed
-		-- upvalues: (copy) v_u_11, (copy) v_u_48, (copy) v_u_16
-		local v43 = p42 or 3
-		if v_u_11[p_u_40] then
-			local v_u_44 = v_u_11[p_u_40]
-			v_u_44.label.Text = p41
-			if v_u_44.timerThread then
-				task.cancel(v_u_44.timerThread)
-			end
-			if v43 > 0 then
-				v_u_44.timerThread = task.delay(v43, function()
-					-- upvalues: (copy) v_u_44, (ref) v_u_48, (copy) p_u_40
-					v_u_44.timerThread = nil
-					v_u_48:RemoveKeyed(p_u_40)
-				end)
-			else
-				v_u_44.timerThread = nil
-			end
-		else
-			local v_u_45 = v_u_16(p41)
-			if v43 > 0 then
-				v_u_45.timerThread = task.delay(v43, function()
-					-- upvalues: (copy) v_u_45, (ref) v_u_48, (copy) p_u_40
-					v_u_45.timerThread = nil
-					v_u_48:RemoveKeyed(p_u_40)
-				end)
-			end
-			v_u_11[p_u_40] = v_u_45
-			return
-		end
-	end,
-	["RemoveKeyed"] = function(_, p46) -- name: RemoveKeyed
-		-- upvalues: (copy) v_u_11, (copy) v_u_18
-		local v47 = v_u_11[p46]
-		if v47 then
-			v_u_11[p46] = nil
-			v_u_18(v47)
-		end
-	end
-}
-return v_u_48
+local u73 = {}
+function u73.Show(p1, p2, p3) -- Line: 115 -- upvalues: u69 (val), u73 (val), Sound (val), Sound_2 (val), createMessageFrame (val)
+    local v1, v2, v3
+    local v4 = p3 or 3
+    if u69[p2] then
+        local u7 = u69[p2]
+        u7.count = u7.count + 1
+        u7.label.Text = p2 .. " x" .. u7.count
+        if u7.timerThread then
+            task.cancel(u7.timerThread)
+        end
+        u7.timerThread = task.delay(v4, function() -- Line: 128 -- upvalues: u7 (val), u73 (upval), p2 (val)
+            u7.timerThread = nil
+            u73:_remove(p2)
+        end)
+        Sound:Play()
+        return
+    end
+    local v5 = false
+    for i, j, k in p2:gmatch("rgb%((%d+)%s*,%s*(%d+)%s*,%s*(%d+)%)") do
+        v1 = tonumber(i)
+        v2 = tonumber(j)
+        v3 = tonumber(k)
+        if v1 and v2 and v3 and 150 < v1 and v2 + 50 < v1 and v3 + 50 < v1 then
+            v5 = true
+            break
+        end
+    end
+    if not v5 then
+        local v6
+        for n in p2:gmatch("#(%x%x%x%x%x%x)") do
+            v1 = n:sub(1, 2)
+            v6 = tonumber(v1, 16)
+            v2 = n:sub(3, 4)
+            v1 = tonumber(v2, 16)
+            v3 = n:sub(5, 6)
+            v2 = tonumber(v3, 16)
+            if v6 and v1 and v2 and 150 < v6 and v1 + 50 < v6 and v2 + 50 < v6 then
+                v5 = true
+                break
+            end
+        end
+    end
+    if not v5 then
+        Sound:Play()
+    else
+        Sound_2:Play()
+    end
+    local u119 = createMessageFrame(p2)
+    u119.timerThread = task.delay(v4, function() -- Line: 166 -- upvalues: u119 (val), u73 (upval), p2 (val)
+        u119.timerThread = nil
+        u73:_remove(p2)
+    end)
+    u69[p2] = u119
+end
+function u73._remove(p1, p2) -- Line: 174 -- upvalues: u69 (val), fadeOutAndDestroy (val)
+    local v1 = u69[p2]
+    if not v1 then
+        return
+    end
+    u69[p2] = nil
+    fadeOutAndDestroy(v1)
+end
+function u73.ShowKeyed(p1, p2, p3, p4) -- Line: 187 -- upvalues: u70 (val), u73 (val), createMessageFrame (val)
+    local v1 = p4 or 3
+    if not (u70[p2]) then
+        local u25 = createMessageFrame(p3)
+        if 0 < v1 then
+            u25.timerThread = task.delay(v1, function() -- Line: 213 -- upvalues: u25 (val), u73 (upval), p2 (val)
+                u25.timerThread = nil
+                u73:RemoveKeyed(p2)
+            end)
+        end
+        u70[p2] = u25
+        return
+    end
+    local u8 = u70[p2]
+    u8.label.Text = p3
+    if u8.timerThread then
+        task.cancel(u8.timerThread)
+    end
+    if 0 < v1 then
+        u8.timerThread = task.delay(v1, function() -- Line: 200 -- upvalues: u8 (val), u73 (upval), p2 (val)
+            u8.timerThread = nil
+            u73:RemoveKeyed(p2)
+        end)
+        return
+    end
+    u8.timerThread = nil
+end
+function u73.RemoveKeyed(p1, p2) -- Line: 222 -- upvalues: u70 (val), fadeOutAndDestroy (val)
+    local v1 = u70[p2]
+    if not v1 then
+        return
+    end
+    u70[p2] = nil
+    fadeOutAndDestroy(v1)
+end
+return u73

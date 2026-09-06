@@ -1,23 +1,20 @@
 return {
-	["Name"] = "blink",
-	["Aliases"] = nil,
-	["Description"] = "Teleports you to where your mouse is hovering.",
-	["Group"] = "Debug",
-	["Args"] = nil,
-	["ClientRun"] = nil,
-	["Aliases"] = { "b" },
-	["Args"] = {},
-	["ClientRun"] = function(p1) -- name: ClientRun
-		local v2 = p1.Executor:GetMouse()
-		local v3 = p1.Executor.Character
-		if not v3 then
-			return "You don\'t have a character."
-		end
-		local v4 = workspace:FindFirstChild("Ignore")
-		if v4 then
-			v2.TargetFilter = v4
-		end
-		v3:MoveTo(v2.Hit.p)
-		return "Blinked!"
-	end
+    Name = "blink",
+    Description = "Teleports you to where your mouse is hovering.",
+    Group = "Debug",
+    Aliases = {"b"},
+    Args = {},
+    ClientRun = function(p1) -- Line: 8
+        local Mouse = p1.Executor:GetMouse()
+        local Character = p1.Executor.Character
+        if not Character then
+            return "You don't have a character."
+        end
+        local Ignore = workspace:FindFirstChild("Ignore")
+        if Ignore then
+            Mouse.TargetFilter = Ignore
+        end
+        Character:MoveTo(Mouse.Hit.p)
+        return "Blinked!"
+    end,
 }

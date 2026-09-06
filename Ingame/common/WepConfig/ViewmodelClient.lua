@@ -1,155 +1,415 @@
-local v_u_1 = game:GetService("ReplicatedStorage")
-local v2 = v_u_1.common
-local v_u_3 = require(script.Parent.SkinApplier)
-local v_u_4 = require(script.Parent.SkinFormat)
-local v_u_5 = require(v2:WaitForChild("SkinUtil"))
-local v_u_6 = require(v2:WaitForChild("Promise"))
-local v_u_7 = nil
-local v_u_8 = nil
-local v_u_10 = {
-	["init"] = function(p9) -- name: init
-		-- upvalues: (ref) v_u_7, (ref) v_u_8
-		v_u_7 = p9.WepConfig
-		v_u_8 = p9.streamOrFindVModel
-	end
-}
-local function v_u_24(p11, p12, _) -- name: applySkinToViewmodel
-	-- upvalues: (copy) v_u_1, (copy) v_u_10, (copy) v_u_3, (copy) v_u_4, (copy) v_u_5
-	local v13 = v_u_1:FindFirstChild("ViewmodelOverride")
-	if not (v13 and v13:GetAttribute("SkinSDKVersion")) then
-		local v14 = v_u_4.classify(p11)
-		if v14.type == "skinsdk_model" then
-			local v15 = p12.BaseName or p12.WeaponName
-			local v16 = v_u_10.loadViewmodel(v15, p12):expect():Clone()
-			v16.Name = p11.Name
-			v_u_3:ApplyCreatorSkin(v16, p11)
-			v16:SetAttribute("GlobalPartsApplied", true)
-			return v16, true
-		end
-		if not p11:IsA("ModuleScript") then
-			if v14.type ~= "configuration" then
-				if v14.type ~= "derived_model" then
-					return p11, false
-				end
-				if p12 and (p12.BaseName and (p12.BaseName ~= p12.WeaponName and (p11.Name ~= p12.BaseName and not p11:GetAttribute("GlobalPartsApplied")))) then
-					p11:SetAttribute("GlobalPartsApplied", true)
-					v_u_3:AddGlobalParts(p11, (v_u_10.loadViewmodel(p12.BaseName, p12, true):expect()))
-				end
-				return p11, false
-			end
-			local v17 = v_u_10.loadViewmodel(p12.BaseName, p12):expect():Clone()
-			v17.Name = p11.Name
-			v_u_3:ApplyFolder(v17, p11)
-			v17:SetAttribute("GlobalPartsApplied", true)
-			return v17, true
-		end
-		local v18 = p12.BaseName or p12.WeaponName
-		local v19 = v_u_10.loadViewmodel(v18, p12):expect():Clone()
-		v19.Name = p11.Name
-		local v20 = require(p11)
-		v_u_3:DecodeSkin(v19, p11)
-		if v20 then
-			v20(v19, v_u_5)
-		end
-		v19:SetAttribute("GlobalPartsApplied", true)
-		return v19, true
-	end
-	local v21 = v13:Clone()
-	v13:Destroy()
-	local v22 = v_u_1:FindFirstChild("SkinCreatorOverride")
-	if v22 then
-		v22:Destroy()
-	end
-	local v23 = v_u_10.loadViewmodel(p12.WeaponName, p12):expect():Clone()
-	v23.Name = p11.Name
-	v_u_3:ApplyCreatorSkin(v23, v21)
-	v21:Destroy()
-	v23:SetAttribute("GlobalPartsApplied", true)
-	v23:SetAttribute("BaseWeaponName", p12.WeaponName)
-	v23.Name = "SkinCreatorOverride"
-	v23.Parent = v_u_1
-	return v23, true
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local common = ReplicatedStorage.common
+local SkinApplier = require(script.Parent.SkinApplier)
+local SkinFormat = require(script.Parent.SkinFormat)
+local SkinUtil = require(common:WaitForChild("SkinUtil"))
+local Promise = require(common:WaitForChild("Promise"))
+local u28 = nil
+local u29 = nil
+local u30 = {}
+local u31 = {}
+local u32 = {}
+local u33 = nil
+local u34 = 0
+local function getPreparedFolder() -- Line: 43 -- upvalues: u33 (ref), ReplicatedStorage (val)
+    if not u33 then
+        u33 = Instance.new("Folder")
+        u33.Name = "WepConfigPreparedViewmodels"
+        u33.Parent = ReplicatedStorage
+        return u33
+    end
+    if u33.Parent then
+        return u33
+    end
+    u33 = Instance.new("Folder")
+    u33.Name = "WepConfigPreparedViewmodels"
+    u33.Parent = ReplicatedStorage
+    return u33
 end
-local function v_u_32(p25, p26) -- name: applyStockGlobalParts
-	if not p25:GetAttribute("GlobalPartsApplied") and (not p26.BaseName or p26.BaseName == p26.WeaponName) then
-		p25:SetAttribute("GlobalPartsApplied", true)
-		if p25:FindFirstChild("GlobalParts") and p25.GlobalParts:FindFirstChild("ToWeapon") then
-			local v27 = p25.GlobalParts.ToWeapon:Clone()
-			local v28 = p25.KeyParts.Handle
-			for _, v29 in v27:QueryDescendants("BasePart") do
-				local v30 = Instance.new("Weld")
-				v30.Name = v28.Name .. ":" .. v29.Name
-				v30.Part0 = v28
-				v30.Part1 = v29
-				v30.C0 = CFrame.new()
-				v30.C1 = v29.CFrame:toObjectSpace(v28.CFrame)
-				v30.Parent = v28
-			end
-			for _, v31 in v27:GetChildren() do
-				v31.Parent = p25.Weapon
-			end
-			v27:Destroy()
-		end
-	end
+local function touch(p1) -- Line: 53 -- upvalues: u34 (ref)
+    u34 = u34 + 1
+    p1.age = u34
 end
-function v_u_10.loadViewmodel(p_u_33, p_u_34) -- name: loadViewmodel
-	-- upvalues: (copy) v_u_6, (ref) v_u_7, (ref) v_u_8, (copy) v_u_24, (copy) v_u_32, (copy) v_u_1
-	return v_u_6.new(function(p35, p36, _)
-		-- upvalues: (ref) p_u_34, (ref) v_u_7, (ref) p_u_33, (ref) v_u_8, (ref) v_u_24, (ref) v_u_32, (ref) v_u_1
-		if not p_u_34 then
-			p_u_34 = v_u_7:GetWeaponConfig(p_u_33)
-		end
-		local v37 = p_u_34 ~= nil
-		local v38 = "No config found for " .. p_u_33
-		assert(v37, v38)
-		p_u_33 = p_u_34.UseVModel or p_u_33
-		local v39 = v_u_8(p_u_33)
-		if v39 then
-			local v40, v41 = v_u_24(v39, p_u_34, p_u_33)
-			v_u_32(v40, p_u_34)
-			if v40 and v40.PrimaryPart then
-				v40.PrimaryPart.Anchored = true
-			end
-			local v42 = v_u_1:FindFirstChild("SkinCreatorOverride")
-			if v42 then
-				if v42:GetAttribute("BaseWeaponName") ~= p_u_34.WeaponName then
-					v42 = v40
-				end
-			else
-				v42 = v40
-			end
-			p35(v42, v41)
-		else
-			p36("Failed to load model: " .. p_u_33 .. " (timeout)")
-		end
-	end)
+local function cachePrepared(p1, p2) -- Line: 58 -- upvalues: u31 (val), u33 (ref), ReplicatedStorage (val), u34 (ref)
+    local v1
+    local v2 = u31[p1]
+    if v2 and v2.model then
+        v2.model:Destroy()
+    end
+    local v3 = p2:Clone()
+    v3.Name = p1
+    if not u33 then
+        u33 = Instance.new("Folder")
+        u33.Name = "WepConfigPreparedViewmodels"
+        u33.Parent = ReplicatedStorage
+        v1 = u33
+    elseif u33.Parent then
+        v1 = u33
+    end
+    v3.Parent = v1
+    v1 = {age = 0, model = v3}
+    u31[p1] = v1
+    u34 = u34 + 1
+    v1.age = u34
+    local v4 = 0
+    local v5 = nil
+    local age = nil
+    for k, v in pairs(u31) do
+        v4 = v4 + 1
+        if not age then
+            v5 = k
+            age = v.age
+        elseif v.age >= age then
+        end
+    end
+    if 40 < v4 and v5 then
+        local v6 = u31[v5]
+        if v6 and v6.model then
+            v6.model:Destroy()
+        end
+        u31[v5] = nil
+    end
+    return v1
 end
-function v_u_10.setupGunGameListeners() -- name: setupGunGameListeners
-	-- upvalues: (ref) v_u_7
-	local v43 = require("@game/ReplicatedStorage/common/zap")
-	local v_u_44 = {}
-	v43.PreloadWeapons.On(function(p45)
-		-- upvalues: (ref) v_u_7, (copy) v_u_44
-		for _, v_u_46 in p45.Weapons do
-			v_u_7:StreamViewmodel(v_u_46):andThen(function(p47)
-				-- upvalues: (copy) v_u_46, (ref) v_u_44
-				if p47:IsA("Model") then
-					local v48 = p47:Clone()
-					v48.Name = v_u_46
-					v48:PivotTo(CFrame.new(0, -1000, 0))
-					v48.Parent = workspace
-					local v49 = v_u_44
-					table.insert(v49, v48)
-				end
-			end)
-		end
-	end)
-	v43.ClearPreloadedWeapons.On(function(_)
-		-- upvalues: (copy) v_u_44, (ref) v_u_7
-		for _, v50 in v_u_44 do
-			v50:Destroy()
-		end
-		v_u_7:ClearCache()
-	end)
+function u30.clearCache() -- Line: 90 -- upvalues: u31 (val), u32 (val), u33 (ref)
+    for k, v in pairs(u31) do
+        if v.model then
+            v.model:Destroy()
+        end
+        u31[k] = nil
+    end
+    table.clear(u32)
+    if u33 then
+        u33:Destroy()
+        u33 = nil
+    end
 end
-return v_u_10
+function u30.init(p1) -- Line: 111 -- upvalues: u28 (ref), u29 (ref)
+    u28 = p1.WepConfig
+    u29 = p1.streamOrFindVModel
+end
+local function applySkinToViewmodel(p1, p2, p3) -- Line: 127 -- upvalues: ReplicatedStorage (val), u30 (val), SkinApplier (val), SkinFormat (val), SkinUtil (val)
+    local BaseName, v1, v2
+    local ViewmodelOverride = ReplicatedStorage:FindFirstChild("ViewmodelOverride")
+    if not ViewmodelOverride then
+        local v3, v4
+        v1 = SkinFormat.classify(p1)
+        if v1.type == "skinsdk_model" then
+            local BaseName_2 = p2.BaseName
+            if not BaseName_2 then
+                BaseName_2 = p2.WeaponName
+            end
+            v4 = u30.loadViewmodel(BaseName_2):expect():Clone()
+            v4.Name = p1.Name
+            SkinApplier:ApplyCreatorSkin(v4, p1)
+            v4:SetAttribute("GlobalPartsApplied", true)
+            return v4
+        end
+        if p1:IsA("ModuleScript") then
+            local BaseName_3 = p2.BaseName
+            if not BaseName_3 then
+                BaseName_3 = p2.WeaponName
+            end
+            v4 = u30.loadViewmodel(BaseName_3):expect():Clone()
+            v4.Name = p1.Name
+            v2 = require(p1)
+            SkinApplier:DecodeSkin(v4, p1)
+            if v2 then
+                v2(v4, SkinUtil)
+            end
+            v4:SetAttribute("GlobalPartsApplied", true)
+            return v4
+        end
+        if v1.type == "configuration" then
+            v3 = u30.loadViewmodel(p2.BaseName):expect():Clone()
+            v3.Name = p1.Name
+            SkinApplier:ApplyFolder(v3, p1)
+            v3:SetAttribute("GlobalPartsApplied", true)
+            return v3
+        end
+        if v1.type ~= "derived_model" then
+            return p1
+        end
+        if p2 and p2.BaseName and p2.BaseName ~= p2.WeaponName and p1.Name ~= p2.BaseName and not (p1:GetAttribute("GlobalPartsApplied")) then
+            p1:SetAttribute("GlobalPartsApplied", true)
+            v3 = u30.loadViewmodel(p2.BaseName):expect()
+            SkinApplier:AddGlobalParts(p1, v3)
+        end
+        return p1
+    elseif ViewmodelOverride:GetAttribute("SkinSDKVersion") then
+        v1 = ViewmodelOverride:Clone()
+        ViewmodelOverride:Destroy()
+        local SkinCreatorOverride = ReplicatedStorage:FindFirstChild("SkinCreatorOverride")
+        if SkinCreatorOverride then
+            SkinCreatorOverride:Destroy()
+        end
+        BaseName = p2.BaseName
+        if not BaseName then
+            BaseName = p2.WeaponName
+        end
+        v2 = u30.loadViewmodel(BaseName):expect():Clone()
+        v2.Name = p1.Name
+        SkinApplier:ApplyCreatorSkin(v2, v1)
+        v1:Destroy()
+        v2:SetAttribute("GlobalPartsApplied", true)
+        v2:SetAttribute("BaseWeaponName", p2.WeaponName)
+        v2.Name = "SkinCreatorOverride"
+        v2.Parent = ReplicatedStorage
+        return v2
+    end
+end
+local function applyStockGlobalParts(p1, p2) -- Line: 210
+    if not (p1:GetAttribute("GlobalPartsApplied")) then
+        if not p2.BaseName then
+            p1:SetAttribute("GlobalPartsApplied", true)
+            if p1:FindFirstChild("GlobalParts") and p1.GlobalParts:FindFirstChild("ToWeapon") then
+                local Weld
+                local v1 = p1.GlobalParts.ToWeapon:Clone()
+                local Handle = p1.KeyParts.Handle
+                for i, j in v1:QueryDescendants("BasePart") do
+                    Weld = Instance.new("Weld")
+                    Weld.Name = Handle.Name .. ":" .. j.Name
+                    Weld.Part0 = Handle
+                    Weld.Part1 = j
+                    Weld.C0 = CFrame.new()
+                    Weld.C1 = j.CFrame:toObjectSpace(Handle.CFrame)
+                    Weld.Parent = Handle
+                end
+                for k, n in v1:GetChildren() do
+                    n.Parent = p1.Weapon
+                end
+                v1:Destroy()
+            end
+        elseif p2.BaseName ~= p2.WeaponName then
+        end
+    end
+end
+function u30.loadViewmodel(p1, p2) -- Line: 250 -- upvalues: u28 (ref), ReplicatedStorage (val), u31 (val), u34 (ref), Promise (val), u32 (val), u29 (ref), applySkinToViewmodel (val), applyStockGlobalParts (val), cachePrepared (val)
+    local u57, u59, u66, v1, v2, v3
+    if p2 then
+        v1 = p2
+    else
+        v1 = u28:GetWeaponConfig(p1)
+    end
+    local v4 = v1 ~= nil
+    assert(v4, "No config found for " .. p1)
+    local ViewmodelOverride = ReplicatedStorage:FindFirstChild("ViewmodelOverride")
+    local Attribute = ViewmodelOverride
+    if Attribute then
+        Attribute = ViewmodelOverride:GetAttribute("SkinSDKVersion")
+    end
+    if Attribute then
+        u57 = v1
+        u59 = false
+        v3 = Promise.new(function(a1, p2, p3) -- Line: 281 -- upvalues: u57 (val), p1 (val), u29 (upval), applySkinToViewmodel (upval), applyStockGlobalParts (upval), ReplicatedStorage (upval)
+            local UseVModel = u57.UseVModel
+            if not UseVModel then
+                UseVModel = p1
+            end
+            local v1 = u29(UseVModel)
+            if not v1 then
+                p2("Failed to load model: " .. UseVModel .. " (timeout)")
+                return
+            end
+            local v2 = applySkinToViewmodel(v1, u57, UseVModel)
+            applyStockGlobalParts(v2, u57)
+            if v2 and v2.PrimaryPart then
+                v2.PrimaryPart.Anchored = true
+            end
+            local SkinCreatorOverride = ReplicatedStorage:FindFirstChild("SkinCreatorOverride")
+            if SkinCreatorOverride then
+                local Attribute = SkinCreatorOverride:GetAttribute("BaseWeaponName")
+                if Attribute == u57.WeaponName then
+                    v2 = SkinCreatorOverride
+                end
+            end
+            a1(v2)
+        end)
+        u66 = nil
+        u66 = v3:andThen(function(a1) -- Line: 309 -- upvalues: u59 (ref), cachePrepared (upval), p1 (val), u32 (upval), u66 (ref)
+            u59 = true
+            local v1 = cachePrepared(p1, a1)
+            local v2 = u32[p1]
+            if v2 == u66 then
+                u32[p1] = nil
+            end
+            return v1
+        end, function(a1) -- Line: 316 -- upvalues: u59 (ref), u32 (upval), p1 (val), u66 (ref), Promise (upval)
+            u59 = true
+            local v1 = u32[p1]
+            if v1 == u66 then
+                u32[p1] = nil
+            end
+            return Promise.reject(a1)
+        end)
+        u32[p1] = u66
+        if u59 and u32[p1] == u66 then
+            u32[p1] = nil
+        end
+        return u66:andThen(function(p1) -- Line: 328 -- upvalues: u34 (upval)
+            u34 = u34 + 1
+            p1.age = u34
+            return p1.model:Clone()
+        end)
+    end
+    v2 = u31[p1]
+    if not v2 or not v2.model then
+        v3 = u32[p1]
+        if v3 then
+            return v3:andThen(function(p1) -- Line: 271 -- upvalues: u34 (upval)
+                u34 = u34 + 1
+                p1.age = u34
+                return p1.model:Clone()
+            end)
+        end
+        u57 = v1
+        u59 = false
+        v3 = Promise.new(function(a1, p2, p3) -- Line: 281 -- upvalues: u57 (val), p1 (val), u29 (upval), applySkinToViewmodel (upval), applyStockGlobalParts (upval), ReplicatedStorage (upval)
+            local UseVModel = u57.UseVModel
+            if not UseVModel then
+                UseVModel = p1
+            end
+            local v1 = u29(UseVModel)
+            if not v1 then
+                p2("Failed to load model: " .. UseVModel .. " (timeout)")
+                return
+            end
+            local v2 = applySkinToViewmodel(v1, u57, UseVModel)
+            applyStockGlobalParts(v2, u57)
+            if v2 and v2.PrimaryPart then
+                v2.PrimaryPart.Anchored = true
+            end
+            local SkinCreatorOverride = ReplicatedStorage:FindFirstChild("SkinCreatorOverride")
+            if SkinCreatorOverride then
+                local Attribute = SkinCreatorOverride:GetAttribute("BaseWeaponName")
+                if Attribute == u57.WeaponName then
+                    v2 = SkinCreatorOverride
+                end
+            end
+            a1(v2)
+        end)
+        u66 = nil
+        u66 = v3:andThen(function(a1) -- Line: 309 -- upvalues: u59 (ref), cachePrepared (upval), p1 (val), u32 (upval), u66 (ref)
+            u59 = true
+            local v1 = cachePrepared(p1, a1)
+            local v2 = u32[p1]
+            if v2 == u66 then
+                u32[p1] = nil
+            end
+            return v1
+        end, function(a1) -- Line: 316 -- upvalues: u59 (ref), u32 (upval), p1 (val), u66 (ref), Promise (upval)
+            u59 = true
+            local v1 = u32[p1]
+            if v1 == u66 then
+                u32[p1] = nil
+            end
+            return Promise.reject(a1)
+        end)
+        u32[p1] = u66
+        if u59 and u32[p1] == u66 then
+            u32[p1] = nil
+        end
+        return u66:andThen(function(p1) -- Line: 328 -- upvalues: u34 (upval)
+            u34 = u34 + 1
+            p1.age = u34
+            return p1.model:Clone()
+        end)
+    end
+    if v2.model.Parent then
+        u34 = u34 + 1
+        v2.age = u34
+        return Promise.resolve(v2.model:Clone())
+    end
+    v3 = u32[p1]
+    if v3 then
+        return v3:andThen(function(p1) -- Line: 271 -- upvalues: u34 (upval)
+            u34 = u34 + 1
+            p1.age = u34
+            return p1.model:Clone()
+        end)
+    end
+    u57 = v1
+    u59 = false
+    v3 = Promise.new(function(a1, p2, p3) -- Line: 281 -- upvalues: u57 (val), p1 (val), u29 (upval), applySkinToViewmodel (upval), applyStockGlobalParts (upval), ReplicatedStorage (upval)
+        local UseVModel = u57.UseVModel
+        if not UseVModel then
+            UseVModel = p1
+        end
+        local v1 = u29(UseVModel)
+        if not v1 then
+            p2("Failed to load model: " .. UseVModel .. " (timeout)")
+            return
+        end
+        local v2 = applySkinToViewmodel(v1, u57, UseVModel)
+        applyStockGlobalParts(v2, u57)
+        if v2 and v2.PrimaryPart then
+            v2.PrimaryPart.Anchored = true
+        end
+        local SkinCreatorOverride = ReplicatedStorage:FindFirstChild("SkinCreatorOverride")
+        if SkinCreatorOverride then
+            local Attribute = SkinCreatorOverride:GetAttribute("BaseWeaponName")
+            if Attribute == u57.WeaponName then
+                v2 = SkinCreatorOverride
+            end
+        end
+        a1(v2)
+    end)
+    u66 = nil
+    u66 = v3:andThen(function(a1) -- Line: 309 -- upvalues: u59 (ref), cachePrepared (upval), p1 (val), u32 (upval), u66 (ref)
+        u59 = true
+        local v1 = cachePrepared(p1, a1)
+        local v2 = u32[p1]
+        if v2 == u66 then
+            u32[p1] = nil
+        end
+        return v1
+    end, function(a1) -- Line: 316 -- upvalues: u59 (ref), u32 (upval), p1 (val), u66 (ref), Promise (upval)
+        u59 = true
+        local v1 = u32[p1]
+        if v1 == u66 then
+            u32[p1] = nil
+        end
+        return Promise.reject(a1)
+    end)
+    u32[p1] = u66
+    if u59 and u32[p1] == u66 then
+        u32[p1] = nil
+    end
+    return u66:andThen(function(p1) -- Line: 328 -- upvalues: u34 (upval)
+        u34 = u34 + 1
+        p1.age = u34
+        return p1.model:Clone()
+    end)
+end
+function u30.setupGunGameListeners() -- Line: 338 -- upvalues: u28 (ref)
+    local v1 = require("@game/ReplicatedStorage/common/zap")
+    local u3 = {}
+    v1.PreloadWeapons.On(function(p1) -- Line: 343 -- upvalues: u28 (upval), u3 (val)
+        local v1
+        local v2 = p1.Weapons
+        local v3 = nil
+        local v4 = nil
+        for i, j in v2, v3, v4 do
+            v1 = u28:StreamViewmodel(j)
+            v1:andThen(function(p1) -- Line: 346 -- upvalues: j (val), u3 (upval)
+                if p1:IsA("Model") then
+                    local v1 = p1:Clone()
+                    v1.Name = j
+                    v1:PivotTo(CFrame.new(0, -1000, 0))
+                    v1.Parent = workspace
+                    table.insert(u3, v1)
+                end
+            end)
+        end
+    end)
+    v1.ClearPreloadedWeapons.On(function(p1) -- Line: 359 -- upvalues: u3 (val), u28 (upval)
+        local v1 = u3
+        local v2 = nil
+        local v3 = nil
+        for i, j in v1, v2, v3 do
+            j:Destroy()
+        end
+        u28:ClearCache()
+    end)
+end
+return u30

@@ -1,102 +1,98 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require("@game/ReplicatedStorage/common/Janitor")
-local v_u_3 = require(v1.common.RedEvents.NPC.StatusEvent)
-local v_u_4 = require("@game/ReplicatedStorage/common/NPCRegistry")
-local v_u_5 = game:GetService("RunService"):IsServer()
-local v_u_6 = {}
-v_u_6.__index = v_u_6
-v_u_6.TickRate = 1
-function v_u_6.UpdateIcon(p7) -- name: UpdateIcon
-	-- upvalues: (copy) v_u_5, (copy) v_u_3
-	if v_u_5 then
-		v_u_3:FireAllClients({
-			["UID"] = nil,
-			["status"] = nil,
-			["Type"] = "UpdateIcon",
-			["packetTime"] = nil,
-			["args"] = nil,
-			["UID"] = p7.getNPC().UID,
-			["status"] = p7._Name,
-			["packetTime"] = workspace:GetServerTimeNow(),
-			["args"] = { p7.Potency, p7.Count }
-		})
-	elseif p7.Label then
-		local v8 = p7.Label
-		local v9 = v8.Count
-		local v10 = v8.Potency
-		v9.Text = p7.Count
-		v10.Text = p7.Potency
-	end
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u7 = require("@game/ReplicatedStorage/common/Janitor")
+local StatusEvent = require(ReplicatedStorage.common.RedEvents.NPC.StatusEvent)
+local u16 = require("@game/ReplicatedStorage/common/NPCRegistry")
+local u24 = game:GetService("RunService"):IsServer()
+local u25 = {}
+u25.__index = u25
+u25.TickRate = 1
+function u25:UpdateIcon() -- Line: 23 -- upvalues: u24 (val), StatusEvent (val)
+    local Label
+    if u24 then
+        StatusEvent:FireAllClients({
+            Type = "UpdateIcon",
+            UID = self.getNPC().UID,
+            status = self._Name,
+            packetTime = workspace:GetServerTimeNow(),
+            args = {self.Potency, self.Count},
+        })
+        return
+    end
+    if self.Label then
+        Label = self.Label
+        Label.Count.Text = self.Count
+        Label.Potency.Text = self.Potency
+    end
 end
-function v_u_6.extend(_, _) -- name: extend end
-if not v_u_5 then
-	v_u_3:SetClientListener(function(p11)
-		-- upvalues: (copy) v_u_4
-		if p11.Type == "UpdateIcon" then
-			local v12 = p11.packetTime
-			local v13 = p11.args
-			local v14, v15 = table.unpack(v13)
-			local v16 = v_u_4:GetNPC(p11.UID)
-			local v17 = v16.CurrentEffects and v16.CurrentEffects[p11.status]
-			if v17 then
-				if v17._lastUpdate and v17._lastUpdate >= v12 then
-					if v12 < v17._lastUpdate then
-						return
-					end
-				else
-					v17._lastUpdate = v12
-				end
-				v17.Count = v15
-				v17.Potency = v14
-				v17:UpdateIcon(v14, v15)
-			end
-		end
-	end)
+function u25.extend(p1, p2) end
+if not u24 then
+    StatusEvent:SetClientListener(function(p1) -- Line: 48 -- upvalues: u16 (val)
+        local v1, v2
+        if p1.Type ~= "UpdateIcon" then
+            return
+        end
+        local packetTime = p1.packetTime
+        v1, v2 = table.unpack(p1.args)
+        local NPC = u16:GetNPC(p1.UID)
+        if not NPC.CurrentEffects then
+            return
+        end
+        local v3 = NPC.CurrentEffects[p1.status]
+        if not v3 then
+            return
+        end
+        if not v3._lastUpdate or v3._lastUpdate < packetTime then
+            v3._lastUpdate = packetTime
+            v3.Count = v2
+            v3.Potency = v1
+            v3:UpdateIcon(v1, v2)
+            return
+        end
+        if packetTime < v3._lastUpdate then
+            return
+        end
+        v3.Count = v2
+        v3.Potency = v1
+        v3:UpdateIcon(v1, v2)
+    end)
 end
-return function(_, p_u_18)
-	-- upvalues: (copy) v_u_6, (copy) v_u_2
-	local v19 = v_u_6
-	local v_u_20 = setmetatable({}, v19)
-	v_u_20.Count = 1
-	v_u_20.Potency = 1
-	v_u_20._Janitor = v_u_2.new()
-	function v_u_20.getNPC() -- name: getNPC
-		-- upvalues: (copy) p_u_18
-		return p_u_18
-	end
-	function v_u_20.contains(p21) -- name: contains
-		-- upvalues: (copy) p_u_18
-		local v22 = p_u_18.CurrentEffects
-		if v22 then
-			return v22[p21]
-		else
-			return nil
-		end
-	end
-	function v_u_20.canTick(p23) -- name: canTick
-		-- upvalues: (copy) v_u_20
-		local v24 = os.clock() > v_u_20._lastTick
-		if not p23 and v24 then
-			v_u_20._lastTick = os.clock() + (v_u_20.TickRate or 1)
-		end
-		return v24
-	end
-	function v_u_20.AddConnection(p25) -- name: AddConnection
-		-- upvalues: (copy) v_u_20
-		v_u_20._Janitor:Add(p25)
-	end
-	function v_u_20.Destroy() -- name: Destroy
-		-- upvalues: (copy) v_u_20
-		if not v_u_20._Destroyed then
-			v_u_20._Destroyed = true
-			v_u_20._Janitor:Destroy()
-			if v_u_20.clearFunc then
-				v_u_20.clearFunc()
-			end
-		end
-	end
-	v_u_20._lastTick = os.clock() + v_u_20.TickRate
-	v_u_20.ShowPotency = true
-	v_u_20.ShowCount = true
-	return v_u_20
+return function(p1, p2) -- Line: 71 -- upvalues: u25 (val), u7 (val)
+    local u5 = setmetatable({}, u25)
+    u5.Count = 1
+    u5.Potency = 1
+    u5._Janitor = u7.new()
+    function u5.getNPC() -- Line: 77 -- upvalues: p2 (val)
+        return p2
+    end
+    function u5.contains(p1) -- Line: 79 -- upvalues: p2 (val)
+        local CurrentEffects = p2.CurrentEffects
+        if not CurrentEffects then
+            return nil
+        end
+        return CurrentEffects[p1]
+    end
+    function u5.canTick(p1) -- Line: 88 -- upvalues: u5 (val)
+        local v1 = u5._lastTick < os.clock()
+        if not p1 and v1 then
+            u5._lastTick = os.clock() + (u5.TickRate or 1)
+        end
+        return v1
+    end
+    function u5.AddConnection(p1) -- Line: 96 -- upvalues: u5 (val)
+        u5._Janitor:Add(p1)
+    end
+    function u5.Destroy() -- Line: 100 -- upvalues: u5 (val)
+        if u5._Destroyed then
+            return
+        end
+        u5._Destroyed = true
+        u5._Janitor:Destroy()
+        if u5.clearFunc then
+            u5.clearFunc()
+        end
+    end
+    u5._lastTick = os.clock() + u5.TickRate
+    u5.ShowPotency = true
+    u5.ShowCount = true
+    return u5
 end

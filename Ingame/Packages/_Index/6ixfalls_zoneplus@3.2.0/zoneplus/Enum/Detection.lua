@@ -1,4 +1,4 @@
 return {
-	{ "WholeBody", 1 },
-	{ "Centre", 2 }
+    {"WholeBody", 1},
+    {"Centre", 2},
 }

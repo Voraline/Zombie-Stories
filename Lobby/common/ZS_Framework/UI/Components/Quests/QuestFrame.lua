@@ -1,189 +1,130 @@
-local v1 = game:GetService("ReplicatedStorage")
-local _ = require(v1.Packages.Fusion).Children
-local v_u_2 = require("../GradientFade")
-local v_u_3 = require("./RewardFrame")
-local v_u_4 = require("./QuestUIComputed")
-return function(p_u_5)
-	-- upvalues: (copy) v_u_4, (copy) v_u_3, (copy) v_u_2
-	local v6 = p_u_5.scope:innerScope()
-	local v8 = v6:Computed(function(p7)
-		-- upvalues: (copy) p_u_5
-		return UDim.new(0, p7(p_u_5.StrokeSize))
-	end)
-	local v9, v10 = v_u_4({
-		["scope"] = v6,
-		["Quest"] = p_u_5.Quest
-	})
-	local v11 = p_u_5.Quest.IsCompleted and 1000 or -(p_u_5.Quest.Progress.Current / p_u_5.Quest.Progress.Goal * 100)
-	if p_u_5.Quest.IsBonus then
-		v11 = v11 + 1
-	end
-	local v12 = v6:New("Frame")
-	local v13 = {
-		["BackgroundColor3"] = Color3.new(0, 0, 0),
-		["BackgroundTransparency"] = 0.5,
-		["Size"] = p_u_5.Size,
-		["LayoutOrder"] = v11
-	}
-	local v14 = v6.Children
-	local v15 = {}
-	local v16 = v6:New("Frame")({
-		["Size"] = UDim2.new(1, 0, 1, 0),
-		["BackgroundTransparency"] = 0.3,
-		["BackgroundColor3"] = Color3.new(0, 0, 0),
-		["Visible"] = p_u_5.Quest.IsCompleted,
-		["ZIndex"] = 5,
-		[v6.Children] = { v6:New("TextLabel")({
-				["Text"] = "COMPLETED",
-				["TextColor3"] = nil,
-				["BackgroundTransparency"] = 1,
-				["TextScaled"] = true,
-				["Font"] = nil,
-				["Size"] = nil,
-				["Position"] = nil,
-				["AnchorPoint"] = nil,
-				["TextColor3"] = Color3.new(0.035294, 1, 0),
-				["Font"] = Enum.Font.GothamBlack,
-				["Size"] = UDim2.new(0.6, 0, 0.3, 0),
-				["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-				["AnchorPoint"] = Vector2.new(0.5, 0.5)
-			}), v6:New("UICorner")({
-				["CornerRadius"] = p_u_5.CornerRadius
-			}) }
-	})
-	local v17 = v6:New("UIPadding")({
-		["PaddingTop"] = p_u_5.Padding,
-		["PaddingBottom"] = p_u_5.Padding,
-		["PaddingLeft"] = p_u_5.Padding,
-		["PaddingRight"] = p_u_5.Padding
-	})
-	local v18 = v6:New("UIStroke")({
-		["Thickness"] = p_u_5.StrokeSize,
-		["Color"] = v9,
-		["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-	})
-	local v19 = v6:New("UICorner")({
-		["CornerRadius"] = p_u_5.CornerRadius
-	})
-	local v20 = v6:New("TextLabel")({
-		["Text"] = nil,
-		["TextColor3"] = nil,
-		["BackgroundTransparency"] = 1,
-		["TextScaled"] = true,
-		["TextXAlignment"] = nil,
-		["TextYAlignment"] = nil,
-		["Font"] = nil,
-		["Size"] = nil,
-		["Text"] = p_u_5.Quest.Title,
-		["TextColor3"] = Color3.new(1, 1, 1),
-		["TextXAlignment"] = Enum.TextXAlignment.Left,
-		["TextYAlignment"] = Enum.TextYAlignment.Top,
-		["Font"] = Enum.Font.GothamBold,
-		["Size"] = UDim2.new(0.61, 0, 0.35, 0)
-	})
-	local v22 = v6:New("TextLabel")({
-		["Text"] = p_u_5.Quest.Description,
-		["TextColor3"] = Color3.new(1, 1, 1),
-		["BackgroundTransparency"] = 1,
-		["TextScaled"] = true,
-		["TextXAlignment"] = Enum.TextXAlignment.Left,
-		["TextYAlignment"] = Enum.TextYAlignment.Top,
-		["Font"] = Enum.Font.Gotham,
-		["Size"] = UDim2.new(0.61, 0, 0.37, 0),
-		["Position"] = UDim2.new(0, 0, 0.325, 0),
-		[v6.Children] = { v6:New("UITextSizeConstraint")({
-				["MaxTextSize"] = v6:Computed(function(p21)
-					-- upvalues: (copy) p_u_5
-					return p21(p_u_5.px) * 30
-				end)
-			}) }
-	})
-	local v23 = v6:New("Frame")({
-		["Name"] = "RewardFrame",
-		["Size"] = UDim2.new(0.38, 0, 1, 0),
-		["Position"] = UDim2.new(1, 0, 0, 0),
-		["AnchorPoint"] = Vector2.new(1, 0),
-		["BackgroundTransparency"] = 1,
-		[v6.Children] = { v_u_3({
-				["Size"] = UDim2.new(1, 0, 1, 0),
-				["Rewards"] = p_u_5.Quest.Rewards,
-				["px"] = p_u_5.px,
-				["CornerRadius"] = p_u_5.CornerRadius,
-				["StrokeSize"] = p_u_5.StrokeSize,
-				["StrokeColor"] = v9,
-				["scope"] = v6
-			}), v6:New("UIPadding")({
-				["PaddingTop"] = v8,
-				["PaddingBottom"] = v8,
-				["PaddingLeft"] = v8,
-				["PaddingRight"] = v8
-			}) }
-	})
-	local v24 = v6:New("Frame")
-	local v26 = {
-		["Name"] = "ProgressFrame",
-		["Size"] = UDim2.new(0.61, 0, 0.25, 0),
-		["Position"] = UDim2.new(0, 0, 0.75, 0),
-		["BackgroundTransparency"] = 1,
-		[v6.Children] = { v6:New("UIPadding")({
-				["PaddingTop"] = v8,
-				["PaddingBottom"] = v8,
-				["PaddingLeft"] = v8,
-				["PaddingRight"] = v8
-			}), v6:New("Frame")({
-				["Size"] = UDim2.new(1, 0, 1, 0),
-				["BackgroundColor3"] = Color3.new(0, 0, 0),
-				["BackgroundTransparency"] = 0.75,
-				[v6.Children] = {
-					v6:New("TextLabel")({
-						["ZIndex"] = 2,
-						["Text"] = p_u_5.Quest.Progress.Current .. " / " .. p_u_5.Quest.Progress.Goal,
-						["TextScaled"] = true,
-						["Size"] = UDim2.new(1, 0, 0.8, 0),
-						["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-						["Font"] = Enum.Font.GothamBold,
-						["AnchorPoint"] = Vector2.new(0.5, 0.5),
-						["BackgroundTransparency"] = 1,
-						["TextColor3"] = Color3.new(1, 1, 1),
-						[v6.Children] = { v6:New("UIStroke")({
-								["Thickness"] = v6:Computed(function(p25)
-									-- upvalues: (copy) p_u_5
-									return p25(p_u_5.StrokeSize) / 2
-								end),
-								["Color"] = Color3.fromRGB(0, 0, 0)
-							}) }
-					}),
-					v6:New("UIStroke")({
-						["Thickness"] = p_u_5.StrokeSize,
-						["Color"] = v9,
-						["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-					}),
-					v6:New("UICorner")({
-						["CornerRadius"] = p_u_5.CornerRadius
-					}),
-					v6:New("Frame")({
-						["Name"] = "ProgressBar",
-						["Size"] = UDim2.new(1, 0, 1, 0),
-						["Position"] = UDim2.new(0, 0, 0, 0),
-						[v6.Children] = { v_u_2({
-								["Rotation"] = 0,
-								["MinTransparency"] = nil,
-								["MaxTransparency"] = 1,
-								["CurrentValue"] = nil,
-								["MaxValue"] = nil,
-								["scope"] = nil,
-								["MinTransparency"] = v10,
-								["CurrentValue"] = p_u_5.Quest.Progress.Current,
-								["MaxValue"] = p_u_5.Quest.Progress.Goal,
-								["scope"] = v6
-							}), v6:New("UICorner")({
-								["CornerRadius"] = p_u_5.CornerRadius
-							}) }
-					})
-				}
-			}) }
-	}
-	__set_list(v15, 1, {v16, v17, v18, v19, v20, v22, v23, v24(v26)})
-	v13[v14] = v15
-	return v12(v13)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+require(ReplicatedStorage.Packages.Fusion)
+local UIKit = require(ReplicatedStorage.common.ZS_Framework.UI.UIKit)
+local u17 = require("../../Theme")
+local u20 = require("./RewardFrame")
+local u23 = require("./QuestUIComputed")
+return function(p1) -- Line: 33 -- upvalues: u23 (val), u17 (val), UIKit (val), u20 (val)
+    local v1, v2, v3, v4, v5, v6
+    local v7 = p1.scope:innerScope()
+    v1, v2, v3, v4 = u23({scope = v7, Quest = p1.Quest})
+    local v8 = v7:Computed(function(a1) -- Line: 39 -- upvalues: p1 (val)
+        if a1(p1.Quest.IsCompleted) then
+            return 0.25
+        end
+        return 0
+    end)
+    if not p1.Quest.IsCompleted then
+        local Goal = p1.Quest.Progress.Goal
+        if 0 >= Goal then
+            v6 = 0
+        else
+            v6 = p1.Quest.Progress.Current / Goal * 100
+        end
+        v5 = -v6
+    else
+        v5 = 1000
+    end
+    if p1.Quest.IsBonus then
+        v5 = v5 + 1
+    end
+    local v9 = v7:Computed(function(a1) -- Line: 55 -- upvalues: p1 (val)
+        if a1(p1.Quest.IsCompleted) then
+            return "COMPLETED"
+        end
+        return "BONUS"
+    end)
+    v6 = v7:Computed(function(a1) -- Line: 61 -- upvalues: p1 (val), u17 (upval)
+        if a1(p1.Quest.IsCompleted) then
+            return u17.Menu.Positive
+        end
+        return u17.Menu.Accent
+    end)
+    local v10 = {
+        Name = "QuestFrame",
+        scope = v7,
+        Size = UDim2.new(1, 0, 0, 104),
+        LayoutOrder = v5,
+        Parent = p1.Parent,
+        BackgroundColor3 = v3,
+        BackgroundTransparency = v8,
+        StrokeColor3 = v1,
+        StrokeThickness = u17.Stroke.Medium,
+    }
+    local v11 = {}
+    local v12 = v7:New("UIPadding")
+    v12 = v12({PaddingTop = UDim.new(0, u17.Spacing.Small), PaddingBottom = UDim.new(0, u17.Spacing.Small), PaddingLeft = UDim.new(0, u17.Spacing.Small), PaddingRight = UDim.new(0, u17.Spacing.Small)})
+    local v13 = v7:New("TextLabel")
+    v13 = v13({
+        Name = "Title",
+        BackgroundTransparency = 1,
+        TextSize = 18,
+        Text = p1.Quest.Title,
+        TextColor3 = v4,
+        Font = u17.Menu.Fonts.Header,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+        Size = UDim2.new(0.58, 0, 0, 22),
+    })
+    local v14 = v7:New("TextLabel")
+    v14 = v14({
+        Name = "Description",
+        BackgroundTransparency = 1,
+        TextSize = 14,
+        TextWrapped = true,
+        Text = p1.Quest.Description,
+        TextColor3 = u17.Menu.TextMuted,
+        Font = u17.Menu.Fonts.Body,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+        Size = UDim2.new(0.58, 0, 0, 30),
+        Position = UDim2.fromOffset(0, 24),
+    })
+    local v15 = UIKit.Badge({
+        Name = "QuestState",
+        scope = v7,
+        Visible = v7:Computed(function(a1) -- Line: 111 -- upvalues: p1 (val)
+            local v1 = a1(p1.Quest.IsCompleted)
+            if not v1 then
+                v1 = a1(p1.Quest.IsBonus or false)
+            end
+            return v1
+        end),
+        Size = UDim2.fromOffset(96, 20),
+        Position = UDim2.new(0.58, -2, 0, 0),
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = v6,
+        ZIndex = u17.ZIndex.Overlay,
+        Text = v9,
+    })
+    local v16 = v7:New("Frame")
+    local v17 = {
+        Name = "RewardFrame",
+        Size = UDim2.new(0.37, 0, 1, 0),
+        Position = UDim2.new(1, 0, 0, 0),
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundTransparency = 1,
+    }
+    v17[v7.Children] = {u20({Size = UDim2.fromScale(1, 1), Rewards = p1.Quest.Rewards, scope = v7})}
+    v16 = v16(v17)
+    local v18 = {
+        Name = "ProgressFrame",
+        scope = v7,
+        Size = UDim2.new(0.58, 0, 0, 24),
+        Position = UDim2.new(0, 0, 1, 0),
+        AnchorPoint = Vector2.new(0, 1),
+        Value = p1.Quest.Progress.Current,
+        Max = p1.Quest.Progress.Goal,
+        FillColor3 = v2,
+        Text = p1.Quest.Progress.Current .. " / " .. p1.Quest.Progress.Goal,
+    }
+    v11[1] = v12
+    v11[2] = v13
+    v11[3] = v14
+    v11[4] = v15
+    v11[5] = v16
+    v11[6] = UIKit.ProgressBar(v18)
+    v10.Children = v11
+    return UIKit.Card(v10)
 end

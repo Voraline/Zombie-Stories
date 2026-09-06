@@ -1,65 +1,65 @@
-local v_u_1 = Random.new()
-local v_u_2 = table
-local v_u_30 = {
-	["contains"] = function(p3, p4)
-		-- upvalues: (copy) v_u_30
-		return v_u_30.indexOf(p3, p4) ~= nil
-	end,
-	["indexOf"] = function(p5, p6)
-		-- upvalues: (copy) v_u_30
-		return table.find(p5, p6) or v_u_30.keyOf(p5, p6)
-	end,
-	["keyOf"] = function(p7, p8)
-		for v9, v10 in pairs(p7) do
-			if v10 == p8 then
-				return v9
-			end
-		end
-		return nil
-	end,
-	["insertAndGetIndexOf"] = function(p11, p12)
-		p11[#p11 + 1] = p12
-		return #p11
-	end,
-	["skip"] = function(p13, p14)
-		return table.move(p13, p14 + 1, #p13, 1, table.create(#p13 - p14))
-	end,
-	["take"] = function(p15, p16)
-		return table.move(p15, 1, p16, 1, table.create(p16))
-	end,
-	["range"] = function(p17, p18, p19)
-		return table.move(p17, p18, p19, 1, table.create(p19 - p18 + 1))
-	end,
-	["skipAndTake"] = function(p20, p21, p22)
-		return table.move(p20, p21 + 1, p21 + p22, 1, table.create(p22))
-	end,
-	["random"] = function(p23)
-		-- upvalues: (copy) v_u_1
-		return p23[v_u_1:NextInteger(1, #p23)]
-	end,
-	["join"] = function(p24, p25)
-		local v26 = table.create(#p24 + #p25)
-		table.move(p24, 1, #p24, 1, v26)
-		return table.move(p25, 1, #p25, #p24 + 1, v26)
-	end,
-	["removeObject"] = function(p27, p28)
-		-- upvalues: (copy) v_u_30
-		local v29 = v_u_30.indexOf(p27, p28)
-		if v29 then
-			table.remove(p27, v29)
-		end
-	end
+local u1 = Random.new()
+local u2 = table
+local u3 = {}
+function u3.contains(p1, p2) -- Line: 27 -- upvalues: u3 (val)
+    local v1 = u3.indexOf(p1, p2) ~= nil
+    return v1
+end
+function u3.indexOf(p1, p2) -- Line: 32 -- upvalues: u3 (val)
+    local v1 = table.find(p1, p2)
+    if v1 then
+        return v1
+    end
+    return u3.keyOf(p1, p2)
+end
+function u3.keyOf(p1, p2) -- Line: 41
+    for k, v in pairs(p1) do
+        if v == p2 then
+            return k
+        end
+    end
+    return nil
+end
+function u3.insertAndGetIndexOf(p1, p2) -- Line: 51
+    p1[#p1 + 1] = p2
+    return #p1
+end
+function u3.skip(p1, p2) -- Line: 57
+    return table.move(p1, p2 + 1, #p1, 1, table.create(#p1 - p2))
+end
+function u3.take(p1, p2) -- Line: 62
+    return table.move(p1, 1, p2, 1, table.create(p2))
+end
+function u3.range(p1, p2, p3) -- Line: 67
+    return table.move(p1, p2, p3, 1, table.create(p3 - p2 + 1))
+end
+function u3.skipAndTake(p1, p2, p3) -- Line: 72
+    return table.move(p1, p2 + 1, p2 + p3, 1, table.create(p3))
+end
+function u3.random(p1) -- Line: 77 -- upvalues: u1 (val)
+    return p1[u1:NextInteger(1, #p1)]
+end
+function u3.join(p1, p2) -- Line: 82
+    local v1 = table.create(#p1 + #p2)
+    table.move(p1, 1, #p1, 1, v1)
+    return table.move(p2, 1, #p2, #p1 + 1, v1)
+end
+function u3.removeObject(p1, p2) -- Line: 89 -- upvalues: u3 (val)
+    local v1 = u3.indexOf(p1, p2)
+    if v1 then
+        table.remove(p1, v1)
+    end
+end
+local v1 = {}
+local v2 = {
+    __index = function(p1, p2) -- Line: 97 -- upvalues: u3 (val), u2 (val)
+        if u3[p2] ~= nil then
+            return u3[p2]
+        end
+        return u2[p2]
+    end,
+    __newindex = function(p1, p2, p3) -- Line: 105
+        error("Add new table entries by editing the Module itself.")
+    end,
 }
-return setmetatable({}, {
-	["__index"] = function(_, p31) -- name: __index
-		-- upvalues: (copy) v_u_30, (copy) v_u_2
-		if v_u_30[p31] == nil then
-			return v_u_2[p31]
-		else
-			return v_u_30[p31]
-		end
-	end,
-	["__newindex"] = function(_, _, _) -- name: __newindex
-		error("Add new table entries by editing the Module itself.")
-	end
-})
+return (setmetatable(v1, v2))

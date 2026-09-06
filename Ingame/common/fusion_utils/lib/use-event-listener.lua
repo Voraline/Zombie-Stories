@@ -1,54 +1,58 @@
 require("./types/fusion")
-local function v_u_8(p1, p_u_2) -- name: connect
-	if typeof(p1) == "RBXScriptSignal" then
-		local v_u_3 = nil
-		v_u_3 = p1:Connect(function(...)
-			-- upvalues: (ref) v_u_3, (copy) p_u_2
-			if v_u_3.Connected then
-				p_u_2(...)
-			end
-		end)
-		return v_u_3
-	end
-	local v4 = typeof(p1) == "table"
-	assert(v4, "[pretty-fusion-utils] Event-like should be an object")
-	local v5 = p1.Connect
-	if typeof(v5) == "function" then
-		return p1:Connect(p_u_2)
-	end
-	local v6 = p1.connect
-	if typeof(v6) == "function" then
-		return p1:connect(p_u_2)
-	end
-	local v7 = p1.subscribe
-	if typeof(v7) == "function" then
-		return p1:subscribe(p_u_2)
-	end
-	error("[pretty-fusion-utils] Event-like has no supported connect method")
+local function connect(p1, p2) -- Line: 15
+    local u49, u5, v1
+    if typeof(p1) == "RBXScriptSignal" then
+        u5 = nil
+        u5 = p1:Connect(function(...) -- Line: 19 -- upvalues: u5 (ref), p2 (val)
+            if u5.Connected then
+                p2(...)
+            end
+        end)
+        return u5
+    end
+    v1, u49 = p1, p2
+    local v2 = typeof(v1) == "table"
+    assert(v2, "[pretty-fusion-utils] Event-like should be an object")
+    u5 = typeof(v1.Connect)
+    if u5 == "function" then
+        u5 = v1:Connect(u49)
+        return u5
+    end
+    u5 = typeof(v1.connect)
+    if u5 == "function" then
+        u5 = v1:connect(u49)
+        return u5
+    end
+    u5 = typeof(v1.subscribe)
+    if u5 == "function" then
+        u5 = v1:subscribe(u49)
+        return u5
+    end
+    error("[pretty-fusion-utils] Event-like has no supported connect method")
 end
-local function v_u_12(p_u_9) -- name: bindDisconnect
-	if typeof(p_u_9) == "function" then
-		return p_u_9
-	end
-	if typeof(p_u_9) == "RBXScriptConnection" then
-		return function()
-			-- upvalues: (copy) p_u_9
-			if p_u_9.Connected then
-				p_u_9:Disconnect()
-			end
-		end
-	end
-	local v10 = typeof(p_u_9) == "table"
-	assert(v10, "[pretty-fusion-utils] Connection-like should be an object")
-	local v_u_11 = p_u_9.Disconnect or p_u_9.disconnect
-	return function()
-		-- upvalues: (copy) v_u_11, (copy) p_u_9
-		v_u_11(p_u_9)
-	end
+local function bindDisconnect(p1) -- Line: 40
+    if typeof(p1) == "function" then
+        return p1
+    end
+    if typeof(p1) == "RBXScriptConnection" then
+        return function() -- Line: 44 -- upvalues: p1 (val)
+            if p1.Connected then
+                p1:Disconnect()
+            end
+        end
+    end
+    local v1 = typeof(p1) == "table"
+    assert(v1, "[pretty-fusion-utils] Connection-like should be an object")
+    local Disconnect = p1.Disconnect
+    if not Disconnect then
+        Disconnect = p1.disconnect
+    end
+    return function() -- Line: 53 -- upvalues: Disconnect (val), p1 (val)
+        Disconnect(p1)
+    end
 end
-return function(p13, p14, p15) -- name: useEventListener
-	-- upvalues: (copy) v_u_12, (copy) v_u_8
-	local v16 = v_u_12(v_u_8(p14, p15))
-	table.insert(p13, v16)
-	return v16
+return function(p1, p2, p3) -- Line: 64 -- upvalues: bindDisconnect (val), connect (val)
+    local v1 = bindDisconnect(connect(p2, p3))
+    table.insert(p1, v1)
+    return v1
 end

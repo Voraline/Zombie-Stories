@@ -1,26 +1,30 @@
-local v_u_5 = {
-	["Done"] = false,
-	["ValidWeapon"] = function(_, p1) -- name: ValidWeapon
-		return p1.WeaponName == "Hammer"
-	end,
-	["CustomHit"] = function(_, p2, p3, _, _, _) -- name: CustomHit
-		-- upvalues: (copy) v_u_5
-		local v4 = v_u_5.Done == false and game.ReplicatedStorage.common.Remotes:FindFirstChild("Door")
-		if v4 then
-			if workspace.Part_2:FindFirstChild("Gate1") then
-				if v_u_5:ValidWeapon(p2) and (v4 and p3:IsDescendantOf(workspace.Part_2.Gate1)) then
-					v4:FireServer()
-					return true
-				end
-			else
-				task.delay(10, function()
-					-- upvalues: (ref) v_u_5
-					if not workspace.Part_2:FindFirstChild("Gate1") then
-						v_u_5.Done = true
-					end
-				end)
-			end
-		end
-	end
+local u0 = {
+    Done = false,
+    ValidWeapon = function(p1, p2) -- Line: 4
+        local v1 = p2.WeaponName == "Hammer"
+        return v1
+    end,
 }
-return v_u_5
+function u0.CustomHit(p1, p2, p3, p4, p5, p6) -- Line: 8 -- upvalues: u0 (val)
+    if u0.Done ~= false then
+        return
+    end
+    local Door = game.ReplicatedStorage.common.Remotes:FindFirstChild("Door")
+    if not Door then
+        return
+    end
+    if not (workspace.Part_2:FindFirstChild("Gate1")) then
+        task.delay(10, function() -- Line: 19 -- upvalues: u0 (upval)
+            if not (workspace.Part_2:FindFirstChild("Gate1")) then
+                u0.Done = true
+            end
+        end)
+        return
+    end
+    if not (u0:ValidWeapon(p2)) or not Door or not (p3:IsDescendantOf(workspace.Part_2.Gate1)) then
+        return
+    end
+    Door:FireServer()
+    return true
+end
+return u0

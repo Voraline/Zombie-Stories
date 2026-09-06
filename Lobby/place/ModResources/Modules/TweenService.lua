@@ -1,29 +1,26 @@
 local v1 = {}
-local v_u_2 = game:GetService("TweenService")
-local v_u_3 = require("./Spring")
-function v1.Tween(_, p4, p5, p6, p7, p8) -- name: Tween
-	-- upvalues: (copy) v_u_2
-	local v9 = v_u_2:Create(p4, TweenInfo.new(p5, Enum.EasingStyle[p6].Value, Enum.EasingDirection[p7].Value), p8)
-	v9:Play()
-	v9.Completed:Wait()
-	v9:Destroy()
+local TweenService = game:GetService("TweenService")
+local u8 = require("./Spring")
+function v1.Tween(p1, p2, p3, p4, p5, p6) -- Line: 5 -- upvalues: TweenService (val)
+    local v1 = TweenInfo.new(p3, Enum.EasingStyle[p4].Value, Enum.EasingDirection[p5].Value)
+    local v2 = TweenService:Create(p2, v1, p6)
+    v2:Play()
+    v2.Completed:Wait()
+    v2:Destroy()
 end
-function v1.TweenAsync(_, p10, p11, p12, p13, p14) -- name: TweenAsync
-	-- upvalues: (copy) v_u_2
-	v_u_2:Create(p10, TweenInfo.new(p11, Enum.EasingStyle[p12].Value, Enum.EasingDirection[p13].Value), p14):Play()
+function v1.TweenAsync(p1, p2, p3, p4, p5, p6) -- Line: 16 -- upvalues: TweenService (val)
+    local v1 = TweenInfo.new(p3, Enum.EasingStyle[p4].Value, Enum.EasingDirection[p5].Value)
+    TweenService:Create(p2, v1, p6):Play()
 end
-function v1.Spring(_, p15, p16, p17, p18) -- name: Spring
-	-- upvalues: (copy) v_u_3
-	v_u_3.Target(p15, p16, p17, p18)
-	task.wait(p16)
-	v_u_3.Stop(p15)
+function v1.Spring(p1, p2, p3, p4, p5) -- Line: 24 -- upvalues: u8 (val)
+    u8.Target(p2, p3, p4, p5)
+    task.wait(p3)
+    u8.Stop(p2)
 end
-function v1.SpringAsync(_, p_u_19, p20, p21, p22) -- name: SpringAsync
-	-- upvalues: (copy) v_u_3
-	v_u_3.Target(p_u_19, p20, p21, p22)
-	task.delay(p20, function()
-		-- upvalues: (ref) v_u_3, (copy) p_u_19
-		v_u_3.Stop(p_u_19)
-	end)
+function v1.SpringAsync(p1, p2, p3, p4, p5) -- Line: 30 -- upvalues: u8 (val)
+    u8.Target(p2, p3, p4, p5)
+    task.delay(p3, function() -- Line: 32 -- upvalues: u8 (upval), p2 (val)
+        u8.Stop(p2)
+    end)
 end
 return v1

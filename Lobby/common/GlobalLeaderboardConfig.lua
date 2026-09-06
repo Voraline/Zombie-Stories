@@ -1,189 +1,193 @@
-local v_u_1 = {}
+local u0 = {}
+local v1 = {}
 local v2 = {}
-local v5 = {
-	["MostPoints"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["better"] = function(p3, p4) -- name: better
-			return not p3 or p3 < p4
-		end
-	}
+v2.MostPoints = {
+    accumulator = false,
+    better = function(p1, p2) -- Line: 9
+        local v1 = not p1
+        if not v1 then
+            v1 = p1 < p2
+        end
+        return v1
+    end,
 }
-v2.Deadeye = v5
-local v8 = {
-	["FastestTime"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["ascending"] = true,
-		["better"] = function(p6, p7) -- name: better
-			return not p6 or (p6 == 0 and true or p7 < p6)
-		end
-	}
+v1.Deadeye = v2
+v2 = {}
+v2.FastestTime = {
+    accumulator = false,
+    ascending = true,
+    better = function(p1, p2) -- Line: 15
+        local v1 = not p1
+        if not v1 then
+            v1 = if p1 ~= 0 then p2 < p1 else true
+        end
+        return v1
+    end,
 }
-v2.GunGame = v8
-local v11 = {
-	["TotalKills"] = {
-		["accumulator"] = true
-	},
-	["FastestTime"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["ascending"] = true,
-		["better"] = function(p9, p10) -- name: better
-			return not p9 or (p9 == 0 and true or p10 < p9)
-		end
-	}
+v1.GunGame = v2
+v2 = {
+    TotalKills = {accumulator = true},
 }
-v2.Survival = v11
-local v14 = {
-	["MostKills"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["better"] = function(p12, p13) -- name: better
-			return not p12 or p12 < p13
-		end
-	},
-	["TotalKills"] = {
-		["accumulator"] = true
-	}
+v2.FastestTime = {
+    accumulator = false,
+    ascending = true,
+    better = function(p1, p2) -- Line: 25
+        local v1 = not p1
+        if not v1 then
+            v1 = if p1 ~= 0 then p2 < p1 else true
+        end
+        return v1
+    end,
 }
-v2.MinigunFiesta = v14
-local v17 = {
-	["MostTurkeysKilled"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["better"] = function(p15, p16) -- name: better
-			return not p15 or p15 < p16
-		end
-	},
-	["MostTurkeyWins"] = {
-		["accumulator"] = true
-	},
-	["MostHunterWins"] = {
-		["accumulator"] = true
-	}
+v1.Survival = v2
+v2 = {}
+v2.MostKills = {
+    accumulator = false,
+    better = function(p1, p2) -- Line: 32
+        local v1 = not p1
+        if not v1 then
+            v1 = p1 < p2
+        end
+        return v1
+    end,
 }
-v2.TurkeyHunt = v17
-v_u_1.ARCADE_MODES = v2
-local v20 = {
-	["Level"] = {
-		["accumulator"] = false,
-		["better"] = nil,
-		["dataPath"] = nil,
-		["better"] = function(p18, p19) -- name: better
-			return not p18 or p18 < p19
-		end,
-		["dataPath"] = { "Progression", "Arcade", "Level" }
-	},
-	["PlayTime"] = {
-		["accumulator"] = true,
-		["dataPath"] = nil,
-		["dataPath"] = { "Progression", "Arcade", "PlayTime" }
-	}
+v2.TotalKills = {accumulator = true}
+v1.MinigunFiesta = v2
+v2 = {}
+v2.MostTurkeysKilled = {
+    accumulator = false,
+    better = function(p1, p2) -- Line: 41
+        local v1 = not p1
+        if not v1 then
+            v1 = p1 < p2
+        end
+        return v1
+    end,
 }
-v_u_1.ARCADE_PROGRESSION = v20
-v_u_1.DIFFICULTIES = {
-	"Easy",
-	"Medium",
-	"Hard",
-	"Nightmare"
-}
-function v_u_1.CreateArcadeLeaderboardStructure() -- name: CreateArcadeLeaderboardStructure
-	-- upvalues: (copy) v_u_1
-	local v21 = {}
-	for v22, v23 in pairs(v_u_1.ARCADE_MODES) do
-		v21[v22] = {}
-		for v24, _ in pairs(v23) do
-			v21[v22][v24] = {}
-			for _, v25 in ipairs(v_u_1.DIFFICULTIES) do
-				v21[v22][v24][v25] = 0
-			end
-		end
-	end
-	return v21
+v2.MostTurkeyWins = {accumulator = true}
+v2.MostHunterWins = {accumulator = true}
+v1.TurkeyHunt = v2
+u0.ARCADE_MODES = v1
+v1 = {}
+v2 = {accumulator = false}
+function v2.better(p1, p2) -- Line: 56
+    local v1 = not p1
+    if not v1 then
+        v1 = p1 < p2
+    end
+    return v1
 end
-function v_u_1.GenerateArcadeConfigEntries() -- name: GenerateArcadeConfigEntries
-	-- upvalues: (copy) v_u_1
-	local v26 = {}
-	for v27, v28 in pairs(v_u_1.ARCADE_MODES) do
-		v26[v27] = {}
-		for v29, v30 in pairs(v28) do
-			local v31 = v26[v27]
-			local v32 = {
-				["dsKey"] = v29,
-				["dataPath"] = { v27, v29 },
-				["accumulator"] = v30.accumulator,
-				["better"] = v30.better
-			}
-			table.insert(v31, v32)
-		end
-	end
-	return v26
+v2.dataPath = {"Progression", "Arcade", "Level"}
+v1.Level = v2
+v2 = {accumulator = true}
+local v3 = {"Progression", "Arcade", "PlayTime"}
+v2.dataPath = v3
+v1.PlayTime = v2
+u0.ARCADE_PROGRESSION = v1
+v1 = {"Easy", "Medium", "Hard", "Nightmare"}
+u0.DIFFICULTIES = v1
+function u0.CreateArcadeLeaderboardStructure() -- Line: 71 -- upvalues: u0 (val)
+    local v1
+    local v2 = {}
+    for k, v in pairs(u0.ARCADE_MODES) do
+        v2[k] = {}
+        for k2, i in pairs(v) do
+            v2[k][k2] = {}
+            for i2, j in ipairs(u0.DIFFICULTIES) do
+                v1 = v2[k][k2]
+                v1[j] = 0
+            end
+        end
+    end
+    return v2
 end
-function v_u_1.GenerateArcadeProgressionConfigEntries() -- name: GenerateArcadeProgressionConfigEntries
-	-- upvalues: (copy) v_u_1
-	local v33 = {}
-	for v34, v35 in pairs(v_u_1.ARCADE_PROGRESSION) do
-		local v36 = {
-			["dsKey"] = v34,
-			["dataPath"] = v35.dataPath,
-			["accumulator"] = v35.accumulator,
-			["better"] = v35.better
-		}
-		table.insert(v33, v36)
-	end
-	return v33
+function u0.GenerateArcadeConfigEntries() -- Line: 89 -- upvalues: u0 (val)
+    local v1 = {}
+    for k, v in pairs(u0.ARCADE_MODES) do
+        v1[k] = {}
+        for k2, i in pairs(v) do
+            table.insert(v1[k], {
+                dsKey = k2,
+                dataPath = {k, k2},
+                accumulator = i.accumulator,
+                better = i.better,
+            })
+        end
+    end
+    return v1
 end
-function v_u_1.GetArcadeProgressionStats() -- name: GetArcadeProgressionStats
-	-- upvalues: (copy) v_u_1
-	local v37 = {}
-	for v38, _ in pairs(v_u_1.ARCADE_PROGRESSION) do
-		table.insert(v37, v38)
-	end
-	return v37
+function u0.GenerateArcadeProgressionConfigEntries() -- Line: 109 -- upvalues: u0 (val)
+    local v1 = {}
+    for k, v in pairs(u0.ARCADE_PROGRESSION) do
+        table.insert(v1, {dsKey = k, dataPath = v.dataPath, accumulator = v.accumulator, better = v.better})
+    end
+    return v1
 end
-function v_u_1.GetArcadeStatsForMode(p39) -- name: GetArcadeStatsForMode
-	-- upvalues: (copy) v_u_1
-	local v40 = {}
-	if v_u_1.ARCADE_MODES[p39] then
-		for v41, _ in pairs(v_u_1.ARCADE_MODES[p39]) do
-			table.insert(v40, v41)
-		end
-	end
-	return v40
+function u0.GetArcadeProgressionStats() -- Line: 125 -- upvalues: u0 (val)
+    local v1 = {}
+    for k, v in pairs(u0.ARCADE_PROGRESSION) do
+        table.insert(v1, k)
+    end
+    return v1
 end
-function v_u_1.GetAllArcadeModes() -- name: GetAllArcadeModes
-	-- upvalues: (copy) v_u_1
-	local v42 = {}
-	for v43, _ in pairs(v_u_1.ARCADE_MODES) do
-		table.insert(v42, v43)
-	end
-	return v42
+function u0.GetArcadeStatsForMode(p1) -- Line: 134 -- upvalues: u0 (val)
+    local v1 = {}
+    if u0.ARCADE_MODES[p1] then
+        for k, v in pairs(u0.ARCADE_MODES[p1]) do
+            table.insert(v1, k)
+        end
+    end
+    return v1
 end
-function v_u_1.IsArcadeAscendingMode(p44, p45) -- name: IsArcadeAscendingMode
-	-- upvalues: (copy) v_u_1
-	if p45 then
-		if p44 == "Arcade" then
-			local v46 = v_u_1.ARCADE_PROGRESSION[p45]
-			if v46 and v46.ascending ~= nil then
-				return v46.ascending
-			end
-		else
-			local v47 = v_u_1.ARCADE_MODES[p44]
-			if v47 then
-				v47 = v47[p45]
-			end
-			if v47 and v47.ascending ~= nil then
-				return v47.ascending
-			end
-		end
-	end
-	return p44 == "GunGame"
+function u0.GetAllArcadeModes() -- Line: 145 -- upvalues: u0 (val)
+    local v1 = {}
+    for k, v in pairs(u0.ARCADE_MODES) do
+        table.insert(v1, k)
+    end
+    return v1
 end
-v_u_1.MODES = v_u_1.ARCADE_MODES
-v_u_1.CreateDefaultLeaderboardStructure = v_u_1.CreateArcadeLeaderboardStructure
-v_u_1.GenerateConfigEntries = v_u_1.GenerateArcadeConfigEntries
-v_u_1.GetStatsForMode = v_u_1.GetArcadeStatsForMode
-v_u_1.GetAllModes = v_u_1.GetAllArcadeModes
-v_u_1.IsAscendingMode = v_u_1.IsArcadeAscendingMode
-return v_u_1
+function u0.IsArcadeAscendingMode(p1, p2) -- Line: 154 -- upvalues: u0 (val)
+    local v1, v2
+    if not p2 then
+        v1 = p1
+        v2 = v1 == "GunGame"
+        return v2
+    end
+    if p1 == "Arcade" then
+        v2 = u0.ARCADE_PROGRESSION[p2]
+        if not v2 then
+            v1 = p1
+            v2 = v1 == "GunGame"
+            return v2
+        end
+        if v2.ascending ~= nil then
+            return v2.ascending
+        end
+        v1 = p1
+        v2 = v1 == "GunGame"
+        return v2
+    end
+    v2 = u0.ARCADE_MODES[p1]
+    local v3 = v2
+    if v3 then
+        v3 = v2[p2]
+    end
+    if not v3 then
+        v1 = p1
+        v2 = v1 == "GunGame"
+        return v2
+    end
+    if v3.ascending ~= nil then
+        return v3.ascending
+    end
+    v1 = p1
+    v2 = v1 == "GunGame"
+    return v2
+end
+u0.MODES = u0.ARCADE_MODES
+u0.CreateDefaultLeaderboardStructure = u0.CreateArcadeLeaderboardStructure
+u0.GenerateConfigEntries = u0.GenerateArcadeConfigEntries
+u0.GetStatsForMode = u0.GetArcadeStatsForMode
+u0.GetAllModes = u0.GetAllArcadeModes
+u0.IsAscendingMode = u0.IsArcadeAscendingMode
+return u0

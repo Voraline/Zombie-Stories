@@ -1,50 +1,39 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("RunService")
-local v_u_3 = require(v1.common.ZS_Shared.Data.GameState)
-local v_u_4, v_u_5 = require(v1.Packages.Bin)()
-local function v21() -- name: toggleBreakdancingZombies
-	-- upvalues: (copy) v_u_3, (copy) v_u_5, (copy) v_u_4, (copy) v_u_2
-	local v6 = v_u_3.Data.Variables.BreakdancingZombiesEnabled
-	v_u_5()
-	if v6 then
-		v_u_4(v_u_2.Heartbeat:Connect(function(p7)
-			-- upvalues: (ref) v_u_3
-			local v8 = v_u_3.LocalState.RotationAxis
-			v8.X = v8.X + p7 * 60
-			local v9 = v_u_3.LocalState.RotationAxis
-			v9.Y = v9.Y + p7 * 200
-			local v10 = v_u_3.LocalState.RotationAxis
-			v10.Z = v10.Z + p7 * 30
-			if v_u_3.LocalState.RotationAxis.X > 360 then
-				local v11 = v_u_3.LocalState.RotationAxis
-				v11.X = v11.X - 360
-			end
-			if v_u_3.LocalState.RotationAxis.Y > 360 then
-				local v12 = v_u_3.LocalState.RotationAxis
-				v12.Y = v12.Y - 360
-			end
-			if v_u_3.LocalState.RotationAxis.Z > 360 then
-				local v13 = v_u_3.LocalState.RotationAxis
-				v13.Z = v13.Z - 360
-			end
-			local v14 = v_u_3.LocalState
-			local v15 = CFrame.Angles
-			local v16 = v_u_3.LocalState.RotationAxis.X
-			local v17 = math.rad(v16)
-			local v18 = v_u_3.LocalState.RotationAxis.Y
-			local v19 = math.rad(v18)
-			local v20 = v_u_3.LocalState.RotationAxis.Z
-			v14.NPCRotation = v15(v17, v19, (math.rad(v20)))
-		end))
-	else
-		v_u_3.LocalState.NPCRotation = CFrame.Angles(0, 0, 0)
-		v_u_3.LocalState.RotationAxis = {
-			["X"] = 0,
-			["Y"] = 0,
-			["Z"] = 0
-		}
-	end
+local u21, u22
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+u21, u22 = require(ReplicatedStorage.Packages.Bin)()
+local function toggleBreakdancingZombies() -- Line: 11 -- upvalues: GameState (val), u22 (val), u21 (val), RunService (val)
+    u22()
+    if GameState.Data.Variables.BreakdancingZombiesEnabled then
+        u21(RunService.Heartbeat:Connect(function(p1) -- Line: 30 -- upvalues: GameState (upval)
+            local RotationAxis = GameState.LocalState.RotationAxis
+            RotationAxis.X = RotationAxis.X + p1 * 60
+            local RotationAxis_2 = GameState.LocalState.RotationAxis
+            RotationAxis_2.Y = RotationAxis_2.Y + p1 * 200
+            local RotationAxis_3 = GameState.LocalState.RotationAxis
+            RotationAxis_3.Z = RotationAxis_3.Z + p1 * 30
+            if 360 < GameState.LocalState.RotationAxis.X then
+                local RotationAxis_4 = GameState.LocalState.RotationAxis
+                RotationAxis_4.X = RotationAxis_4.X - 360
+            end
+            if 360 < GameState.LocalState.RotationAxis.Y then
+                local RotationAxis_5 = GameState.LocalState.RotationAxis
+                RotationAxis_5.Y = RotationAxis_5.Y - 360
+            end
+            if 360 < GameState.LocalState.RotationAxis.Z then
+                local RotationAxis_6 = GameState.LocalState.RotationAxis
+                RotationAxis_6.Z = RotationAxis_6.Z - 360
+            end
+            local v1 = math.rad(GameState.LocalState.RotationAxis.X)
+            local v2 = math.rad(GameState.LocalState.RotationAxis.Y)
+            GameState.LocalState.NPCRotation = CFrame.Angles(v1, v2, (math.rad(GameState.LocalState.RotationAxis.Z)))
+        end))
+        return
+    end
+    GameState.LocalState.NPCRotation = CFrame.Angles(0, 0, 0)
+    GameState.LocalState.RotationAxis = {X = 0, Y = 0, Z = 0}
 end
-v21()
-v_u_3.Signals.Variables.BreakdancingZombiesEnabled:Connect(v21)
+toggleBreakdancingZombies()
+GameState.Signals.Variables.BreakdancingZombiesEnabled:Connect(toggleBreakdancingZombies)
 return {}

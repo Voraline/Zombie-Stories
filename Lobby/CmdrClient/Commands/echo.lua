@@ -1,19 +1,12 @@
 return {
-	["Name"] = "echo",
-	["Aliases"] = nil,
-	["Description"] = "Echoes your text back to you.",
-	["Group"] = "DefaultUtil",
-	["Args"] = nil,
-	["Run"] = nil,
-	["Aliases"] = { "=" },
-	["Args"] = {
-		{
-			["Type"] = "string",
-			["Name"] = "Text",
-			["Description"] = "The text."
-		}
-	},
-	["Run"] = function(_, p1) -- name: Run
-		return p1
-	end
+    Name = "echo",
+    Description = "Echoes your text back to you.",
+    Group = "DefaultUtil",
+    Aliases = {"="},
+    Args = {
+        {Type = "string", Name = "Text", Description = "The text."},
+    },
+    Run = function(p1, p2) -- Line: 14
+        return p2
+    end,
 }

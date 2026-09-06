@@ -1,403 +1,396 @@
-local v_u_1 = game:GetService("TweenService")
-local v_u_2 = game:GetService("UserInputService")
-local _ = game.ReplicatedStorage.common
-local v_u_3 = {}
-local v_u_4 = "MouseKeyboard"
-local v_u_5 = {}
-local v_u_6 = true
-local v_u_7 = {
-	[Enum.KeyCode.Unknown] = "rbxassetid://4436536648",
-	[Enum.KeyCode.ButtonX] = "rbxasset://textures/ui/Controls/xboxX.png",
-	[Enum.KeyCode.ButtonY] = "rbxasset://textures/ui/Controls/xboxY.png",
-	[Enum.KeyCode.ButtonA] = "rbxasset://textures/ui/Controls/xboxA.png",
-	[Enum.KeyCode.ButtonB] = "rbxasset://textures/ui/Controls/xboxB.png",
-	[Enum.KeyCode.DPadLeft] = "rbxasset://textures/ui/Controls/dpadLeft.png",
-	[Enum.KeyCode.DPadRight] = "rbxasset://textures/ui/Controls/dpadRight.png",
-	[Enum.KeyCode.DPadUp] = "rbxasset://textures/ui/Controls/dpadUp.png",
-	[Enum.KeyCode.DPadDown] = "rbxasset://textures/ui/Controls/dpadDown.png",
-	[Enum.KeyCode.ButtonSelect] = "rbxasset://textures/ui/Controls/xboxmenu.png",
-	[Enum.KeyCode.ButtonStart] = "rbxasset://textures/ui/Controls/xboxView.png",
-	[Enum.KeyCode.ButtonL1] = "rbxasset://textures/ui/Controls/xboxLB.png",
-	[Enum.KeyCode.ButtonR1] = "rbxasset://textures/ui/Controls/xboxRB.png",
-	[Enum.KeyCode.ButtonL2] = "rbxasset://textures/ui/Controls/xboxLT.png",
-	[Enum.KeyCode.ButtonR2] = "rbxasset://textures/ui/Controls/xboxRT.png",
-	[Enum.KeyCode.ButtonL3] = "rbxasset://textures/ui/Controls/xboxLS.png",
-	[Enum.KeyCode.ButtonR3] = "rbxasset://textures/ui/Controls/xboxRS.png",
-	[Enum.KeyCode.Thumbstick1] = "rbxasset://textures/ui/Controls/xboxLSDirectional.png",
-	[Enum.KeyCode.Thumbstick2] = "rbxasset://textures/ui/Controls/xboxRSDirectional.png",
-	[Enum.UserInputType.Touch] = "rbxasset://textures/ui/Controls/TouchTapIcon.png"
-}
-local v_u_8 = {
-	[Enum.KeyCode.Backspace] = "rbxasset://textures/ui/Controls/backspace.png",
-	[Enum.KeyCode.Return] = "rbxasset://textures/ui/Controls/return.png",
-	[Enum.KeyCode.KeypadEnter] = "rbxasset://textures/ui/Controls/return.png",
-	[Enum.KeyCode.LeftShift] = "rbxasset://textures/ui/Controls/shift.png",
-	[Enum.KeyCode.RightShift] = "rbxasset://textures/ui/Controls/shift.png",
-	[Enum.KeyCode.Tab] = "rbxasset://textures/ui/Controls/tab.png",
-	[Enum.KeyCode.Quote] = "rbxasset://textures/ui/Controls/apostrophe.png",
-	[Enum.KeyCode.Comma] = "rbxasset://textures/ui/Controls/comma.png",
-	[Enum.KeyCode.Backquote] = "rbxasset://textures/ui/Controls/graveaccent.png",
-	[Enum.KeyCode.Period] = "rbxasset://textures/ui/Controls/period.png",
-	[Enum.KeyCode.Space] = "rbxasset://textures/ui/Controls/spacebar.png"
-}
-local v_u_9 = {
-	[Enum.KeyCode.Escape] = "Esc",
-	[Enum.KeyCode.QuotedDouble] = "\"",
-	[Enum.KeyCode.Hash] = "#",
-	[Enum.KeyCode.Dollar] = "$",
-	[Enum.KeyCode.Percent] = "%",
-	[Enum.KeyCode.Ampersand] = "&",
-	[Enum.KeyCode.LeftParenthesis] = "(",
-	[Enum.KeyCode.RightParenthesis] = ")",
-	[Enum.KeyCode.Asterisk] = "*",
-	[Enum.KeyCode.Plus] = "+",
-	[Enum.KeyCode.Comma] = ",",
-	[Enum.KeyCode.Minus] = "-",
-	[Enum.KeyCode.Period] = ".",
-	[Enum.KeyCode.Slash] = "/",
-	[Enum.KeyCode.Zero] = "0",
-	[Enum.KeyCode.One] = "1",
-	[Enum.KeyCode.Two] = "2",
-	[Enum.KeyCode.Three] = "3",
-	[Enum.KeyCode.Four] = "4",
-	[Enum.KeyCode.Five] = "5",
-	[Enum.KeyCode.Six] = "6",
-	[Enum.KeyCode.Seven] = "7",
-	[Enum.KeyCode.Eight] = "8",
-	[Enum.KeyCode.Nine] = "9",
-	[Enum.KeyCode.Colon] = ":",
-	[Enum.KeyCode.Semicolon] = ";",
-	[Enum.KeyCode.LessThan] = "<",
-	[Enum.KeyCode.Equals] = "=",
-	[Enum.KeyCode.GreaterThan] = ">",
-	[Enum.KeyCode.Question] = "?",
-	[Enum.KeyCode.At] = "@",
-	[Enum.KeyCode.LeftBracket] = "[",
-	[Enum.KeyCode.BackSlash] = "\\",
-	[Enum.KeyCode.RightBracket] = "]",
-	[Enum.KeyCode.Caret] = "^",
-	[Enum.KeyCode.Underscore] = "_",
-	[Enum.KeyCode.Backquote] = "`",
-	[Enum.KeyCode.LeftCurly] = "{",
-	[Enum.KeyCode.Pipe] = "|",
-	[Enum.KeyCode.RightCurly] = "}",
-	[Enum.KeyCode.Tilde] = "~",
-	[Enum.KeyCode.Delete] = "Del",
-	[Enum.KeyCode.KeypadZero] = "NP0",
-	[Enum.KeyCode.KeypadOne] = "NP1",
-	[Enum.KeyCode.KeypadTwo] = "NP2",
-	[Enum.KeyCode.KeypadThree] = "NP3",
-	[Enum.KeyCode.KeypadFour] = "NP4",
-	[Enum.KeyCode.KeypadFive] = "NP5",
-	[Enum.KeyCode.KeypadSix] = "NP6",
-	[Enum.KeyCode.KeypadSeven] = "NP7",
-	[Enum.KeyCode.KeypadEight] = "NP8",
-	[Enum.KeyCode.KeypadNine] = "NP9",
-	[Enum.KeyCode.KeypadPeriod] = ".",
-	[Enum.KeyCode.KeypadDivide] = "/",
-	[Enum.KeyCode.KeypadMultiply] = "*",
-	[Enum.KeyCode.KeypadMinus] = "-",
-	[Enum.KeyCode.KeypadPlus] = "+",
-	[Enum.KeyCode.KeypadEnter] = "Ent",
-	[Enum.KeyCode.KeypadEquals] = "=",
-	[Enum.KeyCode.Up] = "\226\134\145",
-	[Enum.KeyCode.Down] = "\226\134\147",
-	[Enum.KeyCode.Right] = "\226\134\146",
-	[Enum.KeyCode.Left] = "\226\134\144",
-	[Enum.KeyCode.Insert] = "Ins",
-	[Enum.KeyCode.Home] = "Hm",
-	[Enum.KeyCode.End] = "End",
-	[Enum.KeyCode.PageUp] = "PgU",
-	[Enum.KeyCode.PageDown] = "PgD",
-	[Enum.KeyCode.LeftShift] = "Sh",
-	[Enum.KeyCode.RightShift] = "Sh",
-	[Enum.KeyCode.LeftMeta] = "Me",
-	[Enum.KeyCode.RightMeta] = "Me",
-	[Enum.KeyCode.LeftAlt] = "Alt",
-	[Enum.KeyCode.RightAlt] = "Alt",
-	[Enum.KeyCode.LeftControl] = "Ctrl",
-	[Enum.KeyCode.RightControl] = "Ctrl",
-	[Enum.KeyCode.CapsLock] = "Caps",
-	[Enum.KeyCode.NumLock] = "NL",
-	[Enum.KeyCode.ScrollLock] = "SL",
-	[Enum.KeyCode.LeftSuper] = "Sup",
-	[Enum.KeyCode.RightSuper] = "Sup",
-	[Enum.UserInputType.MouseButton1] = "M1",
-	[Enum.UserInputType.MouseButton2] = "M2",
-	[Enum.UserInputType.MouseButton3] = "M3"
-}
-local v_u_10 = { "", "@2x", "@3x" }
-local v_u_11 = {}
-v_u_11.__index = v_u_11
-function v_u_11.new(p12, p13, p14, p15) -- name: new
-	-- upvalues: (copy) v_u_11, (copy) v_u_3
-	local v16 = {}
-	local v17 = v_u_11
-	setmetatable(v16, v17)
-	local v18
-	if typeof(p12) == "EnumItem" then
-		v18 = nil
-	else
-		v18 = p12
-		p12 = nil
-	end
-	if v18 then
-		p12 = getActionInputDeviceCode(v18)
-	end
-	local v19 = p13 == nil and 3 or p13
-	if p14 == nil then
-		p14 = Color3.new(1, 1, 1)
-	end
-	local v20 = (v19 == 1 or v19 == 2) and true or v19 == 3
-	assert(v20, "Icon size must be 1, 2, or 3 (SMALL, MEDIUM, or LARGE)")
-	local v21, v22 = createInputImage(p12, p14, v19)
-	v16.Type = v22
-	v16.UIObject = v21
-	v16.IconSize = v19
-	v16.Color = p14
-	v16.ActionName = v18
-	v16.Transparency = 0
-	v16.AutoUpdate = p15 or true or true
-	local v23 = v_u_3
-	table.insert(v23, v16)
-	return v16
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local u13 = {}
+local u14 = "MouseKeyboard"
+local u15 = {}
+local u16 = true
+local u17 = {}
+u17[Enum.KeyCode.Unknown] = "rbxassetid://4436536648"
+u17[Enum.KeyCode.ButtonX] = "rbxasset://textures/ui/Controls/xboxX.png"
+u17[Enum.KeyCode.ButtonY] = "rbxasset://textures/ui/Controls/xboxY.png"
+u17[Enum.KeyCode.ButtonA] = "rbxasset://textures/ui/Controls/xboxA.png"
+u17[Enum.KeyCode.ButtonB] = "rbxasset://textures/ui/Controls/xboxB.png"
+u17[Enum.KeyCode.DPadLeft] = "rbxasset://textures/ui/Controls/dpadLeft.png"
+u17[Enum.KeyCode.DPadRight] = "rbxasset://textures/ui/Controls/dpadRight.png"
+u17[Enum.KeyCode.DPadUp] = "rbxasset://textures/ui/Controls/dpadUp.png"
+u17[Enum.KeyCode.DPadDown] = "rbxasset://textures/ui/Controls/dpadDown.png"
+u17[Enum.KeyCode.ButtonSelect] = "rbxasset://textures/ui/Controls/xboxmenu.png"
+u17[Enum.KeyCode.ButtonStart] = "rbxasset://textures/ui/Controls/xboxView.png"
+u17[Enum.KeyCode.ButtonL1] = "rbxasset://textures/ui/Controls/xboxLB.png"
+u17[Enum.KeyCode.ButtonR1] = "rbxasset://textures/ui/Controls/xboxRB.png"
+u17[Enum.KeyCode.ButtonL2] = "rbxasset://textures/ui/Controls/xboxLT.png"
+u17[Enum.KeyCode.ButtonR2] = "rbxasset://textures/ui/Controls/xboxRT.png"
+u17[Enum.KeyCode.ButtonL3] = "rbxasset://textures/ui/Controls/xboxLS.png"
+u17[Enum.KeyCode.ButtonR3] = "rbxasset://textures/ui/Controls/xboxRS.png"
+u17[Enum.KeyCode.Thumbstick1] = "rbxasset://textures/ui/Controls/xboxLSDirectional.png"
+u17[Enum.KeyCode.Thumbstick2] = "rbxasset://textures/ui/Controls/xboxRSDirectional.png"
+u17[Enum.UserInputType.Touch] = "rbxasset://textures/ui/Controls/TouchTapIcon.png"
+local u58 = {}
+u58[Enum.KeyCode.Backspace] = "rbxasset://textures/ui/Controls/backspace.png"
+u58[Enum.KeyCode.Return] = "rbxasset://textures/ui/Controls/return.png"
+u58[Enum.KeyCode.KeypadEnter] = "rbxasset://textures/ui/Controls/return.png"
+u58[Enum.KeyCode.LeftShift] = "rbxasset://textures/ui/Controls/shift.png"
+u58[Enum.KeyCode.RightShift] = "rbxasset://textures/ui/Controls/shift.png"
+u58[Enum.KeyCode.Tab] = "rbxasset://textures/ui/Controls/tab.png"
+u58[Enum.KeyCode.Quote] = "rbxasset://textures/ui/Controls/apostrophe.png"
+u58[Enum.KeyCode.Comma] = "rbxasset://textures/ui/Controls/comma.png"
+u58[Enum.KeyCode.Backquote] = "rbxasset://textures/ui/Controls/graveaccent.png"
+u58[Enum.KeyCode.Period] = "rbxasset://textures/ui/Controls/period.png"
+u58[Enum.KeyCode.Space] = "rbxasset://textures/ui/Controls/spacebar.png"
+local u81 = {}
+u81[Enum.KeyCode.Escape] = "Esc"
+u81[Enum.KeyCode.QuotedDouble] = "\""
+u81[Enum.KeyCode.Hash] = "#"
+u81[Enum.KeyCode.Dollar] = "$"
+u81[Enum.KeyCode.Percent] = "%"
+u81[Enum.KeyCode.Ampersand] = "&"
+u81[Enum.KeyCode.LeftParenthesis] = "("
+u81[Enum.KeyCode.RightParenthesis] = ")"
+u81[Enum.KeyCode.Asterisk] = "*"
+u81[Enum.KeyCode.Plus] = "+"
+u81[Enum.KeyCode.Comma] = ","
+u81[Enum.KeyCode.Minus] = "-"
+u81[Enum.KeyCode.Period] = "."
+u81[Enum.KeyCode.Slash] = "/"
+u81[Enum.KeyCode.Zero] = "0"
+u81[Enum.KeyCode.One] = "1"
+u81[Enum.KeyCode.Two] = "2"
+u81[Enum.KeyCode.Three] = "3"
+u81[Enum.KeyCode.Four] = "4"
+u81[Enum.KeyCode.Five] = "5"
+u81[Enum.KeyCode.Six] = "6"
+u81[Enum.KeyCode.Seven] = "7"
+u81[Enum.KeyCode.Eight] = "8"
+u81[Enum.KeyCode.Nine] = "9"
+u81[Enum.KeyCode.Colon] = ":"
+u81[Enum.KeyCode.Semicolon] = ";"
+u81[Enum.KeyCode.LessThan] = "<"
+u81[Enum.KeyCode.Equals] = "="
+u81[Enum.KeyCode.GreaterThan] = ">"
+u81[Enum.KeyCode.Question] = "?"
+u81[Enum.KeyCode.At] = "@"
+u81[Enum.KeyCode.LeftBracket] = "["
+u81[Enum.KeyCode.BackSlash] = "\\"
+u81[Enum.KeyCode.RightBracket] = "]"
+u81[Enum.KeyCode.Caret] = "^"
+u81[Enum.KeyCode.Underscore] = "_"
+u81[Enum.KeyCode.Backquote] = "`"
+u81[Enum.KeyCode.LeftCurly] = "{"
+u81[Enum.KeyCode.Pipe] = "|"
+u81[Enum.KeyCode.RightCurly] = "}"
+u81[Enum.KeyCode.Tilde] = "~"
+u81[Enum.KeyCode.Delete] = "Del"
+u81[Enum.KeyCode.KeypadZero] = "NP0"
+u81[Enum.KeyCode.KeypadOne] = "NP1"
+u81[Enum.KeyCode.KeypadTwo] = "NP2"
+u81[Enum.KeyCode.KeypadThree] = "NP3"
+u81[Enum.KeyCode.KeypadFour] = "NP4"
+u81[Enum.KeyCode.KeypadFive] = "NP5"
+u81[Enum.KeyCode.KeypadSix] = "NP6"
+u81[Enum.KeyCode.KeypadSeven] = "NP7"
+u81[Enum.KeyCode.KeypadEight] = "NP8"
+u81[Enum.KeyCode.KeypadNine] = "NP9"
+u81[Enum.KeyCode.KeypadPeriod] = "."
+u81[Enum.KeyCode.KeypadDivide] = "/"
+u81[Enum.KeyCode.KeypadMultiply] = "*"
+u81[Enum.KeyCode.KeypadMinus] = "-"
+u81[Enum.KeyCode.KeypadPlus] = "+"
+u81[Enum.KeyCode.KeypadEnter] = "Ent"
+u81[Enum.KeyCode.KeypadEquals] = "="
+u81[Enum.KeyCode.Up] = "↑"
+u81[Enum.KeyCode.Down] = "↓"
+u81[Enum.KeyCode.Right] = "→"
+u81[Enum.KeyCode.Left] = "←"
+u81[Enum.KeyCode.Insert] = "Ins"
+u81[Enum.KeyCode.Home] = "Hm"
+u81[Enum.KeyCode.End] = "End"
+u81[Enum.KeyCode.PageUp] = "PgU"
+u81[Enum.KeyCode.PageDown] = "PgD"
+u81[Enum.KeyCode.LeftShift] = "Sh"
+u81[Enum.KeyCode.RightShift] = "Sh"
+u81[Enum.KeyCode.LeftMeta] = "Me"
+u81[Enum.KeyCode.RightMeta] = "Me"
+u81[Enum.KeyCode.LeftAlt] = "Alt"
+u81[Enum.KeyCode.RightAlt] = "Alt"
+u81[Enum.KeyCode.LeftControl] = "Ctrl"
+u81[Enum.KeyCode.RightControl] = "Ctrl"
+u81[Enum.KeyCode.CapsLock] = "Caps"
+u81[Enum.KeyCode.NumLock] = "NL"
+u81[Enum.KeyCode.ScrollLock] = "SL"
+u81[Enum.KeyCode.LeftSuper] = "Sup"
+u81[Enum.KeyCode.RightSuper] = "Sup"
+u81[Enum.UserInputType.MouseButton1] = "M1"
+u81[Enum.UserInputType.MouseButton2] = "M2"
+u81[Enum.UserInputType.MouseButton3] = "M3"
+local u250 = {"", "@2x", "@3x"}
+local u254 = {}
+u254.__index = u254
+function u254.new(p1, p2, p3, p4) -- Line: 148 -- upvalues: u254 (val), u13 (val)
+    local v1, v2, v3
+    local v4 = {}
+    setmetatable(v4, u254)
+    local v5 = nil
+    local v6 = nil
+    if typeof(p1) ~= "EnumItem" then
+        v6 = p1
+    else
+        v5 = p1
+    end
+    if v6 then
+        v5 = getActionInputDeviceCode(v6)
+    end
+    if p2 == nil then
+        v1 = 3
+    else
+        v1 = p2
+    end
+    if p3 == nil then
+        v2 = Color3.new(1, 1, 1)
+    else
+        v2 = p3
+    end
+    local v7 = if v1 ~= 1 then if v1 ~= 2 then v1 == 3 else true else true
+    assert(v7, "Icon size must be 1, 2, or 3 (SMALL, MEDIUM, or LARGE)")
+    v3, v7 = createInputImage(v5, v2, v1)
+    v4.Type = v7
+    v4.UIObject = v3
+    v4.IconSize = v1
+    v4.Color = v2
+    v4.ActionName = v6
+    v4.Transparency = 0
+    v4.AutoUpdate = p4 or true or true
+    table.insert(u13, v4)
+    return v4
 end
-function v_u_11.SetInputMethod(p24) -- name: SetInputMethod
-	-- upvalues: (ref) v_u_4, (copy) v_u_3
-	v_u_4 = p24
-	for _, v25 in v_u_3 do
-		if v25.AutoUpdate and v25.ActionName then
-			v25:_ChangeInput((getActionInputDeviceCode(v25.ActionName)))
-		end
-	end
+function u254.SetInputMethod(p1) -- Line: 183 -- upvalues: u14 (ref), u13 (val)
+    u14 = p1
+    local v1 = u13
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if j.AutoUpdate and j.ActionName then
+            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+        end
+    end
 end
-function v_u_11.SetUseNativeControllerImages(p26) -- name: SetUseNativeControllerImages
-	-- upvalues: (ref) v_u_6, (copy) v_u_3
-	v_u_6 = p26
-	for _, v27 in v_u_3 do
-		if v27.AutoUpdate and v27.ActionName then
-			v27:_ChangeInput((getActionInputDeviceCode(v27.ActionName)))
-		end
-	end
+function u254.SetUseNativeControllerImages(p1) -- Line: 193 -- upvalues: u16 (ref), u13 (val)
+    u16 = p1
+    local v1 = u13
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if j.AutoUpdate and j.ActionName then
+            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+        end
+    end
 end
-function v_u_11.GetUseNativeControllerImages() -- name: GetUseNativeControllerImages
-	-- upvalues: (ref) v_u_6
-	return v_u_6
+function u254.GetUseNativeControllerImages() -- Line: 204 -- upvalues: u16 (ref)
+    return u16
 end
-function v_u_11.UpdateBind(p28, p29) -- name: UpdateBind
-	-- upvalues: (copy) v_u_5, (copy) v_u_3
-	v_u_5[p28] = p29
-	for _, v30 in v_u_3 do
-		if v30.AutoUpdate and v30.ActionName == p28 then
-			v30:_ChangeInput((getActionInputDeviceCode(v30.ActionName)))
-		end
-	end
+function u254.UpdateBind(p1, p2) -- Line: 208 -- upvalues: u15 (val), u13 (val)
+    u15[p1] = p2
+    local v1 = u13
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if j.AutoUpdate and j.ActionName == p1 then
+            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+        end
+    end
 end
-function v_u_11.Destroy(p31) -- name: Destroy
-	-- upvalues: (copy) v_u_3
-	if p31.UpdateConnection then
-		p31.UpdateConnection:Disconnect()
-	end
-	p31.UIObject:Destroy()
-	local v32 = table.find(v_u_3, p31)
-	if v32 then
-		table.remove(v_u_3, v32)
-	end
+function u254:Destroy() -- Line: 218 -- upvalues: u13 (val)
+    if self.UpdateConnection then
+        self.UpdateConnection:Disconnect()
+    end
+    self.UIObject:Destroy()
+    local v1 = table.find(u13, self)
+    if v1 then
+        table.remove(u13, v1)
+    end
 end
-function v_u_11.SetColor(p33, p34) -- name: SetColor
-	p33.Color = p34
-	if p33.Type == "UniqueImage" then
-		p33.UIObject.ImageColor3 = p34
-		return
-	elseif p33.Type == "KeyWithText" then
-		p33.UIObject.OutlineImageLabel.ImageColor3 = p34
-		p33.UIObject.KeyTextLabel.TextColor3 = p34
-	elseif p33.Type == "KeyWithImage" then
-		p33.UIObject.OutlineImageLabel.ImageColor3 = p34
-		p33.UIObject.KeyImageLabel.ImageColor3 = p34
-	end
+function u254.SetColor(p1, p2) -- Line: 229
+    p1.Color = p2
+    if p1.Type == "UniqueImage" then
+        p1.UIObject.ImageColor3 = p2
+        return
+    end
+    if p1.Type == "KeyWithText" then
+        p1.UIObject.OutlineImageLabel.ImageColor3 = p2
+        p1.UIObject.KeyTextLabel.TextColor3 = p2
+        return
+    end
+    if p1.Type == "KeyWithImage" then
+        p1.UIObject.OutlineImageLabel.ImageColor3 = p2
+        p1.UIObject.KeyImageLabel.ImageColor3 = p2
+    end
 end
-function v_u_11.SetTransparency(p35, p36) -- name: SetTransparency
-	p35.Transparency = p36
-	if p35.Type == "UniqueImage" then
-		p35.UIObject.ImageTransparency = p36
-		return
-	elseif p35.Type == "KeyWithText" then
-		p35.UIObject.OutlineImageLabel.ImageTransparency = p36
-		p35.UIObject.KeyTextLabel.TextTransparency = p36
-	elseif p35.Type == "KeyWithImage" then
-		p35.UIObject.OutlineImageLabel.ImageTransparency = p36
-		p35.UIObject.KeyImageLabel.ImageTransparency = p36
-	end
+function u254:SetTransparency(p2) -- Line: 242
+    self.Transparency = p2
+    if self.Type == "UniqueImage" then
+        self.UIObject.ImageTransparency = p2
+        return
+    end
+    if self.Type == "KeyWithText" then
+        self.UIObject.OutlineImageLabel.ImageTransparency = p2
+        self.UIObject.KeyTextLabel.TextTransparency = p2
+        return
+    end
+    if self.Type == "KeyWithImage" then
+        self.UIObject.OutlineImageLabel.ImageTransparency = p2
+        self.UIObject.KeyImageLabel.ImageTransparency = p2
+    end
 end
-function v_u_11.TweenTransparency(p37, p38, p39) -- name: TweenTransparency
-	-- upvalues: (copy) v_u_1
-	local v40 = {}
-	if p37.Type == "UniqueImage" then
-		local v41 = p37.UIObject
-		table.insert(v40, v41)
-	elseif p37.Type == "KeyWithText" then
-		local v42 = p37.UIObject.OutlineImageLabel
-		table.insert(v40, v42)
-		local v43 = p37.UIObject.KeyTextLabel
-		table.insert(v40, v43)
-	elseif p37.Type == "KeyWithImage" then
-		local v44 = p37.UIObject.OutlineImageLabel
-		table.insert(v40, v44)
-		local v45 = p37.UIObject.KeyImageLabel
-		table.insert(v40, v45)
-	end
-	local v46 = {}
-	for _, v47 in v40 do
-		local v48
-		if v47:IsA("ImageLabel") then
-			v48 = {
-				["ImageTransparency"] = p38
-			}
-		else
-			v48 = {
-				["TextTransparency"] = p38
-			}
-		end
-		local v49 = v_u_1:Create(v47, p39, v48)
-		v49:Play()
-		table.insert(v46, v49)
-	end
-	return v46
+function u254.TweenTransparency(p1, p2, p3) -- Line: 255 -- upvalues: TweenService (val)
+    local v1, v2
+    local v3 = {}
+    if p1.Type == "UniqueImage" then
+        table.insert(v3, p1.UIObject)
+    elseif p1.Type == "KeyWithText" then
+        table.insert(v3, p1.UIObject.OutlineImageLabel)
+        table.insert(v3, p1.UIObject.KeyTextLabel)
+    elseif p1.Type == "KeyWithImage" then
+        table.insert(v3, p1.UIObject.OutlineImageLabel)
+        table.insert(v3, p1.UIObject.KeyImageLabel)
+    end
+    local v4 = {}
+    local v5 = v3
+    local v6 = nil
+    local v7 = nil
+    local v8 = p2
+    for i, j in v5, v6, v7 do
+        if not (j:IsA("ImageLabel")) then
+            v1 = {TextTransparency = v8}
+        else
+            v1 = {ImageTransparency = v8}
+        end
+        v2 = TweenService:Create(j, v9, v1)
+        v2:Play()
+        table.insert(v4, v2)
+    end
+    return v4
 end
-function v_u_11._ChangeInput(p50, p51) -- name: _ChangeInput
-	local v52 = p50.IconSize
-	local v53 = p50.Color
-	local v54, v55 = createInputImage(p51, v53, v52)
-	local v56 = p50.UIObject
-	v56.BackgroundTransparency = 0.5
-	local v57 = v56.Size
-	local v58 = v56.Position
-	local v59 = v56.AnchorPoint
-	local v60 = v56.SizeConstraint
-	local v61 = v56.AutomaticSize
-	local v62 = v56.Visible
-	v54.Size = v57
-	v54.Position = v58
-	v54.AnchorPoint = v59
-	v54.SizeConstraint = v60
-	v54.AutomaticSize = v61
-	v54.Visible = v62
-	v54.Parent = v56.Parent
-	p50.Type = v55
-	p50.UIObject = v54
-	p50:SetTransparency(p50.Transparency)
-	v56:Destroy()
+function u254:_ChangeInput(p2) -- Line: 284
+    local v1, v2
+    v1, v2 = createInputImage(p2, self.Color, self.IconSize)
+    local UIObject = self.UIObject
+    UIObject.BackgroundTransparency = 0.5
+    v1.Size = UIObject.Size
+    v1.Position = UIObject.Position
+    v1.AnchorPoint = UIObject.AnchorPoint
+    v1.SizeConstraint = UIObject.SizeConstraint
+    v1.AutomaticSize = UIObject.AutomaticSize
+    v1.Visible = UIObject.Visible
+    v1.Parent = UIObject.Parent
+    self.Type = v2
+    self.UIObject = v1
+    self:SetTransparency(self.Transparency)
+    UIObject:Destroy()
 end
-function addSizeSuffix(p63, p64) -- name: addSizeSuffix
-	-- upvalues: (copy) v_u_10
-	local v65 = #p63 - 3
-	local v66 = #p63
-	if string.sub(p63, v65, v66) ~= ".png" then
-		return p63
-	end
-	local v67 = #p63 - 4
-	local v68 = string.sub(p63, 1, v67)
-	local v69 = #p63 - 3
-	local v70 = string.sub(p63, v69)
-	return v68 .. v_u_10[p64] .. v70
+function addSizeSuffix(p1, p2) -- Line: 317 -- upvalues: u250 (val)
+    local v1 = #p1 - 3
+    if string.sub(p1, v1, #p1) ~= ".png" then
+        return p1
+    end
+    local v2 = string.sub(p1, 1, #p1 - 4)
+    local v3 = string.sub(p1, #p1 - 3)
+    return v2 .. u250[p2] .. v3
 end
-function createInputImage(p71, p72, p73) -- name: createInputImage
-	-- upvalues: (copy) v_u_7, (ref) v_u_6, (copy) v_u_2, (copy) v_u_8, (copy) v_u_9
-	local v74 = v_u_7[p71]
-	if v74 then
-		local v75 = Instance.new("ImageLabel")
-		v75.Name = "InputLabel"
-		v75.BackgroundTransparency = 1
-		v75.ImageColor3 = p72
-		v75.ScaleType = Enum.ScaleType.Fit
-		local v76 = false
-		local v77
-		if v_u_6 and (typeof(p71) == "EnumItem" and p71.EnumType == Enum.KeyCode) then
-			v77 = v_u_2:GetImageForKeyCode(p71)
-			if v77 and v77 ~= "" then
-				v76 = true
-			else
-				v77 = v74
-			end
-		else
-			v77 = v74
-		end
-		if not v76 then
-			v77 = addSizeSuffix(v77, p73)
-		end
-		v75.Image = v77
-		return v75, "UniqueImage"
-	end
-	local v78 = Instance.new("Frame")
-	v78.Name = "InputLabel"
-	v78.BackgroundTransparency = 1
-	local v79 = Instance.new("ImageLabel")
-	v79.Name = "OutlineImageLabel"
-	v79.BackgroundTransparency = 1
-	v79.Image = addSizeSuffix("rbxasset://textures/ui/Controls/key_single.png", p73)
-	v79.ImageColor3 = p72
-	v79.Size = UDim2.new(1, 0, 1, 0)
-	v79.Parent = v78
-	local v80 = v_u_8[p71]
-	local v81
-	if v80 then
-		local v82 = Instance.new("ImageLabel")
-		v82.Name = "KeyImageLabel"
-		v82.BackgroundTransparency = 1
-		v82.Image = addSizeSuffix(v80, p73)
-		v82.ImageColor3 = p72
-		v82.Size = UDim2.new(1, 0, 1, 0)
-		v82.Parent = v79
-		v81 = "KeyWithImage"
-	else
-		local v83 = v_u_9[p71]
-		if v83 == nil then
-			v83 = p71.Name
-		end
-		local v84 = Instance.new("TextLabel")
-		v84.Name = "KeyTextLabel"
-		v84.BackgroundTransparency = 1
-		v84.FontFace = Font.new("SourceSansPro", Enum.FontWeight.Bold)
-		v84.Text = v83
-		v84.TextColor3 = p72
-		v84.TextScaled = true
-		v84.Size = UDim2.new(0.8, 0, 0.8, 0)
-		v84.Position = UDim2.new(0.5, 0, 0.45, 0)
-		v84.AnchorPoint = Vector2.new(0.5, 0.5)
-		v84.Parent = v78
-		v81 = "KeyWithText"
-	end
-	return v78, v81
+function createInputImage(p1, p2, p3) -- Line: 326 -- upvalues: u17 (val), u16 (ref), UserInputService (val), u58 (val), u81 (val)
+    local v1, v2
+    local v3 = u17[p1]
+    if v3 then
+        local ImageLabel = Instance.new("ImageLabel")
+        ImageLabel.Name = "InputLabel"
+        ImageLabel.BackgroundTransparency = 1
+        ImageLabel.ImageColor3 = p2
+        ImageLabel.ScaleType = Enum.ScaleType.Fit
+        local v4 = v3
+        v1 = false
+        if u16 and typeof(p1) == "EnumItem" and p1.EnumType == Enum.KeyCode then
+            local ImageForKeyCode = UserInputService:GetImageForKeyCode(p1)
+            if ImageForKeyCode and ImageForKeyCode ~= "" then
+                v4 = ImageForKeyCode
+                v1 = true
+            end
+        end
+        if not v1 then
+            v2 = addSizeSuffix(v4, p3)
+        else
+            v2 = v4
+        end
+        ImageLabel.Image = v2
+        return ImageLabel, "UniqueImage"
+    end
+    local Frame = Instance.new("Frame")
+    Frame.Name = "InputLabel"
+    Frame.BackgroundTransparency = 1
+    local ImageLabel_2 = Instance.new("ImageLabel")
+    ImageLabel_2.Name = "OutlineImageLabel"
+    ImageLabel_2.BackgroundTransparency = 1
+    ImageLabel_2.Image = addSizeSuffix("rbxasset://textures/ui/Controls/key_single.png", p3)
+    ImageLabel_2.ImageColor3 = p2
+    ImageLabel_2.Size = UDim2.new(1, 0, 1, 0)
+    ImageLabel_2.Parent = Frame
+    v1 = u58[p1]
+    if not v1 then
+        local Name = u81[p1]
+        if Name == nil then
+            Name = p1.Name
+        end
+        local TextLabel = Instance.new("TextLabel")
+        TextLabel.Name = "KeyTextLabel"
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.FontFace = Font.new("SourceSansPro", Enum.FontWeight.Bold)
+        TextLabel.Text = Name
+        TextLabel.TextColor3 = p2
+        TextLabel.TextScaled = true
+        TextLabel.Size = UDim2.new(0.8, 0, 0.8, 0)
+        TextLabel.Position = UDim2.new(0.5, 0, 0.45, 0)
+        TextLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+        TextLabel.Parent = Frame
+        v2 = "KeyWithText"
+    else
+        local ImageLabel_3 = Instance.new("ImageLabel")
+        ImageLabel_3.Name = "KeyImageLabel"
+        ImageLabel_3.BackgroundTransparency = 1
+        ImageLabel_3.Image = addSizeSuffix(v1, p3)
+        ImageLabel_3.ImageColor3 = p2
+        ImageLabel_3.Size = UDim2.new(1, 0, 1, 0)
+        ImageLabel_3.Parent = ImageLabel_2
+        v2 = "KeyWithImage"
+    end
+    return Frame, v2
 end
-function getActionInputDeviceCode(p85) -- name: getActionInputDeviceCode
-	-- upvalues: (copy) v_u_5, (ref) v_u_4
-	local v86 = nil
-	local v87 = v_u_5[p85]
-	if v87 then
-		if v_u_4 == "MouseKeyboard" then
-			if v87.Mouse then
-				v86 = v87.Mouse
-			else
-				v86 = nil
-			end
-			if not v86 then
-				if v87.Keyboard then
-					v86 = v87.Keyboard
-				else
-					v86 = nil
-				end
-			end
-		elseif v_u_4 == "Gamepad" then
-			if v87.Gamepad then
-				v86 = v87.Gamepad
-			else
-				v86 = nil
-			end
-		elseif v_u_4 == "Touch" then
-			v86 = Enum.UserInputType.Touch
-		end
-	end
-	return v86 or Enum.KeyCode.Unknown
+function getActionInputDeviceCode(p1) -- Line: 401 -- upvalues: u15 (val), u14 (ref)
+    local Mouse = nil
+    local v1 = u15[p1]
+    if v1 then
+        if u14 == "MouseKeyboard" then
+            if not v1.Mouse then
+                Mouse = nil
+            else
+                Mouse = v1.Mouse
+            end
+            if not Mouse then
+                if not v1.Keyboard then
+                    Mouse = nil
+                else
+                    Mouse = v1.Keyboard
+                end
+            end
+        elseif u14 ~= "Gamepad" then
+            if u14 == "Touch" then
+                Mouse = Enum.UserInputType.Touch
+            end
+        elseif not v1.Gamepad then
+            Mouse = nil
+        else
+            Mouse = v1.Gamepad
+        end
+    end
+    if Mouse then
+        return Mouse
+    end
+    return Enum.KeyCode.Unknown
 end
-return v_u_11
+return u254

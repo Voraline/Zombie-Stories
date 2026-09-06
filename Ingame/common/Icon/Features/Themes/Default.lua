@@ -1,217 +1,127 @@
-return {
-	{ "IconCorners", "CornerRadius", UDim.new(1, 0) },
-	{ "Selection", "RotationSpeed", 1 },
-	{ "Selection", "Size", UDim2.new(1, 0, 1, 1) },
-	{ "Selection", "Position", UDim2.new(0, 0, 0, 0) },
-	{ "SelectionGradient", "Color", ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(86, 86, 86)) }) },
-	{
-		"IconImage",
-		"Image",
-		"",
-		"Deselected"
-	},
-	{
-		"IconLabel",
-		"Text",
-		"",
-		"Deselected"
-	},
-	{
-		"IconLabel",
-		"Position",
-		UDim2.fromOffset(0, 0),
-		"Deselected"
-	},
-	{
-		"Widget",
-		"MinimumWidth",
-		44,
-		"Deselected"
-	},
-	{
-		"Widget",
-		"MinimumHeight",
-		44,
-		"Deselected"
-	},
-	{
-		"Widget",
-		"BorderSize",
-		4,
-		"Deselected"
-	},
-	{
-		"IconButton",
-		"BackgroundColor3",
-		Color3.fromRGB(0, 0, 0),
-		"Deselected"
-	},
-	{
-		"IconButton",
-		"BackgroundTransparency",
-		0.3,
-		"Deselected"
-	},
-	{
-		"IconImageScale",
-		"Value",
-		0.5,
-		"Deselected"
-	},
-	{
-		"IconImageCorner",
-		"CornerRadius",
-		UDim.new(0, 0),
-		"Deselected"
-	},
-	{
-		"IconImage",
-		"ImageColor3",
-		Color3.fromRGB(255, 255, 255),
-		"Deselected"
-	},
-	{
-		"IconImage",
-		"ImageTransparency",
-		0,
-		"Deselected"
-	},
-	{
-		"IconLabel",
-		"FontFace",
-		Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal),
-		"Deselected"
-	},
-	{
-		"IconLabel",
-		"TextSize",
-		16,
-		"Deselected"
-	},
-	{
-		"IconSpot",
-		"BackgroundTransparency",
-		1,
-		"Deselected"
-	},
-	{
-		"IconOverlay",
-		"BackgroundTransparency",
-		0.925,
-		"Deselected"
-	},
-	{
-		"IconSpotGradient",
-		"Enabled",
-		false,
-		"Deselected"
-	},
-	{
-		"IconGradient",
-		"Enabled",
-		false,
-		"Deselected"
-	},
-	{
-		"ClickRegion",
-		"Active",
-		true,
-		"Deselected"
-	},
-	{
-		"Menu",
-		"Active",
-		false,
-		"Deselected"
-	},
-	{
-		"ContentsList",
-		"HorizontalAlignment",
-		Enum.HorizontalAlignment.Center,
-		"Deselected"
-	},
-	{
-		"Dropdown",
-		"BackgroundColor3",
-		Color3.fromRGB(0, 0, 0),
-		"Deselected"
-	},
-	{
-		"Dropdown",
-		"BackgroundTransparency",
-		0.3,
-		"Deselected"
-	},
-	{
-		"Dropdown",
-		"MaxIcons",
-		4,
-		"Deselected"
-	},
-	{
-		"Menu",
-		"MaxIcons",
-		4,
-		"Deselected"
-	},
-	{
-		"Notice",
-		"Position",
-		UDim2.new(1, -12, 0, -1),
-		"Deselected"
-	},
-	{
-		"Notice",
-		"Size",
-		UDim2.new(0, 20, 0, 20),
-		"Deselected"
-	},
-	{
-		"NoticeLabel",
-		"TextSize",
-		13,
-		"Deselected"
-	},
-	{
-		"PaddingLeft",
-		"Size",
-		UDim2.new(0, 9, 1, 0),
-		"Deselected"
-	},
-	{
-		"PaddingRight",
-		"Size",
-		UDim2.new(0, 11, 1, 0),
-		"Deselected"
-	},
-	{
-		"IconSpot",
-		"BackgroundTransparency",
-		0.7,
-		"Selected"
-	},
-	{
-		"IconSpot",
-		"BackgroundColor3",
-		Color3.fromRGB(255, 255, 255),
-		"Selected"
-	},
-	{
-		"IconSpotGradient",
-		"Enabled",
-		true,
-		"Selected"
-	},
-	{
-		"IconSpotGradient",
-		"Rotation",
-		45,
-		"Selected"
-	},
-	{
-		"IconSpotGradient",
-		"Color",
-		ColorSequence.new(Color3.fromRGB(96, 98, 100), Color3.fromRGB(77, 78, 80)),
-		"Selected"
-	}
-}
+local v1 = {}
+local v2 = {"IconCorners", "CornerRadius", UDim.new(1, 0)}
+local v3 = {"Selection", "Size", UDim2.new(1, 0, 1, 1)}
+local v4 = {"Selection", "Position", UDim2.new(0, 0, 0, 0)}
+local v5 = {}
+local v6 = {}
+local v7 = ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255))
+v6[1] = v7
+v6[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(86, 86, 86))
+v5[1] = "SelectionGradient"
+v5[2] = "Color"
+v5[3] = ColorSequence.new(v6)
+local v8 = {}
+local v9 = UDim2.fromOffset(0, 0)
+v8[1] = "IconLabel"
+v8[2] = "Position"
+v8[3] = v9
+v8[4] = "Deselected"
+local v10 = {}
+local v11 = Color3.fromRGB(0, 0, 0)
+v10[1] = "IconButton"
+v10[2] = "BackgroundColor3"
+v10[3] = v11
+v10[4] = "Deselected"
+v11 = {}
+local v12 = UDim.new(0, 0)
+v11[1] = "IconImageCorner"
+v11[2] = "CornerRadius"
+v11[3] = v12
+v11[4] = "Deselected"
+local v13 = {}
+local v14 = Color3.fromRGB(255, 255, 255)
+v13[1] = "IconImage"
+v13[2] = "ImageColor3"
+v13[3] = v14
+v13[4] = "Deselected"
+v1[1] = v2
+v1[2] = {"Selection", "RotationSpeed", 1}
+v1[3] = v3
+v1[4] = v4
+v1[5] = v5
+v1[6] = {"IconImage", "Image", "", "Deselected"}
+v1[7] = {"IconLabel", "Text", "", "Deselected"}
+v1[8] = v8
+v1[9] = {"Widget", "MinimumWidth", 44, "Deselected"}
+v1[10] = {"Widget", "MinimumHeight", 44, "Deselected"}
+v1[11] = {"Widget", "BorderSize", 4, "Deselected"}
+v1[12] = v10
+v1[13] = {"IconButton", "BackgroundTransparency", 0.3, "Deselected"}
+v1[14] = {"IconImageScale", "Value", 0.5, "Deselected"}
+v1[15] = v11
+v1[16] = v13
+local v15 = {}
+v5 = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+v15[1] = "IconLabel"
+v15[2] = "FontFace"
+v15[3] = v5
+v15[4] = "Deselected"
+v7 = {"ContentsList", "HorizontalAlignment", Enum.HorizontalAlignment.Center, "Deselected"}
+v9 = {}
+local v16 = Color3.fromRGB(0, 0, 0)
+v9[1] = "Dropdown"
+v9[2] = "BackgroundColor3"
+v9[3] = v16
+v9[4] = "Deselected"
+v11 = {}
+v12 = UDim2.new(1, -12, 0, -1)
+v11[1] = "Notice"
+v11[2] = "Position"
+v11[3] = v12
+v11[4] = "Deselected"
+v13 = {}
+v14 = UDim2.new(0, 20, 0, 20)
+v13[1] = "Notice"
+v13[2] = "Size"
+v13[3] = v14
+v13[4] = "Deselected"
+v1[17] = {"IconImage", "ImageTransparency", 0, "Deselected"}
+v1[18] = v15
+v1[19] = {"IconLabel", "TextSize", 16, "Deselected"}
+v1[20] = {"IconSpot", "BackgroundTransparency", 1, "Deselected"}
+v1[21] = {"IconOverlay", "BackgroundTransparency", 0.925, "Deselected"}
+v1[22] = {"IconSpotGradient", "Enabled", false, "Deselected"}
+v1[23] = {"IconGradient", "Enabled", false, "Deselected"}
+v1[24] = {"ClickRegion", "Active", true, "Deselected"}
+v1[25] = {"Menu", "Active", false, "Deselected"}
+v1[26] = v7
+v1[27] = v9
+v1[28] = {"Dropdown", "BackgroundTransparency", 0.3, "Deselected"}
+v1[29] = {"Dropdown", "MaxIcons", 4, "Deselected"}
+v1[30] = {"Menu", "MaxIcons", 4, "Deselected"}
+v1[31] = v11
+v1[32] = v13
+v15 = {}
+v5 = UDim2.new(0, 9, 1, 0)
+v15[1] = "PaddingLeft"
+v15[2] = "Size"
+v15[3] = v5
+v15[4] = "Deselected"
+v3 = {}
+local v17 = UDim2.new(0, 11, 1, 0)
+v3[1] = "PaddingRight"
+v3[2] = "Size"
+v3[3] = v17
+v3[4] = "Deselected"
+v5 = {}
+v8 = Color3.fromRGB(255, 255, 255)
+v5[1] = "IconSpot"
+v5[2] = "BackgroundColor3"
+v5[3] = v8
+v5[4] = "Selected"
+v8 = {}
+local v18 = Color3.fromRGB(96, 98, 100)
+v14 = ColorSequence.new(v18, Color3.fromRGB(77, 78, 80))
+v8[1] = "IconSpotGradient"
+v8[2] = "Color"
+v8[3] = v14
+v8[4] = "Selected"
+v1[33] = {"NoticeLabel", "TextSize", 13, "Deselected"}
+v1[34] = v15
+v1[35] = v3
+v1[36] = {"IconSpot", "BackgroundTransparency", 0.7, "Selected"}
+v1[37] = v5
+v1[38] = {"IconSpotGradient", "Enabled", true, "Selected"}
+v1[39] = {"IconSpotGradient", "Rotation", 45, "Selected"}
+v1[40] = v8
+return v1

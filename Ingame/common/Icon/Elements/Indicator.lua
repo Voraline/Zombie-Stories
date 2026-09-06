@@ -1,88 +1,90 @@
-return function(p_u_1, _)
-	local v_u_2 = p_u_1.widget
-	local v3 = p_u_1:getInstance("Contents")
-	local v_u_4 = Instance.new("Frame")
-	v_u_4.Name = "Indicator"
-	v_u_4.LayoutOrder = 9999999
-	v_u_4.ZIndex = 6
-	v_u_4.Size = UDim2.new(0, 42, 0, 42)
-	v_u_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_4.BackgroundTransparency = 1
-	v_u_4.Position = UDim2.new(1, 0, 0.5, 0)
-	v_u_4.BorderSizePixel = 0
-	v_u_4.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_4.Parent = v3
-	local v_u_5 = Instance.new("Frame")
-	v_u_5.Name = "IndicatorButton"
-	v_u_5.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_5.AnchorPoint = Vector2.new(0.5, 0.5)
-	v_u_5.BorderSizePixel = 0
-	v_u_5.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_5.Parent = v_u_4
-	local v_u_6 = game:GetService("GuiService")
-	local v_u_7 = game:GetService("GamepadService")
-	local v_u_8 = p_u_1:getInstance("ClickRegion")
-	local function v9() -- name: selectionChanged
-		-- upvalues: (copy) v_u_6, (copy) v_u_8, (copy) v_u_5
-		if v_u_6.SelectedObject == v_u_8 then
-			v_u_5.BackgroundTransparency = 1
-			v_u_5.Position = UDim2.new(0.5, -2, 0.5, 0)
-			v_u_5.Size = UDim2.fromScale(1.2, 1.2)
-		else
-			v_u_5.BackgroundTransparency = 0.75
-			v_u_5.Position = UDim2.new(0.5, 2, 0.5, 0)
-			v_u_5.Size = UDim2.fromScale(1, 1)
-		end
-	end
-	p_u_1.janitor:add(v_u_6:GetPropertyChangedSignal("SelectedObject"):Connect(v9))
-	v9()
-	local v_u_10 = Instance.new("ImageLabel")
-	v_u_10.LayoutOrder = 2
-	v_u_10.ZIndex = 15
-	v_u_10.AnchorPoint = Vector2.new(0.5, 0.5)
-	v_u_10.Size = UDim2.new(0.5, 0, 0.5, 0)
-	v_u_10.BackgroundTransparency = 1
-	v_u_10.Position = UDim2.new(0.5, 0, 0.5, 0)
-	v_u_10.Image = "rbxasset://textures/ui/Controls/XboxController/DPadUp@2x.png"
-	v_u_10.Parent = v_u_5
-	local v11 = Instance.new("UICorner")
-	v11.CornerRadius = UDim.new(1, 0)
-	v11.Parent = v_u_5
-	local v_u_12 = game:GetService("UserInputService")
-	local function v_u_14(p13) -- name: setIndicatorVisible
-		-- upvalues: (copy) v_u_4, (copy) v_u_7, (copy) p_u_1
-		if p13 == nil then
-			p13 = v_u_4.Visible
-		end
-		if v_u_7.GamepadCursorEnabled then
-			p13 = false
-		end
-		if p13 then
-			p_u_1:modifyTheme({ "PaddingRight", "Size", UDim2.new(0, 0, 1, 0) }, "IndicatorPadding")
-		elseif v_u_4.Visible then
-			p_u_1:removeModification("IndicatorPadding")
-		end
-		p_u_1:modifyTheme({ "Indicator", "Visible", p13 })
-		p_u_1.updateSize:Fire()
-	end
-	p_u_1.janitor:add(v_u_7:GetPropertyChangedSignal("GamepadCursorEnabled"):Connect(v_u_14))
-	p_u_1.indicatorSet:Connect(function(p15)
-		-- upvalues: (copy) v_u_10, (copy) v_u_12, (copy) v_u_14
-		local v16
-		if p15 then
-			v_u_10.Image = v_u_12:GetImageForKeyCode(p15)
-			v16 = true
-		else
-			v16 = false
-		end
-		v_u_14(v16)
-	end)
-	v_u_2:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() -- name: updateSize
-		-- upvalues: (copy) v_u_2, (copy) v_u_4
-		local v17 = v_u_2.AbsoluteSize.Y * 0.96
-		v_u_4.Size = UDim2.new(0, v17, 0, v17)
-	end)
-	local v18 = v_u_2.AbsoluteSize.Y * 0.96
-	v_u_4.Size = UDim2.new(0, v18, 0, v18)
-	return v_u_4
+return function(p1, p2) -- Line: 1
+    local widget = p1.widget
+    local v1 = p1:getInstance("Contents")
+    local Frame = Instance.new("Frame")
+    Frame.Name = "Indicator"
+    Frame.LayoutOrder = 9999999
+    Frame.ZIndex = 6
+    Frame.Size = UDim2.new(0, 42, 0, 42)
+    Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 1
+    Frame.Position = UDim2.new(1, 0, 0.5, 0)
+    Frame.BorderSizePixel = 0
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.Parent = v1
+    local Frame_2 = Instance.new("Frame")
+    Frame_2.Name = "IndicatorButton"
+    Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Frame_2.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame_2.BorderSizePixel = 0
+    Frame_2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame_2.Parent = Frame
+    local GuiService = game:GetService("GuiService")
+    local GamepadService = game:GetService("GamepadService")
+    local u69 = p1:getInstance("ClickRegion")
+    local function selectionChanged() -- Line: 28 -- upvalues: GuiService (val), u69 (val), Frame_2 (val)
+        if GuiService.SelectedObject == u69 then
+            Frame_2.BackgroundTransparency = 1
+            Frame_2.Position = UDim2.new(0.5, -2, 0.5, 0)
+            Frame_2.Size = UDim2.fromScale(1.2, 1.2)
+            return
+        end
+        Frame_2.BackgroundTransparency = 0.75
+        Frame_2.Position = UDim2.new(0.5, 2, 0.5, 0)
+        Frame_2.Size = UDim2.fromScale(1, 1)
+    end
+    local janitor = p1.janitor
+    local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("SelectedObject")
+    janitor:add(PropertyChangedSignal:Connect(selectionChanged))
+    selectionChanged()
+    local ImageLabel = Instance.new("ImageLabel")
+    ImageLabel.LayoutOrder = 2
+    ImageLabel.ZIndex = 15
+    ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    ImageLabel.Size = UDim2.new(0.5, 0, 0.5, 0)
+    ImageLabel.BackgroundTransparency = 1
+    ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    ImageLabel.Image = "rbxasset://textures/ui/Controls/XboxController/DPadUp@2x.png"
+    ImageLabel.Parent = Frame_2
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Frame_2
+    local UserInputService = game:GetService("UserInputService")
+    local function setIndicatorVisible(a1) -- Line: 58 -- upvalues: Frame (val), GamepadService (val), p1 (val)
+        local Visible
+        if a1 ~= nil then
+            Visible = a1
+        else
+            Visible = Frame.Visible
+        end
+        if GamepadService.GamepadCursorEnabled then
+            Visible = false
+        end
+        if Visible then
+            p1:modifyTheme({"PaddingRight", "Size", UDim2.new(0, 0, 1, 0)}, "IndicatorPadding")
+        elseif Frame.Visible then
+            p1:removeModification("IndicatorPadding")
+        end
+        p1:modifyTheme({"Indicator", "Visible", Visible})
+        p1.updateSize:Fire()
+    end
+    local janitor_2 = p1.janitor
+    local PropertyChangedSignal_2 = GamepadService:GetPropertyChangedSignal("GamepadCursorEnabled")
+    janitor_2:add(PropertyChangedSignal_2:Connect(setIndicatorVisible))
+    p1.indicatorSet:Connect(function(p1) -- Line: 74 -- upvalues: ImageLabel (val), UserInputService (val), setIndicatorVisible (val)
+        local v1 = false
+        if p1 then
+            ImageLabel.Image = UserInputService:GetImageForKeyCode(p1)
+            v1 = true
+        end
+        setIndicatorVisible(v1)
+    end)
+    local PropertyChangedSignal_3 = widget:GetPropertyChangedSignal("AbsoluteSize")
+    PropertyChangedSignal_3:Connect(function() -- Line: 83 -- upvalues: widget (val), Frame (val)
+        local v1 = widget.AbsoluteSize.Y * 0.96
+        Frame.Size = UDim2.new(0, v1, 0, v1)
+    end)
+    local v2 = widget.AbsoluteSize.Y * 0.96
+    Frame.Size = UDim2.new(0, v2, 0, v2)
+    return Frame
 end

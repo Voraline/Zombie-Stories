@@ -1,102 +1,102 @@
-local v1 = game:GetService("RunService")
-local v2 = game:GetService("StarterGui")
-local v3 = game:GetService("Players").LocalPlayer
-local v4 = script:WaitForChild("Shared")
-local v_u_5 = require(v4:WaitForChild("Util"))
-if v1:IsClient() == false then
-	error("Server scripts cannot require the client library. Please require the server library to use Cmdr in your own code.")
+local v1
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Shared = script:WaitForChild("Shared")
+local Util = require(Shared:WaitForChild("Util"))
+if RunService:IsClient() == false then
+    error("Server scripts cannot require the client library. Please require the server library to use Cmdr in your own code.")
 end
-local v6 = {
-	["ReplicatedRoot"] = nil,
-	["RemoteFunction"] = nil,
-	["RemoteEvent"] = nil,
-	["ActivationKeys"] = nil,
-	["Enabled"] = true,
-	["MashToEnable"] = false,
-	["ActivationUnlocksMouse"] = false,
-	["HideOnLostFocus"] = true,
-	["PlaceName"] = "Cmdr",
-	["Util"] = nil,
-	["Events"] = nil,
-	["ReplicatedRoot"] = script,
-	["RemoteFunction"] = script:WaitForChild("CmdrFunction"),
-	["RemoteEvent"] = script:WaitForChild("CmdrEvent"),
-	["ActivationKeys"] = {
-		[Enum.KeyCode.F2] = true
-	},
-	["Util"] = v_u_5,
-	["Events"] = {}
+local v2 = {
+    Enabled = true,
+    MashToEnable = false,
+    ActivationUnlocksMouse = false,
+    HideOnLostFocus = true,
+    PlaceName = "Cmdr",
+    ReplicatedRoot = script,
+    RemoteFunction = script:WaitForChild("CmdrFunction"),
+    RemoteEvent = script:WaitForChild("CmdrEvent"),
 }
-local v_u_10 = setmetatable(v6, {
-	["__index"] = function(p_u_7, p8) -- name: __index
-		local v_u_9 = p_u_7.Dispatcher[p8]
-		if v_u_9 and type(v_u_9) == "function" then
-			return function(_, ...)
-				-- upvalues: (copy) v_u_9, (copy) p_u_7
-				return v_u_9(p_u_7.Dispatcher, ...)
-			end
-		end
-	end
+local v3 = {}
+v3[Enum.KeyCode.F2] = true
+v2.ActivationKeys = v3
+v2.Util = Util
+v2.Events = {}
+local u55 = setmetatable(v2, {
+    __index = function(p1, p2) -- Line: 28
+        local u3 = p1.Dispatcher[p2]
+        if not u3 then
+            return
+        end
+        if type(u3) == "function" then
+            return function(a1, ...) -- Line: 31 -- upvalues: u3 (val), p1 (val)
+                return u3(p1.Dispatcher, ...)
+            end
+        end
+    end,
 })
-v_u_10.Registry = require(v4.Registry)(v_u_10)
-v_u_10.Dispatcher = require(v4.Dispatcher)(v_u_10)
-if v2:WaitForChild("Cmdr") and (wait() and v3:WaitForChild("PlayerGui"):FindFirstChild("Cmdr") == nil) then
-	v2.Cmdr:Clone().Parent = v3.PlayerGui
+local Registry = require(Shared.Registry)
+u55.Registry = Registry(u55)
+local Dispatcher = require(Shared.Dispatcher)
+u55.Dispatcher = Dispatcher(u55)
+if StarterGui:WaitForChild("Cmdr") and wait() then
+    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+    if PlayerGui:FindFirstChild("Cmdr") == nil then
+        v1 = StarterGui.Cmdr:Clone()
+        v1.Parent = LocalPlayer.PlayerGui
+    end
 end
-local v_u_11 = require("@self/CmdrInterface")(v_u_10)
-function v_u_10.SetActivationKeys(p12, p13) -- name: SetActivationKeys
-	-- upvalues: (copy) v_u_5
-	p12.ActivationKeys = v_u_5.MakeDictionary(p13)
+v1 = require("@self/CmdrInterface")
+local u93 = v1(u55)
+function u55.SetActivationKeys(p1, p2) -- Line: 49 -- upvalues: Util (val)
+    p1.ActivationKeys = Util.MakeDictionary(p2)
 end
-function v_u_10.SetPlaceName(p14, p15) -- name: SetPlaceName
-	-- upvalues: (copy) v_u_11
-	p14.PlaceName = p15
-	v_u_11.Window:UpdateLabel()
+function u55.SetPlaceName(p1, p2) -- Line: 54 -- upvalues: u93 (val)
+    p1.PlaceName = p2
+    u93.Window:UpdateLabel()
 end
-function v_u_10.SetEnabled(p16, p17) -- name: SetEnabled
-	p16.Enabled = p17
+function u55:SetEnabled(p2) -- Line: 60
+    self.Enabled = p2
 end
-function v_u_10.SetActivationUnlocksMouse(p18, p19) -- name: SetActivationUnlocksMouse
-	p18.ActivationUnlocksMouse = p19
+function u55.SetActivationUnlocksMouse(p1, p2) -- Line: 65
+    p1.ActivationUnlocksMouse = p2
 end
-function v_u_10.Show(p20) -- name: Show
-	-- upvalues: (copy) v_u_11
-	if p20.Enabled then
-		v_u_11.Window:Show()
-	end
+function u55:Show() -- Line: 70 -- upvalues: u93 (val)
+    if not self.Enabled then
+        return
+    end
+    u93.Window:Show()
 end
-function v_u_10.Hide(_) -- name: Hide
-	-- upvalues: (copy) v_u_11
-	v_u_11.Window:Hide()
+function u55.Hide(p1) -- Line: 79 -- upvalues: u93 (val)
+    u93.Window:Hide()
 end
-function v_u_10.Toggle(p21) -- name: Toggle
-	-- upvalues: (copy) v_u_11
-	if not p21.Enabled then
-		return p21:Hide()
-	end
-	v_u_11.Window:SetVisible(not v_u_11.Window:IsVisible())
+function u55.Toggle(p1) -- Line: 84 -- upvalues: u93 (val)
+    if not p1.Enabled then
+        return p1:Hide()
+    end
+    u93.Window:SetVisible(not u93.Window:IsVisible())
 end
-function v_u_10.SetMashToEnable(p22, p23) -- name: SetMashToEnable
-	p22.MashToEnable = p23
-	if p23 then
-		p22:SetEnabled(false)
-	end
+function u55.SetMashToEnable(p1, p2) -- Line: 93
+    p1.MashToEnable = p2
+    if p2 then
+        p1:SetEnabled(false)
+    end
 end
-function v_u_10.SetHideOnLostFocus(p24, p25) -- name: SetHideOnLostFocus
-	p24.HideOnLostFocus = p25
+function u55.SetHideOnLostFocus(p1, p2) -- Line: 102
+    p1.HideOnLostFocus = p2
 end
-function v_u_10.HandleEvent(p26, p27, p28) -- name: HandleEvent
-	p26.Events[p27] = p28
+function u55.HandleEvent(p1, p2, p3) -- Line: 107
+    p1.Events[p2] = p3
 end
-if v1:IsServer() == false then
-	v_u_10.Registry:RegisterTypesIn(script:WaitForChild("Types"))
-	v_u_10.Registry:RegisterCommandsIn(script:WaitForChild("Commands"))
+if RunService:IsServer() == false then
+    u55.Registry:RegisterTypesIn(script:WaitForChild("Types"))
+    u55.Registry:RegisterCommandsIn(script:WaitForChild("Commands"))
 end
-v_u_10.RemoteEvent.OnClientEvent:Connect(function(p29, ...)
-	-- upvalues: (ref) v_u_10
-	if v_u_10.Events[p29] then
-		v_u_10.Events[p29](...)
-	end
+u55.RemoteEvent.OnClientEvent:Connect(function(p1, ...) -- Line: 118 -- upvalues: u55 (ref)
+    if u55.Events[p1] then
+        u55.Events[p1](...)
+    end
 end)
-require("@self/DefaultEventHandlers")(v_u_10)
-return v_u_10
+v2 = require("@self/DefaultEventHandlers")
+v2(u55)
+return u55

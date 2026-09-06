@@ -1,4 +1,4 @@
 require("../types/fusion")
-return function(p1) -- name: lockValue
-	return p1
+return function(p1) -- Line: 7
+    return p1
 end

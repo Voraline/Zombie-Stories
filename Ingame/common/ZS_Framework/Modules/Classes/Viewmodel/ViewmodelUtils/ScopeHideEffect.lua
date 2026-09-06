@@ -1,88 +1,124 @@
-local v_u_1 = {}
-local v_u_2 = {}
-local v_u_3 = {}
-local v4 = {}
-function easeInQuart(p5) -- name: easeInQuart
-	return p5 * p5 * p5 * p5
+local u0 = {}
+local u1 = {}
+local u2 = {}
+local v1 = {}
+function easeInQuart(p1) -- Line: 9
+    return p1 * p1 * p1 * p1
 end
-local function v_u_14(p6) -- name: initialize
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	local v7 = {}
-	v_u_1[p6] = v7
-	local v8 = {}
-	v_u_2[p6] = v8
-	local v9 = Instance.new("Folder")
-	v9.Name = "GlassParts"
-	v9.Parent = p6
-	for _, v10 in p6:QueryDescendants("BasePart[$HideScope]") do
-		table.insert(v7, v10)
-		v10:SetAttribute("OriginalTransparency", v10.Transparency)
-		if v10.Material ~= Enum.Material.Glass and not v10:GetAttribute("NoGlass") then
-			local v11 = v10:Clone()
-			v11.Material = "Glass"
-			v11.Transparency = v11.Transparency * 0.5
-			v11:SetAttribute("OriginalTransparency", v11.Transparency)
-			table.insert(v8, v11)
-			local v12 = Instance.new("Weld")
-			v12.Part0 = v10
-			v12.Part1 = v11
-			v12.Parent = v11
-			v11.Parent = v9
-		end
-	end
-	for _, v13 in p6:QueryDescendants("Texture") do
-		if v13.Parent:GetAttribute("HideScope") then
-			v13:SetAttribute("OriginalTransparency", v13.Transparency)
-			table.insert(v7, v13)
-		end
-	end
+local function initialize(p1) -- Line: 13 -- upvalues: u0 (val), u1 (val)
+    local Weld, v1
+    local v2 = {}
+    u0[p1] = v2
+    local v3 = {}
+    u1[p1] = v3
+    local Folder = Instance.new("Folder")
+    Folder.Name = "GlassParts"
+    Folder.Parent = p1
+    for i, j in p1:QueryDescendants("BasePart[$HideScope]") do
+        table.insert(v2, j)
+        j:SetAttribute("OriginalTransparency", j.Transparency)
+        if j.Material ~= Enum.Material.Glass and not (j:GetAttribute("NoGlass")) then
+            v1 = j:Clone()
+            v1.Material = "Glass"
+            v1.Transparency = v1.Transparency * 0.5
+            v1:SetAttribute("OriginalTransparency", v1.Transparency)
+            table.insert(v3, v1)
+            Weld = Instance.new("Weld")
+            Weld.Part0 = j
+            Weld.Part1 = v1
+            Weld.Parent = v1
+            v1.Parent = Folder
+        end
+    end
+    for k, n in p1:QueryDescendants("Texture") do
+        if n.Parent:GetAttribute("HideScope") then
+            n:SetAttribute("OriginalTransparency", n.Transparency)
+            table.insert(v2, n)
+        end
+    end
 end
-function v4.Update(_, p15, p16) -- name: Update
-	-- upvalues: (copy) v_u_1, (copy) v_u_14, (copy) v_u_2, (copy) v_u_3
-	if not v_u_1[p15] then
-		v_u_14(p15)
-	end
-	local v17 = v_u_1[p15]
-	local v18 = v_u_2[p15]
-	local v19 = easeInQuart(p16.Position)
-	local v20 = math.min(v19, 0.5) * 2
-	for _, v21 in v17 do
-		local v22 = v21:GetAttribute("OriginalTransparency") or 0
-		v21.Transparency = v22 + (1 - v22) * v20
-		if v21:IsA("BasePart") and v21.Material == Enum.Material.Glass then
-			local v23 = v21.Transparency ~= 1
-			if v23 or v21.Parent == nil then
-				if v23 and v21.Parent == nil then
-					v21.Parent = v_u_3[v21]
-				end
-			else
-				v_u_3[v21] = v21.Parent
-				v21.Parent = nil
-			end
-		end
-	end
-	local v24 = v19 - 0.45
-	local v25 = math.max(v24, 0) * 2
-	local v26 = math.min(v25, 1)
-	for _, v27 in v18 do
-		local v28 = v27:GetAttribute("OriginalTransparency")
-		v27.Transparency = v28 + (1 - v28) * v26
-		if v26 == 0 then
-			if v27.Parent ~= nil then
-				v_u_3[v27] = v27.Parent
-				v27.Parent = nil
-			end
-		else
-			local v29 = v27.Transparency ~= 1
-			if v29 or v27.Parent == nil then
-				if v29 and v27.Parent == nil then
-					v27.Parent = v_u_3[v27]
-				end
-			else
-				v_u_3[v27] = v27.Parent
-				v27.Parent = nil
-			end
-		end
-	end
+local function setPartVisible(p1, p2) -- Line: 52 -- upvalues: u2 (val)
+    if p2 then
+        if p2 and p1.Parent == nil then
+            p1.Parent = u2[p1]
+        end
+        return
+    end
+    if p1.Parent ~= nil then
+        u2[p1] = p1.Parent
+        p1.Parent = nil
+        return
+    end
+    if p2 and p1.Parent == nil then
+        p1.Parent = u2[p1]
+    end
 end
-return v4
+local function correctGlassVisibility(p1) -- Line: 61 -- upvalues: u2 (val)
+    local v1 = p1.Transparency ~= 1
+    if v1 then
+        if v1 and p1.Parent == nil then
+            p1.Parent = u2[p1]
+        end
+        return
+    end
+    if p1.Parent ~= nil then
+        u2[p1] = p1.Parent
+        p1.Parent = nil
+        return
+    end
+    if v1 and p1.Parent == nil then
+        p1.Parent = u2[p1]
+    end
+end
+function v1.Update(p1, p2, p3) -- Line: 65 -- upvalues: u0 (val), initialize (val), u1 (val), u2 (val)
+    local Attribute, v1, v2, v3
+    if not (u0[p2]) then
+        initialize(p2)
+    end
+    local v4 = u0[p2]
+    local v5 = u1[p2]
+    local v6 = easeInQuart(p3.Position)
+    local v7 = math.min(v6, 0.5) * 2
+    local v8 = v4
+    local v9 = nil
+    local v10 = nil
+    for i, j in v8, v9, v10 do
+        v1 = j:GetAttribute("OriginalTransparency") or 0
+        j.Transparency = v1 + (1 - v1) * v7
+        if j:IsA("BasePart") and j.Material == Enum.Material.Glass then
+            v2 = j.Transparency ~= 1
+            if v2 then
+                if v2 and j.Parent == nil then
+                    j.Parent = u2[j]
+                end
+            elseif j.Parent ~= nil then
+                u2[j] = j.Parent
+                j.Parent = nil
+            end
+        end
+    end
+    v9 = math.max(v6 - 0.45, 0) * 2
+    v8 = math.min(v9, 1)
+    v9 = v5
+    v10 = nil
+    local v11 = nil
+    for k, n in v9, v10, v11 do
+        Attribute = n:GetAttribute("OriginalTransparency")
+        n.Transparency = Attribute + (1 - Attribute) * v8
+        if v8 ~= 0 then
+            v3 = n.Transparency ~= 1
+            if v3 then
+                if v3 and n.Parent == nil then
+                    n.Parent = u2[n]
+                end
+            elseif n.Parent ~= nil then
+                u2[n] = n.Parent
+                n.Parent = nil
+            end
+        elseif n.Parent ~= nil then
+            u2[n] = n.Parent
+            n.Parent = nil
+        end
+    end
+end
+return v1

@@ -1,572 +1,474 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v2 = require(v1.Packages.Fusion)
-local _ = v2.Value
-local v_u_3 = v2.Children
-local v_u_4 = v2.OnEvent
-local v_u_5 = v2.peek
-require("./RefreshButton")
-local v_u_6 = require("../GenericExitButton")
-local v_u_7 = require("../GenericButton")
-local function v_u_15(p8, p9, p10, p11, _, p12) -- name: infoFrame
-	-- upvalues: (copy) v_u_3
-	local v13 = p8:New("Frame")
-	local v14 = {
-		["Size"] = p12,
-		["BackgroundTransparency"] = 1,
-		["LayoutOrder"] = p11,
-		[v_u_3] = { p8:New("TextLabel")({
-				["Font"] = nil,
-				["TextColor3"] = nil,
-				["Size"] = nil,
-				["BackgroundTransparency"] = 1,
-				["Text"] = nil,
-				["TextScaled"] = true,
-				["TextXAlignment"] = nil,
-				["TextYAlignment"] = nil,
-				["RichText"] = true,
-				["LayoutOrder"] = 0,
-				["Font"] = Enum.Font.GothamMedium,
-				["TextColor3"] = Color3.new(1, 1, 1),
-				["Size"] = UDim2.new(1, 0, 1, 0),
-				["Text"] = "<b>" .. p9 .. "</b>" .. p10,
-				["TextXAlignment"] = Enum.TextXAlignment.Left,
-				["TextYAlignment"] = Enum.TextYAlignment.Center
-			}) }
-	}
-	return v13(v14)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local Children = Fusion.Children
+local peek = Fusion.peek
+local Theme = require(ReplicatedStorage.common.ZS_Framework.UI.Theme)
+local UIKit = require(ReplicatedStorage.common.ZS_Framework.UI.UIKit)
+local function infoFrame(p1, p2, p3, p4, p5, p6) -- Line: 26 -- upvalues: Children (val), Theme (val)
+    local v1 = p1:New("Frame")
+    local v2 = {Size = p5, BackgroundTransparency = 1, LayoutOrder = p4}
+    local v3 = {}
+    local v4 = p1:New("TextLabel")
+    v4 = v4({
+        BackgroundTransparency = 1,
+        TextScaled = false,
+        Size = UDim2.new(0.44, 0, 1, 0),
+        Text = p2,
+        Font = Theme.Menu.Fonts.Header,
+        TextColor3 = Theme.Menu.Text,
+        TextSize = p6,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Center,
+    })
+    local v5 = p1:New("TextLabel")
+    local v6 = {
+        BackgroundTransparency = 1,
+        TextScaled = false,
+        Size = UDim2.new(0.56, 0, 1, 0),
+        Position = UDim2.new(0.44, 0, 0, 0),
+        Text = p3,
+        Font = Theme.Menu.Fonts.Body,
+        TextColor3 = Theme.Menu.TextMuted,
+        TextSize = p6,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Center,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+    }
+    v3[1] = v4
+    v3[2] = v5(v6)
+    v2[Children] = v3
+    return v1(v2)
 end
-return function(p_u_16)
-	-- upvalues: (copy) v_u_4, (copy) v_u_5, (copy) v_u_3, (copy) v_u_15, (copy) v_u_7, (copy) v_u_6
-	local v_u_17 = p_u_16.scope
-	local v18 = v_u_17:usePx()
-	local v_u_19 = v_u_17:Value(false)
-	local v_u_20 = v18(2)
-	v_u_17:Computed(function(p21)
-		-- upvalues: (copy) v_u_20
-		return UDim.new(0, p21(v_u_20))
-	end)
-	local v_u_22 = v18(4)
-	local v_u_24 = v_u_17:Computed(function(p23)
-		-- upvalues: (copy) v_u_22
-		return UDim.new(0, p23(v_u_22))
-	end)
-	local v_u_25 = v18(6)
-	local v_u_27 = v_u_17:Computed(function(p26)
-		-- upvalues: (copy) v_u_25
-		return UDim.new(0, p26(v_u_25))
-	end)
-	local v_u_28 = v18(80)
-	local v_u_30 = v_u_17:Computed(function(p29)
-		-- upvalues: (copy) v_u_28
-		return UDim2.new(1, 0, 0, p29(v_u_28))
-	end)
-	local v_u_31 = v18(28)
-	local v_u_32 = v_u_17:Value("")
-	local v_u_33 = v_u_17:Value(Vector2.new(0, 0))
-	local v46 = v_u_17:ForPairs(p_u_16.ServerData, function(_, p34, p35, p_u_36)
-		-- upvalues: (copy) v_u_30, (ref) v_u_4, (copy) p_u_16, (ref) v_u_5, (copy) v_u_32, (ref) v_u_3, (copy) v_u_17, (copy) v_u_24, (copy) v_u_27, (ref) v_u_15, (copy) v_u_31
-		local v37 = p34:New("ImageButton")
-		local v38 = {
-			["Size"] = v_u_30,
-			["BackgroundColor3"] = Color3.new(0, 0, 0),
-			["BackgroundTransparency"] = 0.5,
-			[v_u_4("Activated")] = function()
-				-- upvalues: (ref) p_u_16, (ref) v_u_5, (ref) v_u_32, (copy) p_u_36
-				if p_u_16.PlayClickSound then
-					p_u_16.PlayClickSound()
-				end
-				if v_u_5(v_u_32) == p_u_36.Id then
-					v_u_32:set("")
-				else
-					v_u_32:set(p_u_36.Id)
-				end
-			end
-		}
-		local v39 = v_u_3
-		local v40 = {}
-		local v41 = {
-			["PaddingTop"] = v_u_24,
-			["PaddingBottom"] = v_u_24,
-			["PaddingLeft"] = v_u_27,
-			["PaddingRight"] = v_u_24
-		}
-		local v42 = v_u_17:New("UIPadding")(v41)
-		local v43 = v_u_17:New("Frame")
-		local v44 = {
-			["Size"] = UDim2.new(1, 0, 0.7, 0),
-			["BackgroundTransparency"] = 1,
-			["Position"] = UDim2.new(0, 0, 0.4, 0),
-			[v_u_3] = {
-				v_u_17:New("UIListLayout")({
-					["SortOrder"] = Enum.SortOrder.LayoutOrder,
-					["Padding"] = v_u_27,
-					["HorizontalAlignment"] = Enum.HorizontalAlignment.Left,
-					["VerticalAlignment"] = Enum.VerticalAlignment.Center,
-					["FillDirection"] = Enum.FillDirection.Horizontal,
-					["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceEvenly
-				}),
-				v_u_15(v_u_17, "Map: ", p_u_36.MapName, 0, v_u_31, UDim2.new(0.3, 0, 0.5, 0)),
-				v_u_15(v_u_17, "Mode: ", p_u_36.Gamemode, 1, v_u_31, UDim2.new(0.3, 0, 0.5, 0)),
-				v_u_15(v_u_17, "Players: ", p_u_36.Players .. "/" .. p_u_36.MaxPlayers, 2, v_u_31, UDim2.new(0.16, 0, 0.5, 0)),
-				v_u_15(v_u_17, "Location: ", p_u_36.Location, 3, v_u_31, UDim2.new(0.16, 0, 0.5, 0))
-			}
-		}
-		__set_list(v40, 1, {v42, v43(v44), v_u_17:New("TextLabel")({
-	["TextScaled"] = true,
-	["Font"] = nil,
-	["TextColor3"] = nil,
-	["Size"] = nil,
-	["BackgroundTransparency"] = 1,
-	["Text"] = nil,
-	["TextXAlignment"] = nil,
-	["TextYAlignment"] = nil,
-	["Font"] = Enum.Font.GothamBlack,
-	["TextColor3"] = Color3.new(1, 1, 1),
-	["Size"] = UDim2.new(1, 0, 0.4, 0),
-	["Text"] = p_u_36.Name,
-	["TextXAlignment"] = Enum.TextXAlignment.Left,
-	["TextYAlignment"] = Enum.TextYAlignment.Center
-}), v_u_17:New("UIStroke")({
-	["Thickness"] = 1,
-	["Transparency"] = 0,
-	["Color"] = nil,
-	["Color"] = v_u_17:Computed(function(p45)
-		-- upvalues: (ref) v_u_32, (copy) p_u_36
-		if p45(v_u_32) == p_u_36.Id then
-			return Color3.new(1, 1, 1)
-		else
-			return Color3.new(0.023529, 0.043137, 0.294118)
-		end
-	end)
-})})
-		v38[v39] = v40
-		return p35, v37(v38)
-	end)
-	local v47 = p_u_16.Refreshing
-	local v_u_48 = v_u_17:Value("Joining Server")
-	local v_u_49 = task.spawn(function()
-		-- upvalues: (copy) v_u_48
-		while true do
-			v_u_48:set("Joining Server")
-			task.wait(0.25)
-			v_u_48:set("Joining Server.")
-			task.wait(0.25)
-			v_u_48:set("Joining Server..")
-			task.wait(0.25)
-			v_u_48:set("Joining Server...")
-			task.wait(0.25)
-		end
-	end)
-	local v_u_50 = v_u_17:Value(false)
-	table.insert(v_u_17, function()
-		-- upvalues: (copy) v_u_49
-		task.cancel(v_u_49)
-	end)
-	local v51 = v_u_17:New("Frame")
-	local v52 = {
-		["Size"] = UDim2.new(0.65, 0, 0.65, 0),
-		["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(0.5, 0.5),
-		["Parent"] = p_u_16.target,
-		["BackgroundTransparency"] = 1
-	}
-	local v53 = v_u_3
-	local v54 = {}
-	local v55 = v_u_17:New("TextLabel")({
-		["Size"] = nil,
-		["Text"] = nil,
-		["TextScaled"] = true,
-		["Font"] = nil,
-		["TextColor3"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundTransparency"] = 1,
-		["Visible"] = nil,
-		["Size"] = UDim2.new(0.4, 0, 0.1, 0),
-		["Text"] = v_u_48,
-		["Font"] = Enum.Font.GothamBold,
-		["TextColor3"] = Color3.new(1, 1, 1),
-		["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(0.5, 0.5),
-		["Visible"] = p_u_16.Joining
-	})
-	local v56 = v_u_17:New("Frame")
-	local v58 = {
-		["Size"] = UDim2.new(1, 0, 1, 0),
-		["BackgroundColor3"] = Color3.new(0.2, 0.32549, 0.658824),
-		["AnchorPoint"] = Vector2.new(0.5, 0.5),
-		["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-		["Visible"] = v_u_17:Computed(function(p57)
-			-- upvalues: (copy) p_u_16
-			return not p57(p_u_16.Joining)
-		end)
-	}
-	local v59 = v_u_17.Children
-	local v60 = {}
-	local v61 = v_u_17:New("Frame")
-	local v62 = {
-		["Size"] = UDim2.new(1, 0, 1, 0),
-		["BackgroundTransparency"] = 1,
-		["Visible"] = v_u_19
-	}
-	local v63 = v_u_3
-	local v64 = {}
-	local v65 = v_u_17:New("UIListLayout")({
-		["SortOrder"] = Enum.SortOrder.LayoutOrder,
-		["Padding"] = UDim.new(0, 6),
-		["HorizontalAlignment"] = Enum.HorizontalAlignment.Center,
-		["VerticalAlignment"] = Enum.VerticalAlignment.Center,
-		["FillDirection"] = Enum.FillDirection.Vertical
-	})
-	local v66 = v_u_17:New("TextBox")
-	local v67 = {
-		["Size"] = UDim2.new(0.65, 0, 0.2, 0),
-		["Position"] = UDim2.new(0.5, 0, 0.3, 0),
-		["AnchorPoint"] = Vector2.new(0.5, 0),
-		["BackgroundTransparency"] = 0,
-		["PlaceholderText"] = "Enter Server Code",
-		["Text"] = p_u_16.PrivateServerId,
-		[v_u_17.Out("Text")] = p_u_16.PrivateServerId,
-		["TextColor3"] = Color3.new(1, 1, 1),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["Font"] = Enum.Font.GothamBold,
-		["TextScaled"] = true,
-		[v_u_17.Children] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	local v68 = v66(v67)
-	local v69 = v_u_17:New("Frame")
-	local v70 = {
-		["Size"] = UDim2.new(0.65, 0, 0.2, 0),
-		["BackgroundTransparency"] = 1,
-		["LayoutOrder"] = 2
-	}
-	local v71 = v_u_3
-	local v72 = {}
-	local v73 = v_u_17:New("UIListLayout")({
-		["SortOrder"] = Enum.SortOrder.LayoutOrder,
-		["HorizontalAlignment"] = Enum.HorizontalAlignment.Center,
-		["VerticalAlignment"] = Enum.VerticalAlignment.Center,
-		["FillDirection"] = Enum.FillDirection.Horizontal,
-		["HorizontalFlex"] = Enum.UIFlexAlignment.SpaceBetween
-	})
-	local v74 = v_u_7
-	local v75 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Text"] = "GENERATE CODE",
-		["Font"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["Disabled"] = nil,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.49, 0, 1, 0),
-		["Font"] = Enum.Font.GothamBold,
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["Disabled"] = v_u_50,
-		["scope"] = v_u_17,
-		["OnClick"] = function() -- name: OnClick
-			-- upvalues: (copy) v_u_50, (copy) p_u_16
-			v_u_50:set(true)
-			p_u_16.OnStartPrivateServer()
-		end,
-		["Children"] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	local v76 = v74(v75)
-	local v77 = v_u_7
-	local v78 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Text"] = "JOIN PRIVATE SERVER",
-		["Font"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["LayoutOrder"] = 2,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.49, 0, 1, 0),
-		["Font"] = Enum.Font.GothamBold,
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["scope"] = v_u_17,
-		["OnClick"] = function() -- name: OnClick
-			-- upvalues: (copy) p_u_16
-			p_u_16.OnJoinPrivateServer()
-		end,
-		["Children"] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	__set_list(v72, 1, {v73, v76, v77(v78)})
-	v70[v71] = v72
-	__set_list(v64, 1, {v65, v68, v69(v70)})
-	v62[v63] = v64
-	local v79 = v61(v62)
-	local v80 = v_u_17:New("Frame")
-	local v81 = {
-		["Size"] = UDim2.new(1, 0, 0.125, 0),
-		["AnchorPoint"] = Vector2.new(0, 1),
-		["Position"] = UDim2.new(0, 0, 1.14, 0),
-		["BackgroundColor3"] = Color3.new(1, 1, 1),
-		["BackgroundTransparency"] = 1
-	}
-	local v82 = v_u_3
-	local v83 = {}
-	local v84 = v_u_17:New("UIListLayout")({
-		["SortOrder"] = Enum.SortOrder.LayoutOrder,
-		["Padding"] = UDim.new(0, 6),
-		["HorizontalAlignment"] = Enum.HorizontalAlignment.Left,
-		["VerticalAlignment"] = Enum.VerticalAlignment.Center,
-		["FillDirection"] = Enum.FillDirection.Horizontal
-	})
-	local v85 = v_u_7
-	local v87 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Text"] = nil,
-		["Font"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.2, 0, 1, 0),
-		["Text"] = v_u_17:Computed(function(p86)
-			-- upvalues: (copy) v_u_19
-			return p86(v_u_19) and "SERVER BROWSER" or "PRIVATE SERVERS"
-		end),
-		["Font"] = Enum.Font.GothamBold,
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["scope"] = v_u_17,
-		["OnClick"] = function() -- name: OnClick
-			-- upvalues: (copy) p_u_16, (copy) v_u_19, (ref) v_u_5
-			if p_u_16.PlayClickSound then
-				p_u_16.PlayClickSound()
-			end
-			v_u_19:set(not v_u_5(v_u_19))
-		end,
-		["Children"] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	__set_list(v83, 1, {v84, v85(v87)})
-	v81[v82] = v83
-	local v88 = v80(v81)
-	local v89 = v_u_17:New("Frame")
-	local v91 = {
-		["Size"] = UDim2.new(1, 0, 0.125, 0),
-		["AnchorPoint"] = Vector2.new(0, 1),
-		["Position"] = UDim2.new(0, 0, 1.14, 0),
-		["BackgroundColor3"] = Color3.new(1, 1, 1),
-		["BackgroundTransparency"] = 1,
-		["Visible"] = v_u_17:Computed(function(p90)
-			-- upvalues: (copy) v_u_19
-			return not p90(v_u_19)
-		end)
-	}
-	local v92 = v_u_3
-	local v93 = {}
-	local v94 = v_u_17:New("UIListLayout")({
-		["SortOrder"] = Enum.SortOrder.LayoutOrder,
-		["Padding"] = UDim.new(0, 6),
-		["HorizontalAlignment"] = Enum.HorizontalAlignment.Right,
-		["VerticalAlignment"] = Enum.VerticalAlignment.Center,
-		["FillDirection"] = Enum.FillDirection.Horizontal
-	})
-	local v95 = v_u_7
-	local v96 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Text"] = "REFRESH",
-		["Font"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["Disabled"] = nil,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.2, 0, 1, 0),
-		["Font"] = Enum.Font.GothamBold,
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["Disabled"] = v47,
-		["scope"] = v_u_17,
-		["OnClick"] = p_u_16.OnRefresh,
-		["Children"] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	local v97 = v95(v96)
-	local v98 = v_u_7
-	local v100 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Text"] = nil,
-		["Font"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.2, 0, 1, 0),
-		["Text"] = v_u_17:Computed(function(p99)
-			-- upvalues: (copy) v_u_32
-			return p99(v_u_32) == "" and "START SERVER" or "JOIN"
-		end),
-		["Font"] = Enum.Font.GothamBold,
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902),
-		["scope"] = v_u_17,
-		["OnClick"] = function() -- name: OnClick
-			-- upvalues: (copy) p_u_16, (ref) v_u_5, (copy) v_u_32
-			p_u_16.OnJoin(v_u_5(v_u_32))
-		end,
-		["Children"] = { v_u_17:New("UIPadding")({
-				["PaddingTop"] = v_u_27,
-				["PaddingBottom"] = v_u_27,
-				["PaddingLeft"] = v_u_27,
-				["PaddingRight"] = v_u_27
-			}), v_u_17:New("UICorner")({
-				["CornerRadius"] = v_u_24
-			}) }
-	}
-	__set_list(v93, 1, {v94, v97, v98(v100)})
-	v91[v92] = v93
-	local v101 = v89(v91)
-	local v102 = v_u_17:New("ScrollingFrame")
-	local v105 = {
-		["Size"] = UDim2.new(1, 0, 0.85, 0),
-		["Position"] = UDim2.new(0, 0, 0.15, 0),
-		["AnchorPoint"] = Vector2.new(0, 0),
-		["BackgroundTransparency"] = 1,
-		["Visible"] = v_u_17:Computed(function(p103)
-			-- upvalues: (copy) v_u_19
-			return not p103(v_u_19)
-		end),
-		["CanvasSize"] = v_u_17:Computed(function(p104)
-			-- upvalues: (copy) v_u_33
-			return UDim2.new(0, 0, 0, p104(v_u_33).Y + 40)
-		end),
-		[v_u_3] = { v46, v_u_17:New("UIPadding")({
-				["PaddingTop"] = UDim.new(0, 6),
-				["PaddingBottom"] = UDim.new(0, 6),
-				["PaddingLeft"] = UDim.new(0, 6),
-				["PaddingRight"] = UDim.new(0, 16)
-			}), v_u_17:New("UIListLayout")({
-				["SortOrder"] = Enum.SortOrder.LayoutOrder,
-				["Padding"] = v_u_27,
-				[v_u_17.Out("AbsoluteContentSize")] = v_u_33
-			}) }
-	}
-	local v106 = v102(v105)
-	local v107 = v_u_17:New("Frame")
-	local v108 = {
-		["Size"] = UDim2.new(1, 0, 0.15, 0),
-		["BackgroundColor3"] = Color3.new(0.133333, 0.215686, 0.454902)
-	}
-	local v109 = v_u_3
-	local v110 = {}
-	local v111 = v_u_17:New("UIPadding")({
-		["PaddingTop"] = UDim.new(0, 10),
-		["PaddingBottom"] = UDim.new(0, 10),
-		["PaddingLeft"] = UDim.new(0, 10),
-		["PaddingRight"] = UDim.new(0, 10)
-	})
-	local v113 = v_u_17:New("TextLabel")({
-		["Size"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundTransparency"] = 1,
-		["Text"] = nil,
-		["Font"] = nil,
-		["TextXAlignment"] = nil,
-		["TextScaled"] = true,
-		["TextColor3"] = nil,
-		["Size"] = UDim2.new(1, 0, 1, 0),
-		["Position"] = UDim2.new(0, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(0, 0.5),
-		["Text"] = v_u_17:Computed(function(p112)
-			-- upvalues: (copy) v_u_19
-			return p112(v_u_19) and "Private Servers" or "Server Browser"
-		end),
-		["Font"] = Enum.Font.GothamBold,
-		["TextXAlignment"] = Enum.TextXAlignment.Left,
-		["TextColor3"] = Color3.new(1, 1, 1)
-	})
-	local v114 = v_u_6
-	local v115 = {
-		["Size"] = nil,
-		["TextScaled"] = true,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["scope"] = nil,
-		["OnClick"] = nil,
-		["Children"] = nil,
-		["Size"] = UDim2.new(0.1, 0, 1, 0),
-		["Position"] = UDim2.new(1, 0, 0.5, 0),
-		["AnchorPoint"] = Vector2.new(1, 0.5),
-		["BackgroundColor3"] = Color3.new(0.341176, 0.454902, 0.8),
-		["scope"] = v_u_17,
-		["OnClick"] = p_u_16.OnExit,
-		["Children"] = { v_u_17:New("UICorner")({
-				["CornerRadius"] = UDim.new(0, 4)
-			}) }
-	}
-	__set_list(v110, 1, {v111, v113, v114(v115)})
-	v108[v109] = v110
-	__set_list(v60, 1, {v79, v88, v101, v106, v107(v108)})
-	v58[v59] = v60
-	__set_list(v54, 1, {v55, v56(v58)})
-	v52[v53] = v54
-	return v51(v52)
+local function actionButton(p1, p2) -- Line: 61 -- upvalues: UIKit (val), Theme (val), Children (val)
+    local Colors = p2.Colors
+    local v1 = {
+        Text = "",
+        TextTransparency = 1,
+        TextScaled = false,
+        BackgroundTransparency = 0,
+        OutlineEnabled = true,
+        OutlineThickness = 2,
+        scope = p1,
+        Size = p2.Size,
+        Position = p2.Position,
+        AnchorPoint = p2.AnchorPoint,
+        LayoutOrder = p2.LayoutOrder,
+        TextSize = p2.TextSize,
+        Font = Theme.Menu.Fonts.Button,
+        BackgroundColor3 = Color3.new(1, 1, 1),
+        Disabled = p2.Disabled,
+        OutlineColor3 = Colors.Accent,
+        RippleColor3 = Colors.Accent,
+        OnClick = p2.OnClick,
+    }
+    local v2 = {}
+    local v3 = p1:New("UIGradient")
+    v3 = v3({Color = Colors.Gradient, Rotation = Theme.Menu.ShadeRotation})
+    local v4 = p1:New("UICorner")
+    v4 = v4({CornerRadius = UDim.new(0, Theme.Menu.CornerRadius)})
+    local v5 = p1:New("TextLabel")
+    local v6 = {
+        Name = "Label",
+        Size = UDim2.fromScale(1, 1),
+        BackgroundTransparency = 1,
+        Text = p2.Text,
+        Font = Theme.Menu.Fonts.Button,
+    }
+    local TextColor3 = p2.TextColor3
+    if not TextColor3 then
+        TextColor3 = Theme.Menu.Text
+    end
+    v6.TextColor3 = TextColor3
+    v6.TextSize = p2.TextSize
+    v6.TextTruncate = Enum.TextTruncate.AtEnd
+    v6.TextXAlignment = Enum.TextXAlignment.Center
+    v6.TextYAlignment = Enum.TextYAlignment.Center
+    local ZIndex = p2.ZIndex
+    if not ZIndex then
+        ZIndex = Theme.ZIndex.Content
+    end
+    v6.ZIndex = ZIndex + 2
+    local v7 = {}
+    local v8 = p1:New("UIPadding")
+    v7[1] = v8({PaddingLeft = UDim.new(0, 8), PaddingRight = UDim.new(0, 8)})
+    v6[Children] = v7
+    v2[1] = v3
+    v2[2] = v4
+    v2[3] = v5(v6)
+    v1.Children = v2
+    return UIKit.Button(v1)
+end
+return function(p1) -- Line: 116 -- upvalues: UIKit (val), Theme (val), peek (val), Children (val), infoFrame (val), actionButton (val)
+    local v1, v2, v3, v4
+    local scope = p1.scope
+    local v5 = scope:usePx()
+    local u8 = scope:Value(false)
+    local u11 = v5(4)
+    local u15 = scope:Computed(function(p1) -- Line: 122 -- upvalues: u11 (val)
+        return UDim.new(0, p1(u11))
+    end)
+    local u18 = v5(6)
+    local u22 = scope:Computed(function(p1) -- Line: 126 -- upvalues: u18 (val)
+        return UDim.new(0, p1(u18))
+    end)
+    local v6 = v5(16)
+    local v7 = v5(26)
+    local u31 = v5(20)
+    local u34 = v5(12)
+    local u37 = v5(80)
+    local u41 = scope:Computed(function(p1) -- Line: 135 -- upvalues: u37 (val)
+        return UDim2.new(1, 0, 0, p1(u37))
+    end)
+    local u45 = scope:Value("")
+    v1 = scope:ForPairs(p1.ServerData, function(p1, p2, p3, p4) -- Line: 140 -- upvalues: UIKit (upval), u41 (val), u45 (val), Theme (upval), peek (upval), u15 (val), u22 (val), Children (upval), infoFrame (upval), u34 (val), u31 (val)
+        local v1 = {
+            HoverScale = 1.01,
+            scope = p2,
+            Size = u41,
+            StrokeColor3 = p2:Computed(function(p1) -- Line: 145 -- upvalues: u45 (upval), p4 (val), Theme (upval)
+                local v1 = p1(u45)
+                if v1 == p4.Id then
+                    return Theme.Menu.Accent
+                end
+                return Theme.Menu.Border
+            end),
+            StrokeHoverColor3 = Theme.Menu.AccentCyan,
+            OnClick = function() -- Line: 150 -- upvalues: peek (upval), u45 (upval), p4 (val)
+                local v1 = peek(u45)
+                if v1 == p4.Id then
+                    u45:set("")
+                    return
+                end
+                u45:set(p4.Id)
+            end,
+        }
+        local v2 = {}
+        local v3 = p2:New("UIPadding")
+        v3 = v3({PaddingTop = u15, PaddingBottom = u15, PaddingLeft = u22, PaddingRight = u15})
+        local v4 = p2:New("Frame")
+        local v5 = {Size = UDim2.new(1, 0, 0.7, 0), BackgroundTransparency = 1, Position = UDim2.new(0, 0, 0.4, 0)}
+        local v6 = {}
+        local v7 = p2:New("UIListLayout")
+        v7 = v7({
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Padding = u22,
+            HorizontalAlignment = Enum.HorizontalAlignment.Left,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            FillDirection = Enum.FillDirection.Horizontal,
+            HorizontalFlex = Enum.UIFlexAlignment.SpaceEvenly,
+        })
+        local MapName = p4.MapName
+        local v8 = UDim2.new(0.3, 0, 0.5, 0)
+        local v9 = infoFrame(p2, "Map:", MapName, 0, v8, u34)
+        local Gamemode = p4.Gamemode
+        local v10 = UDim2.new(0.3, 0, 0.5, 0)
+        local v11 = infoFrame(p2, "Mode:", Gamemode, 1, v10, u34)
+        v8 = p4.Players .. "/" .. p4.MaxPlayers
+        local v12 = UDim2.new(0.16, 0, 0.5, 0)
+        local v13 = infoFrame(p2, "Players:", v8, 2, v12, u34)
+        local Location = p4.Location
+        local v14 = UDim2.new(0.16, 0, 0.5, 0)
+        v6[1] = v7
+        v6[2] = v9
+        v6[3] = v11
+        v6[4] = v13
+        v6[5] = infoFrame(p2, "Location:", Location, 3, v14, u34)
+        v5[Children] = v6
+        v4 = v4(v5)
+        v5 = p2:New("TextLabel")
+        local v15 = {
+            TextScaled = false,
+            BackgroundTransparency = 1,
+            TextSize = u31,
+            Font = Theme.Menu.Fonts.Title,
+            TextColor3 = Theme.Menu.Text,
+            Size = UDim2.new(1, 0, 0.4, 0),
+            Text = p4.Name,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+        }
+        v2[1] = v3
+        v2[2] = v4
+        v2[3] = v5(v15)
+        v1.Children = v2
+        return p3, UIKit.Card(v1)
+    end)
+    local u54 = scope:Value("Joining Server")
+    local u57 = task.spawn(function() -- Line: 229 -- upvalues: peek (upval), p1 (val), u54 (val)
+        local v1, v2, v3
+        while true do
+            if peek(p1.Joining) then
+                v1 = {"Joining Server", "Joining Server.", "Joining Server..", "Joining Server..."}
+                v2 = nil
+                v3 = nil
+                for i, j in v1, v2, v3 do
+                    if not (peek(p1.Joining)) then
+                        break
+                    end
+                    u54:set(j)
+                    task.wait(0.25)
+                end
+            else
+                u54:set("Joining Server")
+                task.wait(0.25)
+            end
+        end
+    end)
+    local u61 = scope:Value(false)
+    table.insert(scope, function() -- Line: 247 -- upvalues: u57 (val)
+        task.cancel(u57)
+    end)
+    v2 = scope:New("Frame")
+    v3 = {
+        Size = UDim2.new(0.65, 0, 0.65, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Parent = p1.target,
+        BackgroundTransparency = 1,
+    }
+    v4 = {}
+    local v8 = scope:New("TextLabel")
+    v8 = v8({
+        TextScaled = false,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(0.4, 0, 0.1, 0),
+        Text = u54,
+        TextSize = v7,
+        Font = Theme.Menu.Fonts.Header,
+        TextColor3 = Theme.Menu.Text,
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Visible = p1.Joining,
+    })
+    local v9 = {
+        scope = scope,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = Theme.Menu.PanelDeep,
+        GradientColor = Theme.Menu.Shade,
+        GradientRotation = Theme.Menu.ShadeRotation,
+        StrokeColor3 = Theme.Menu.Border,
+        StrokeThickness = Theme.Menu.StrokeThickness,
+        CornerRadius = UDim.new(0, Theme.Menu.CornerRadius),
+        Visible = scope:Computed(function(a1) -- Line: 281 -- upvalues: p1 (val)
+            return not a1(p1.Joining)
+        end),
+    }
+    local v10 = {}
+    local v11 = scope:New("Frame")
+    local v12 = {Name = "PrivateServerFrame", Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Visible = u8}
+    local v13 = {}
+    local v14 = scope:New("UIListLayout")
+    v14 = v14({SortOrder = Enum.SortOrder.LayoutOrder, Padding = u22, HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center})
+    local v15 = scope:New("TextBox")
+    local v16 = {Size = UDim2.new(0.65, 0, 0.2, 0), BackgroundColor3 = Theme.Menu.PanelInset, PlaceholderText = "", Text = p1.PrivateServerId}
+    local Text = scope.Out("Text")
+    v16[Text] = p1.PrivateServerId
+    v16.TextTransparency = 1
+    v16.TextStrokeTransparency = 1
+    v16.Font = Theme.Menu.Fonts.Header
+    v16.TextScaled = false
+    v16.TextSize = v6
+    local v17 = {}
+    local v18 = scope:New("UIPadding")
+    v18 = v18({PaddingTop = u22, PaddingBottom = u22, PaddingLeft = u22, PaddingRight = u22})
+    local v19 = scope:New("UICorner")
+    v19 = v19({CornerRadius = u15})
+    local v20 = scope:New("TextLabel")
+    local v21 = {
+        Name = "CodeDisplay",
+        BackgroundTransparency = 1,
+        TextStrokeTransparency = 1,
+        Size = UDim2.fromScale(1, 1),
+        Text = scope:Computed(function(a1) -- Line: 325 -- upvalues: p1 (val)
+            local v1 = a1(p1.PrivateServerId)
+            if v1 == "" then
+                return "Enter Server Code"
+            end
+            return v1
+        end),
+        Font = Theme.Menu.Fonts.Header,
+        TextColor3 = scope:Computed(function(a1) -- Line: 330 -- upvalues: p1 (val), Theme (upval)
+            if a1(p1.PrivateServerId) == "" then
+                return Theme.Menu.TextMuted
+            end
+            return Theme.Menu.Text
+        end),
+        TextSize = v6,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        TextYAlignment = Enum.TextYAlignment.Center,
+    }
+    v17[1] = v18
+    v17[2] = v19
+    v17[3] = v20(v21)
+    v16[Children] = v17
+    v15 = v15(v16)
+    v16 = scope:New("Frame")
+    local v22 = {Size = UDim2.new(0.65, 0, 0.2, 0), BackgroundTransparency = 1, LayoutOrder = 2}
+    v18 = {}
+    v19 = scope:New("UIListLayout")
+    v19 = v19({FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center, HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween})
+    v20 = actionButton(scope, {
+        Text = "GENERATE CODE",
+        Size = UDim2.new(0.49, 0, 1, 0),
+        Colors = Theme.Menu.NavigationColors.Map,
+        TextSize = v6,
+        Disabled = u61,
+        OnClick = function() -- Line: 358 -- upvalues: u61 (val), p1 (val)
+            u61:set(true)
+            p1.OnStartPrivateServer()
+        end,
+    })
+    local v23 = {
+        LayoutOrder = 2,
+        Text = "JOIN PRIVATE SERVER",
+        Size = UDim2.new(0.49, 0, 1, 0),
+        Colors = Theme.Menu.NavigationColors.Play,
+        TextSize = v6,
+        OnClick = p1.OnJoinPrivateServer,
+    }
+    v18[1] = v19
+    v18[2] = v20
+    v18[3] = actionButton(scope, v23)
+    v22[Children] = v18
+    v13[1] = v14
+    v13[2] = v15
+    v13[3] = v16(v22)
+    v12[Children] = v13
+    v11 = v11(v12)
+    v12 = scope:New("Frame")
+    local v24 = {Size = UDim2.new(1, 0, 0.125, 0), AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1.14, 0), BackgroundTransparency = 1}
+    v14 = {}
+    v15 = scope:New("UIListLayout")
+    v15 = v15({FillDirection = Enum.FillDirection.Horizontal, Padding = u22, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Center})
+    v22 = {
+        TextMaxSize = 16,
+        scope = scope,
+        Size = UDim2.new(0.2, 0, 1, 0),
+        Text = scope:Computed(function(p1) -- Line: 391 -- upvalues: u8 (val)
+            if p1(u8) then
+                return "SERVER BROWSER"
+            end
+            return "PRIVATE SERVERS"
+        end),
+        Selected = u8,
+        AccentColor3 = Theme.Menu.Accent,
+        OnClick = function() -- Line: 397 -- upvalues: u8 (val), peek (upval)
+            u8:set(not peek(u8))
+        end,
+    }
+    v14[1] = v15
+    v14[2] = UIKit.CategoryButton(v22)
+    v24[Children] = v14
+    v12 = v12(v24)
+    v24 = scope:New("Frame")
+    v13 = {
+        Size = UDim2.new(1, 0, 0.125, 0),
+        AnchorPoint = Vector2.new(0, 1),
+        Position = UDim2.new(0, 0, 1.14, 0),
+        BackgroundTransparency = 1,
+        Visible = scope:Computed(function(p1) -- Line: 409 -- upvalues: u8 (val)
+            return not p1(u8)
+        end),
+    }
+    v15 = {}
+    v16 = scope:New("UIListLayout")
+    v16 = v16({FillDirection = Enum.FillDirection.Horizontal, Padding = u22, HorizontalAlignment = Enum.HorizontalAlignment.Right, VerticalAlignment = Enum.VerticalAlignment.Center})
+    v22 = actionButton(scope, {
+        Text = "REFRESH",
+        Size = UDim2.new(0.2, 0, 1, 0),
+        Colors = Theme.Menu.NavigationColors.More,
+        TextSize = v6,
+        Disabled = p1.Refreshing,
+        OnClick = p1.OnRefresh,
+    })
+    v19 = {
+        Size = UDim2.new(0.2, 0, 1, 0),
+        Text = scope:Computed(function(p1) -- Line: 429 -- upvalues: u45 (val)
+            if p1(u45) == "" then
+                return "START SERVER"
+            end
+            return "JOIN"
+        end),
+        Colors = Theme.Menu.NavigationColors.Play,
+        TextSize = v6,
+        OnClick = function() -- Line: 434 -- upvalues: p1 (val), peek (upval), u45 (val)
+            p1.OnJoin(peek(u45))
+        end,
+    }
+    v15[1] = v16
+    v15[2] = v22
+    v15[3] = actionButton(scope, v19)
+    v13[Children] = v15
+    v24 = v24(v13)
+    v13 = UIKit.ScrollList({
+        scope = scope,
+        Size = UDim2.new(1, 0, 0.85, 0),
+        Position = UDim2.new(0, 0, 0.15, 0),
+        Visible = scope:Computed(function(p1) -- Line: 445 -- upvalues: u8 (val)
+            return not p1(u8)
+        end),
+        Padding = u22,
+        ScrollBarImageColor3 = Theme.Menu.Border,
+        Children = {v1},
+    })
+    v15 = {
+        Name = "Header",
+        scope = scope,
+        Size = UDim2.new(1, 0, 0.15, 0),
+        Position = UDim2.fromScale(0, 0),
+        AnchorPoint = Vector2.new(0, 0),
+        BackgroundColor3 = Theme.Menu.Panel,
+        GradientColor = Theme.Menu.ButtonGradient,
+        GradientRotation = Theme.Menu.ShadeRotation,
+        StrokeColor3 = Theme.Menu.Border,
+        StrokeThickness = Theme.Menu.StrokeThickness,
+        CornerRadius = UDim.new(0, Theme.Menu.CornerRadius),
+    }
+    v16 = {}
+    v22 = scope:New("UIPadding")
+    v22 = v22({PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10), PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10)})
+    v17 = scope:New("TextLabel")
+    v18 = {
+        Size = UDim2.new(0.88, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Text = scope:Computed(function(p1) -- Line: 475 -- upvalues: u8 (val)
+            if p1(u8) then
+                return "Private Servers"
+            end
+            return "Server Browser"
+        end),
+        Font = Theme.Menu.Fonts.Title,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextScaled = false,
+        TextSize = v7,
+        TextColor3 = Theme.Menu.Text,
+    }
+    v20 = {}
+    v21 = scope:New("UIStroke")
+    v20[1] = v21({Thickness = 2, Color = Theme.Menu.HeaderStroke})
+    v18[Children] = v20
+    v17 = v17(v18)
+    v19 = {
+        scope = scope,
+        Size = UDim2.new(0.1, 0, 1, 0),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(1, 0.5),
+        OnClick = p1.OnExit,
+    }
+    v16[1] = v22
+    v16[2] = v17
+    v16[3] = UIKit.CloseButton(v19)
+    v15.Children = v16
+    v10[1] = v11
+    v10[2] = v12
+    v10[3] = v24
+    v10[4] = v13
+    v10[5] = UIKit.Panel(v15)
+    v9.Children = v10
+    v4[1] = v8
+    v4[2] = UIKit.Panel(v9)
+    v3[Children] = v4
+    return v2(v3)
 end

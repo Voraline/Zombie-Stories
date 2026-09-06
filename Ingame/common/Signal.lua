@@ -1,120 +1,106 @@
-local v_u_1 = nil
-local function v_u_4(p2, ...) -- name: acquireRunnerThreadAndCallEventHandler
-	-- upvalues: (ref) v_u_1
-	local v3 = v_u_1
-	v_u_1 = nil
-	p2(...)
-	v_u_1 = v3
+local u0 = nil
+local function acquireRunnerThreadAndCallEventHandler(p1, ...) -- Line: 34 -- upvalues: u0 (ref)
+    u0 = nil
+    p1(...)
+    u0 = u0
 end
-local function v_u_5() -- name: runEventHandlerInFreeThread
-	-- upvalues: (copy) v_u_4
-	while true do
-		v_u_4(coroutine.yield())
-	end
+local function runEventHandlerInFreeThread() -- Line: 45 -- upvalues: acquireRunnerThreadAndCallEventHandler (val)
+    while true do
+        acquireRunnerThreadAndCallEventHandler(coroutine.yield())
+    end
 end
-local v_u_6 = {}
-v_u_6.__index = v_u_6
-function v_u_6.new(p7, p8) -- name: new
-	-- upvalues: (copy) v_u_6
-	local v9 = v_u_6
-	return setmetatable({
-		["_connected"] = true,
-		["_signal"] = nil,
-		["_fn"] = nil,
-		["_next"] = false,
-		["_signal"] = p7,
-		["_fn"] = p8
-	}, v9)
+local u3 = {}
+u3.__index = u3
+function u3.new(p1, p2) -- Line: 60 -- upvalues: u3 (val)
+    local v1 = {_connected = true, _next = false, _signal = p1, _fn = p2}
+    return (setmetatable(v1, u3))
 end
-function v_u_6.Disconnect(p10) -- name: Disconnect
-	p10._connected = false
-	if p10._signal._handlerListHead == p10 then
-		p10._signal._handlerListHead = p10._next
-	else
-		local v11 = p10._signal._handlerListHead
-		while v11 and v11._next ~= p10 do
-			v11 = v11._next
-		end
-		if v11 then
-			v11._next = p10._next
-		end
-	end
+function u3:Disconnect() -- Line: 69
+    local _handlerListHead
+    self._connected = false
+    if self._signal._handlerListHead == self then
+        self._signal._handlerListHead = self._next
+        return
+    end
+    _handlerListHead = self._signal._handlerListHead
+    while _handlerListHead do
+        if _handlerListHead._next == self then
+            break
+        end
+        _handlerListHead = _handlerListHead._next
+    end
+    if _handlerListHead then
+        _handlerListHead._next = self._next
+    end
 end
-setmetatable(v_u_6, {
-	["__index"] = function(_, p12) -- name: __index
-		error(("Attempt to get Connection::%s (not a valid member)"):format((tostring(p12))), 2)
-	end,
-	["__newindex"] = function(_, p13, _) -- name: __newindex
-		error(("Attempt to set Connection::%s (not a valid member)"):format((tostring(p13))), 2)
-	end
+setmetatable(u3, {
+    __index = function(p1, p2) -- Line: 91
+        local v1 = ("Attempt to get Connection::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
+    __newindex = function(p1, p2, p3) -- Line: 94
+        local v1 = ("Attempt to set Connection::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
 })
-local v_u_14 = {}
-v_u_14.__index = v_u_14
-function v_u_14.new() -- name: new
-	-- upvalues: (copy) v_u_14
-	local v15 = v_u_14
-	return setmetatable({
-		["_handlerListHead"] = false
-	}, v15)
+local u12 = {}
+u12.__index = u12
+function u12.new() -- Line: 103 -- upvalues: u12 (val)
+    local v1 = {_handlerListHead = false}
+    return (setmetatable(v1, u12))
 end
-function v_u_14.Connect(p16, p17) -- name: Connect
-	-- upvalues: (copy) v_u_6
-	local v18 = v_u_6.new(p16, p17)
-	if not p16._handlerListHead then
-		p16._handlerListHead = v18
-		return v18
-	end
-	v18._next = p16._handlerListHead
-	p16._handlerListHead = v18
-	return v18
+function u12:Connect(p2) -- Line: 109 -- upvalues: u3 (val)
+    local v1 = u3.new(self, p2)
+    if not self._handlerListHead then
+        self._handlerListHead = v1
+        return v1
+    end
+    v1._next = self._handlerListHead
+    self._handlerListHead = v1
+    return v1
 end
-function v_u_14.connect(p19, p20) -- name: connect
-	return p19:Connect(p20)
+function u12.connect(p1, p2) -- Line: 120
+    return p1:Connect(p2)
 end
-function v_u_14.DisconnectAll(p21) -- name: DisconnectAll
-	p21._handlerListHead = false
+function u12.DisconnectAll(p1) -- Line: 126
+    p1._handlerListHead = false
 end
-function v_u_14.Fire(p22, ...) -- name: Fire
-	-- upvalues: (ref) v_u_1, (copy) v_u_5
-	local v23 = p22._handlerListHead
-	while v23 do
-		if v23._connected then
-			if not v_u_1 then
-				v_u_1 = coroutine.create(v_u_5)
-				coroutine.resume(v_u_1)
-			end
-			task.spawn(v_u_1, v23._fn, ...)
-		end
-		v23 = v23._next
-	end
+function u12.Fire(p1, ...) -- Line: 134 -- upvalues: u0 (ref), runEventHandlerInFreeThread (val)
+    local _handlerListHead = p1._handlerListHead
+    while _handlerListHead do
+        if _handlerListHead._connected then
+            if not u0 then
+                u0 = coroutine.create(runEventHandlerInFreeThread)
+                coroutine.resume(u0)
+            end
+            task.spawn(u0, _handlerListHead._fn, ...)
+        end
+        _handlerListHead = _handlerListHead._next
+    end
 end
-function v_u_14.Wait(p24) -- name: Wait
-	local v_u_25 = coroutine.running()
-	local v_u_26 = nil
-	v_u_26 = p24:Connect(function(...)
-		-- upvalues: (ref) v_u_26, (copy) v_u_25
-		v_u_26:Disconnect()
-		task.spawn(v_u_25, ...)
-	end)
-	return coroutine.yield()
+function u12.Wait(p1) -- Line: 151
+    local u2 = coroutine.running()
+    local u3 = nil
+    return coroutine.yield()
 end
-function v_u_14.Once(p27, p_u_28) -- name: Once
-	local v_u_29 = nil
-	v_u_29 = p27:Connect(function(...)
-		-- upvalues: (ref) v_u_29, (copy) p_u_28
-		if v_u_29._connected then
-			v_u_29:Disconnect()
-		end
-		p_u_28(...)
-	end)
-	return v_u_29
+function u12.Once(p1, p2) -- Line: 163
+    local u2 = nil
+    u2 = p1:Connect(function(...) -- Line: 165 -- upvalues: u2 (ref), p2 (val)
+        if u2._connected then
+            u2:Disconnect()
+        end
+        p2(...)
+    end)
+    return u2
 end
-setmetatable(v_u_14, {
-	["__index"] = function(_, p30) -- name: __index
-		error(("Attempt to get Signal::%s (not a valid member)"):format((tostring(p30))), 2)
-	end,
-	["__newindex"] = function(_, p31, _) -- name: __newindex
-		error(("Attempt to set Signal::%s (not a valid member)"):format((tostring(p31))), 2)
-	end
+setmetatable(u12, {
+    __index = function(p1, p2) -- Line: 176
+        local v1 = ("Attempt to get Signal::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
+    __newindex = function(p1, p2, p3) -- Line: 179
+        local v1 = ("Attempt to set Signal::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
 })
-return v_u_14
+return u12

@@ -1,630 +1,706 @@
 require("./TypeDefinitions")
-local v_u_1 = require("./TypeMarshaller")
-local v_u_2 = {}
-v_u_2.__index = v_u_2
-v_u_2.__type = "ActiveCast"
-local v_u_3 = game:GetService("RunService")
-local v_u_4 = require("./Table")
-local v_u_5 = nil
-function DbgVisualizeSegment(p6, p7) -- name: DbgVisualizeSegment
-	-- upvalues: (ref) v_u_5
-	if v_u_5.VisualizeCasts ~= true then
-		return nil
-	end
-	local v8 = Instance.new("ConeHandleAdornment")
-	v8.Adornee = workspace.Terrain
-	v8.CFrame = p6
-	v8.Height = p7
-	v8.Color3 = Color3.new()
-	v8.Radius = 0.25
-	v8.Transparency = 0.5
-	local v9 = workspace.Terrain:FindFirstChild("FastCastVisualizationObjects")
-	if v9 == nil then
-		v9 = Instance.new("Folder")
-		v9.Name = "FastCastVisualizationObjects"
-		v9.Archivable = false
-		v9.Parent = workspace.Terrain
-	end
-	v8.Parent = v9
-	return v8
+local u5 = require("./TypeMarshaller")
+local u6 = {}
+u6.__index = u6
+u6.__type = "ActiveCast"
+local RunService = game:GetService("RunService")
+local u15 = require("./Table")
+local u16 = nil
+local function GetFastCastVisualizationContainer() -- Line: 61
+    local FastCastVisualizationObjects = workspace.Terrain:FindFirstChild("FastCastVisualizationObjects")
+    if FastCastVisualizationObjects ~= nil then
+        return FastCastVisualizationObjects
+    end
+    local v1 = Instance.new("Folder")
+    v1.Name = "FastCastVisualizationObjects"
+    v1.Archivable = false
+    v1.Parent = workspace.Terrain
+    return v1
 end
-function DbgVisualizeHit(p10, p11) -- name: DbgVisualizeHit
-	-- upvalues: (ref) v_u_5
-	if v_u_5.VisualizeCasts ~= true then
-		return nil
-	end
-	local v12 = Instance.new("SphereHandleAdornment")
-	v12.Adornee = workspace.Terrain
-	v12.CFrame = p10
-	v12.Radius = 0.4
-	v12.Transparency = 0.25
-	v12.Color3 = p11 == false and Color3.new(0.2, 1, 0.5) or Color3.new(1, 0.2, 0.2)
-	local v13 = workspace.Terrain:FindFirstChild("FastCastVisualizationObjects")
-	if v13 == nil then
-		v13 = Instance.new("Folder")
-		v13.Name = "FastCastVisualizationObjects"
-		v13.Archivable = false
-		v13.Parent = workspace.Terrain
-	end
-	v12.Parent = v13
-	return v12
+local function PrintDebug(p1) -- Line: 79 -- upvalues: u16 (ref)
+    if u16.DebugLogging == true then
+        print(p1)
+    end
 end
-local function v_u_27(p14, p15) -- name: GetTrajectoryInfo
-	local v16 = p14.StateInfo.UpdateConnection ~= nil
-	assert(v16, "This ActiveCast has been terminated. It can no longer be used.")
-	local v17 = p14.StateInfo.Trajectories[p15]
-	local v18 = v17.EndTime - v17.StartTime
-	local v19 = v17.Origin
-	local v20 = v17.InitialVelocity
-	local v21 = v17.Acceleration
-	local v22 = {}
-	local v23 = v21.X * v18 ^ 2 / 2
-	local v24 = v21.Y * v18 ^ 2 / 2
-	local v25 = v21.Z * v18 ^ 2 / 2
-	local v26 = Vector3.new(v23, v24, v25)
-	__set_list(v22, 1, {v19 + v20 * v18 + v26, v20 + v21 * v18})
-	return v22
+function DbgVisualizeSegment(p1, p2) -- Line: 86 -- upvalues: u16 (ref)
+    local v1
+    if u16.VisualizeCasts ~= true then
+        return nil
+    end
+    local ConeHandleAdornment = Instance.new("ConeHandleAdornment")
+    ConeHandleAdornment.Adornee = workspace.Terrain
+    ConeHandleAdornment.CFrame = p1
+    ConeHandleAdornment.Height = p2
+    ConeHandleAdornment.Color3 = Color3.new()
+    ConeHandleAdornment.Radius = 0.25
+    ConeHandleAdornment.Transparency = 0.5
+    local FastCastVisualizationObjects = workspace.Terrain:FindFirstChild("FastCastVisualizationObjects")
+    if FastCastVisualizationObjects == nil then
+        local v2 = Instance.new("Folder")
+        v2.Name = "FastCastVisualizationObjects"
+        v2.Archivable = false
+        v2.Parent = workspace.Terrain
+        v1 = v2
+    else
+        v1 = FastCastVisualizationObjects
+    end
+    ConeHandleAdornment.Parent = v1
+    return ConeHandleAdornment
 end
-local function v_u_94(p28, p29, p30) -- name: SimulateCast
-	-- upvalues: (ref) v_u_5, (copy) v_u_4
-	local v31 = p28.StateInfo.UpdateConnection ~= nil
-	assert(v31, "This ActiveCast has been terminated. It can no longer be used.")
-	if v_u_5.DebugLogging == true then
-		print("Casting for frame.")
-	end
-	local v32 = p28.StateInfo.Trajectories[#p28.StateInfo.Trajectories]
-	local v33 = v32.Origin
-	local v34 = p28.StateInfo.TotalRuntime - v32.StartTime
-	local v35 = v32.InitialVelocity
-	local v36 = v32.Acceleration
-	local v37 = v36.X * v34 ^ 2 / 2
-	local v38 = v36.Y * v34 ^ 2 / 2
-	local v39 = v36.Z * v34 ^ 2 / 2
-	local v40 = Vector3.new(v37, v38, v39)
-	local v41 = v33 + v35 * v34 + v40
-	local _ = v35 + v36 * v34
-	local v42 = p28.StateInfo.TotalRuntime - v32.StartTime
-	local v43 = p28.StateInfo
-	v43.TotalRuntime = v43.TotalRuntime + p29
-	local v44 = p28.StateInfo.TotalRuntime - v32.StartTime
-	local v45 = v36.X * v44 ^ 2 / 2
-	local v46 = v36.Y * v44 ^ 2 / 2
-	local v47 = v36.Z * v44 ^ 2 / 2
-	local v48 = Vector3.new(v45, v46, v47)
-	local v49 = v33 + v35 * v44 + v48
-	local v50 = v35 + v36 * v44
-	local v51 = (v49 - v41).Unit * v50.Magnitude * p29
-	local v52 = p28.RayInfo.WorldRoot
-	local v53 = v52:Raycast(v41, v51, p28.RayInfo.Parameters)
-	local v54 = Enum.Material.Air
-	Vector3.new()
-	local v55, v56
-	if v53 == nil then
-		v55 = v49
-		v56 = nil
-	else
-		v55 = v53.Position
-		v56 = v53.Instance
-		v54 = v53.Material
-		local _ = v53.Normal
-	end
-	local v57 = (v55 - v41).Magnitude
-	local v58 = v51.Unit
-	local v59 = p28.RayInfo.CosmeticBulletObject
-	p28.Caster.LengthChanged:Fire(p28, v41, v58, v57, v50, v59)
-	local v60 = p28.StateInfo
-	v60.DistanceCovered = v60.DistanceCovered + v57
-	local v61
-	if p29 > 0 then
-		v61 = DbgVisualizeSegment(CFrame.new(v41, v41 + v51), v57)
-	else
-		v61 = nil
-	end
-	if v56 and v56 ~= p28.RayInfo.CosmeticBulletObject then
-		tick()
-		if v_u_5.DebugLogging == true then
-			print("Hit something, testing now.")
-		end
-		if p28.RayInfo.CanPierceCallback ~= nil then
-			if p30 == false and p28.StateInfo.IsActivelySimulatingPierce then
-				p28:Terminate()
-				error("ERROR: The latest call to CanPierceCallback took too long to complete! This cast is going to suffer desyncs which WILL cause unexpected behavior and errors. Please fix your performance problems, or remove statements that yield (e.g. wait() calls)")
-			end
-			p28.StateInfo.IsActivelySimulatingPierce = true
-		end
-		if p28.RayInfo.CanPierceCallback == nil or p28.RayInfo.CanPierceCallback ~= nil and p28.RayInfo.CanPierceCallback(p28, v53, v50, p28.RayInfo.CosmeticBulletObject) == false then
-			if v_u_5.DebugLogging == true then
-				print("Piercing function is nil or it returned FALSE to not pierce this hit.")
-			end
-			p28.StateInfo.IsActivelySimulatingPierce = false
-			if p28.StateInfo.HighFidelityBehavior == 2 and (v32.Acceleration ~= Vector3.new() and p28.StateInfo.HighFidelitySegmentSize ~= 0) then
-				p28.StateInfo.CancelHighResCast = false
-				if p28.StateInfo.IsActivelyResimulating then
-					p28:Terminate()
-					error("Cascading cast lag encountered! The caster attempted to perform a high fidelity cast before the previous one completed, resulting in exponential cast lag. Consider increasing HighFidelitySegmentSize.")
-				end
-				p28.StateInfo.IsActivelyResimulating = true
-				if v_u_5.DebugLogging == true then
-					print("Hit was registered, but recalculation is on for physics based casts. Recalculating to verify a real hit...")
-				end
-				local v62 = v57 / p28.StateInfo.HighFidelitySegmentSize
-				local v63 = math.floor(v62)
-				local _ = v57 / v63
-				local v64 = p29 / v63
-				for v65 = 1, v63 do
-					if p28.StateInfo.CancelHighResCast then
-						p28.StateInfo.CancelHighResCast = false
-						break
-					end
-					local v66 = v42 + v64 * v65
-					local v67 = v36.X * v66 ^ 2 / 2
-					local v68 = v36.Y * v66 ^ 2 / 2
-					local v69 = v36.Z * v66 ^ 2 / 2
-					local v70 = Vector3.new(v67, v68, v69)
-					local v71 = v33 + v35 * v66 + v70
-					local v72 = v35 + v36 * (v42 + v64 * v65)
-					local v73 = v52:Raycast(v71, v72 * p29, p28.RayInfo.Parameters)
-					local v74 = (v71 - (v71 + v72)).Magnitude
-					if v73 == nil then
-						local v75 = DbgVisualizeSegment(CFrame.new(v71, v71 + v72), v74)
-						if v75 ~= nil then
-							v75.Color3 = Color3.new(0.286275, 0.329412, 0.247059)
-						end
-					else
-						local v76 = (v71 - v73.Position).Magnitude
-						local v77 = DbgVisualizeSegment(CFrame.new(v71, v71 + v72), v76)
-						if v77 ~= nil then
-							v77.Color3 = Color3.new(0.286275, 0.329412, 0.247059)
-						end
-						if p28.RayInfo.CanPierceCallback == nil or p28.RayInfo.CanPierceCallback ~= nil and p28.RayInfo.CanPierceCallback(p28, v73, v72, p28.RayInfo.CosmeticBulletObject) == false then
-							p28.StateInfo.IsActivelyResimulating = false
-							local v78 = p28.RayInfo.CosmeticBulletObject
-							p28.Caster.RayHit:Fire(p28, v73, v72, v78)
-							p28:Terminate()
-							local v79 = DbgVisualizeHit(CFrame.new(v55), false)
-							if v79 ~= nil then
-								v79.Color3 = Color3.new(0.0588235, 0.87451, 1)
-							end
-							return
-						end
-						local v80 = p28.RayInfo.CosmeticBulletObject
-						p28.Caster.RayPierced:Fire(p28, v73, v72, v80)
-						local v81 = DbgVisualizeHit(CFrame.new(v55), true)
-						if v81 ~= nil then
-							v81.Color3 = Color3.new(1, 0.113725, 0.588235)
-						end
-						if v77 ~= nil then
-							v77.Color3 = Color3.new(0.305882, 0.243137, 0.329412)
-						end
-					end
-				end
-				p28.StateInfo.IsActivelyResimulating = false
-			else
-				if p28.StateInfo.HighFidelityBehavior == 1 or p28.StateInfo.HighFidelityBehavior == 3 then
-					if v_u_5.DebugLogging == true then
-						print("Hit was successful. Terminating.")
-					end
-					local v82 = p28.RayInfo.CosmeticBulletObject
-					p28.Caster.RayHit:Fire(p28, v53, v50, v82)
-					p28:Terminate()
-					DbgVisualizeHit(CFrame.new(v55), false)
-					return
-				end
-				p28:Terminate()
-				error("Invalid value " .. p28.StateInfo.HighFidelityBehavior .. " for HighFidelityBehavior.")
-			end
-		else
-			if v_u_5.DebugLogging == true then
-				print("Piercing function returned TRUE to pierce this part.")
-			end
-			if v61 ~= nil then
-				v61.Color3 = Color3.new(0.4, 0.05, 0.05)
-			end
-			DbgVisualizeHit(CFrame.new(v55), true)
-			local v83 = p28.RayInfo.Parameters
-			local v84 = v83.FilterDescendantsInstances
-			local v85 = {}
-			local v86 = false
-			local v87 = 0
-			while true do
-				if v53.Instance:IsA("Terrain") then
-					if v54 == Enum.Material.Water then
-						p28:Terminate()
-						error("Do not add Water as a piercable material. If you need to pierce water, set cast.RayInfo.Parameters.IgnoreWater = true instead", 0)
-					end
-					warn("WARNING: The pierce callback for this cast returned TRUE on Terrain! This can cause severely adverse effects.")
-				end
-				if v83.FilterType == Enum.RaycastFilterType.Blacklist then
-					local v88 = v83.FilterDescendantsInstances
-					v_u_4.insert(v88, v53.Instance)
-					v_u_4.insert(v85, v53.Instance)
-					v83.FilterDescendantsInstances = v88
-				else
-					local v89 = v83.FilterDescendantsInstances
-					v_u_4.removeObject(v89, v53.Instance)
-					v_u_4.insert(v85, v53.Instance)
-					v83.FilterDescendantsInstances = v89
-				end
-				local v90 = p28.RayInfo.CosmeticBulletObject
-				p28.Caster.RayPierced:Fire(p28, v53, v50, v90)
-				v53 = v52:Raycast(v41, v51, v83)
-				if v53 == nil then
-					break
-				end
-				if v87 >= 100 then
-					warn("WARNING: Exceeded maximum pierce test budget for a single ray segment (attempted to test the same segment " .. 100 .. " times!)")
-					break
-				end
-				v87 = v87 + 1
-				if p28.RayInfo.CanPierceCallback(p28, v53, v50, p28.RayInfo.CosmeticBulletObject) == false then
-					v86 = true
-					break
-				end
-			end
-			p28.RayInfo.Parameters.FilterDescendantsInstances = v84
-			p28.StateInfo.IsActivelySimulatingPierce = false
-			if v86 then
-				local v91 = v53.Instance
-				local v92 = "Broke because the ray hit something solid (" .. tostring(v91) .. ") while testing for a pierce. Terminating the cast."
-				if v_u_5.DebugLogging == true then
-					print(v92)
-				end
-				local v93 = p28.RayInfo.CosmeticBulletObject
-				p28.Caster.RayHit:Fire(p28, v53, v50, v93)
-				p28:Terminate()
-				DbgVisualizeHit(CFrame.new(v53.Position), false)
-				return
-			end
-		end
-	end
-	if p28.StateInfo.DistanceCovered >= p28.RayInfo.MaxDistance then
-		p28:Terminate()
-		DbgVisualizeHit(CFrame.new(v49), false)
-	end
+function DbgVisualizeHit(p1, p2) -- Line: 100 -- upvalues: u16 (ref)
+    local v1
+    if u16.VisualizeCasts ~= true then
+        return nil
+    end
+    local SphereHandleAdornment = Instance.new("SphereHandleAdornment")
+    SphereHandleAdornment.Adornee = workspace.Terrain
+    SphereHandleAdornment.CFrame = p1
+    SphereHandleAdornment.Radius = 0.4
+    SphereHandleAdornment.Transparency = 0.25
+    if p2 ~= false then
+        v1 = Color3.new(1, 0.2, 0.2)
+    else
+        v1 = Color3.new(0.2, 1, 0.5)
+        if not v1 then
+            v1 = Color3.new(1, 0.2, 0.2)
+        end
+    end
+    SphereHandleAdornment.Color3 = v1
+    local FastCastVisualizationObjects = workspace.Terrain:FindFirstChild("FastCastVisualizationObjects")
+    if FastCastVisualizationObjects == nil then
+        local v2 = Instance.new("Folder")
+        v2.Name = "FastCastVisualizationObjects"
+        v2.Archivable = false
+        v2.Parent = workspace.Terrain
+        v1 = v2
+    else
+        v1 = FastCastVisualizationObjects
+    end
+    SphereHandleAdornment.Parent = v1
+    return SphereHandleAdornment
 end
-function v_u_2.new(p95, p96, p97, p98, p99) -- name: new
-	-- upvalues: (copy) v_u_1, (copy) v_u_4, (copy) v_u_3, (copy) v_u_2, (ref) v_u_5, (copy) v_u_94
-	if v_u_1(p98) == "number" then
-		p98 = p97.Unit * p98
-	end
-	if p99.HighFidelitySegmentSize <= 0 then
-		error("Cannot set FastCastBehavior.HighFidelitySegmentSize <= 0!", 0)
-	end
-	local v_u_100 = {
-		["Caster"] = p95,
-		["StateInfo"] = {
-			["UpdateConnection"] = nil,
-			["Paused"] = false,
-			["TotalRuntime"] = 0,
-			["DistanceCovered"] = 0,
-			["HighFidelitySegmentSize"] = nil,
-			["HighFidelityBehavior"] = nil,
-			["IsActivelySimulatingPierce"] = false,
-			["IsActivelyResimulating"] = false,
-			["CancelHighResCast"] = false,
-			["Trajectories"] = nil,
-			["HighFidelitySegmentSize"] = p99.HighFidelitySegmentSize,
-			["HighFidelityBehavior"] = p99.HighFidelityBehavior,
-			["Trajectories"] = {
-				{
-					["StartTime"] = 0,
-					["EndTime"] = -1,
-					["Origin"] = nil,
-					["InitialVelocity"] = nil,
-					["Acceleration"] = nil,
-					["Origin"] = p96,
-					["InitialVelocity"] = p98,
-					["Acceleration"] = p99.Acceleration
-				}
-			}
-		},
-		["RayInfo"] = {
-			["Parameters"] = p99.RaycastParams,
-			["WorldRoot"] = workspace,
-			["MaxDistance"] = p99.MaxDistance or 1000,
-			["CosmeticBulletObject"] = p99.CosmeticBulletTemplate,
-			["CanPierceCallback"] = p99.CanPierceFunction
-		},
-		["UserData"] = {}
-	}
-	if v_u_100.StateInfo.HighFidelityBehavior == 2 then
-		v_u_100.StateInfo.HighFidelityBehavior = 3
-	end
-	if v_u_100.RayInfo.Parameters == nil then
-		v_u_100.RayInfo.Parameters = RaycastParams.new()
-	else
-		local v101 = v_u_100.RayInfo
-		local v102 = v_u_100.RayInfo.Parameters
-		local v103 = RaycastParams.new()
-		v103.CollisionGroup = v102.CollisionGroup
-		v103.FilterType = v102.FilterType
-		v103.FilterDescendantsInstances = v102.FilterDescendantsInstances
-		v103.IgnoreWater = v102.IgnoreWater
-		v101.Parameters = v103
-	end
-	local v104 = false
-	if p99.CosmeticBulletProvider == nil then
-		if v_u_100.RayInfo.CosmeticBulletObject ~= nil then
-			v_u_100.RayInfo.CosmeticBulletObject = v_u_100.RayInfo.CosmeticBulletObject:Clone()
-			v_u_100.RayInfo.CosmeticBulletObject.CFrame = CFrame.new(p96, p96 + p97)
-			v_u_100.RayInfo.CosmeticBulletObject.Parent = p99.CosmeticBulletContainer
-		end
-	elseif v_u_1(p99.CosmeticBulletProvider) == "PartCache" then
-		if v_u_100.RayInfo.CosmeticBulletObject ~= nil then
-			warn("Do not define FastCastBehavior.CosmeticBulletTemplate and FastCastBehavior.CosmeticBulletProvider at the same time! The provider will be used, and CosmeticBulletTemplate will be set to nil.")
-			v_u_100.RayInfo.CosmeticBulletObject = nil
-			p99.CosmeticBulletTemplate = nil
-		end
-		v_u_100.RayInfo.CosmeticBulletObject = p99.CosmeticBulletProvider:GetPart()
-		v_u_100.RayInfo.CosmeticBulletObject.CFrame = CFrame.new(p96, p96 + p97)
-		v104 = true
-	else
-		warn("FastCastBehavior.CosmeticBulletProvider was not an instance of the PartCache module (an external/separate model)! Are you inputting an instance created via PartCache.new? If so, are you on the latest version of PartCache? Setting FastCastBehavior.CosmeticBulletProvider to nil.")
-		p99.CosmeticBulletProvider = nil
-	end
-	local v105
-	if v104 then
-		v105 = p99.CosmeticBulletProvider.CurrentCacheParent
-	else
-		v105 = p99.CosmeticBulletContainer
-	end
-	if p99.AutoIgnoreContainer == true and v105 ~= nil then
-		local v106 = v_u_100.RayInfo.Parameters.FilterDescendantsInstances
-		if v_u_4.find(v106, v105) == nil then
-			v_u_4.insert(v106, v105)
-			v_u_100.RayInfo.Parameters.FilterDescendantsInstances = v106
-		end
-	end
-	local v107
-	if v_u_3:IsClient() then
-		v107 = v_u_3.RenderStepped
-	else
-		v107 = v_u_3.Heartbeat
-	end
-	local v108 = v_u_2
-	setmetatable(v_u_100, v108)
-	v_u_100.StateInfo.UpdateConnection = v107:Connect(function(p109)
-		-- upvalues: (copy) v_u_100, (ref) v_u_5, (ref) v_u_94
-		if v_u_100.StateInfo.Paused then
-			return
-		end
-		if v_u_5.DebugLogging == true then
-			print("Casting for frame.")
-		end
-		local v110 = v_u_100.StateInfo.Trajectories[#v_u_100.StateInfo.Trajectories]
-		if v_u_100.StateInfo.HighFidelityBehavior == 3 and (v110.Acceleration ~= Vector3.new() and v_u_100.StateInfo.HighFidelitySegmentSize > 0) then
-			local v111 = tick()
-			if v_u_100.StateInfo.IsActivelyResimulating then
-				v_u_100:Terminate()
-				error("Cascading cast lag encountered! The caster attempted to perform a high fidelity cast before the previous one completed, resulting in exponential cast lag. Consider increasing HighFidelitySegmentSize.")
-			end
-			v_u_100.StateInfo.IsActivelyResimulating = true
-			local v112 = v110.Origin
-			local v113 = v_u_100.StateInfo.TotalRuntime - v110.StartTime
-			local v114 = v110.InitialVelocity
-			local v115 = v110.Acceleration
-			local v116 = v115.X * v113 ^ 2 / 2
-			local v117 = v115.Y * v113 ^ 2 / 2
-			local v118 = v115.Z * v113 ^ 2 / 2
-			local v119 = Vector3.new(v116, v117, v118)
-			local v120 = v112 + v114 * v113 + v119
-			local _ = v114 + v115 * v113
-			local _ = v_u_100.StateInfo.TotalRuntime - v110.StartTime
-			local v121 = v_u_100.StateInfo
-			v121.TotalRuntime = v121.TotalRuntime + p109
-			local v122 = v_u_100.StateInfo.TotalRuntime - v110.StartTime
-			local v123 = v115.X * v122 ^ 2 / 2
-			local v124 = v115.Y * v122 ^ 2 / 2
-			local v125 = v115.Z * v122 ^ 2 / 2
-			local v126 = Vector3.new(v123, v124, v125)
-			local v127 = v112 + v114 * v122 + v126
-			local v128 = v114 + v115 * v122
-			local v129 = (v127 - v120).Unit * v128.Magnitude * p109
-			local v130 = v_u_100.RayInfo.WorldRoot:Raycast(v120, v129, v_u_100.RayInfo.Parameters)
-			if v130 ~= nil then
-				v127 = v130.Position
-			end
-			local v131 = (v127 - v120).Magnitude
-			local v132 = v_u_100.StateInfo
-			v132.TotalRuntime = v132.TotalRuntime - p109
-			local v133 = v131 / v_u_100.StateInfo.HighFidelitySegmentSize
-			local v134 = math.floor(v133)
-			local v135 = v134 == 0 and 1 or v134
-			local v136 = p109 / v135
-			for v137 = 1, v135 do
-				local v138 = v_u_100
-				if getmetatable(v138) == nil then
-					return
-				end
-				if v_u_100.StateInfo.CancelHighResCast then
-					v_u_100.StateInfo.CancelHighResCast = false
-					break
-				end
-				local v139 = "[" .. v137 .. "] Subcast of time increment " .. v136
-				if v_u_5.DebugLogging == true then
-					print(v139)
-				end
-				v_u_94(v_u_100, v136, true)
-			end
-			local v140 = v_u_100
-			if getmetatable(v140) == nil then
-				return
-			end
-			v_u_100.StateInfo.IsActivelyResimulating = false
-			if tick() - v111 > 0.08 then
-				warn("Extreme cast lag encountered! Consider increasing HighFidelitySegmentSize.")
-				return
-			end
-		else
-			v_u_94(v_u_100, p109, false)
-		end
-	end)
-	return v_u_100
+local function GetPositionAtTime(p1, p2, p3, p4) -- Line: 120
+    local v1 = Vector3.new(p4.X * p1 ^ 2 / 2, p4.Y * p1 ^ 2 / 2, p4.Z * p1 ^ 2 / 2)
+    return p2 + p3 * p1 + v1
 end
-function v_u_2.SetStaticFastCastReference(p141) -- name: SetStaticFastCastReference
-	-- upvalues: (ref) v_u_5
-	v_u_5 = p141
+local function GetVelocityAtTime(p1, p2, p3) -- Line: 126
+    return p2 + p3 * p1
 end
-local function v_u_152(p142, p143, p144, p145) -- name: ModifyTransformation
-	-- upvalues: (copy) v_u_27, (copy) v_u_4
-	local v146 = p142.StateInfo.Trajectories
-	local v147 = v146[#v146]
-	if v147.StartTime == p142.StateInfo.TotalRuntime then
-		if p143 == nil then
-			p143 = v147.InitialVelocity
-		end
-		if p144 == nil then
-			p144 = v147.Acceleration
-		end
-		if p145 == nil then
-			p145 = v147.Origin
-		end
-		v147.Origin = p145
-		v147.InitialVelocity = p143
-		v147.Acceleration = p144
-	else
-		v147.EndTime = p142.StateInfo.TotalRuntime
-		local v148 = p142.StateInfo.UpdateConnection ~= nil
-		assert(v148, "This ActiveCast has been terminated. It can no longer be used.")
-		local v149 = v_u_27(p142, #p142.StateInfo.Trajectories)
-		local v150, v151 = unpack(v149)
-		if p143 == nil then
-			p143 = v151
-		end
-		if p144 == nil then
-			p144 = v147.Acceleration
-		end
-		if p145 ~= nil then
-			v150 = p145
-		end
-		v_u_4.insert(p142.StateInfo.Trajectories, {
-			["StartTime"] = nil,
-			["EndTime"] = -1,
-			["Origin"] = nil,
-			["InitialVelocity"] = nil,
-			["Acceleration"] = nil,
-			["StartTime"] = p142.StateInfo.TotalRuntime,
-			["Origin"] = v150,
-			["InitialVelocity"] = p143,
-			["Acceleration"] = p144
-		})
-		p142.StateInfo.CancelHighResCast = true
-	end
+local function GetTrajectoryInfo(p1, p2) -- Line: 130
+    local v1 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v1, "This ActiveCast has been terminated. It can no longer be used.")
+    v1 = p1.StateInfo.Trajectories[p2]
+    local v2 = v1.EndTime - v1.StartTime
+    local InitialVelocity = v1.InitialVelocity
+    local Acceleration = v1.Acceleration
+    local v3 = {}
+    local v4 = Vector3.new(Acceleration.X * v2 ^ 2 / 2, Acceleration.Y * v2 ^ 2 / 2, Acceleration.Z * v2 ^ 2 / 2)
+    v3[1] = v1.Origin + InitialVelocity * v2 + v4
+    v3[2] = InitialVelocity + Acceleration * v2
+    return v3
 end
-function v_u_2.SetVelocity(p153, p154) -- name: SetVelocity
-	-- upvalues: (copy) v_u_2, (copy) v_u_152
-	local v155 = getmetatable(p153) == v_u_2
-	assert(v155, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("SetVelocity", "ActiveCast.new(...)"))
-	local v156 = p153.StateInfo.UpdateConnection ~= nil
-	assert(v156, "This ActiveCast has been terminated. It can no longer be used.")
-	v_u_152(p153, p154, nil, nil)
+local function GetLatestTrajectoryEndInfo(p1) -- Line: 143 -- upvalues: GetTrajectoryInfo (val)
+    local v1 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v1, "This ActiveCast has been terminated. It can no longer be used.")
+    return (GetTrajectoryInfo(p1, #p1.StateInfo.Trajectories))
 end
-function v_u_2.SetAcceleration(p157, p158) -- name: SetAcceleration
-	-- upvalues: (copy) v_u_2, (copy) v_u_152
-	local v159 = getmetatable(p157) == v_u_2
-	assert(v159, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("SetAcceleration", "ActiveCast.new(...)"))
-	local v160 = p157.StateInfo.UpdateConnection ~= nil
-	assert(v160, "This ActiveCast has been terminated. It can no longer be used.")
-	v_u_152(p157, nil, p158, nil)
+local function CloneCastParams(p1) -- Line: 148
+    local v1 = RaycastParams.new()
+    v1.CollisionGroup = p1.CollisionGroup
+    v1.FilterType = p1.FilterType
+    v1.FilterDescendantsInstances = p1.FilterDescendantsInstances
+    v1.IgnoreWater = p1.IgnoreWater
+    return v1
 end
-function v_u_2.SetPosition(p161, p162) -- name: SetPosition
-	-- upvalues: (copy) v_u_2, (copy) v_u_152
-	local v163 = getmetatable(p161) == v_u_2
-	assert(v163, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("SetPosition", "ActiveCast.new(...)"))
-	local v164 = p161.StateInfo.UpdateConnection ~= nil
-	assert(v164, "This ActiveCast has been terminated. It can no longer be used.")
-	v_u_152(p161, nil, nil, p162)
+local function SendRayHit(p1, p2, p3, p4) -- Line: 157
+    p1.Caster.RayHit:Fire(p1, p2, p3, p4)
 end
-function v_u_2.GetVelocity(p165) -- name: GetVelocity
-	-- upvalues: (copy) v_u_2
-	local v166 = getmetatable(p165) == v_u_2
-	assert(v166, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("GetVelocity", "ActiveCast.new(...)"))
-	local v167 = p165.StateInfo.UpdateConnection ~= nil
-	assert(v167, "This ActiveCast has been terminated. It can no longer be used.")
-	local v168 = p165.StateInfo.Trajectories[#p165.StateInfo.Trajectories]
-	local v169 = p165.StateInfo.TotalRuntime - v168.StartTime
-	return v168.InitialVelocity + v168.Acceleration * v169
+local function SendRayPierced(p1, p2, p3, p4) -- Line: 162
+    p1.Caster.RayPierced:Fire(p1, p2, p3, p4)
 end
-function v_u_2.GetAcceleration(p170) -- name: GetAcceleration
-	-- upvalues: (copy) v_u_2
-	local v171 = getmetatable(p170) == v_u_2
-	assert(v171, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("GetAcceleration", "ActiveCast.new(...)"))
-	local v172 = p170.StateInfo.UpdateConnection ~= nil
-	assert(v172, "This ActiveCast has been terminated. It can no longer be used.")
-	return p170.StateInfo.Trajectories[#p170.StateInfo.Trajectories].Acceleration
+local function SendLengthChanged(p1, p2, p3, p4, p5, p6) -- Line: 167
+    p1.Caster.LengthChanged:Fire(p1, p2, p3, p4, p5, p6)
 end
-function v_u_2.GetPosition(p173) -- name: GetPosition
-	-- upvalues: (copy) v_u_2
-	local v174 = getmetatable(p173) == v_u_2
-	assert(v174, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("GetPosition", "ActiveCast.new(...)"))
-	local v175 = p173.StateInfo.UpdateConnection ~= nil
-	assert(v175, "This ActiveCast has been terminated. It can no longer be used.")
-	local v176 = p173.StateInfo.Trajectories[#p173.StateInfo.Trajectories]
-	local v177 = p173.StateInfo.TotalRuntime - v176.StartTime
-	local v178 = v176.Origin
-	local v179 = v176.InitialVelocity
-	local v180 = v176.Acceleration
-	local v181 = v180.X * v177 ^ 2 / 2
-	local v182 = v180.Y * v177 ^ 2 / 2
-	local v183 = v180.Z * v177 ^ 2 / 2
-	local v184 = Vector3.new(v181, v182, v183)
-	return v178 + v179 * v177 + v184
+local function SimulateCast(p1, p2, p3) -- Line: 173 -- upvalues: u16 (ref), u15 (val)
+    local StateInfo, v1, v2
+    local v3 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v3, "This ActiveCast has been terminated. It can no longer be used.")
+    if u16.DebugLogging == true then
+        print("Casting for frame.")
+    end
+    local v4 = p1.StateInfo.Trajectories[#p1.StateInfo.Trajectories]
+    local Origin = v4.Origin
+    local InitialVelocity = v4.InitialVelocity
+    local Acceleration = v4.Acceleration
+    local v5 = p1.StateInfo.TotalRuntime - v4.StartTime
+    local v6 = Vector3.new(Acceleration.X * v5 ^ 2 / 2, Acceleration.Y * v5 ^ 2 / 2, Acceleration.Z * v5 ^ 2 / 2)
+    local v7 = Origin + InitialVelocity * v5 + v6
+    v6 = p1.StateInfo.TotalRuntime - v4.StartTime
+    StateInfo = p1.StateInfo
+    StateInfo.TotalRuntime = StateInfo.TotalRuntime + p2
+    local v8 = p1.StateInfo.TotalRuntime - v4.StartTime
+    local v9 = v8
+    local v10 = Vector3.new(Acceleration.X * v9 ^ 2 / 2, Acceleration.Y * v9 ^ 2 / 2, Acceleration.Z * v9 ^ 2 / 2)
+    local v11 = Origin + InitialVelocity * v9 + v10
+    v9 = InitialVelocity + Acceleration * v8
+    local v12 = (v11 - v7).Unit * v9.Magnitude * p2
+    local WorldRoot = p1.RayInfo.WorldRoot
+    local v13 = WorldRoot:Raycast(v7, v12, p1.RayInfo.Parameters)
+    local Position = v11
+    local Instance = nil
+    local Air = Enum.Material.Air
+    Vector3.new()
+    if v13 ~= nil then
+        Position = v13.Position
+        Instance = v13.Instance
+        Air = v13.Material
+    end
+    local Magnitude = (Position - v7).Magnitude
+    p1.Caster.LengthChanged:Fire(p1, v7, v12.Unit, Magnitude, v9, p1.RayInfo.CosmeticBulletObject)
+    local StateInfo_2 = p1.StateInfo
+    StateInfo_2.DistanceCovered = StateInfo_2.DistanceCovered + Magnitude
+    local v14 = nil
+    if 0 < p2 then
+        v2 = CFrame.new(v7, v7 + v12)
+        v14 = DbgVisualizeSegment(v2, Magnitude)
+    end
+    if not Instance then
+        v1 = p1
+        if v1.RayInfo.MaxDistance <= v1.StateInfo.DistanceCovered then
+            v1:Terminate()
+            v2 = CFrame.new(v11)
+            DbgVisualizeHit(v2, false)
+        end
+        return
+    elseif Instance == p1.RayInfo.CosmeticBulletObject then
+        v1 = p1
+        if v1.RayInfo.MaxDistance <= v1.StateInfo.DistanceCovered then
+            v1:Terminate()
+            v2 = CFrame.new(v11)
+            DbgVisualizeHit(v2, false)
+        end
+        return
+    else
+        local v15, v16, v17, v18
+        tick()
+        if u16.DebugLogging == true then
+            print("Hit something, testing now.")
+        end
+        if p1.RayInfo.CanPierceCallback ~= nil then
+            if p3 == false and p1.StateInfo.IsActivelySimulatingPierce then
+                p1:Terminate()
+                error("ERROR: The latest call to CanPierceCallback took too long to complete! This cast is going to suffer desyncs which WILL cause unexpected behavior and errors. Please fix your performance problems, or remove statements that yield (e.g. wait() calls)")
+            end
+            p1.StateInfo.IsActivelySimulatingPierce = true
+        end
+        if p1.RayInfo.CanPierceCallback == nil then
+            if u16.DebugLogging == true then
+                print("Piercing function is nil or it returned FALSE to not pierce this hit.")
+            end
+            p1.StateInfo.IsActivelySimulatingPierce = false
+            if p1.StateInfo.HighFidelityBehavior ~= 2 then
+                if p1.StateInfo.HighFidelityBehavior == 1 or p1.StateInfo.HighFidelityBehavior == 3 then
+                    if u16.DebugLogging == true then
+                        print("Hit was successful. Terminating.")
+                    end
+                    p1.Caster.RayHit:Fire(p1, v13, v9, p1.RayInfo.CosmeticBulletObject)
+                    p1:Terminate()
+                    v15 = CFrame.new(Position)
+                    DbgVisualizeHit(v15, false)
+                    return
+                end
+                p1:Terminate()
+                error("Invalid value " .. p1.StateInfo.HighFidelityBehavior .. " for HighFidelityBehavior.")
+                v1 = p1
+                if v1.RayInfo.MaxDistance <= v1.StateInfo.DistanceCovered then
+                    v1:Terminate()
+                    v2 = CFrame.new(v11)
+                    DbgVisualizeHit(v2, false)
+                end
+                return
+            elseif v4.Acceleration ~= Vector3.new() and p1.StateInfo.HighFidelitySegmentSize ~= 0 then
+                local v19, v20, v21, v22, v23, v24, v25, v26
+                p1.StateInfo.CancelHighResCast = false
+                if p1.StateInfo.IsActivelyResimulating then
+                    p1:Terminate()
+                    error("Cascading cast lag encountered! The caster attempted to perform a high fidelity cast before the previous one completed, resulting in exponential cast lag. Consider increasing HighFidelitySegmentSize.")
+                end
+                p1.StateInfo.IsActivelyResimulating = true
+                if u16.DebugLogging == true then
+                    print("Hit was registered, but recalculation is on for physics based casts. Recalculating to verify a real hit...")
+                end
+                v15 = math.floor(Magnitude / p1.StateInfo.HighFidelitySegmentSize)
+                local v27 = p2 / v15
+                v16 = v15
+                v17 = 1
+                v1, v19 = p1, p2
+                for i = 1, v16, v17 do
+                    if v1.StateInfo.CancelHighResCast then
+                        v1.StateInfo.CancelHighResCast = false
+                        break
+                    end
+                    v20 = v6 + v27 * i
+                    v21 = Vector3.new(Acceleration.X * v20 ^ 2 / 2, Acceleration.Y * v20 ^ 2 / 2, Acceleration.Z * v20 ^ 2 / 2)
+                    v18 = Origin + InitialVelocity * v20 + v21
+                    v20 = InitialVelocity + Acceleration * (v6 + v27 * i)
+                    v22 = WorldRoot:Raycast(v18, v20 * v19, v1.RayInfo.Parameters)
+                    if v22 ~= nil then
+                        v25 = CFrame.new(v18, v18 + v20)
+                        v24 = DbgVisualizeSegment(v25, (v18 - v22.Position).Magnitude)
+                        if v24 ~= nil then
+                            v24.Color3 = Color3.new(0.286275, 0.329412, 0.247059)
+                        end
+                        if v1.RayInfo.CanPierceCallback == nil then
+                            v1.StateInfo.IsActivelyResimulating = false
+                            v1.Caster.RayHit:Fire(v1, v22, v20, v1.RayInfo.CosmeticBulletObject)
+                            v1:Terminate()
+                            v26 = CFrame.new(Position)
+                            v25 = DbgVisualizeHit(v26, false)
+                            if v25 ~= nil then
+                                v25.Color3 = Color3.new(0.0588235, 0.87451, 1)
+                            end
+                            return
+                        end
+                        if v1.RayInfo.CanPierceCallback ~= nil and v1.RayInfo.CanPierceCallback(v1, v22, v20, v1.RayInfo.CosmeticBulletObject) == false then
+                            v1.StateInfo.IsActivelyResimulating = false
+                            v1.Caster.RayHit:Fire(v1, v22, v20, v1.RayInfo.CosmeticBulletObject)
+                            v1:Terminate()
+                            v26 = CFrame.new(Position)
+                            v25 = DbgVisualizeHit(v26, false)
+                            if v25 ~= nil then
+                                v25.Color3 = Color3.new(0.0588235, 0.87451, 1)
+                            end
+                            return
+                        end
+                        v1.Caster.RayPierced:Fire(v1, v22, v20, v1.RayInfo.CosmeticBulletObject)
+                        v26 = CFrame.new(Position)
+                        v25 = DbgVisualizeHit(v26, true)
+                        if v25 ~= nil then
+                            v25.Color3 = Color3.new(1, 0.113725, 0.588235)
+                        end
+                        if v24 ~= nil then
+                            v24.Color3 = Color3.new(0.305882, 0.243137, 0.329412)
+                        end
+                        continue
+                    end
+                    v24 = CFrame.new(v18, v18 + v20)
+                    v23 = DbgVisualizeSegment(v24, (v18 - (v18 + v20)).Magnitude)
+                    if v23 ~= nil then
+                        v23.Color3 = Color3.new(0.286275, 0.329412, 0.247059)
+                    end
+                end
+                v1.StateInfo.IsActivelyResimulating = false
+                if v1.RayInfo.MaxDistance <= v1.StateInfo.DistanceCovered then
+                    v1:Terminate()
+                    v2 = CFrame.new(v11)
+                    DbgVisualizeHit(v2, false)
+                end
+                return
+            end
+        elseif p1.RayInfo.CanPierceCallback == nil then
+            local FilterDescendantsInstances_2, FilterDescendantsInstances_3, v28
+            if u16.DebugLogging == true then
+                print("Piercing function returned TRUE to pierce this part.")
+            end
+            if v14 ~= nil then
+                v14.Color3 = Color3.new(0.4, 0.05, 0.05)
+            end
+            v15 = CFrame.new(Position)
+            DbgVisualizeHit(v15, true)
+            local Parameters = p1.RayInfo.Parameters
+            v15 = {}
+            local v29 = 0
+            local FilterDescendantsInstances = Parameters.FilterDescendantsInstances
+            v16 = false
+            v1 = p1
+            while true do
+                if v13.Instance:IsA("Terrain") then
+                    if Air == Enum.Material.Water then
+                        v1:Terminate()
+                        error("Do not add Water as a piercable material. If you need to pierce water, set cast.RayInfo.Parameters.IgnoreWater = true instead", 0)
+                    end
+                    warn("WARNING: The pierce callback for this cast returned TRUE on Terrain! This can cause severely adverse effects.")
+                end
+                if Parameters.FilterType ~= Enum.RaycastFilterType.Blacklist then
+                    FilterDescendantsInstances_3 = Parameters.FilterDescendantsInstances
+                    u15.removeObject(FilterDescendantsInstances_3, v13.Instance)
+                    u15.insert(v15, v13.Instance)
+                    Parameters.FilterDescendantsInstances = FilterDescendantsInstances_3
+                else
+                    FilterDescendantsInstances_2 = Parameters.FilterDescendantsInstances
+                    u15.insert(FilterDescendantsInstances_2, v13.Instance)
+                    u15.insert(v15, v13.Instance)
+                    Parameters.FilterDescendantsInstances = FilterDescendantsInstances_2
+                end
+                v1.Caster.RayPierced:Fire(v1, v13, v9, v1.RayInfo.CosmeticBulletObject)
+                v13 = WorldRoot:Raycast(v7, v12, Parameters)
+                if v13 ~= nil then
+                    if 100 > v29 then
+                        v29 = v29 + 1
+                        if v1.RayInfo.CanPierceCallback(v1, v13, v9, v1.RayInfo.CosmeticBulletObject) ~= false then
+                            continue
+                        else
+                            v16 = true
+                        end
+                    else
+                        warn("WARNING: Exceeded maximum pierce test budget for a single ray segment (attempted to test the same segment " .. 100 .. " times!)")
+                    end
+                end
+                v1.RayInfo.Parameters.FilterDescendantsInstances = FilterDescendantsInstances
+                v1.StateInfo.IsActivelySimulatingPierce = false
+                if not v16 then
+                    if v1.RayInfo.MaxDistance <= v1.StateInfo.DistanceCovered then
+                        v1:Terminate()
+                        v2 = CFrame.new(v11)
+                        DbgVisualizeHit(v2, false)
+                    end
+                    return
+                end
+                v18 = tostring(v13.Instance)
+                v17 = "Broke because the ray hit something solid (" .. v18 .. ") while testing for a pierce. Terminating the cast."
+                if u16.DebugLogging == true then
+                    print(v17)
+                end
+                v1.Caster.RayHit:Fire(v1, v13, v9, v1.RayInfo.CosmeticBulletObject)
+                v1:Terminate()
+                v28 = CFrame.new(v13.Position)
+                DbgVisualizeHit(v28, false)
+                return
+            end
+        elseif p1.RayInfo.CanPierceCallback(p1, v13, v9, p1.RayInfo.CosmeticBulletObject) ~= false then
+        end
+    end
 end
-function v_u_2.AddVelocity(p185, p186) -- name: AddVelocity
-	-- upvalues: (copy) v_u_2
-	local v187 = getmetatable(p185) == v_u_2
-	assert(v187, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("AddVelocity", "ActiveCast.new(...)"))
-	local v188 = p185.StateInfo.UpdateConnection ~= nil
-	assert(v188, "This ActiveCast has been terminated. It can no longer be used.")
-	p185:SetVelocity(p185:GetVelocity() + p186)
+function u6.new(p1, p2, p3, p4, p5) -- Line: 422 -- upvalues: u5 (val), u15 (val), RunService (val), u6 (val), u16 (ref), SimulateCast (val)
+    local CurrentCacheParent, Parameters, RayInfo, RenderStepped, StateInfo, v1, v2
+    if u5(p4) ~= "number" then
+        v1 = p4
+    else
+        v1 = p3.Unit * p4
+    end
+    if p5.HighFidelitySegmentSize <= 0 then
+        error("Cannot set FastCastBehavior.HighFidelitySegmentSize <= 0!", 0)
+    end
+    local u17 = {Caster = p1}
+    local v3 = {
+        Paused = false,
+        TotalRuntime = 0,
+        DistanceCovered = 0,
+        IsActivelySimulatingPierce = false,
+        IsActivelyResimulating = false,
+        CancelHighResCast = false,
+        HighFidelitySegmentSize = p5.HighFidelitySegmentSize,
+        HighFidelityBehavior = p5.HighFidelityBehavior,
+    }
+    local v4 = {}
+    local v5 = {
+        StartTime = 0,
+        EndTime = -1,
+        Origin = p2,
+        InitialVelocity = v1,
+        Acceleration = p5.Acceleration,
+    }
+    v4[1] = v5
+    v3.Trajectories = v4
+    u17.StateInfo = v3
+    u17.RayInfo = {
+        Parameters = p5.RaycastParams,
+        WorldRoot = workspace,
+        MaxDistance = p5.MaxDistance or 1000,
+        CosmeticBulletObject = p5.CosmeticBulletTemplate,
+        CanPierceCallback = p5.CanPierceFunction,
+    }
+    u17.UserData = {}
+    if u17.StateInfo.HighFidelityBehavior == 2 then
+        u17.StateInfo.HighFidelityBehavior = 3
+    end
+    if u17.RayInfo.Parameters == nil then
+        local RayInfo_2 = u17.RayInfo
+        RayInfo_2.Parameters = RaycastParams.new()
+    else
+        RayInfo = u17.RayInfo
+        Parameters = u17.RayInfo.Parameters
+        v2 = RaycastParams.new()
+        v2.CollisionGroup = Parameters.CollisionGroup
+        v2.FilterType = Parameters.FilterType
+        v2.FilterDescendantsInstances = Parameters.FilterDescendantsInstances
+        v2.IgnoreWater = Parameters.IgnoreWater
+        RayInfo.Parameters = v2
+    end
+    v3 = false
+    if p5.CosmeticBulletProvider ~= nil then
+        if u5(p5.CosmeticBulletProvider) ~= "PartCache" then
+            warn("FastCastBehavior.CosmeticBulletProvider was not an instance of the PartCache module (an external/separate model)! Are you inputting an instance created via PartCache.new? If so, are you on the latest version of PartCache? Setting FastCastBehavior.CosmeticBulletProvider to nil.")
+            p5.CosmeticBulletProvider = nil
+        else
+            if u17.RayInfo.CosmeticBulletObject ~= nil then
+                warn("Do not define FastCastBehavior.CosmeticBulletTemplate and FastCastBehavior.CosmeticBulletProvider at the same time! The provider will be used, and CosmeticBulletTemplate will be set to nil.")
+                u17.RayInfo.CosmeticBulletObject = nil
+                p5.CosmeticBulletTemplate = nil
+            end
+            local RayInfo_4 = u17.RayInfo
+            RayInfo_4.CosmeticBulletObject = p5.CosmeticBulletProvider:GetPart()
+            u17.RayInfo.CosmeticBulletObject.CFrame = CFrame.new(p2, p2 + p3)
+            v3 = true
+        end
+    elseif u17.RayInfo.CosmeticBulletObject ~= nil then
+        local RayInfo_3 = u17.RayInfo
+        RayInfo_3.CosmeticBulletObject = u17.RayInfo.CosmeticBulletObject:Clone()
+        u17.RayInfo.CosmeticBulletObject.CFrame = CFrame.new(p2, p2 + p3)
+        u17.RayInfo.CosmeticBulletObject.Parent = p5.CosmeticBulletContainer
+    end
+    if not v3 then
+        CurrentCacheParent = p5.CosmeticBulletContainer
+    else
+        CurrentCacheParent = p5.CosmeticBulletProvider.CurrentCacheParent
+    end
+    if p5.AutoIgnoreContainer == true and CurrentCacheParent ~= nil then
+        local FilterDescendantsInstances = u17.RayInfo.Parameters.FilterDescendantsInstances
+        if u15.find(FilterDescendantsInstances, CurrentCacheParent) == nil then
+            u15.insert(FilterDescendantsInstances, CurrentCacheParent)
+            u17.RayInfo.Parameters.FilterDescendantsInstances = FilterDescendantsInstances
+        end
+    end
+    if not (RunService:IsClient()) then
+        RenderStepped = RunService.Heartbeat
+    else
+        RenderStepped = RunService.RenderStepped
+    end
+    setmetatable(u17, u6)
+    StateInfo = u17.StateInfo
+    StateInfo.UpdateConnection = RenderStepped:Connect(function(p1) -- Line: 535 -- upvalues: u17 (val), u16 (upval), SimulateCast (upval)
+        local Acceleration, Position, StateInfo, v1
+        if u17.StateInfo.Paused then
+            return
+        end
+        if u16.DebugLogging == true then
+            print("Casting for frame.")
+        end
+        local v2 = u17.StateInfo.Trajectories[#u17.StateInfo.Trajectories]
+        if u17.StateInfo.HighFidelityBehavior ~= 3 or v2.Acceleration == Vector3.new() or 0 >= u17.StateInfo.HighFidelitySegmentSize then
+            SimulateCast(u17, p1, false)
+            return
+        end
+        local v3 = tick()
+        if u17.StateInfo.IsActivelyResimulating then
+            u17:Terminate()
+            error("Cascading cast lag encountered! The caster attempted to perform a high fidelity cast before the previous one completed, resulting in exponential cast lag. Consider increasing HighFidelitySegmentSize.")
+        end
+        u17.StateInfo.IsActivelyResimulating = true
+        local Origin = v2.Origin
+        local InitialVelocity = v2.InitialVelocity
+        Acceleration = v2.Acceleration
+        local v4 = u17.StateInfo.TotalRuntime - v2.StartTime
+        local v5 = Vector3.new(Acceleration.X * v4 ^ 2 / 2, Acceleration.Y * v4 ^ 2 / 2, Acceleration.Z * v4 ^ 2 / 2)
+        local v6 = Origin + InitialVelocity * v4 + v5
+        StateInfo = u17.StateInfo
+        StateInfo.TotalRuntime = StateInfo.TotalRuntime + p1
+        local v7 = u17.StateInfo.TotalRuntime - v2.StartTime
+        local v8 = v7
+        local v9 = Vector3.new(Acceleration.X * v8 ^ 2 / 2, Acceleration.Y * v8 ^ 2 / 2, Acceleration.Z * v8 ^ 2 / 2)
+        local v10 = Origin + InitialVelocity * v8 + v9
+        local v11 = u17.RayInfo.WorldRoot:Raycast(v6, (v10 - v6).Unit * (InitialVelocity + Acceleration * v7).Magnitude * p1, u17.RayInfo.Parameters)
+        Position = if v11 ~= nil then v11.Position else v10
+        local StateInfo_2 = u17.StateInfo
+        StateInfo_2.TotalRuntime = StateInfo_2.TotalRuntime - p1
+        local v12 = math.floor((Position - v6).Magnitude / u17.StateInfo.HighFidelitySegmentSize)
+        if v12 == 0 then
+            v12 = 1
+        end
+        local v13 = p1 / v12
+        local v14 = v12
+        local v15 = 1
+        for i = 1, v14, v15 do
+            if getmetatable(u17) == nil then
+                return
+            end
+            if u17.StateInfo.CancelHighResCast then
+                u17.StateInfo.CancelHighResCast = false
+                break
+            end
+            v1 = "[" .. i .. "] Subcast of time increment " .. v13
+            if u16.DebugLogging == true then
+                print(v1)
+            end
+            SimulateCast(u17, v13, true)
+        end
+        if getmetatable(u17) == nil then
+            return
+        end
+        u17.StateInfo.IsActivelyResimulating = false
+        v14 = tick() - v3
+        if 0.08 >= v14 then
+            return
+        end
+        warn("Extreme cast lag encountered! Consider increasing HighFidelitySegmentSize.")
+    end)
+    return u17
 end
-function v_u_2.AddAcceleration(p189, p190) -- name: AddAcceleration
-	-- upvalues: (copy) v_u_2
-	local v191 = getmetatable(p189) == v_u_2
-	assert(v191, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("AddAcceleration", "ActiveCast.new(...)"))
-	local v192 = p189.StateInfo.UpdateConnection ~= nil
-	assert(v192, "This ActiveCast has been terminated. It can no longer be used.")
-	p189:SetAcceleration(p189:GetAcceleration() + p190)
+function u6.SetStaticFastCastReference(p1) -- Line: 619 -- upvalues: u16 (ref)
+    u16 = p1
 end
-function v_u_2.AddPosition(p193, p194) -- name: AddPosition
-	-- upvalues: (copy) v_u_2
-	local v195 = getmetatable(p193) == v_u_2
-	assert(v195, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("AddPosition", "ActiveCast.new(...)"))
-	local v196 = p193.StateInfo.UpdateConnection ~= nil
-	assert(v196, "This ActiveCast has been terminated. It can no longer be used.")
-	p193:SetPosition(p193:GetPosition() + p194)
+local function ModifyTransformation(p1, p2, p3, p4) -- Line: 625 -- upvalues: GetTrajectoryInfo (val), u15 (val)
+    local Acceleration, InitialVelocity, Origin, v1, v2
+    local Trajectories = p1.StateInfo.Trajectories
+    local v3 = Trajectories[#Trajectories]
+    if v3.StartTime == p1.StateInfo.TotalRuntime then
+        if p2 ~= nil then
+            InitialVelocity = p2
+        else
+            InitialVelocity = v3.InitialVelocity
+        end
+        if p3 ~= nil then
+            Acceleration = p3
+        else
+            Acceleration = v3.Acceleration
+        end
+        if p4 ~= nil then
+            Origin = p4
+        else
+            Origin = v3.Origin
+        end
+        v3.Origin = Origin
+        v3.InitialVelocity = InitialVelocity
+        v3.Acceleration = Acceleration
+        return
+    end
+    v3.EndTime = p1.StateInfo.TotalRuntime
+    local v4 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v4, "This ActiveCast has been terminated. It can no longer be used.")
+    v1, v2 = unpack((GetTrajectoryInfo(p1, #p1.StateInfo.Trajectories)))
+    if p2 ~= nil then
+        InitialVelocity = p2
+    else
+        InitialVelocity = v2
+    end
+    if p3 ~= nil then
+        Acceleration = p3
+    else
+        Acceleration = v3.Acceleration
+    end
+    if p4 ~= nil then
+        Origin = p4
+    else
+        Origin = v1
+    end
+    u15.insert(p1.StateInfo.Trajectories, {
+        EndTime = -1,
+        StartTime = p1.StateInfo.TotalRuntime,
+        Origin = Origin,
+        InitialVelocity = InitialVelocity,
+        Acceleration = Acceleration,
+    })
+    p1.StateInfo.CancelHighResCast = true
 end
-function v_u_2.Pause(p197) -- name: Pause
-	-- upvalues: (copy) v_u_2
-	local v198 = getmetatable(p197) == v_u_2
-	assert(v198, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Pause", "ActiveCast.new(...)"))
-	local v199 = p197.StateInfo.UpdateConnection ~= nil
-	assert(v199, "This ActiveCast has been terminated. It can no longer be used.")
-	p197.StateInfo.Paused = true
+function u6:SetVelocity(p2) -- Line: 671 -- upvalues: u6 (val), ModifyTransformation (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("SetVelocity", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    ModifyTransformation(self, p2, nil, nil)
 end
-function v_u_2.Resume(p200) -- name: Resume
-	-- upvalues: (copy) v_u_2
-	local v201 = getmetatable(p200) == v_u_2
-	assert(v201, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Resume", "ActiveCast.new(...)"))
-	local v202 = p200.StateInfo.UpdateConnection ~= nil
-	assert(v202, "This ActiveCast has been terminated. It can no longer be used.")
-	p200.StateInfo.Paused = false
+function u6:SetAcceleration(p2) -- Line: 677 -- upvalues: u6 (val), ModifyTransformation (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("SetAcceleration", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    ModifyTransformation(self, nil, p2, nil)
 end
-function v_u_2.Terminate(p203) -- name: Terminate
-	-- upvalues: (copy) v_u_2
-	local v204 = getmetatable(p203) == v_u_2
-	assert(v204, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Terminate", "ActiveCast.new(...)"))
-	local v205 = p203.StateInfo.UpdateConnection ~= nil
-	assert(v205, "This ActiveCast has been terminated. It can no longer be used.")
-	local v206 = p203.StateInfo.Trajectories
-	v206[#v206].EndTime = p203.StateInfo.TotalRuntime
-	p203.StateInfo.UpdateConnection:Disconnect()
-	p203.Caster.CastTerminating:FireSync(p203)
-	p203.StateInfo.UpdateConnection = nil
-	p203.Caster = nil
-	p203.StateInfo = nil
-	p203.RayInfo = nil
-	p203.UserData = nil
-	setmetatable(p203, nil)
+function u6:SetPosition(p2) -- Line: 683 -- upvalues: u6 (val), ModifyTransformation (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("SetPosition", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    ModifyTransformation(self, nil, nil, p2)
 end
-return v_u_2
+function u6:GetVelocity() -- Line: 689 -- upvalues: u6 (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("GetVelocity", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    local v3 = self.StateInfo.Trajectories[#self.StateInfo.Trajectories]
+    return v3.InitialVelocity + v3.Acceleration * (self.StateInfo.TotalRuntime - v3.StartTime)
+end
+function u6:GetAcceleration() -- Line: 696 -- upvalues: u6 (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("GetAcceleration", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    return self.StateInfo.Trajectories[#self.StateInfo.Trajectories].Acceleration
+end
+function u6:GetPosition() -- Line: 703 -- upvalues: u6 (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("GetPosition", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    local v3 = self.StateInfo.Trajectories[#self.StateInfo.Trajectories]
+    v1 = self.StateInfo.TotalRuntime - v3.StartTime
+    local Acceleration = v3.Acceleration
+    local v4 = Vector3.new(Acceleration.X * v1 ^ 2 / 2, Acceleration.Y * v1 ^ 2 / 2, Acceleration.Z * v1 ^ 2 / 2)
+    return v3.Origin + v3.InitialVelocity * v1 + v4
+end
+function u6.AddVelocity(p1, p2) -- Line: 712 -- upvalues: u6 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("AddVelocity", "ActiveCast.new(...)"))
+    v2 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    p1:SetVelocity(p1:GetVelocity() + p2)
+end
+function u6.AddAcceleration(p1, p2) -- Line: 718 -- upvalues: u6 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("AddAcceleration", "ActiveCast.new(...)"))
+    v2 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    p1:SetAcceleration(p1:GetAcceleration() + p2)
+end
+function u6.AddPosition(p1, p2) -- Line: 724 -- upvalues: u6 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("AddPosition", "ActiveCast.new(...)"))
+    v2 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    p1:SetPosition(p1:GetPosition() + p2)
+end
+function u6.Pause(p1) -- Line: 732 -- upvalues: u6 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Pause", "ActiveCast.new(...)"))
+    v2 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    p1.StateInfo.Paused = true
+end
+function u6.Resume(p1) -- Line: 738 -- upvalues: u6 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Resume", "ActiveCast.new(...)"))
+    v2 = p1.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    p1.StateInfo.Paused = false
+end
+function u6:Terminate() -- Line: 744 -- upvalues: u6 (val)
+    local v1 = getmetatable(self)
+    local v2 = v1 == u6
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Terminate", "ActiveCast.new(...)"))
+    v2 = self.StateInfo.UpdateConnection ~= nil
+    assert(v2, "This ActiveCast has been terminated. It can no longer be used.")
+    local Trajectories = self.StateInfo.Trajectories
+    v2 = Trajectories[#Trajectories]
+    v2.EndTime = self.StateInfo.TotalRuntime
+    self.StateInfo.UpdateConnection:Disconnect()
+    self.Caster.CastTerminating:FireSync(self)
+    self.StateInfo.UpdateConnection = nil
+    self.Caster = nil
+    self.StateInfo = nil
+    self.RayInfo = nil
+    self.UserData = nil
+    setmetatable(self, nil)
+end
+return u6

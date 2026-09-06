@@ -1,92 +1,117 @@
-local v_u_1 = game:GetService("HttpService")
-local v_u_2 = game:GetService("ServerStorage")
-local v_u_3 = require(script.Parent.SkinFormat)
-local v4 = {}
-local v_u_5 = {}
-function v4.init(p6) -- name: init
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_5, (copy) v_u_3
-	local v7 = p6.VModels
-	local v8 = p6.Configs
-	local v9 = v_u_2:FindFirstChild("CustomResources")
-	if v9 then
-		for _, v10 in v9:GetChildren() do
-			for _, v11 in v10:GetChildren() do
-				v11.Parent = v_u_2.common.ServerResources[v10.Name]
-			end
-		end
-		v9:Destroy()
-	end
-	for _, v16 in { v7, v8 } do
-		local v13 = v16:FindFirstChild("RenameMap")
-		if v13 and (v13:IsA("StringValue") and v13.Value ~= "") then
-			for _, v14 in v_u_1:JSONDecode(v13.Value) do
-				local v15 = v16
-				local v16
-				for _, v17 in v14.path do
-					v16 = v16:FindFirstChild(v17)
-					if not v16 then
-						break
-					end
-				end
-				if v16 and v16.Name ~= v14.name then
-					v16.Name = v14.name
-					v16 = v15
-				else
-					v16 = v15
-				end
-			end
-			v13:Destroy()
-		end
-	end
-	local function v_u_20(p18) -- name: Register
-		-- upvalues: (copy) v_u_20, (ref) v_u_5
-		if p18:IsA("Folder") then
-			for _, v19 in p18:GetChildren() do
-				v_u_20(v19)
-			end
-		elseif p18:IsA("Model") or (p18:IsA("ModuleScript") or p18:IsA("Configuration")) then
-			v_u_5[p18.Name] = p18
-		end
-	end
-	for _, v21 in v7:GetChildren() do
-		v_u_20(v21)
-	end
-	for _, v22 in v_u_5 do
-		v_u_3.stampAttributes(v22)
-	end
-	if not p6.IsInEdit then
-		local v_u_23 = p6.SharedResources
-		local v_u_24 = p6.ChunkSender
-		local v25 = p6.GetAttFolder
-		local v_u_26 = p6.attCache
-		for _, v27 in v_u_2.common.ServerResources.Attachments:GetChildren() do
-			if v27:IsA("Folder") then
-				for _, v28 in v27:GetChildren() do
-					v_u_26[v28.Name] = v28
-				end
-				Instance.new("Folder", v_u_23.Attachments).Name = v27.Name
-			end
-		end
-		v25:SetCallback(function(p29, p30)
-			-- upvalues: (copy) v_u_26, (copy) v_u_24, (copy) v_u_23
-			local v31 = p30[1]
-			if v_u_26[v31] then
-				v_u_24.Send(p29, v_u_26[v31], nil, v_u_23.Attachments[v_u_26[v31].Parent.Name])
-			end
-			return { v_u_26[v31] and v_u_26[v31].Parent.Name or nil }
-		end)
-	end
+local HttpService = game:GetService("HttpService")
+local ServerStorage = game:GetService("ServerStorage")
+local SkinFormat = require(script.Parent.SkinFormat)
+local v1 = {}
+local u16 = {}
+function v1.init(p1) -- Line: 39 -- upvalues: ServerStorage (val), HttpService (val), u16 (val), SkinFormat (val)
+    local Register, RenameMap, path, v1, v2, v3, v4, v5, v6, v7
+    local VModels = p1.VModels
+    local Configs = p1.Configs
+    local CustomResources = ServerStorage:FindFirstChild("CustomResources")
+    if not CustomResources then
+        v1 = p1
+    else
+        v1 = p1
+        for i, j in CustomResources:GetChildren() do
+            for k, n in j:GetChildren() do
+                n.Parent = ServerStorage.common.ServerResources[j.Name]
+            end
+        end
+        CustomResources:Destroy()
+    end
+    local v8 = {VModels, Configs}
+    local v9 = nil
+    local v10 = nil
+    for m, i5 in v8, v9, v10 do
+        RenameMap = i5:FindFirstChild("RenameMap")
+        if RenameMap and RenameMap:IsA("StringValue") and RenameMap.Value ~= "" then
+            v2 = HttpService:JSONDecode(RenameMap.Value)
+            v3 = nil
+            v4 = nil
+            for i6, i7 in v2, v3, v4 do
+                v5 = i5
+                path = i7.path
+                v6 = nil
+                v7 = nil
+                for i8, i9 in path, v6, v7 do
+                    v5 = v5:FindFirstChild(i9)
+                    if not v5 then
+                        break
+                    end
+                end
+                if v5 and v5.Name ~= i7.name then
+                    v5.Name = i7.name
+                end
+            end
+            RenameMap:Destroy()
+        end
+    end
+    function Register(p1) -- Line: 78 -- upvalues: Register (val), u16 (upval)
+        if p1:IsA("Folder") then
+            for i, j in p1:GetChildren() do
+                Register(j)
+            end
+            return
+        end
+        if p1:IsA("Model") then
+            u16[p1.Name] = p1
+        elseif p1:IsA("ModuleScript") then
+            u16[p1.Name] = p1
+        elseif p1:IsA("Configuration") then
+            u16[p1.Name] = p1
+        end
+    end
+    for i10, i11 in VModels:GetChildren() do
+        Register(i11)
+    end
+    v9 = u16
+    v10 = nil
+    local v11 = nil
+    for i12, i13 in v9, v10, v11 do
+        SkinFormat.stampAttributes(i13)
+    end
+    if not v1.IsInEdit then
+        local v12
+        local SharedResources = v1.SharedResources
+        local ChunkSender = v1.ChunkSender
+        local GetAttFolder = v1.GetAttFolder
+        local attCache = v1.attCache
+        for i14, i15 in ServerStorage.common.ServerResources.Attachments:GetChildren() do
+            if i15:IsA("Folder") then
+                for i16, i17 in i15:GetChildren() do
+                    attCache[i17.Name] = i17
+                end
+                v12 = Instance.new("Folder", SharedResources.Attachments)
+                v12.Name = i15.Name
+            end
+        end
+        GetAttFolder:SetCallback(function(p1, p2) -- Line: 116 -- upvalues: attCache (val), ChunkSender (val), SharedResources (val)
+            local Name
+            local v1 = p2[1]
+            if attCache[v1] then
+                ChunkSender.Send(p1, attCache[v1], nil, SharedResources.Attachments[attCache[v1].Parent.Name])
+            end
+            local v2 = {}
+            if not (attCache[v1]) then
+                Name = nil
+            else
+                Name = attCache[v1].Parent.Name
+                if not Name then
+                    Name = nil
+                end
+            end
+            v2[1] = Name
+            return v2
+        end)
+    end
 end
-function v4.loadViewmodel(p32) -- name: loadViewmodel
-	-- upvalues: (copy) v_u_5
-	return v_u_5[p32]
+function v1.loadViewmodel(p1) -- Line: 132 -- upvalues: u16 (val)
+    return u16[p1]
 end
-function v4.GetViewmodels() -- name: GetViewmodels
-	-- upvalues: (copy) v_u_5
-	return v_u_5
+function v1.GetViewmodels() -- Line: 136 -- upvalues: u16 (val)
+    return u16
 end
-function v4.GetViewmodel(p33) -- name: GetViewmodel
-	-- upvalues: (copy) v_u_5
-	return v_u_5[p33]
+function v1.GetViewmodel(p1) -- Line: 140 -- upvalues: u16 (val)
+    return u16[p1]
 end
-return v4
+return v1

@@ -1,4 +1,1 @@
-return {
-	["Server"] = require(script.Server),
-	["Client"] = require(script.Client)
-}
+return {Server = require(script.Server), Client = require(script.Client)}

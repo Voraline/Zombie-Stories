@@ -1,75 +1,88 @@
-local v_u_1 = {
-	["Offset"] = CFrame.new(0, 0, 500)
-}
-game.ReplicatedStorage.common:WaitForChild("Remotes"):WaitForChild("Net")
-local v_u_2 = game.Players.LocalPlayer
-local v_u_3 = nil
-local v_u_4 = false
-local v_u_5 = false
+local u0 = {Offset = CFrame.new(0, 0, 500)}
+local MonetizationCatalog = require(game.ReplicatedStorage.common.ZS_Shared.Data.MonetizationCatalog)
+local Remotes = game.ReplicatedStorage.common:WaitForChild("Remotes")
+Remotes:WaitForChild("Net")
+local LocalPlayer = game.Players.LocalPlayer
+local u28 = nil
+local u29 = false
+local u30 = false
 tick()
-local v_u_6 = game:GetService("SoundService")
-local v_u_7 = Color3.new(0.384314, 1, 0.94902)
-local v_u_8 = nil
-function v_u_1.Init() -- name: Init
-	-- upvalues: (ref) v_u_3, (copy) v_u_2, (ref) v_u_8, (copy) v_u_7, (ref) v_u_4
-	if not workspace:FindFirstChild("Values") or (not workspace.Values:FindFirstChild("IsLobby") or workspace.Values.IsLobby.Value ~= true) then
-		for _ = 1, 10 do
-			local _, _ = pcall(function()
-				-- upvalues: (ref) v_u_3, (ref) v_u_2
-				v_u_3 = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(v_u_2.UserId, 6885070) or game:GetService("MarketplaceService"):UserOwnsGamePassAsync(v_u_2.UserId, 10504943)
-			end)
-			if v_u_3 then
-				break
-			end
-		end
-		local v_u_9 = nil
-		local _, _ = pcall(function()
-			-- upvalues: (ref) v_u_9, (ref) v_u_2
-			v_u_9 = v_u_2:GetRankInGroup(3532462)
-		end)
-		if v_u_9 and v_u_9 >= 254 then
-			v_u_3 = true
-		end
-		v_u_8 = game.Lighting.Ambient
-		game.Lighting.Changed:Connect(function()
-			-- upvalues: (ref) v_u_7, (ref) v_u_8, (ref) v_u_4
-			if game.Lighting.Ambient ~= v_u_7 and game.Lighting.Ambient ~= v_u_8 then
-				v_u_8 = game.Lighting.Ambient
-				if v_u_4 then
-					task.wait()
-					if v_u_4 then
-						game.Lighting.Ambient = v_u_7
-					end
-				end
-			end
-		end)
-	end
+local SoundService = game:GetService("SoundService")
+local u42 = Color3.new(0.384314, 1, 0.94902)
+local u43 = nil
+function u0.Init() -- Line: 20 -- upvalues: u28 (ref), LocalPlayer (val), MonetizationCatalog (val), u43 (ref), u42 (val), u29 (ref)
+    if not (workspace:FindFirstChild("Values")) then
+        local v1 = LocalPlayer:GetAttribute("HasNightVisionEntitlement") == true
+        u28 = v1
+        v1 = 10
+        local v2 = 1
+        for i = 1, v1, v2 do
+            if u28 then
+                break
+            end
+            pcall(function() -- Line: 35 -- upvalues: MonetizationCatalog (upval), LocalPlayer (upval), u28 (upval)
+                local MarketplaceService
+                for i, v in ipairs(MonetizationCatalog.GetPassIds("NightVision")) do
+                    MarketplaceService = game:GetService("MarketplaceService")
+                    if MarketplaceService:UserOwnsGamePassAsync(LocalPlayer.UserId, v) then
+                        u28 = true
+                        return
+                    end
+                end
+            end)
+            if u28 then
+                break
+            end
+        end
+        local u39 = nil
+        pcall(function() -- Line: 47 -- upvalues: u39 (ref), LocalPlayer (upval)
+            u39 = LocalPlayer:GetRankInGroup(3532462)
+        end)
+        if u39 and 254 <= u39 then
+            u28 = true
+        end
+        u43 = game.Lighting.Ambient
+        game.Lighting.Changed:Connect(function() -- Line: 86 -- upvalues: u42 (upval), u43 (upval), u29 (upval)
+            if game.Lighting.Ambient ~= u42 and game.Lighting.Ambient ~= u43 then
+                u43 = game.Lighting.Ambient
+                if u29 then
+                    task.wait()
+                    if u29 then
+                        game.Lighting.Ambient = u42
+                    end
+                end
+            end
+        end)
+        return
+    elseif workspace.Values:FindFirstChild("IsLobby") and workspace.Values.IsLobby.Value == true then
+        return
+    end
 end
-function v_u_1.ToggleActivate() -- name: ToggleActivate
-	-- upvalues: (ref) v_u_3, (ref) v_u_4, (ref) v_u_5, (copy) v_u_1, (copy) v_u_6, (copy) v_u_7, (ref) v_u_8
-	if v_u_3 then
-		if not v_u_4 then
-			v_u_5 = true
-			task.wait(0.1)
-			v_u_1.Offset = CFrame.new()
-			v_u_4 = true
-			v_u_6:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Cloth)
-			task.wait()
-			game.Lighting.Ambient = v_u_7
-			v_u_1.Offset = CFrame.new(0, 0, 500)
-			v_u_6:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Sound)
-			v_u_5 = false
-			return
-		end
-		v_u_5 = true
-		task.wait(0.1)
-		v_u_1.Offset = CFrame.new()
-		v_u_4 = false
-		game.Lighting.Ambient = v_u_8
-		v_u_6:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Cloth)
-		task.wait(0.5)
-		v_u_1.Offset = CFrame.new(0, 0, 500)
-		v_u_5 = false
-	end
+function u0.ToggleActivate() -- Line: 114 -- upvalues: u28 (ref), u29 (ref), u30 (ref), u0 (val), SoundService (val), u42 (val), u43 (ref)
+    if not u28 then
+        return
+    end
+    if u29 then
+        u30 = true
+        task.wait(0.1)
+        u0.Offset = CFrame.new()
+        u29 = false
+        game.Lighting.Ambient = u43
+        SoundService:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Cloth)
+        task.wait(0.5)
+        u0.Offset = CFrame.new(0, 0, 500)
+        u30 = false
+        return
+    end
+    u30 = true
+    task.wait(0.1)
+    u0.Offset = CFrame.new()
+    u29 = true
+    SoundService:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Cloth)
+    task.wait()
+    game.Lighting.Ambient = u42
+    u0.Offset = CFrame.new(0, 0, 500)
+    SoundService:PlayLocalSound(script.Parent.Parent.Resources.Sounds.Sound)
+    u30 = false
 end
-return v_u_1
+return u0

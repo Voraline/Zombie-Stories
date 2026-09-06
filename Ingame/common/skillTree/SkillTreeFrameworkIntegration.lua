@@ -1,33 +1,30 @@
-local v_u_1 = game:GetService("Players")
-local v_u_2 = game:GetService("UserInputService")
-local v_u_3 = game:GetService("GamepadService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local GamepadService = game:GetService("GamepadService")
 return {
-	["new"] = function() -- name: new
-		-- upvalues: (copy) v_u_1, (copy) v_u_2, (copy) v_u_3
-		v_u_1.LocalPlayer:WaitForChild("PlayerScripts")
-		local v4 = game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers
-		local v_u_5 = require(v4.CameraController)
-		local v_u_6 = require(v4.WeaponController)
-		local v_u_7 = require(v4.LocalPlayerController)
-		return {
-			["onOpen"] = function(_) -- name: onOpen
-				-- upvalues: (copy) v_u_5, (copy) v_u_6, (copy) v_u_7, (ref) v_u_2, (ref) v_u_3
-				v_u_5:SetEnabled(false)
-				v_u_5:SetMouseUnlocked("Skilltree", true)
-				v_u_6:ForceUnequip(nil)
-				v_u_6:DisableSwapping()
-				v_u_7:SetMovementEnabled(false)
-				if v_u_2:GetGamepadConnected(Enum.UserInputType.Gamepad1) then
-					v_u_3:EnableGamepadCursor(nil)
-				end
-			end,
-			["onClose"] = function(_) -- name: onClose
-				-- upvalues: (copy) v_u_7, (copy) v_u_6, (copy) v_u_5
-				v_u_7:SetMovementEnabled(true)
-				v_u_6:DisableSwapping(false)
-				v_u_5:SetEnabled(true)
-				v_u_5:SetMouseUnlocked("Skilltree", false)
-			end
-		}
-	end
+    new = function() -- Line: 28 -- upvalues: Players (val), UserInputService (val), GamepadService (val)
+        Players.LocalPlayer:WaitForChild("PlayerScripts")
+        local Controllers = game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers
+        local CameraController = require(Controllers.CameraController)
+        local WeaponController = require(Controllers.WeaponController)
+        local LocalPlayerController = require(Controllers.LocalPlayerController)
+        return {
+            onOpen = function(p1) -- Line: 40 -- upvalues: CameraController (val), WeaponController (val), LocalPlayerController (val), UserInputService (upval), GamepadService (upval)
+                CameraController:SetEnabled(false)
+                CameraController:SetMouseUnlocked("Skilltree", true)
+                WeaponController:ForceUnequip(nil)
+                WeaponController:DisableSwapping()
+                LocalPlayerController:SetMovementEnabled(false)
+                if UserInputService:GetGamepadConnected(Enum.UserInputType.Gamepad1) then
+                    GamepadService:EnableGamepadCursor(nil)
+                end
+            end,
+            onClose = function(p1) -- Line: 52 -- upvalues: LocalPlayerController (val), WeaponController (val), CameraController (val)
+                LocalPlayerController:SetMovementEnabled(true)
+                WeaponController:DisableSwapping(false)
+                CameraController:SetEnabled(true)
+                CameraController:SetMouseUnlocked("Skilltree", false)
+            end,
+        }
+    end,
 }

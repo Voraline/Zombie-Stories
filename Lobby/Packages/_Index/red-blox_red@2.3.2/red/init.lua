@@ -1,25 +1,21 @@
-local v1 = game:GetService("ReplicatedStorage")
-if game:GetService("RunService"):IsServer() then
-	if not v1:FindFirstChild("ReliableRedEvent") then
-		local v2 = Instance.new("RemoteEvent")
-		v2.Name = "ReliableRedEvent"
-		v2.Parent = v1
-	end
-	if not v1:FindFirstChild("UnreliableRedEvent") then
-		local v3 = Instance.new("UnreliableRemoteEvent")
-		v3.Name = "UnreliableRedEvent"
-		v3.Parent = v1
-	end
-	require(script.Net).Server.Start()
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+if not (game:GetService("RunService"):IsServer()) then
+    ReplicatedStorage:WaitForChild("ReliableRedEvent")
+    ReplicatedStorage:WaitForChild("UnreliableRedEvent")
+    require(script.Net).Client.Start()
 else
-	v1:WaitForChild("ReliableRedEvent")
-	v1:WaitForChild("UnreliableRedEvent")
-	require(script.Net).Client.Start()
+    local ReliableRedEvent, UnreliableRedEvent
+    if not (ReplicatedStorage:FindFirstChild("ReliableRedEvent")) then
+        local RemoteEvent = Instance.new("RemoteEvent")
+        RemoteEvent.Name = "ReliableRedEvent"
+        RemoteEvent.Parent = ReplicatedStorage
+    end
+    if not (ReplicatedStorage:FindFirstChild("UnreliableRedEvent")) then
+        local UnreliableRemoteEvent = Instance.new("UnreliableRemoteEvent")
+        UnreliableRemoteEvent.Name = "UnreliableRedEvent"
+        UnreliableRemoteEvent.Parent = ReplicatedStorage
+    end
+    require(script.Net).Server.Start()
 end
-local v4 = require(script.SharedEvent)
-return {
-	["Event"] = require(script.Event),
-	["Function"] = require(script.Function),
-	["SharedEvent"] = v4.SharedCallEvent,
-	["SharedSignalEvent"] = v4.SharedSignalEvent
-}
+local SharedEvent = require(script.SharedEvent)
+return {Event = require(script.Event), Function = require(script.Function), SharedEvent = SharedEvent.SharedCallEvent, SharedSignalEvent = SharedEvent.SharedSignalEvent}

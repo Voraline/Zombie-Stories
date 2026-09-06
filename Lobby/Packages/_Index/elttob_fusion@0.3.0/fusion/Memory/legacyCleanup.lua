@@ -1,9 +1,8 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Memory.doCleanup)
-return function(p4) -- name: legacyCleanup
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	v_u_2.logWarn("cleanupWasRenamed")
-	return v_u_3(p4)
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local doCleanup = require(Parent.Memory.doCleanup)
+return function(p1) -- Line: 11 -- upvalues: External (val), doCleanup (val)
+    External.logWarn("cleanupWasRenamed")
+    return doCleanup(p1)
 end

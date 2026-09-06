@@ -1,613 +1,725 @@
-local v_u_1 = game:GetService("ReplicatedStorage")
-local v2 = game:GetService("Players")
-local v3 = game:GetService("TweenService")
-local v_u_4 = game:GetService("RunService")
-local v_u_5 = game:GetService("UserInputService")
-local v6 = require(v_u_1.Packages.Fusion)
-local v7 = v6.scoped
-local v_u_8 = v6.peek
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local peek = Fusion.peek
 require("@game/ReplicatedStorage/common/HUDService")
-local v_u_9 = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.LocalPlayerController)
-local v_u_10 = require("@game/ReplicatedStorage/common/BindUtil")
-local v_u_11 = require("@game/ReplicatedStorage/common/Settings")
-local v12 = require("./Objectives")
-local v13 = require("./StaminaDisplay")
-local v14 = require("@self/Components/AbilityUI")
-local v_u_15 = {
-	["xbox"] = {
-		[Enum.KeyCode.ButtonR1] = "RB",
-		[Enum.KeyCode.ButtonL1] = "LB",
-		[Enum.KeyCode.ButtonR2] = "RT",
-		[Enum.KeyCode.ButtonL2] = "LT",
-		[Enum.KeyCode.ButtonA] = "A",
-		[Enum.KeyCode.ButtonB] = "B",
-		[Enum.KeyCode.ButtonX] = "X",
-		[Enum.KeyCode.ButtonY] = "Y"
-	},
-	["ps"] = {
-		[Enum.KeyCode.ButtonR1] = "R1",
-		[Enum.KeyCode.ButtonL1] = "L1",
-		[Enum.KeyCode.ButtonR2] = "R2",
-		[Enum.KeyCode.ButtonL2] = "L2",
-		[Enum.KeyCode.ButtonA] = "X",
-		[Enum.KeyCode.ButtonB] = "O",
-		[Enum.KeyCode.ButtonX] = "\226\150\161",
-		[Enum.KeyCode.ButtonY] = "\226\150\179"
-	}
-}
-local function v_u_22() -- name: getOffHandKeyLabel
-	-- upvalues: (copy) v_u_10, (copy) v_u_11, (copy) v_u_5, (copy) v_u_15
-	local v16 = v_u_10.getInputMethod()
-	if v16 == "Touch" then
-		return "[TAP]"
-	end
-	local v17 = v_u_11.Controls
-	if v17 then
-		v17 = v_u_11.Controls.Binds
-	end
-	if v17 then
-		v17 = v17.OffHandUse
-	end
-	if not v17 then
-		return v16 == "Gamepad" and "[RB]" or "[F]"
-	end
-	if v16 ~= "Gamepad" then
-		local v18 = v17.Keyboard
-		return not v18 and "[F]" or "[" .. v18.Name .. "]"
-	end
-	local v19 = v_u_5:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" and "ps" or "xbox"
-	local v20 = v_u_15[v19]
-	local v21 = v17.Gamepad
-	return not (v21 and v20) and (v19 == "ps" and "[R1]" or "[RB]") or "[" .. (v20[v21] or v21.Name) .. "]"
+local LocalPlayerController = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.LocalPlayerController)
+local u48 = require("@game/ReplicatedStorage/common/BindUtil")
+local u51 = require("@game/ReplicatedStorage/common/Settings")
+local v1 = require("./Objectives")
+local v2 = require("./StaminaDisplay")
+local v3 = require("@self/Components/AbilityUI")
+local u61 = {}
+local v4 = {}
+v4[Enum.KeyCode.ButtonR1] = "RB"
+v4[Enum.KeyCode.ButtonL1] = "LB"
+v4[Enum.KeyCode.ButtonR2] = "RT"
+v4[Enum.KeyCode.ButtonL2] = "LT"
+v4[Enum.KeyCode.ButtonA] = "A"
+v4[Enum.KeyCode.ButtonB] = "B"
+v4[Enum.KeyCode.ButtonX] = "X"
+v4[Enum.KeyCode.ButtonY] = "Y"
+u61.xbox = v4
+v4 = {}
+v4[Enum.KeyCode.ButtonR1] = "R1"
+v4[Enum.KeyCode.ButtonL1] = "L1"
+v4[Enum.KeyCode.ButtonR2] = "R2"
+v4[Enum.KeyCode.ButtonL2] = "L2"
+v4[Enum.KeyCode.ButtonA] = "X"
+v4[Enum.KeyCode.ButtonB] = "O"
+v4[Enum.KeyCode.ButtonX] = "□"
+v4[Enum.KeyCode.ButtonY] = "△"
+u61.ps = v4
+local function getGamepadType() -- Line: 47 -- upvalues: UserInputService (val)
+    if UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" then
+        return "ps"
+    end
+    return "xbox"
 end
-local v23 = v7(v6)
-local v_u_24 = v23:Value(1)
-local v_u_25 = v23:Value(false)
-local v_u_26 = v23:Value(false)
-local v_u_27 = v23:Value(0)
-local v_u_28 = v23:Value(false)
-local v_u_29 = v23:Value(1)
-local v_u_30 = v23:Value("side")
-local v_u_31 = v23:Value(false)
-local v_u_32 = v23:Value(false)
-local v_u_33 = v23:Value(false)
-local v_u_34 = v23:Value(0)
-local v_u_35 = v23:Value(0)
-local v_u_36 = v23:Value(true)
-local v_u_37 = v23:Value(nil)
-local v_u_38 = v23:Value(Vector2.new(0, 0))
-local v_u_39 = v23:Value(Vector2.new(0, 0))
-local v_u_40 = v23:Value("rbxassetid://18494319766")
-local v_u_41 = v23:Value(0)
-local v_u_42 = v23:Value(0)
-local v_u_43 = v23:Value(1)
-local v_u_44 = v23:Value((v_u_22()))
-local v_u_45 = {
-	["Focus"] = "rbxassetid://18494319766",
-	["AmmoBox"] = "rbxassetid://18494323513",
-	["Medkit"] = "rbxassetid://18494325361"
-}
-local v_u_46 = v2.LocalPlayer
-local v_u_47 = nil
-local v_u_48 = nil
-local v_u_49 = nil
-local v_u_50 = nil
-local v_u_51 = nil
-local v_u_52 = "none"
-local v_u_53 = 0
-local v_u_54 = 0
-local v_u_55 = 0
-local v_u_56 = false
-local v_u_57 = 0
-local v_u_58 = nil
-local v_u_59 = nil
-local v60 = v14({
-	["scope"] = v23,
-	["percentage"] = v_u_24,
-	["isReady"] = v_u_25,
-	["isActivating"] = v_u_26,
-	["activationProgress"] = v_u_27,
-	["isActive"] = v_u_28,
-	["durationRemaining"] = v_u_29,
-	["staminaPlacement"] = v_u_30,
-	["isMobile"] = v_u_31,
-	["isGamepad"] = v_u_32,
-	["visible"] = v_u_33,
-	["abilityImage"] = v_u_40,
-	["objectiveListSizeY"] = v_u_34,
-	["ammoHudWidth"] = v_u_35,
-	["staminaFramePosition"] = v_u_38,
-	["staminaFrameSize"] = v_u_39,
-	["ammoCount"] = v_u_41,
-	["customPosition"] = v_u_37,
-	["uiScale"] = v_u_43,
-	["readyLabelText"] = v_u_44,
-	["onActivatePressed"] = function() -- name: onActivatePressed
-		-- upvalues: (ref) v_u_59
-		if v_u_59 then
-			v_u_59:UseOffHand()
-		end
-	end
+local function getOffHandKeyLabel() -- Line: 56 -- upvalues: u48 (val), u51 (val), UserInputService (val), u61 (val)
+    local Gamepad, v1
+    local v2 = u48.getInputMethod()
+    if v2 == "Touch" then
+        return "[TAP]"
+    end
+    local Controls = u51.Controls
+    if Controls then
+        Controls = u51.Controls.Binds
+    end
+    local OffHandUse = Controls
+    if OffHandUse then
+        OffHandUse = Controls.OffHandUse
+    end
+    if not OffHandUse then
+        if v2 == "Gamepad" then
+            return "[RB]"
+        end
+        return "[F]"
+    end
+    if v2 ~= "Gamepad" then
+        local Keyboard = OffHandUse.Keyboard
+        if Keyboard then
+            return "[" .. Keyboard.Name .. "]"
+        end
+        return "[F]"
+    end
+    if UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonA) ~= "ButtonCross" then
+        v1 = "xbox"
+    else
+        v1 = "ps"
+    end
+    local v3 = u61[v1]
+    Gamepad = OffHandUse.Gamepad
+    if not Gamepad or not v3 then
+        if v1 == "ps" then
+            return "[R1]"
+        end
+        return "[RB]"
+    end
+    local Name = v3[Gamepad]
+    if not Name then
+        Name = Gamepad.Name
+    end
+    return "[" .. Name .. "]"
+end
+local v5 = Fusion.scoped(Fusion)
+local u104 = v5:Value(1)
+local u108 = v5:Value(false)
+local u112 = v5:Value(false)
+local u116 = v5:Value(0)
+local u120 = v5:Value(false)
+local u124 = v5:Value(1)
+local u128 = v5:Value("side")
+local u132 = v5:Value(false)
+local u136 = v5:Value(false)
+local u140 = v5:Value(false)
+local u144 = v5:Value(0)
+local u148 = v5:Value(0)
+local u152 = v5:Value(true)
+local u156 = v5:Value(nil)
+local u163 = v5:Value(Vector2.new(0, 0))
+local u170 = v5:Value(Vector2.new(0, 0))
+local u174 = v5:Value("rbxassetid://18494319766")
+local u178 = v5:Value(0)
+local u182 = v5:Value(0)
+local u186 = v5:Value(1)
+local u191 = v5:Value((getOffHandKeyLabel()))
+local u192 = {Focus = "rbxassetid://18494319766", AmmoBox = "rbxassetid://18494323513", Medkit = "rbxassetid://18494325361"}
+local LocalPlayer = Players.LocalPlayer
+local u194 = nil
+local u195 = nil
+local u196 = nil
+local u197 = nil
+local u198 = nil
+local u199 = "none"
+local u200 = 0
+local u201 = 0
+local u202 = 0
+local u203 = false
+local u204 = 0
+local u205 = nil
+local u206 = nil
+local v6 = v3({
+    scope = v5,
+    percentage = u104,
+    isReady = u108,
+    isActivating = u112,
+    activationProgress = u116,
+    isActive = u120,
+    durationRemaining = u124,
+    staminaPlacement = u128,
+    isMobile = u132,
+    isGamepad = u136,
+    visible = u140,
+    abilityImage = u174,
+    objectiveListSizeY = u144,
+    ammoHudWidth = u148,
+    staminaFramePosition = u163,
+    staminaFrameSize = u170,
+    ammoCount = u178,
+    customPosition = u156,
+    uiScale = u186,
+    readyLabelText = u191,
+    onActivatePressed = function() -- Line: 162 -- upvalues: u206 (ref)
+        if u206 then
+            u206:UseOffHand()
+        end
+    end,
 })
-local v_u_61 = v60.screenGui
-local v62 = v60.blueGlowImage
-local v_u_63 = v60.mainFrame
-v23:Observer(v_u_36):onChange(function()
-	-- upvalues: (copy) v_u_8, (copy) v_u_36, (copy) v_u_33, (copy) v_u_61
-	v_u_61.Enabled = v_u_8(v_u_36) and v_u_8(v_u_33)
+local screenGui = v6.screenGui
+local blueGlowImage = v6.blueGlowImage
+local mainFrame = v6.mainFrame
+local v7 = v5:Observer(u152)
+v7:onChange(function() -- Line: 175 -- upvalues: peek (val), u152 (val), u140 (val), screenGui (val)
+    local v1 = peek(u152)
+    local v2 = peek(u140)
+    screenGui.Enabled = v1 and v2
 end)
-v23:Observer(v_u_33):onChange(function()
-	-- upvalues: (copy) v_u_8, (copy) v_u_36, (copy) v_u_33, (copy) v_u_61
-	v_u_61.Enabled = v_u_8(v_u_36) and v_u_8(v_u_33)
+v7 = v5:Observer(u140)
+v7:onChange(function() -- Line: 182 -- upvalues: peek (val), u152 (val), u140 (val), screenGui (val)
+    local v1 = peek(u152)
+    local v2 = peek(u140)
+    screenGui.Enabled = v1 and v2
 end)
-local v64 = v_u_8(v_u_36)
-if v64 then
-	v64 = v_u_8(v_u_33)
+v7 = peek(u152)
+if v7 then
+    v7 = peek(u140)
 end
-v_u_61.Enabled = v64
-local v_u_65 = Instance.new("Sound")
-v_u_65.Name = "AbilityReady"
-v_u_65.SoundId = "rbxassetid://9039999622"
-v_u_65.Parent = v_u_61
-local v66 = TweenInfo.new(0.01, Enum.EasingStyle.Linear)
-local v67 = TweenInfo.new(0.4, Enum.EasingStyle.Linear)
-local v_u_68 = v3:Create(v62, v66, {
-	["ImageTransparency"] = 0
-})
-local v_u_69 = v3:Create(v62, v67, {
-	["ImageTransparency"] = 1
-})
-v_u_68.Completed:Connect(function()
-	-- upvalues: (copy) v_u_69
-	v_u_69:Play()
+screenGui.Enabled = v7
+local Sound = Instance.new("Sound")
+Sound.Name = "AbilityReady"
+Sound.SoundId = "rbxassetid://9039999622"
+Sound.Parent = screenGui
+local v8 = TweenInfo.new(0.01, Enum.EasingStyle.Linear)
+local v9 = TweenInfo.new(0.4, Enum.EasingStyle.Linear)
+local u258 = TweenService:Create(blueGlowImage, v8, {ImageTransparency = 0})
+local u264 = TweenService:Create(blueGlowImage, v9, {ImageTransparency = 1})
+u258.Completed:Connect(function() -- Line: 203 -- upvalues: u264 (val)
+    u264:Play()
 end)
-local function v_u_71() -- name: switchToFocusDisplay
-	-- upvalues: (ref) v_u_47, (copy) v_u_33, (ref) v_u_52, (copy) v_u_40, (ref) v_u_56, (ref) v_u_48, (copy) v_u_28, (copy) v_u_26, (copy) v_u_29, (copy) v_u_41
-	if v_u_47 then
-		v_u_52 = "focus"
-		v_u_40:set("rbxassetid://18494319766")
-		v_u_33:set(true)
-		if v_u_56 then
-			if v_u_48 and v_u_48:IsFullyActivated() then
-				v_u_28:set(true)
-				v_u_26:set(false)
-				local v70 = (v_u_48:GetRemainingTime() or 0) / (v_u_48:GetDuration() or 19)
-				v_u_29:set((math.clamp(v70, 0, 1)))
-			end
-			v_u_56 = false
-		end
-		v_u_41:set(0)
-	else
-		v_u_33:set(false)
-		v_u_52 = "none"
-	end
+local function flashWheel() -- Line: 207 -- upvalues: u258 (val)
+    u258:Play()
 end
-local function v_u_74(p72) -- name: switchToTwoHandedDisplay
-	-- upvalues: (ref) v_u_47, (copy) v_u_71, (copy) v_u_33, (ref) v_u_52, (copy) v_u_8, (copy) v_u_28, (ref) v_u_56, (ref) v_u_49, (ref) v_u_50, (copy) v_u_26, (copy) v_u_40, (copy) v_u_45, (copy) v_u_24, (copy) v_u_41, (copy) v_u_29
-	if p72 then
-		if v_u_52 == "focus" and v_u_8(v_u_28) then
-			v_u_56 = true
-		end
-		v_u_49 = p72
-		v_u_50 = p72.Config
-		v_u_52 = "twohanded"
-		v_u_28:set(false)
-		v_u_26:set(false)
-		v_u_40:set(v_u_45[p72.Name or "AmmoBox"] or "rbxassetid://18494323513")
-		v_u_33:set(true)
-		local v73 = p72.Ammo or 0
-		v_u_24:set(v73 / (p72.Config.Ammo or 3))
-		v_u_41:set(v73)
-		v_u_29:set(1)
-		return
-	elseif v_u_47 then
-		v_u_71()
-	else
-		v_u_33:set(false)
-		v_u_52 = "none"
-	end
+local function switchToFocusDisplay() -- Line: 214 -- upvalues: u194 (ref), u140 (val), u199 (ref), u174 (val), u203 (ref), u195 (ref), u120 (val), u112 (val), u124 (val), u178 (val)
+    if not u194 then
+        u140:set(false)
+        u199 = "none"
+        return
+    end
+    u199 = "focus"
+    u174:set("rbxassetid://18494319766")
+    u140:set(true)
+    if u203 then
+        if u195 and u195:IsFullyActivated() then
+            u120:set(true)
+            u112:set(false)
+            local v1 = u195:GetRemainingTime() or 0
+            local v2 = math.clamp(v1 / (u195:GetDuration() or 19), 0, 1)
+            u124:set(v2)
+        end
+        u203 = false
+    end
+    u178:set(0)
 end
-local function v_u_80() -- name: updateAbilityState
-	-- upvalues: (ref) v_u_52, (ref) v_u_49, (ref) v_u_47, (copy) v_u_33, (copy) v_u_24, (copy) v_u_41, (copy) v_u_8, (copy) v_u_42, (copy) v_u_25, (copy) v_u_26, (copy) v_u_28, (copy) v_u_68, (copy) v_u_65
-	local v75
-	if v_u_52 == "twohanded" then
-		v75 = v_u_49
-	else
-		v75 = v_u_47
-	end
-	if v75 then
-		local v76 = v75.Ammo or 0
-		local v77 = v76 > 0
-		if v_u_52 == "twohanded" then
-			v_u_24:set(v76 / (v75.Config.Ammo or 3))
-			v_u_41:set(v76)
-		else
-			if v77 then
-				v_u_24:set(1)
-			else
-				v_u_24:set(v_u_8(v_u_42))
-			end
-			v_u_41:set(0)
-		end
-		local v78 = v_u_8(v_u_25)
-		local v79 = v77 and not v_u_8(v_u_26)
-		if v79 then
-			v79 = not v_u_8(v_u_28)
-		end
-		v_u_25:set(v79)
-		if v79 and (not v78 and v77) then
-			v_u_68:Play()
-			v_u_65:Play()
-		end
-	else
-		v_u_33:set(false)
-	end
+local function switchToTwoHandedDisplay(p1) -- Line: 246 -- upvalues: u194 (ref), switchToFocusDisplay (val), u140 (val), u199 (ref), peek (val), u120 (val), u203 (ref), u196 (ref), u197 (ref), u112 (val), u174 (val), u192 (val), u104 (val), u178 (val), u124 (val)
+    if not p1 then
+        if u194 then
+            switchToFocusDisplay()
+            return
+        end
+        u140:set(false)
+        u199 = "none"
+        return
+    end
+    if u199 == "focus" and peek(u120) then
+        u203 = true
+    end
+    u196 = p1
+    u197 = p1.Config
+    u199 = "twohanded"
+    u120:set(false)
+    u112:set(false)
+    u174:set(u192[p1.Name or "AmmoBox"] or "rbxassetid://18494323513")
+    u140:set(true)
+    local v1 = p1.Ammo or 0
+    u104:set(v1 / (p1.Config.Ammo or 3))
+    u178:set(v1)
+    u124:set(1)
 end
-local function v_u_84() -- name: updateMobilePlacement
-	-- upvalues: (copy) v_u_10, (copy) v_u_31, (copy) v_u_32, (ref) v_u_58, (copy) v_u_46, (copy) v_u_35, (copy) v_u_44, (copy) v_u_22
-	local v81 = v_u_10.getInputMethod()
-	if v81 == "Touch" then
-		v_u_31:set(true)
-		v_u_32:set(false)
-		local v82 = not v_u_58 and v_u_46:FindFirstChild("PlayerGui")
-		if v82 then
-			v_u_58 = v82:FindFirstChild("AmmoUI")
-		end
-		local v83 = v_u_58 and v_u_58:FindFirstChild("Ammo")
-		if v83 then
-			v_u_35:set(v83.AbsoluteSize.X)
-		end
-	elseif v81 == "Gamepad" then
-		v_u_31:set(false)
-		v_u_32:set(true)
-	else
-		v_u_31:set(false)
-		v_u_32:set(false)
-	end
-	v_u_44:set((v_u_22()))
+local function updateAbilityState() -- Line: 286 -- upvalues: u199 (ref), u196 (ref), u194 (ref), u140 (val), u104 (val), u178 (val), peek (val), u182 (val), u108 (val), u112 (val), u120 (val), u258 (val), Sound (val)
+    local v1
+    if u199 ~= "twohanded" then
+        v1 = u194
+    else
+        v1 = u196
+    end
+    if not v1 then
+        u140:set(false)
+        return
+    end
+    local v2 = v1.Ammo or 0
+    local v3 = 0 < v2
+    if u199 ~= "twohanded" then
+        if not v3 then
+            u104:set(peek(u182))
+        else
+            u104:set(1)
+        end
+        u178:set(0)
+    else
+        u104:set(v2 / (v1.Config.Ammo or 3))
+        u178:set(v2)
+    end
+    local v4 = peek(u108)
+    local v5 = v3
+    if v5 then
+        v5 = not peek(u112)
+        if v5 then
+            v5 = not peek(u120)
+        end
+    end
+    u108:set(v5)
+    if v5 and not v4 and v3 then
+        u258:Play()
+        Sound:Play()
+    end
 end
-local v_u_91 = {
-	["IsShowing"] = true,
-	["GetMainFrame"] = function(_) -- name: GetMainFrame
-		-- upvalues: (copy) v_u_63
-		return v_u_63
-	end,
-	["SetCustomPosition"] = function(_, p85) -- name: SetCustomPosition
-		-- upvalues: (copy) v_u_37
-		v_u_37:set(p85)
-	end,
-	["SetUIScale"] = function(_, p86) -- name: SetUIScale
-		-- upvalues: (copy) v_u_43
-		v_u_43:set(p86)
-	end,
-	["Show"] = function(_) -- name: Show
-		-- upvalues: (copy) v_u_36, (copy) v_u_91
-		v_u_36:set(true)
-		v_u_91.IsShowing = true
-	end,
-	["Hide"] = function(_) -- name: Hide
-		-- upvalues: (copy) v_u_36, (copy) v_u_91
-		v_u_36:set(false)
-		v_u_91.IsShowing = false
-	end,
-	["SetStaminaPlacement"] = function(_, p87) -- name: SetStaminaPlacement
-		-- upvalues: (copy) v_u_30
-		v_u_30:set(p87)
-	end,
-	["SetFocusAbility"] = function(_, p88) -- name: SetFocusAbility
-		-- upvalues: (ref) v_u_47, (ref) v_u_48, (ref) v_u_52, (copy) v_u_71, (copy) v_u_80, (copy) v_u_33, (copy) v_u_26, (copy) v_u_28
-		v_u_47 = p88
-		if p88 then
-			v_u_48 = p88.Config
-			if v_u_52 ~= "twohanded" then
-				v_u_71()
-				v_u_80()
-				return
-			end
-		else
-			v_u_48 = nil
-			if v_u_52 == "focus" then
-				v_u_33:set(false)
-				v_u_52 = "none"
-				v_u_26:set(false)
-				v_u_28:set(false)
-			end
-		end
-	end,
-	["SetTwoHandedAbility"] = function(_, p89) -- name: SetTwoHandedAbility
-		-- upvalues: (copy) v_u_74, (copy) v_u_80, (ref) v_u_49, (ref) v_u_50, (ref) v_u_47, (copy) v_u_71, (ref) v_u_51, (copy) v_u_33, (ref) v_u_52, (copy) v_u_26, (copy) v_u_28
-		if p89 and (p89.Config and p89.Config.IsTwoHandedAbility) then
-			v_u_74(p89)
-			v_u_80()
-			return
-		else
-			v_u_49 = nil
-			v_u_50 = nil
-			if v_u_47 then
-				v_u_71()
-				v_u_80()
-				return
-			elseif v_u_51 and (v_u_51.Ammo and v_u_51.Ammo > 0) then
-				v_u_74(v_u_51)
-				v_u_80()
-			else
-				v_u_33:set(false)
-				v_u_52 = "none"
-				v_u_26:set(false)
-				v_u_28:set(false)
-			end
-		end
-	end,
-	["UpdateAmmo"] = function(_) -- name: UpdateAmmo
-		-- upvalues: (copy) v_u_80
-		v_u_80()
-	end,
-	["StartActivating"] = function(_) -- name: StartActivating
-		-- upvalues: (copy) v_u_26, (copy) v_u_27, (ref) v_u_52, (ref) v_u_55, (ref) v_u_53
-		v_u_26:set(true)
-		v_u_27:set(0)
-		if v_u_52 == "twohanded" then
-			v_u_55 = os.clock()
-		else
-			v_u_53 = os.clock()
-		end
-	end,
-	["CancelActivating"] = function(_) -- name: CancelActivating
-		-- upvalues: (copy) v_u_26, (copy) v_u_27, (copy) v_u_80
-		v_u_26:set(false)
-		v_u_27:set(0)
-		v_u_80()
-	end,
-	["SetActive"] = function(_, p90) -- name: SetActive
-		-- upvalues: (copy) v_u_26, (copy) v_u_28, (copy) v_u_29, (ref) v_u_54, (ref) v_u_56, (ref) v_u_57, (ref) v_u_59, (ref) v_u_52, (copy) v_u_80
-		if p90 then
-			v_u_26:set(false)
-			v_u_28:set(true)
-			v_u_29:set(1)
-			v_u_54 = os.clock()
-			v_u_56 = false
-			v_u_57 = 0
-			if v_u_59 and v_u_52 == "focus" then
-				v_u_59:OffHandItemComplete()
-				return
-			end
-		else
-			v_u_28:set(false)
-			v_u_29:set(0)
-			v_u_56 = false
-			v_u_57 = 0
-			v_u_80()
-			if v_u_59 and v_u_52 == "focus" then
-				v_u_59:OffHandItemComplete()
-			end
-		end
-	end
+local function updateFocusState() -- Line: 327 -- upvalues: u199 (ref), updateAbilityState (val)
+    if u199 ~= "focus" then
+        return
+    end
+    updateAbilityState()
+end
+local function updateTwoHandedState() -- Line: 332 -- upvalues: u199 (ref), updateAbilityState (val)
+    if u199 ~= "twohanded" then
+        return
+    end
+    updateAbilityState()
+end
+local function updateMobilePlacement() -- Line: 337 -- upvalues: u48 (val), u132 (val), u136 (val), u205 (ref), LocalPlayer (val), u148 (val), u191 (val), getOffHandKeyLabel (val)
+    local v1 = u48.getInputMethod()
+    if v1 == "Touch" then
+        u132:set(true)
+        u136:set(false)
+        if not u205 then
+            local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+            if PlayerGui then
+                u205 = PlayerGui:FindFirstChild("AmmoUI")
+            end
+        end
+        if u205 then
+            local Ammo = u205:FindFirstChild("Ammo")
+            if Ammo then
+                u148:set(Ammo.AbsoluteSize.X)
+            end
+        end
+    elseif v1 ~= "Gamepad" then
+        u132:set(false)
+        u136:set(false)
+    else
+        u132:set(false)
+        u136:set(true)
+    end
+    u191:set((getOffHandKeyLabel()))
+end
+local u302 = {
+    IsShowing = true,
+    GetMainFrame = function(p1) -- Line: 369 -- upvalues: mainFrame (val)
+        return mainFrame
+    end,
+    SetCustomPosition = function(p1, p2) -- Line: 373 -- upvalues: u156 (val)
+        u156:set(p2)
+    end,
+    SetUIScale = function(p1, p2) -- Line: 377 -- upvalues: u186 (val)
+        u186:set(p2)
+    end,
 }
-local v_u_92 = nil
-v23:Observer(v_u_26):onChange(function()
-	-- upvalues: (copy) v_u_8, (copy) v_u_26, (copy) v_u_28, (ref) v_u_92, (copy) v_u_4, (ref) v_u_52, (ref) v_u_55, (ref) v_u_53, (copy) v_u_27, (ref) v_u_48, (copy) v_u_29, (copy) v_u_91
-	if v_u_8(v_u_26) or v_u_8(v_u_28) then
-		if not v_u_92 then
-			v_u_92 = v_u_4.RenderStepped:Connect(function()
-				-- upvalues: (ref) v_u_8, (ref) v_u_26, (ref) v_u_52, (ref) v_u_55, (ref) v_u_53, (ref) v_u_27, (ref) v_u_28, (ref) v_u_48, (ref) v_u_29, (ref) v_u_91
-				if v_u_8(v_u_26) then
-					local v93, v94
-					if v_u_52 == "twohanded" then
-						v93 = os.clock() - v_u_55
-						v94 = 1.5
-					else
-						v93 = os.clock() - v_u_53
-						v94 = 1
-					end
-					local v95 = v93 / v94
-					v_u_27:set((math.clamp(v95, 0, 1)))
-				end
-				if v_u_8(v_u_28) and (v_u_52 == "focus" and v_u_48) then
-					local v96 = (v_u_48:GetRemainingTime() or 0) / (v_u_48:GetDuration() or 19)
-					local v97 = math.clamp(v96, 0, 1)
-					v_u_29:set(v97)
-					if v97 <= 0 then
-						v_u_91:SetActive(false)
-					end
-				end
-			end)
-		end
-	else
-		if not v_u_8(v_u_26) and (not v_u_8(v_u_28) and v_u_92) then
-			v_u_92:Disconnect()
-			v_u_92 = nil
-		end
-		return
-	end
-end)
-v23:Observer(v_u_28):onChange(function()
-	-- upvalues: (copy) v_u_8, (copy) v_u_26, (copy) v_u_28, (ref) v_u_92, (copy) v_u_4, (ref) v_u_52, (ref) v_u_55, (ref) v_u_53, (copy) v_u_27, (ref) v_u_48, (copy) v_u_29, (copy) v_u_91
-	if v_u_8(v_u_26) or v_u_8(v_u_28) then
-		if not v_u_92 then
-			v_u_92 = v_u_4.RenderStepped:Connect(function()
-				-- upvalues: (ref) v_u_8, (ref) v_u_26, (ref) v_u_52, (ref) v_u_55, (ref) v_u_53, (ref) v_u_27, (ref) v_u_28, (ref) v_u_48, (ref) v_u_29, (ref) v_u_91
-				if v_u_8(v_u_26) then
-					local v98, v99
-					if v_u_52 == "twohanded" then
-						v98 = os.clock() - v_u_55
-						v99 = 1.5
-					else
-						v98 = os.clock() - v_u_53
-						v99 = 1
-					end
-					local v100 = v98 / v99
-					v_u_27:set((math.clamp(v100, 0, 1)))
-				end
-				if v_u_8(v_u_28) and (v_u_52 == "focus" and v_u_48) then
-					local v101 = (v_u_48:GetRemainingTime() or 0) / (v_u_48:GetDuration() or 19)
-					local v102 = math.clamp(v101, 0, 1)
-					v_u_29:set(v102)
-					if v102 <= 0 then
-						v_u_91:SetActive(false)
-					end
-				end
-			end)
-		end
-	else
-		if not v_u_8(v_u_26) and (not v_u_8(v_u_28) and v_u_92) then
-			v_u_92:Disconnect()
-			v_u_92 = nil
-		end
-		return
-	end
-end)
-v_u_10.InputMethodChanged:Connect(function(_)
-	-- upvalues: (copy) v_u_84
-	v_u_84()
-end)
-v_u_11.SettingsChanged:Connect(function(p103)
-	-- upvalues: (copy) v_u_44, (copy) v_u_22
-	if p103 and (p103[1] == "Controls" and (p103[2] == "Binds" and p103[3] == "OffHandUse")) then
-		v_u_44:set((v_u_22()))
-	end
-end)
-v13.PlacementChanged:Connect(function(p104)
-	-- upvalues: (copy) v_u_30
-	v_u_30:set(p104)
-end)
-v_u_30:set(v13:GetPlacement())
-local v_u_105 = v13:GetMainFrame()
-local function v106() -- name: updateStaminaFrameState
-	-- upvalues: (copy) v_u_38, (copy) v_u_105, (copy) v_u_39
-	v_u_38:set(v_u_105.AbsolutePosition)
-	v_u_39:set(v_u_105.AbsoluteSize)
+function u302.Show(p1) -- Line: 381 -- upvalues: u152 (val), u302 (val)
+    u152:set(true)
+    u302.IsShowing = true
 end
-v_u_105:GetPropertyChangedSignal("AbsolutePosition"):Connect(v106)
-v_u_105:GetPropertyChangedSignal("AbsoluteSize"):Connect(v106)
-v_u_38:set(v_u_105.AbsolutePosition)
-v_u_39:set(v_u_105.AbsoluteSize)
-local v_u_107 = v12:GetGuiList()
-v_u_107:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-	-- upvalues: (copy) v_u_8, (copy) v_u_31, (copy) v_u_34, (copy) v_u_107
-	if v_u_8(v_u_31) then
-		v_u_34:set(v_u_107.AbsoluteSize.Y)
-	end
+function u302.Hide(p1) -- Line: 386 -- upvalues: u152 (val), u302 (val)
+    u152:set(false)
+    u302.IsShowing = false
+end
+function u302.SetStaminaPlacement(p1, p2) -- Line: 391 -- upvalues: u128 (val)
+    u128:set(p2)
+end
+function u302.SetFocusAbility(p1, p2) -- Line: 396 -- upvalues: u194 (ref), u195 (ref), u199 (ref), switchToFocusDisplay (val), updateAbilityState (val), u140 (val), u112 (val), u120 (val)
+    u194 = p2
+    if p2 then
+        u195 = p2.Config
+        if u199 == "twohanded" then
+            return
+        end
+        switchToFocusDisplay()
+        updateAbilityState()
+        return
+    end
+    u195 = nil
+    if u199 == "focus" then
+        u140:set(false)
+        u199 = "none"
+        u112:set(false)
+        u120:set(false)
+    end
+end
+function u302.SetTwoHandedAbility(p1, p2) -- Line: 418 -- upvalues: switchToTwoHandedDisplay (val), updateAbilityState (val), u196 (ref), u197 (ref), u194 (ref), switchToFocusDisplay (val), u198 (ref), u140 (val), u199 (ref), u112 (val), u120 (val)
+    if not p2 or not p2.Config then
+        u196 = nil
+        u197 = nil
+        if u194 then
+            switchToFocusDisplay()
+            updateAbilityState()
+            return
+        end
+        if u198 then
+            if not u198.Ammo then
+                u140:set(false)
+                u199 = "none"
+                u112:set(false)
+                u120:set(false)
+                return
+            end
+            if 0 < u198.Ammo then
+                switchToTwoHandedDisplay(u198)
+                updateAbilityState()
+                return
+            end
+            u140:set(false)
+            u199 = "none"
+            u112:set(false)
+            u120:set(false)
+            return
+        end
+        u140:set(false)
+        u199 = "none"
+        u112:set(false)
+        u120:set(false)
+        return
+    end
+    if p2.Config.IsTwoHandedAbility then
+        switchToTwoHandedDisplay(p2)
+        updateAbilityState()
+        return
+    end
+    u196 = nil
+    u197 = nil
+    if u194 then
+        switchToFocusDisplay()
+        updateAbilityState()
+        return
+    end
+    if not u198 or not u198.Ammo then
+        u140:set(false)
+        u199 = "none"
+        u112:set(false)
+        u120:set(false)
+        return
+    end
+    if 0 < u198.Ammo then
+        switchToTwoHandedDisplay(u198)
+        updateAbilityState()
+        return
+    end
+    u140:set(false)
+    u199 = "none"
+    u112:set(false)
+    u120:set(false)
+end
+function u302.UpdateAmmo(p1) -- Line: 445 -- upvalues: updateAbilityState (val)
+    updateAbilityState()
+end
+function u302.StartActivating(p1) -- Line: 450 -- upvalues: u112 (val), u116 (val), u199 (ref), u202 (ref), u200 (ref)
+    u112:set(true)
+    u116:set(0)
+    if u199 == "twohanded" then
+        u202 = os.clock()
+        return
+    end
+    u200 = os.clock()
+end
+function u302.CancelActivating(p1) -- Line: 461 -- upvalues: u112 (val), u116 (val), updateAbilityState (val)
+    u112:set(false)
+    u116:set(0)
+    updateAbilityState()
+end
+function u302.SetActive(p1, p2) -- Line: 468 -- upvalues: u112 (val), u120 (val), u124 (val), u201 (ref), u203 (ref), u204 (ref), u206 (ref), u199 (ref), updateAbilityState (val)
+    if not p2 then
+        u120:set(false)
+        u124:set(0)
+        u203 = false
+        u204 = 0
+        updateAbilityState()
+        if u206 and u199 == "focus" then
+            u206:OffHandItemComplete()
+        end
+        return
+    end
+    u112:set(false)
+    u120:set(true)
+    u124:set(1)
+    u201 = os.clock()
+    u203 = false
+    u204 = 0
+    if not u206 or u199 ~= "focus" then
+        return
+    end
+    u206:OffHandItemComplete()
+end
+local u328 = nil
+local function startRenderLoop() -- Line: 499 -- upvalues: u328 (ref), RunService (val), peek (val), u112 (val), u199 (ref), u202 (ref), u200 (ref), u116 (val), u120 (val), u195 (ref), u124 (val), u302 (val)
+    if u328 then
+        return
+    end
+    u328 = RunService.RenderStepped:Connect(function() -- Line: 502 -- upvalues: peek (upval), u112 (upval), u199 (upval), u202 (upval), u200 (upval), u116 (upval), u120 (upval), u195 (upval), u124 (upval), u302 (upval)
+        local v1, v2
+        if peek(u112) then
+            local v3
+            if u199 ~= "twohanded" then
+                v1 = os.clock() - u200
+                v3 = 1
+            else
+                v1 = os.clock() - u202
+                v3 = 1.5
+            end
+            v2 = math.clamp(v1 / v3, 0, 1)
+            u116:set(v2)
+        end
+        if peek(u120) and u199 == "focus" and u195 then
+            v1 = u195:GetRemainingTime() or 0
+            v2 = math.clamp(v1 / (u195:GetDuration() or 19), 0, 1)
+            u124:set(v2)
+            if v2 <= 0 then
+                u302:SetActive(false)
+            end
+        end
+    end)
+end
+local function stopRenderLoop() -- Line: 533 -- upvalues: u328 (ref)
+    if u328 then
+        u328:Disconnect()
+        u328 = nil
+    end
+end
+local v10 = v5:Observer(u112)
+v10:onChange(function() -- Line: 541 -- upvalues: peek (val), u112 (val), u120 (val), u328 (ref), RunService (val), u199 (ref), u202 (ref), u200 (ref), u116 (val), u195 (ref), u124 (val), u302 (val)
+    if peek(u112) or peek(u120) then
+        if u328 then
+            return
+        end
+        u328 = RunService.RenderStepped:Connect(function() -- Line: 502 -- upvalues: peek (upval), u112 (upval), u199 (upval), u202 (upval), u200 (upval), u116 (upval), u120 (upval), u195 (upval), u124 (upval), u302 (upval)
+            local v1, v2
+            if peek(u112) then
+                local v3
+                if u199 ~= "twohanded" then
+                    v1 = os.clock() - u200
+                    v3 = 1
+                else
+                    v1 = os.clock() - u202
+                    v3 = 1.5
+                end
+                v2 = math.clamp(v1 / v3, 0, 1)
+                u116:set(v2)
+            end
+            if peek(u120) and u199 == "focus" and u195 then
+                v1 = u195:GetRemainingTime() or 0
+                v2 = math.clamp(v1 / (u195:GetDuration() or 19), 0, 1)
+                u124:set(v2)
+                if v2 <= 0 then
+                    u302:SetActive(false)
+                end
+            end
+        end)
+        return
+    end
+    if not (peek(u112)) and not (peek(u120)) and u328 then
+        u328:Disconnect()
+        u328 = nil
+    end
 end)
-task.spawn(function()
-	-- upvalues: (ref) v_u_59, (ref) v_u_51, (copy) v_u_91, (ref) v_u_52, (copy) v_u_74, (copy) v_u_80, (copy) v_u_33, (copy) v_u_1, (copy) v_u_42
-	v_u_59 = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.WeaponController)
-	v_u_59.InventoryChanged:Connect(function(p108)
-		-- upvalues: (ref) v_u_51, (ref) v_u_91, (ref) v_u_52, (ref) v_u_74, (ref) v_u_80, (ref) v_u_33
-		local v109 = nil
-		local v110 = nil
-		for _, v111 in p108 do
-			if v111.Config then
-				if v111.Name == "Focus" then
-					v110 = v111
-				elseif v111.Config.IsTwoHandedAbility and (v111.Ammo and (v111.Ammo > 0 and not v109)) then
-					v109 = v111
-				end
-			end
-		end
-		v_u_51 = v109
-		v_u_91:SetFocusAbility(v110)
-		if v110 or (not v109 or v_u_52 == "twohanded") then
-			if not v110 and (not v109 and v_u_52 ~= "twohanded") then
-				v_u_33:set(false)
-				v_u_52 = "none"
-			end
-		else
-			v_u_74(v109)
-			v_u_80()
-		end
-	end)
-	v_u_59.WeaponEquipped:Connect(function(p112)
-		-- upvalues: (ref) v_u_91, (ref) v_u_52
-		if p112 and (p112.Config and p112.Config.IsTwoHandedAbility) then
-			v_u_91:SetTwoHandedAbility(p112)
-		elseif v_u_52 == "twohanded" then
-			v_u_91:SetTwoHandedAbility(nil)
-		end
-	end)
-	v_u_59.WeaponUnequipped:Connect(function()
-		-- upvalues: (ref) v_u_52, (ref) v_u_91
-		if v_u_52 == "twohanded" then
-			v_u_91:SetTwoHandedAbility(nil)
-		end
-	end)
-	v_u_59.AmmoChanged:Connect(function()
-		-- upvalues: (ref) v_u_80
-		v_u_80()
-	end)
-	v_u_1.common:WaitForChild("Remotes"):WaitForChild("Net").OnClientEvent:Connect(function(p113, p114)
-		-- upvalues: (ref) v_u_42, (ref) v_u_52, (ref) v_u_80
-		if p113 == "FocusMeter" then
-			v_u_42:set(p114)
-			if v_u_52 == "focus" then
-				v_u_80()
-			end
-		end
-	end)
+v10 = v5:Observer(u120)
+v10:onChange(function() -- Line: 549 -- upvalues: peek (val), u112 (val), u120 (val), u328 (ref), RunService (val), u199 (ref), u202 (ref), u200 (ref), u116 (val), u195 (ref), u124 (val), u302 (val)
+    if peek(u112) or peek(u120) then
+        if u328 then
+            return
+        end
+        u328 = RunService.RenderStepped:Connect(function() -- Line: 502 -- upvalues: peek (upval), u112 (upval), u199 (upval), u202 (upval), u200 (upval), u116 (upval), u120 (upval), u195 (upval), u124 (upval), u302 (upval)
+            local v1, v2
+            if peek(u112) then
+                local v3
+                if u199 ~= "twohanded" then
+                    v1 = os.clock() - u200
+                    v3 = 1
+                else
+                    v1 = os.clock() - u202
+                    v3 = 1.5
+                end
+                v2 = math.clamp(v1 / v3, 0, 1)
+                u116:set(v2)
+            end
+            if peek(u120) and u199 == "focus" and u195 then
+                v1 = u195:GetRemainingTime() or 0
+                v2 = math.clamp(v1 / (u195:GetDuration() or 19), 0, 1)
+                u124:set(v2)
+                if v2 <= 0 then
+                    u302:SetActive(false)
+                end
+            end
+        end)
+        return
+    end
+    if not (peek(u112)) and not (peek(u120)) and u328 then
+        u328:Disconnect()
+        u328 = nil
+    end
 end)
-task.spawn(function()
-	-- upvalues: (copy) v_u_9, (copy) v_u_4, (ref) v_u_52, (copy) v_u_91, (ref) v_u_56, (ref) v_u_57, (ref) v_u_48, (copy) v_u_8, (copy) v_u_28, (ref) v_u_50, (copy) v_u_80
-	local v_u_115 = v_u_9.FocusEnabled
-	local v_u_116 = false
-	local v_u_117 = false
-	v_u_4.Heartbeat:Connect(function()
-		-- upvalues: (ref) v_u_9, (ref) v_u_115, (ref) v_u_52, (ref) v_u_91, (ref) v_u_56, (ref) v_u_57, (ref) v_u_48, (ref) v_u_116, (ref) v_u_8, (ref) v_u_28, (ref) v_u_50, (ref) v_u_117, (ref) v_u_80
-		local v118 = v_u_9.FocusEnabled
-		if v118 ~= v_u_115 then
-			v_u_115 = v118
-			if v_u_52 == "focus" then
-				if v118 then
-					v_u_91:SetActive(true)
-				else
-					v_u_91:SetActive(false)
-				end
-			elseif v_u_52 == "twohanded" and not v118 then
-				v_u_56 = false
-				v_u_57 = 0
-			end
-		end
-		if v_u_48 and v_u_52 == "focus" then
-			local v119 = v_u_48:IsActivating()
-			if v119 ~= v_u_116 then
-				v_u_116 = v119
-				if v119 then
-					v_u_91:StartActivating()
-				elseif not v_u_8(v_u_28) then
-					v_u_91:CancelActivating()
-				end
-			end
-		end
-		if v_u_50 and v_u_52 == "twohanded" then
-			local v120 = v_u_50:IsActivating() or false
-			if v120 ~= v_u_117 then
-				v_u_117 = v120
-				if v120 then
-					v_u_91:StartActivating()
-					return
-				end
-				v_u_91:CancelActivating()
-				v_u_80()
-			end
-		end
-	end)
+u48.InputMethodChanged:Connect(function(p1) -- Line: 558 -- upvalues: updateMobilePlacement (val)
+    updateMobilePlacement()
 end)
-v_u_84()
-task.spawn(function()
-	-- upvalues: (copy) v_u_46, (ref) v_u_58, (copy) v_u_8, (copy) v_u_31, (copy) v_u_35
-	local v121 = v_u_46:WaitForChild("PlayerGui"):WaitForChild("AmmoUI", 10)
-	if v121 then
-		v_u_58 = v121
-		local v_u_122 = v121:FindFirstChild("Ammo")
-		if v_u_122 then
-			if v_u_8(v_u_31) then
-				v_u_35:set(v_u_122.AbsoluteSize.X)
-			end
-			v_u_122:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-				-- upvalues: (ref) v_u_8, (ref) v_u_31, (ref) v_u_35, (copy) v_u_122
-				if v_u_8(v_u_31) then
-					v_u_35:set(v_u_122.AbsoluteSize.X)
-				end
-			end)
-		end
-	end
+u51.SettingsChanged:Connect(function(p1) -- Line: 563 -- upvalues: u191 (val), getOffHandKeyLabel (val)
+    if p1 and p1[1] == "Controls" and p1[2] == "Binds" and p1[3] == "OffHandUse" then
+        u191:set((getOffHandKeyLabel()))
+    end
 end)
-return v_u_91
+v2.PlacementChanged:Connect(function(p1) -- Line: 570 -- upvalues: u128 (val)
+    u128:set(p1)
+end)
+u128:set(v2:GetPlacement())
+local MainFrame = v2:GetMainFrame()
+local function updateStaminaFrameState() -- Line: 579 -- upvalues: u163 (val), MainFrame (val), u170 (val)
+    u163:set(MainFrame.AbsolutePosition)
+    u170:set(MainFrame.AbsoluteSize)
+end
+local PropertyChangedSignal = MainFrame:GetPropertyChangedSignal("AbsolutePosition")
+PropertyChangedSignal:Connect(updateStaminaFrameState)
+local PropertyChangedSignal_2 = MainFrame:GetPropertyChangedSignal("AbsoluteSize")
+PropertyChangedSignal_2:Connect(updateStaminaFrameState)
+u163:set(MainFrame.AbsolutePosition)
+u170:set(MainFrame.AbsoluteSize)
+local GuiList = v1:GetGuiList()
+local PropertyChangedSignal_3 = GuiList:GetPropertyChangedSignal("AbsoluteSize")
+PropertyChangedSignal_3:Connect(function() -- Line: 590 -- upvalues: peek (val), u132 (val), u144 (val), GuiList (val)
+    if peek(u132) then
+        u144:set(GuiList.AbsoluteSize.Y)
+    end
+end)
+task.spawn(function() -- Line: 598 -- upvalues: u206 (ref), u198 (ref), u302 (val), u199 (ref), switchToTwoHandedDisplay (val), updateAbilityState (val), u140 (val), ReplicatedStorage (val), u182 (val)
+    u206 = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.WeaponController)
+    u206.InventoryChanged:Connect(function(p1) -- Line: 603 -- upvalues: u198 (upval), u302 (upval), u199 (upval), switchToTwoHandedDisplay (upval), updateAbilityState (upval), u140 (upval)
+        local v1 = nil
+        local v2 = nil
+        local v3 = p1
+        local v4 = nil
+        local v5 = nil
+        for i, j in v3, v4, v5 do
+            if j.Config then
+                if j.Name == "Focus" then
+                    v1 = j
+                elseif j.Config.IsTwoHandedAbility and j.Ammo and 0 < j.Ammo and not v2 then
+                    v2 = j
+                end
+            end
+        end
+        u198 = v2
+        u302:SetFocusAbility(v1)
+        if v1 or not v2 then
+            if not v1 and not v2 and u199 ~= "twohanded" then
+                u140:set(false)
+                u199 = "none"
+            end
+            return
+        end
+        if u199 ~= "twohanded" then
+            switchToTwoHandedDisplay(v2)
+            updateAbilityState()
+            return
+        end
+        if not v1 and not v2 and u199 ~= "twohanded" then
+            u140:set(false)
+            u199 = "none"
+        end
+    end)
+    u206.WeaponEquipped:Connect(function(p1) -- Line: 636 -- upvalues: u302 (upval), u199 (upval)
+        if not p1 or not p1.Config then
+            if u199 == "twohanded" then
+                u302:SetTwoHandedAbility(nil)
+            end
+            return
+        end
+        if p1.Config.IsTwoHandedAbility then
+            u302:SetTwoHandedAbility(p1)
+            return
+        end
+        if u199 == "twohanded" then
+            u302:SetTwoHandedAbility(nil)
+        end
+    end)
+    u206.WeaponUnequipped:Connect(function() -- Line: 647 -- upvalues: u199 (upval), u302 (upval)
+        if u199 == "twohanded" then
+            u302:SetTwoHandedAbility(nil)
+        end
+    end)
+    u206.AmmoChanged:Connect(function() -- Line: 654 -- upvalues: updateAbilityState (upval)
+        updateAbilityState()
+    end)
+    local Remotes = ReplicatedStorage.common:WaitForChild("Remotes")
+    Remotes:WaitForChild("Net").OnClientEvent:Connect(function(p1, p2) -- Line: 660 -- upvalues: u182 (upval), u199 (upval), updateAbilityState (upval)
+        if p1 == "FocusMeter" then
+            u182:set(p2)
+            if u199 == "focus" then
+                updateAbilityState()
+            end
+        end
+    end)
+end)
+task.spawn(function() -- Line: 671 -- upvalues: LocalPlayerController (val), RunService (val), u199 (ref), u302 (val), u203 (ref), u204 (ref), u195 (ref), peek (val), u120 (val), u197 (ref), updateAbilityState (val)
+    local FocusEnabled = LocalPlayerController.FocusEnabled
+    local u2 = false
+    local u3 = false
+    RunService.Heartbeat:Connect(function() -- Line: 676 -- upvalues: LocalPlayerController (upval), FocusEnabled (ref), u199 (upval), u302 (upval), u203 (upval), u204 (upval), u195 (upval), u2 (ref), peek (upval), u120 (upval), u197 (upval), u3 (ref), updateAbilityState (upval)
+        local v1
+        local FocusEnabled_2 = LocalPlayerController.FocusEnabled
+        if FocusEnabled_2 ~= FocusEnabled then
+            FocusEnabled = FocusEnabled_2
+            if u199 ~= "focus" then
+                if u199 == "twohanded" and not FocusEnabled_2 then
+                    u203 = false
+                    u204 = 0
+                end
+            elseif not FocusEnabled_2 then
+                u302:SetActive(false)
+            else
+                u302:SetActive(true)
+            end
+        end
+        if u195 and u199 == "focus" then
+            v1 = u195:IsActivating()
+            if v1 ~= u2 then
+                u2 = v1
+                if v1 then
+                    u302:StartActivating()
+                elseif not (peek(u120)) then
+                    u302:CancelActivating()
+                end
+            end
+        end
+        if not u197 or u199 ~= "twohanded" then
+            return
+        end
+        v1 = u197:IsActivating() or false
+        if v1 == u3 then
+            return
+        end
+        u3 = v1
+        if v1 then
+            u302:StartActivating()
+            return
+        end
+        u302:CancelActivating()
+        updateAbilityState()
+    end)
+end)
+updateMobilePlacement()
+task.spawn(function() -- Line: 747 -- upvalues: LocalPlayer (val), u205 (ref), peek (val), u132 (val), u148 (val)
+    local AmmoUI = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("AmmoUI", 10)
+    if AmmoUI then
+        u205 = AmmoUI
+        local Ammo = AmmoUI:FindFirstChild("Ammo")
+        if Ammo then
+            if peek(u132) then
+                u148:set(Ammo.AbsoluteSize.X)
+            end
+            local PropertyChangedSignal = Ammo:GetPropertyChangedSignal("AbsoluteSize")
+            PropertyChangedSignal:Connect(function() -- Line: 759 -- upvalues: peek (upval), u132 (upval), u148 (upval), Ammo (val)
+                if peek(u132) then
+                    u148:set(Ammo.AbsoluteSize.X)
+                end
+            end)
+        end
+    end
+end)
+return u302

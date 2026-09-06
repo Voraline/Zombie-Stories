@@ -1,183 +1,192 @@
-local v_u_1 = game:GetService("Players")
-local v_u_2 = game:GetService("ReplicatedStorage")
-local v_u_3 = game:GetService("RunService")
-local v_u_4 = require("./HandleInvalidPlayer")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local u17 = require("./HandleInvalidPlayer")
 require("../Utilities/Output")
-local v_u_5 = require("../../TableKit")
+local u23 = require("../../TableKit")
 require("../Types")
-local v_u_6 = require("../Utilities/RecycledSpawn")
-local v_u_7 = {}
-local v_u_8 = {}
-local v_u_9 = {}
-local v_u_10 = {}
-local v_u_11 = {}
-local v_u_12 = {}
-local function v_u_14(p13) -- name: playerAdded
-	-- upvalues: (copy) v_u_7, (copy) v_u_8, (copy) v_u_9, (copy) v_u_11
-	v_u_7[p13] = true
-	v_u_8[p13] = 0
-	v_u_9[p13] = {}
-	v_u_11[p13] = {}
+local u29 = require("../Utilities/RecycledSpawn")
+local u30 = {}
+local u31 = {}
+local u32 = {}
+local u33 = {}
+local u34 = {}
+local u35 = {}
+local function playerAdded(p1) -- Line: 21 -- upvalues: u30 (val), u31 (val), u32 (val), u34 (val)
+    u30[p1] = true
+    u31[p1] = 0
+    u32[p1] = {}
+    u34[p1] = {}
 end
-return {
-	["start"] = function() -- name: start
-		-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_14, (copy) v_u_7, (copy) v_u_8, (copy) v_u_9, (copy) v_u_11, (ref) v_u_4, (copy) v_u_3, (copy) v_u_10, (copy) v_u_5, (copy) v_u_12, (copy) v_u_6
-		task.spawn(function()
-			-- upvalues: (ref) v_u_2, (ref) v_u_1, (ref) v_u_14, (ref) v_u_7, (ref) v_u_8, (ref) v_u_9, (ref) v_u_11, (ref) v_u_4, (ref) v_u_3, (ref) v_u_10, (ref) v_u_5, (ref) v_u_12, (ref) v_u_6
-			debug.setmemorycategory("BridgeNet2")
-			local v15 = Instance.new("RemoteEvent")
-			local v_u_16 = Instance.new("RemoteEvent")
-			v15.Name = "metaRemoteEvent"
-			v_u_16.Name = "dataRemoteEvent"
-			v15.Parent = v_u_2
-			v_u_16.Parent = v_u_2
-			v_u_1.PlayerAdded:Connect(v_u_14)
-			v_u_1.PlayerRemoving:Connect(function(p17)
-				-- upvalues: (ref) v_u_7, (ref) v_u_8, (ref) v_u_9, (ref) v_u_11
-				v_u_7[p17] = nil
-				v_u_8[p17] = nil
-				v_u_9[p17] = nil
-				v_u_11[p17] = nil
-			end)
-			v15.OnServerEvent:Connect(function(p18, p19)
-				-- upvalues: (ref) v_u_8, (copy) v_u_16, (ref) v_u_9
-				if p19 == "1" then
-					v_u_8[p18] = nil
-					v_u_16:FireClient(p18, v_u_9[p18])
-					v_u_9[p18] = nil
-				end
-			end)
-			v_u_16.OnServerEvent:Connect(function(p20, p21)
-				-- upvalues: (ref) v_u_4, (ref) v_u_11
-				if typeof(p21) == "table" then
-					local v22 = v_u_11[p20]
-					table.insert(v22, p21)
-				else
-					v_u_4(p20)
-				end
-			end)
-			local v_u_23 = {}
-			local function v_u_29(p24, p25, p26) -- name: addContentToQueue
-				-- upvalues: (copy) v_u_23
-				local v27 = v_u_23[p24]
-				if v27 then
-					if v27[p25] then
-						local v28 = v27[p25]
-						table.insert(v28, p26)
-					else
-						v27[p25] = { p26 }
-					end
-				else
-					v_u_23[p24] = {
-						[p25] = { p26 }
-					}
-					return
-				end
-			end
-			v_u_3.PostSimulation:Connect(function()
-				-- upvalues: (ref) v_u_10, (copy) v_u_29, (ref) v_u_7, (copy) v_u_23, (ref) v_u_8, (ref) v_u_9, (ref) v_u_5, (copy) v_u_16, (ref) v_u_11, (ref) v_u_4, (ref) v_u_12, (ref) v_u_6
-				debug.profilebegin("BridgeNet2")
-				debug.profilebegin("BridgeNet2:Send")
-				for _, v30 in v_u_10 do
-					local v31 = v30.playerContainer.kind
-					local v32 = v30.playerContainer.value
-					local v33 = v30.id
-					local v34 = v30.content
-					if v31 == "single" then
-						v_u_29(v32, v33, v34)
-					elseif v31 == "all" then
-						for v35 in v_u_7 do
-							v_u_29(v35, v33, v34)
-						end
-					elseif v31 == "except" then
-						for _, v36 in v32 do
-							v_u_7[v36] = false
-						end
-						for v37, v38 in v_u_7 do
-							if v38 then
-								v_u_29(v37, v33, v34)
-							else
-								v_u_7[v37] = true
-							end
-						end
-					elseif v31 == "set" then
-						for _, v39 in v32 do
-							v_u_29(v39, v33, v34)
-						end
-					end
-				end
-				for v40, v41 in v_u_23 do
-					if v_u_8[v40] then
-						if v_u_9[v40] then
-							for v42, v43 in v41 do
-								if v_u_9[v40][v42] then
-									v_u_9[v40][v42] = v_u_5.MergeArrays(v_u_9[v40][v42], v43)
-								else
-									v_u_9[v40][v42] = v43
-								end
-							end
-						else
-							v_u_9[v40] = v41
-						end
-					else
-						v_u_16:FireClient(v40, v41)
-					end
-					v_u_23[v40] = nil
-				end
-				table.clear(v_u_10)
-				debug.profileend()
-				debug.profilebegin("BridgeNet2:Receive")
-				for v44, v45 in v_u_11 do
-					for _, v46 in v45 do
-						for v47 = 1, #v46, 2 do
-							local v48 = v46[v47]
-							local v49 = v46[v47 + 1]
-							if typeof(v49) ~= "string" then
-								v_u_4(v44)
-								break
-							end
-							local v50 = v_u_12[v49]
-							if v50 then
-								for _, v51 in v50 do
-									v_u_6(v51, v44, v48)
-								end
-							end
-						end
-					end
-					table.clear(v_u_11[v44])
-				end
-				debug.profileend()
-				debug.profileend()
-			end)
-		end)
-	end,
-	["addToQueue"] = function(p52, p53, p54) -- name: addToQueue
-		-- upvalues: (copy) v_u_10
-		local v55 = v_u_10
-		table.insert(v55, {
-			["playerContainer"] = p52,
-			["id"] = p53,
-			["content"] = p54
-		})
-	end,
-	["setInvalidPlayerFunction"] = function(p56) -- name: setInvalidPlayerFunction
-		-- upvalues: (ref) v_u_4
-		v_u_4 = p56
-	end,
-	["registerBridge"] = function(p57) -- name: registerBridge
-		-- upvalues: (copy) v_u_12
-		if not v_u_12[p57] then
-			v_u_12[p57] = {}
-		end
-	end,
-	["connect"] = function(p_u_58, p_u_59) -- name: connect
-		-- upvalues: (copy) v_u_12
-		local v60 = v_u_12[p_u_58]
-		table.insert(v60, p_u_59)
-		return function()
-			-- upvalues: (ref) v_u_12, (copy) p_u_58, (copy) p_u_59
-			local v61 = table.find(v_u_12[p_u_58], p_u_59)
-			table.remove(v_u_12[p_u_58], v61)
-		end
-	end
-}
+local v1 = {}
+function v1.start() -- Line: 38 -- upvalues: ReplicatedStorage (val), Players (val), playerAdded (val), u30 (val), u31 (val), u32 (val), u34 (val), u17 (ref), RunService (val), u33 (val), u23 (val), u35 (val), u29 (val)
+    task.spawn(function() -- Line: 39 -- upvalues: ReplicatedStorage (upval), Players (upval), playerAdded (upval), u30 (upval), u31 (upval), u32 (upval), u34 (upval), u17 (upval), RunService (upval), u33 (upval), u23 (upval), u35 (upval), u29 (upval)
+        debug.setmemorycategory("BridgeNet2")
+        local RemoteEvent_2 = Instance.new("RemoteEvent")
+        local RemoteEvent = Instance.new("RemoteEvent")
+        RemoteEvent_2.Name = "metaRemoteEvent"
+        RemoteEvent.Name = "dataRemoteEvent"
+        RemoteEvent_2.Parent = ReplicatedStorage
+        RemoteEvent.Parent = ReplicatedStorage
+        Players.PlayerAdded:Connect(playerAdded)
+        Players.PlayerRemoving:Connect(function(p1) -- Line: 55 -- upvalues: u30 (upval), u31 (upval), u32 (upval), u34 (upval)
+            u30[p1] = nil
+            u31[p1] = nil
+            u32[p1] = nil
+            u34[p1] = nil
+        end)
+        RemoteEvent_2.OnServerEvent:Connect(function(p1, p2) -- Line: 63 -- upvalues: u31 (upval), RemoteEvent (val), u32 (upval)
+            if p2 == "1" then
+                u31[p1] = nil
+                RemoteEvent:FireClient(p1, u32[p1])
+                u32[p1] = nil
+            end
+        end)
+        RemoteEvent.OnServerEvent:Connect(function(p1, p2) -- Line: 73 -- upvalues: u17 (upval), u34 (upval)
+            if typeof(p2) ~= "table" then
+                u17(p1)
+                return
+            end
+            table.insert(u34[p1], p2)
+        end)
+        local u35 = {}
+        local function addContentToQueue(p1, p2, p3) -- Line: 85 -- upvalues: u35 (val)
+            local v1 = u35[p1]
+            if not v1 then
+                local v2 = {}
+                v2[p2] = {p3}
+                u35[p1] = v2
+                return
+            end
+            if not (v1[p2]) then
+                v1[p2] = {p3}
+                return
+            end
+            table.insert(v1[p2], p3)
+        end
+        RunService.PostSimulation:Connect(function() -- Line: 101 -- upvalues: u33 (upval), addContentToQueue (val), u30 (upval), u35 (val), u31 (upval), u32 (upval), u23 (upval), RemoteEvent (val), u34 (upval), u17 (upval), u35 (upval), u29 (upval)
+            local content, id, kind, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, value
+            debug.profilebegin("BridgeNet2")
+            debug.profilebegin("BridgeNet2:Send")
+            local v12 = u33
+            local v13 = nil
+            local v14 = nil
+            for i, j in v12, v13, v14 do
+                kind = j.playerContainer.kind
+                value = j.playerContainer.value
+                id = j.id
+                content = j.content
+                if kind == "single" then
+                    addContentToQueue(value, id, content)
+                elseif kind == "all" then
+                    v11 = u30
+                    v1 = nil
+                    v2 = nil
+                    for i8 in v11, v1, v2 do
+                        addContentToQueue(i8, id, content)
+                    end
+                elseif kind == "except" then
+                    v11 = value
+                    v1 = nil
+                    v2 = nil
+                    for m, i5 in v11, v1, v2 do
+                        u30[i5] = false
+                    end
+                    v11 = u30
+                    v1 = nil
+                    v2 = nil
+                    for i6, i7 in v11, v1, v2 do
+                        if not i7 then
+                            u30[i6] = true
+                        else
+                            addContentToQueue(i6, id, content)
+                        end
+                    end
+                elseif kind == "set" then
+                    v11 = value
+                    v1 = nil
+                    v2 = nil
+                    for k, n in v11, v1, v2 do
+                        addContentToQueue(n, id, content)
+                    end
+                end
+            end
+            v12 = u35
+            v13 = nil
+            v14 = nil
+            for i9, i10 in v12, v13, v14 do
+                if not (u31[i9]) then
+                    RemoteEvent:FireClient(i9, i10)
+                elseif u32[i9] then
+                    v8 = i10
+                    v9 = nil
+                    v10 = nil
+                    for i11, i12 in v8, v9, v10 do
+                        if u32[i9][i11] then
+                            v1 = u32[i9]
+                            v1[i11] = u23.MergeArrays(u32[i9][i11], i12)
+                        else
+                            u32[i9][i11] = i12
+                        end
+                    end
+                else
+                    u32[i9] = i10
+                end
+                u35[i9] = nil
+            end
+            table.clear(u33)
+            debug.profileend()
+            debug.profilebegin("BridgeNet2:Receive")
+            v12 = u34
+            v13 = nil
+            v14 = nil
+            for i13, i14 in v12, v13, v14 do
+                v8 = i14
+                v9 = nil
+                v10 = nil
+                for i15, i16 in v8, v9, v10 do
+                    v1 = #i16
+                    v2 = 2
+                    for i17 = 1, v1, v2 do
+                        v3 = i16[i17 + 1]
+                        if typeof(v3) ~= "string" then
+                            u17(i13)
+                            break
+                        end
+                        v4 = u35[v3]
+                        if v4 then
+                            v5 = v4
+                            v6 = nil
+                            v7 = nil
+                            for i18, i19 in v5, v6, v7 do
+                                u29(i19, i13, i16[i17])
+                            end
+                        end
+                    end
+                end
+                table.clear(u34[i13])
+            end
+            debug.profileend()
+            debug.profileend()
+        end)
+    end)
+end
+function v1.addToQueue(p1, p2, p3) -- Line: 212 -- upvalues: u33 (val)
+    table.insert(u33, {playerContainer = p1, id = p2, content = p3})
+end
+function v1.setInvalidPlayerFunction(p1) -- Line: 224 -- upvalues: u17 (ref)
+    u17 = p1
+end
+function v1.registerBridge(p1) -- Line: 228 -- upvalues: u35 (val)
+    if not (u35[p1]) then
+        u35[p1] = {}
+    end
+end
+function v1.connect(p1, p2) -- Line: 234 -- upvalues: u35 (val)
+    table.insert(u35[p1], p2)
+    return function() -- Line: 238 -- upvalues: u35 (upval), p1 (val), p2 (val)
+        local v1 = table.find(u35[p1], p2)
+        table.remove(u35[p1], v1)
+    end
+end
+return v1

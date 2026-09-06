@@ -1,634 +1,620 @@
-local v1 = game:GetService("Players")
-local v_u_2 = game:GetService("UserInputService")
-local v_u_3 = game:GetService("ContentProvider")
-local v4 = game:GetService("ReplicatedStorage")
-local v_u_5 = require(v4.Packages.Fusion).peek
-local v_u_6 = require(v4.common:WaitForChild("Settings"))
-local v_u_7 = require(v4.common:WaitForChild("BindUtil"))
-local v_u_8 = require(script:WaitForChild("Icons"))
-local v_u_9 = require(script:WaitForChild("Sorting"))
-local v10 = v1.LocalPlayer:WaitForChild("PlayerGui")
-local v_u_11 = {
-	[Enum.UserInputType.MouseButton1] = Enum.KeyCode.MouseLeftButton,
-	[Enum.UserInputType.MouseButton2] = Enum.KeyCode.MouseRightButton,
-	[Enum.UserInputType.MouseButton3] = Enum.KeyCode.MouseMiddleButton
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local ContentProvider = game:GetService("ContentProvider")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local peek = require(ReplicatedStorage.Packages.Fusion).peek
+local Settings = require(ReplicatedStorage.common:WaitForChild("Settings"))
+local BindUtil = require(ReplicatedStorage.common:WaitForChild("BindUtil"))
+local Icons = require(script:WaitForChild("Icons"))
+local Sorting = require(script:WaitForChild("Sorting"))
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local u58 = nil
+local u59 = nil
+local u60 = {}
+u60[Enum.UserInputType.MouseButton1] = Enum.KeyCode.MouseLeftButton
+u60[Enum.UserInputType.MouseButton2] = Enum.KeyCode.MouseRightButton
+u60[Enum.UserInputType.MouseButton3] = Enum.KeyCode.MouseMiddleButton
+local u67 = {}
+local v1 = u60
+local v2 = nil
+local v3 = nil
+for i, j in v1, v2, v3 do
+    u67[j] = i
+end
+local function getIconId(p1, p2, p3) -- Line: 36 -- upvalues: Icons (val), BindUtil (val)
+    local v1
+    local v2 = p3 == true
+    if not p2 then
+        if BindUtil.getInputMethod() ~= "Gamepad" then
+            local keyboard_solid_2
+            if not v2 then
+                keyboard_solid_2 = Icons.keyboard
+            else
+                keyboard_solid_2 = Icons.keyboard_solid
+            end
+            return keyboard_solid_2[p1] or ""
+        end
+        return Icons.Resolve(p1, v2)
+    end
+    if p2 == "keyboard" then
+        local keyboard_solid
+        if not v2 then
+            keyboard_solid = Icons.keyboard
+        else
+            keyboard_solid = Icons.keyboard_solid
+        end
+        return keyboard_solid[p1] or ""
+    end
+    if not v2 then
+        v1 = Icons[p2]
+    else
+        v1 = Icons[p2 .. "_solid"]
+    end
+    if v1 then
+        return v1[p1] or ""
+    end
+    return ""
+end
+local function alive() -- Line: 57 -- upvalues: u59 (ref)
+    if not u59 then
+        return false
+    end
+    return not u59.States.IsDead
+end
+local function hasGun() -- Line: 62 -- upvalues: u59 (ref), u58 (ref)
+    local v1
+    if u59 then
+        v1 = not u59.States.IsDead
+    else
+        v1 = false
+    end
+    if not v1 or not u58 then
+        return false
+    end
+    local CurrentWeapon = u58:GetCurrentWeapon()
+    local v2 = if CurrentWeapon ~= nil then not CurrentWeapon.Config.IsMelee else false
+    return v2
+end
+local function hasMelee() -- Line: 68 -- upvalues: u59 (ref), u58 (ref)
+    local v1
+    if u59 then
+        v1 = not u59.States.IsDead
+    else
+        v1 = false
+    end
+    if not v1 or not u58 then
+        return false
+    end
+    local CurrentWeapon = u58:GetCurrentWeapon()
+    local v2 = if CurrentWeapon ~= nil then CurrentWeapon.Config.IsMelee == true else false
+    return v2
+end
+local u88 = {}
+local v4 = {
+    id = "Shoot",
+    label = "Shoot",
+    priority = 1,
+    actions = {"PrimaryAttack"},
+    condition = hasGun,
 }
-local v_u_12 = {}
-local v_u_13 = nil
-local v_u_14 = nil
-for v15, v16 in v_u_11 do
-	v_u_12[v16] = v15
-end
-local function v_u_26(p17, p18, p19) -- name: getIconId
-	-- upvalues: (copy) v_u_8, (copy) v_u_7, (copy) v_u_2
-	local v20 = p19 == true
-	if p18 then
-		if p18 == "keyboard" then
-			local v21
-			if v20 then
-				v21 = v_u_8.keyboard_solid
-			else
-				v21 = v_u_8.keyboard
-			end
-			return v21[p17] or ""
-		else
-			local v22
-			if v20 then
-				v22 = v_u_8[p18 .. "_solid"]
-			else
-				v22 = v_u_8[p18]
-			end
-			return v22 and (v22[p17] or "") or ""
-		end
-	else
-		if v_u_7.getInputMethod() ~= "Gamepad" then
-			local v23
-			if v20 then
-				v23 = v_u_8.keyboard_solid
-			else
-				v23 = v_u_8.keyboard
-			end
-			return v23[p17] or ""
-		end
-		local v24 = v_u_2:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" and "ps" or "xbox"
-		local v25
-		if v20 then
-			v25 = v_u_8[v24 .. "_solid"]
-		else
-			v25 = v_u_8[v24]
-		end
-		return v25 and (v25[p17] or "") or ""
-	end
-end
-local function v27() -- name: alive
-	-- upvalues: (ref) v_u_13
-	if v_u_13 then
-		return not v_u_13.States.IsDead
-	else
-		return false
-	end
-end
-local function v31() -- name: hasGun
-	-- upvalues: (ref) v_u_13, (ref) v_u_14
-	local v28
-	if v_u_13 then
-		v28 = not v_u_13.States.IsDead
-	else
-		v28 = false
-	end
-	if not (v28 and v_u_14) then
-		return false
-	end
-	local v29 = v_u_14:GetCurrentWeapon()
-	local v30
-	if v29 == nil then
-		v30 = false
-	else
-		v30 = not v29.Config.IsMelee
-	end
-	return v30
-end
-local function v35() -- name: hasMelee
-	-- upvalues: (ref) v_u_13, (ref) v_u_14
-	local v32
-	if v_u_13 then
-		v32 = not v_u_13.States.IsDead
-	else
-		v32 = false
-	end
-	if not (v32 and v_u_14) then
-		return false
-	end
-	local v33 = v_u_14:GetCurrentWeapon()
-	local v34
-	if v33 == nil then
-		v34 = false
-	else
-		v34 = v33.Config.IsMelee == true
-	end
-	return v34
-end
-local v_u_46 = {
-	{
-		["id"] = "Shoot",
-		["label"] = "Shoot",
-		["actions"] = nil,
-		["priority"] = 1,
-		["condition"] = nil,
-		["actions"] = { "PrimaryAttack" },
-		["condition"] = v31
-	},
-	{
-		["id"] = "Aim",
-		["label"] = "Aim",
-		["actions"] = nil,
-		["priority"] = 2,
-		["condition"] = nil,
-		["actions"] = { "SecondaryAttack" },
-		["condition"] = v31
-	},
-	{
-		["id"] = "Reload",
-		["label"] = "Reload",
-		["actions"] = nil,
-		["priority"] = 3,
-		["condition"] = nil,
-		["actions"] = { "Reload" },
-		["condition"] = v31
-	},
-	{
-		["id"] = "Firemode",
-		["label"] = "Fire Mode",
-		["actions"] = nil,
-		["priority"] = 4,
-		["condition"] = nil,
-		["actions"] = { "Firemode" },
-		["condition"] = function() -- name: hasMultiFireMode
-			-- upvalues: (ref) v_u_13, (ref) v_u_14
-			local v36
-			if v_u_13 then
-				v36 = not v_u_13.States.IsDead
-			else
-				v36 = false
-			end
-			local v37
-			if v36 and v_u_14 then
-				local v38 = v_u_14:GetCurrentWeapon()
-				if v38 == nil then
-					v37 = false
-				else
-					v37 = not v38.Config.IsMelee
-				end
-			else
-				v37 = false
-			end
-			if not (v37 and v_u_14) then
-				return false
-			end
-			local v39 = v_u_14:GetCurrentWeapon()
-			local v40
-			if v39 == nil or v39.Config.FireMode == nil then
-				v40 = false
-			else
-				v40 = #v39.Config.FireMode > 1
-			end
-			return v40
-		end
-	},
-	{
-		["id"] = "Attack",
-		["label"] = "Attack",
-		["actions"] = nil,
-		["priority"] = 1,
-		["condition"] = nil,
-		["actions"] = { "PrimaryAttack" },
-		["condition"] = v35
-	},
-	{
-		["id"] = "Block",
-		["label"] = "Block",
-		["actions"] = nil,
-		["priority"] = 2,
-		["condition"] = nil,
-		["actions"] = { "SecondaryAttack" },
-		["condition"] = v35
-	},
-	{
-		["id"] = "Charge",
-		["label"] = "Hold to Charge",
-		["actions"] = nil,
-		["priority"] = 3,
-		["condition"] = nil,
-		["actions"] = { "PrimaryAttack" },
-		["condition"] = function() -- name: hasCharge
-			-- upvalues: (ref) v_u_13, (ref) v_u_14
-			local v41
-			if v_u_13 then
-				v41 = not v_u_13.States.IsDead
-			else
-				v41 = false
-			end
-			local v42
-			if v41 and v_u_14 then
-				local v43 = v_u_14:GetCurrentWeapon()
-				if v43 == nil then
-					v42 = false
-				else
-					v42 = v43.Config.IsMelee == true
-				end
-			else
-				v42 = false
-			end
-			if not (v42 and v_u_14) then
-				return false
-			end
-			local v44 = v_u_14:GetCurrentWeapon()
-			local v45
-			if v44 == nil then
-				v45 = false
-			else
-				v45 = v44.Config.ChargeTime ~= nil
-			end
-			return v45
-		end
-	},
-	{
-		["id"] = "Ability",
-		["label"] = "Ability",
-		["actions"] = nil,
-		["priority"] = 5,
-		["condition"] = nil,
-		["actions"] = { "OffHandUse" },
-		["condition"] = v27
-	},
-	{
-		["id"] = "QuickMelee",
-		["label"] = "Quick Melee",
-		["actions"] = nil,
-		["priority"] = 6,
-		["condition"] = nil,
-		["actions"] = { "QuickMeleeAndBlock" },
-		["condition"] = v31
-	},
-	{
-		["id"] = "Sprint",
-		["label"] = "Sprint",
-		["actions"] = nil,
-		["priority"] = 10,
-		["condition"] = nil,
-		["actions"] = { "SprintHold", "SprintToggle" },
-		["condition"] = v27
-	},
-	{
-		["id"] = "Crouch",
-		["label"] = "Crouch",
-		["actions"] = nil,
-		["priority"] = 11,
-		["condition"] = nil,
-		["actions"] = { "CrouchToggle", "CrouchHold", "CrouchProneToggle" },
-		["condition"] = v27
-	},
-	{
-		["id"] = "Prone",
-		["label"] = "Prone",
-		["actions"] = nil,
-		["priority"] = 12,
-		["condition"] = nil,
-		["actions"] = { "ProneToggle" },
-		["condition"] = v27
-	},
-	{
-		["id"] = "ThirdPerson",
-		["label"] = "Third Person (Hold)",
-		["actions"] = nil,
-		["priority"] = 13,
-		["condition"] = nil,
-		["actions"] = { "Thirdperson" },
-		["condition"] = v27
-	},
-	{
-		["id"] = "NVG",
-		["label"] = "Night Vision",
-		["actions"] = nil,
-		["priority"] = 14,
-		["condition"] = nil,
-		["actions"] = { "NVGToggle" },
-		["condition"] = v27
-	}
+local v5 = {
+    id = "Aim",
+    label = "Aim",
+    priority = 2,
+    actions = {"SecondaryAttack"},
+    condition = hasGun,
 }
-local v_u_47 = Instance.new("ScreenGui")
-v_u_47.Name = "ControlHints"
-v_u_47.ResetOnSpawn = false
-v_u_47.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-v_u_47.IgnoreGuiInset = true
-v_u_47.DisplayOrder = 5
-v_u_47.Parent = v10
-local v_u_48 = Instance.new("Frame")
-v_u_48.Name = "HintsFrame"
-v_u_48.AnchorPoint = Vector2.new(1, 0.5)
-v_u_48.BackgroundTransparency = 1
-v_u_48.Position = UDim2.new(1, -10, 0.5, 0)
-v_u_48.Size = UDim2.fromScale(0.2, 0.4)
-v_u_48.Parent = v_u_47
-local v49 = Instance.new("UIListLayout")
-v49.Name = "UIListLayout"
-v49.HorizontalAlignment = Enum.HorizontalAlignment.Right
-v49.SortOrder = Enum.SortOrder.LayoutOrder
-v49.VerticalAlignment = Enum.VerticalAlignment.Center
-v49.Parent = v_u_48
-local v50 = Instance.new("UISizeConstraint")
-v50.MaxSize = Vector2.new((1 / 0), 400)
-v50.MinSize = Vector2.new(200, 200)
-v50.Parent = v_u_48
-local v51 = Instance.new("UIAspectRatioConstraint")
-v51.AspectRatio = 1.078
-v51.Parent = v_u_48
-local v_u_52 = Instance.new("Frame")
-v_u_52.Name = "HintTemplate"
-v_u_52.AnchorPoint = Vector2.new(1, 0.5)
-v_u_52.BackgroundTransparency = 1
-v_u_52.Size = UDim2.fromScale(1, 0.12)
-v_u_52.Visible = false
-local v53 = Instance.new("UIListLayout")
-v53.FillDirection = Enum.FillDirection.Horizontal
-v53.HorizontalAlignment = Enum.HorizontalAlignment.Right
-v53.Padding = UDim.new(0, 5)
-v53.SortOrder = Enum.SortOrder.LayoutOrder
-v53.VerticalAlignment = Enum.VerticalAlignment.Center
-v53.Parent = v_u_52
-local v54 = Instance.new("TextLabel")
-v54.Name = "ActionText"
-v54.AnchorPoint = Vector2.new(1, 0.5)
-v54.AutomaticSize = Enum.AutomaticSize.X
-v54.BackgroundTransparency = 1
-v54.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
-v54.Position = UDim2.fromScale(0.795, 0.5)
-v54.Size = UDim2.fromScale(0.7, 0.7)
-v54.Text = "Action"
-v54.TextColor3 = Color3.new(1, 1, 1)
-v54.TextScaled = true
-v54.TextXAlignment = Enum.TextXAlignment.Right
-v54.Parent = v_u_52
-local v55 = Instance.new("ImageLabel")
-v55.Name = "IconImage"
-v55.BackgroundTransparency = 1
-v55.Image = ""
-v55.LayoutOrder = 1
-v55.ScaleType = Enum.ScaleType.Fit
-v55.Size = UDim2.fromScale(0.3, 1)
-Instance.new("UIAspectRatioConstraint").Parent = v55
-v55.Parent = v_u_52
-local v56 = Instance.new("TextLabel")
-v56.Name = "Separator"
-v56.AnchorPoint = Vector2.new(1, 0.5)
-v56.AutomaticSize = Enum.AutomaticSize.X
-v56.BackgroundTransparency = 1
-v56.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
-v56.LayoutOrder = 2
-v56.Position = UDim2.fromScale(0.795, 0.5)
-v56.Size = UDim2.fromScale(0.01, 0.5)
-v56.Text = "/"
-v56.TextColor3 = Color3.new(1, 1, 1)
-v56.TextScaled = true
-v56.Visible = false
-v56.Parent = v_u_52
-v_u_52.Parent = v_u_48
-local v_u_57 = {}
-local v_u_58 = {}
-local v_u_59 = false
-local function v_u_73(p60, p61) -- name: resolveKeyCodes
-	-- upvalues: (copy) v_u_6, (copy) v_u_11, (copy) v_u_9
-	local v62 = {}
-	local v63 = {}
-	for _, v64 in p60.actions do
-		local v65 = v_u_6.Controls.Binds[v64]
-		if v65 then
-			if p61 == "MouseKeyboard" then
-				local v66 = v65.Keyboard
-				if v66 and not v62[v66] then
-					v62[v66] = true
-					table.insert(v63, v66)
-				end
-				local v67 = v65.Mouse
-				if v67 then
-					local v68 = v_u_11[v67]
-					if v68 and not v62[v68] then
-						v62[v68] = true
-						table.insert(v63, v68)
-					end
-				end
-			elseif p61 == "Gamepad" then
-				local v69 = v65.Gamepad
-				if v69 and not v62[v69] then
-					v62[v69] = true
-					table.insert(v63, v69)
-				end
-			end
-		end
-	end
-	local v_u_70
-	if p61 == "Gamepad" then
-		v_u_70 = v_u_9.gamepad_sort_index
-	else
-		v_u_70 = v_u_9.keyboard_sort_index
-	end
-	table.sort(v63, function(p71, p72)
-		-- upvalues: (copy) v_u_70
-		return (v_u_70[p71] or (1 / 0)) < (v_u_70[p72] or (1 / 0))
-	end)
-	return v63
-end
-local v_u_107 = {
-	["IsShowing"] = false,
-	["Update"] = function(_) -- name: Update
-		-- upvalues: (ref) v_u_59, (copy) v_u_7, (copy) v_u_47, (copy) v_u_5, (copy) v_u_6, (copy) v_u_107, (copy) v_u_2, (copy) v_u_48, (copy) v_u_57, (copy) v_u_58, (copy) v_u_46, (copy) v_u_73, (copy) v_u_52, (copy) v_u_26, (copy) v_u_12, (copy) v_u_3
-		if v_u_59 then
-			local v74 = v_u_7.getInputMethod()
-			if v74 == "Touch" then
-				v_u_47.Enabled = false
-				return
-			elseif v_u_5(v_u_6.Controls.ShowControlHints) then
-				v_u_47.Enabled = v_u_107.IsShowing
-				local v75 = v74 == "Gamepad" and (v_u_2:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" and "ps" or "xbox") or "keyboard"
-				for _, v76 in v_u_48:GetChildren() do
-					if v76:IsA("Frame") and v76.Name == "HintLabel" then
-						v76:Destroy()
-					end
-				end
-				table.clear(v_u_57)
-				table.clear(v_u_58)
-				local v77 = {}
-				for _, v78 in v_u_46 do
-					if v78.condition() then
-						local v79 = v_u_73(v78, v74)
-						if #v79 > 0 then
-							table.insert(v77, {
-								["hintDef"] = v78,
-								["keyCodes"] = v79
-							})
-						end
-					end
-				end
-				table.sort(v77, function(p80, p81)
-					return p80.hintDef.priority < p81.hintDef.priority
-				end)
-				local v_u_82 = {}
-				for _, v83 in v77 do
-					local v84 = v83.hintDef
-					local v85 = v83.keyCodes
-					local v86 = v_u_52:Clone()
-					v86.Name = "HintLabel"
-					v86.LayoutOrder = v84.priority
-					local v87 = v86:FindFirstChild("ActionText")
-					if v87 then
-						v87.Text = v84.label
-					end
-					local v88 = v86:FindFirstChild("IconImage")
-					local v89 = v86:FindFirstChild("Separator")
-					if v88 and (v89 and #v85 > 0) then
-						local v90 = v_u_26(v85[1], v75, false)
-						local v91 = v_u_26(v85[1], v75, true)
-						v88.Image = v90
-						v88.Visible = true
-						v89.Visible = false
-						if v90 ~= "" then
-							table.insert(v_u_82, v90)
-						end
-						if v91 ~= "" then
-							table.insert(v_u_82, v91)
-						end
-						local v92 = v88.LayoutOrder + 1
-						for v93 = 2, #v85 do
-							local v94 = v89:Clone()
-							v94.Name = "Separator" .. v93 - 1
-							v94.Text = "/"
-							v94.LayoutOrder = v92
-							v94.Visible = true
-							v94.Parent = v86
-							local v95 = v92 + 1
-							local v96 = v88:Clone()
-							v96.Name = "IconImage" .. v93
-							local v97 = v_u_26(v85[v93], v75, false)
-							local v98 = v_u_26(v85[v93], v75, true)
-							v96.Image = v97
-							v96.LayoutOrder = v95
-							v96.Visible = true
-							v96.Parent = v86
-							v92 = v95 + 1
-							if v97 ~= "" then
-								table.insert(v_u_82, v97)
-							end
-							if v98 ~= "" then
-								table.insert(v_u_82, v98)
-							end
-						end
-					end
-					v86.Visible = true
-					v86.Parent = v_u_48
-					local v99 = v_u_57
-					table.insert(v99, {
-						["hintDef"] = v84,
-						["keyCodes"] = v85,
-						["frame"] = v86
-					})
-					for _, v100 in v85 do
-						if not v_u_58[v100] then
-							v_u_58[v100] = {}
-						end
-						local v101 = v_u_58[v100]
-						table.insert(v101, v86)
-						local v102 = v_u_12[v100]
-						if v102 then
-							if not v_u_58[v102] then
-								v_u_58[v102] = {}
-							end
-							local v103 = v_u_58[v102]
-							table.insert(v103, v86)
-						end
-					end
-				end
-				if #v_u_82 > 0 then
-					task.spawn(function()
-						-- upvalues: (copy) v_u_82, (ref) v_u_3
-						local v104 = Instance.new("Folder")
-						for _, v105 in v_u_82 do
-							local v106 = Instance.new("ImageLabel")
-							v106.Image = v105
-							v106.Parent = v104
-						end
-						v_u_3:PreloadAsync(v104:GetChildren())
-						v104:Destroy()
-					end)
-				end
-			else
-				v_u_47.Enabled = false
-			end
-		else
-			return
-		end
-	end
+local v6 = {
+    id = "Reload",
+    label = "Reload",
+    priority = 3,
+    actions = {"Reload"},
+    condition = hasGun,
 }
-local function v_u_118(p108, p109) -- name: updateIconsForKey
-	-- upvalues: (copy) v_u_7, (copy) v_u_2, (copy) v_u_58, (copy) v_u_57, (copy) v_u_12, (copy) v_u_26
-	local v110 = v_u_7.getInputMethod() == "Gamepad" and (v_u_2:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" and "ps" or "xbox") or "keyboard"
-	local v111 = v_u_58[p108]
-	if not v111 then
-		return
-	end
-	for _, v112 in v111 do
-		for _, v113 in v112:GetChildren() do
-			if v113:IsA("ImageLabel") and v113.Name:match("^IconImage") then
-				for _, v114 in v_u_57 do
-					if v114.frame == v112 then
-						for v115, v116 in v114.keyCodes do
-							local v117 = v112:FindFirstChild(v115 == 1 and "IconImage" or "IconImage" .. v115)
-							if v117 and (v116 == p108 or v_u_12[v116] == p108) then
-								v117.Image = v_u_26(v116, v110, p109)
-							end
-						end
-						break
-					end
-				end
-				break
-			end
-		end
-	end
+local v7 = {
+    id = "Firemode",
+    label = "Fire Mode",
+    priority = 4,
+    actions = {"Firemode"},
+    condition = function() -- Line: 80 -- upvalues: u59 (ref), u58 (ref)
+        local v1, v2
+        if u59 then
+            v2 = not u59.States.IsDead
+        else
+            v2 = false
+        end
+        if not v2 then
+            v1 = false
+        elseif u58 then
+            local CurrentWeapon = u58:GetCurrentWeapon()
+            v1 = if CurrentWeapon ~= nil then not CurrentWeapon.Config.IsMelee else false
+        end
+        if not v1 or not u58 then
+            return false
+        end
+        local CurrentWeapon_2 = u58:GetCurrentWeapon()
+        v2 = false
+        if CurrentWeapon_2 ~= nil then
+            v2 = false
+            if CurrentWeapon_2.Config.FireMode ~= nil then
+                local v3 = #CurrentWeapon_2.Config.FireMode
+                v2 = 1 < v3
+            end
+        end
+        return v2
+    end,
+}
+local v8 = {
+    id = "Attack",
+    label = "Attack",
+    priority = 1,
+    actions = {"PrimaryAttack"},
+    condition = hasMelee,
+}
+local v9 = {
+    id = "Charge",
+    label = "Hold to Charge",
+    priority = 3,
+    actions = {"PrimaryAttack"},
+    condition = function() -- Line: 74 -- upvalues: u59 (ref), u58 (ref)
+        local v1, v2
+        if u59 then
+            v2 = not u59.States.IsDead
+        else
+            v2 = false
+        end
+        if not v2 then
+            v1 = false
+        elseif u58 then
+            local CurrentWeapon = u58:GetCurrentWeapon()
+            v1 = if CurrentWeapon ~= nil then CurrentWeapon.Config.IsMelee == true else false
+        end
+        if not v1 or not u58 then
+            return false
+        end
+        local CurrentWeapon_2 = u58:GetCurrentWeapon()
+        v2 = if CurrentWeapon_2 ~= nil then CurrentWeapon_2.Config.ChargeTime ~= nil else false
+        return v2
+    end,
+}
+local v10 = {
+    id = "ToggleControlHints",
+    label = "Toggle Controls",
+    priority = 0,
+    actions = {"ToggleControlHints"},
+    condition = function() -- Line: 100
+        return true
+    end,
+}
+u88[1] = v4
+u88[2] = v5
+u88[3] = v6
+u88[4] = v7
+u88[5] = v8
+u88[6] = {
+    id = "Block",
+    label = "Block",
+    priority = 2,
+    actions = {"SecondaryAttack"},
+    condition = hasMelee,
+}
+u88[7] = v9
+u88[8] = v10
+u88[9] = {
+    id = "Ability",
+    label = "Ability",
+    priority = 5,
+    actions = {"OffHandUse"},
+    condition = alive,
+}
+u88[10] = {
+    id = "QuickMelee",
+    label = "Quick Melee",
+    priority = 6,
+    actions = {"QuickMeleeAndBlock"},
+    condition = hasGun,
+}
+u88[11] = {
+    id = "Sprint",
+    label = "Sprint",
+    priority = 10,
+    actions = {"SprintHold", "SprintToggle"},
+    condition = alive,
+}
+u88[12] = {
+    id = "Crouch",
+    label = "Crouch",
+    priority = 11,
+    actions = {"CrouchToggle", "CrouchHold", "CrouchProneToggle"},
+    condition = alive,
+}
+u88[13] = {
+    id = "Prone",
+    label = "Prone",
+    priority = 12,
+    actions = {"ProneToggle"},
+    condition = alive,
+}
+u88[14] = {
+    id = "ThirdPerson",
+    label = "Third Person (Hold)",
+    priority = 13,
+    actions = {"Thirdperson"},
+    condition = alive,
+}
+u88[15] = {
+    id = "NVG",
+    label = "Night Vision",
+    priority = 14,
+    actions = {"NVGToggle"},
+    condition = alive,
+}
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ControlHints"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.DisplayOrder = 5
+ScreenGui.Parent = PlayerGui
+local Frame = Instance.new("Frame")
+Frame.Name = "HintsFrame"
+Frame.AnchorPoint = Vector2.new(1, 0.5)
+Frame.BackgroundTransparency = 1
+Frame.Position = UDim2.new(1, -10, 0.5, 0)
+Frame.Size = UDim2.fromScale(0.15, 0.3)
+Frame.Parent = ScreenGui
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Name = "UIListLayout"
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+UIListLayout.Parent = Frame
+local UISizeConstraint = Instance.new("UISizeConstraint")
+UISizeConstraint.MaxSize = Vector2.new((1 / 0), 300)
+UISizeConstraint.MinSize = Vector2.new(150, 150)
+UISizeConstraint.Parent = Frame
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+UIAspectRatioConstraint.AspectRatio = 1.078
+UIAspectRatioConstraint.Parent = Frame
+local Frame_2 = Instance.new("Frame")
+Frame_2.Name = "HintTemplate"
+Frame_2.AnchorPoint = Vector2.new(1, 0.5)
+Frame_2.BackgroundTransparency = 1
+Frame_2.Size = UDim2.fromScale(1, 0.12)
+Frame_2.Visible = false
+local UIListLayout_2 = Instance.new("UIListLayout")
+UIListLayout_2.FillDirection = Enum.FillDirection.Horizontal
+UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Right
+UIListLayout_2.Padding = UDim.new(0, 4)
+UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout_2.VerticalAlignment = Enum.VerticalAlignment.Center
+UIListLayout_2.Parent = Frame_2
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Name = "ActionText"
+TextLabel.AnchorPoint = Vector2.new(1, 0.5)
+TextLabel.AutomaticSize = Enum.AutomaticSize.X
+TextLabel.BackgroundTransparency = 1
+TextLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
+TextLabel.Position = UDim2.fromScale(0.795, 0.5)
+TextLabel.Size = UDim2.fromScale(0.7, 0.7)
+TextLabel.Text = "Action"
+TextLabel.TextColor3 = Color3.new(1, 1, 1)
+TextLabel.TextScaled = true
+TextLabel.TextXAlignment = Enum.TextXAlignment.Right
+TextLabel.Parent = Frame_2
+local ImageLabel = Instance.new("ImageLabel")
+ImageLabel.Name = "IconImage"
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.Image = ""
+ImageLabel.LayoutOrder = 1
+ImageLabel.ScaleType = Enum.ScaleType.Fit
+ImageLabel.Size = UDim2.fromScale(0.3, 1)
+Instance.new("UIAspectRatioConstraint").Parent = ImageLabel
+ImageLabel.Parent = Frame_2
+local TextLabel_2 = Instance.new("TextLabel")
+TextLabel_2.Name = "Separator"
+TextLabel_2.AnchorPoint = Vector2.new(1, 0.5)
+TextLabel_2.AutomaticSize = Enum.AutomaticSize.X
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+TextLabel_2.LayoutOrder = 2
+TextLabel_2.Position = UDim2.fromScale(0.795, 0.5)
+TextLabel_2.Size = UDim2.fromScale(0.01, 0.5)
+TextLabel_2.Text = "/"
+TextLabel_2.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_2.TextScaled = true
+TextLabel_2.Visible = false
+TextLabel_2.Parent = Frame_2
+Frame_2.Parent = Frame
+local u288 = {}
+local u289 = {}
+local u290 = false
+local function resolveKeyCodes(p1, p2) -- Line: 209 -- upvalues: Settings (val), u60 (val), Sorting (val)
+    local Gamepad, Keyboard, Mouse, gamepad_sort_index, v1, v2
+    local v3 = {}
+    local v4 = {}
+    local actions = p1.actions
+    local v5 = nil
+    local v6 = nil
+    local v7 = p2
+    for i, j in actions, v5, v6 do
+        v2 = Settings.Controls.Binds[j]
+        if v2 then
+            if v7 == "MouseKeyboard" then
+                Keyboard = v2.Keyboard
+                if Keyboard and not (v4[Keyboard]) then
+                    v4[Keyboard] = true
+                    table.insert(v3, Keyboard)
+                end
+                Mouse = v2.Mouse
+                if Mouse then
+                    v1 = u60[Mouse]
+                    if v1 and not (v4[v1]) then
+                        v4[v1] = true
+                        table.insert(v3, v1)
+                    end
+                end
+            elseif v7 == "Gamepad" then
+                Gamepad = v2.Gamepad
+                if Gamepad and not (v4[Gamepad]) then
+                    v4[Gamepad] = true
+                    table.insert(v3, Gamepad)
+                end
+            end
+        end
+    end
+    if v7 ~= "Gamepad" then
+        gamepad_sort_index = Sorting.keyboard_sort_index
+    else
+        gamepad_sort_index = Sorting.gamepad_sort_index
+    end
+    table.sort(v3, function(p1, p2) -- Line: 243 -- upvalues: gamepad_sort_index (val)
+        local v1
+        local v2 = gamepad_sort_index[p1] or (1 / 0)
+        if v2 < gamepad_sort_index[p2] or (1 / 0) then
+            v1 = true
+        else
+            v1 = false
+        end
+        return v1
+    end)
+    return v3
 end
-function v_u_107.Show(_) -- name: Show
-	-- upvalues: (copy) v_u_107, (copy) v_u_7, (copy) v_u_47
-	v_u_107.IsShowing = true
-	if v_u_7.getInputMethod() ~= "Touch" then
-		v_u_47.Enabled = true
-	end
+local u295 = {IsShowing = false}
+function u295.Update(p1) -- Line: 256 -- upvalues: u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val), u295 (val), Icons (val), Frame (val), u288 (val), u289 (val), u88 (val), resolveKeyCodes (val), Frame_2 (val), getIconId (val), u67 (val), ContentProvider (val)
+    local ActionText, IconImage, Separator, hintDef, keyCodes, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
+    if not u290 then
+        return
+    end
+    local v13 = BindUtil.getInputMethod()
+    if v13 == "Touch" or not (peek(Settings.Controls.ShowControlHints)) then
+        ScreenGui.Enabled = false
+        return
+    end
+    ScreenGui.Enabled = u295.IsShowing
+    if v13 ~= "Gamepad" then
+        v6 = "keyboard"
+    else
+        v6 = Icons.GetGamepadType()
+    end
+    for i, j in Frame:GetChildren() do
+        if j:IsA("Frame") and j.Name == "HintLabel" then
+            j:Destroy()
+        end
+    end
+    table.clear(u288)
+    table.clear(u289)
+    local v14 = {}
+    local v15 = u88
+    local v16 = nil
+    local v17 = nil
+    for k, n in v15, v16, v17 do
+        if n.condition() then
+            v12 = resolveKeyCodes(n, v13)
+            if 0 < #v12 then
+                table.insert(v14, {hintDef = n, keyCodes = v12})
+            end
+        end
+    end
+    table.sort(v14, function(p1, p2) -- Line: 304
+        local v1 = p1.hintDef.priority < p2.hintDef.priority
+        return v1
+    end)
+    local u273 = {}
+    v16 = v14
+    v17 = nil
+    local v18 = nil
+    for m, i5 in v16, v17, v18 do
+        hintDef = i5.hintDef
+        keyCodes = i5.keyCodes
+        v1 = Frame_2:Clone()
+        v1.Name = "HintLabel"
+        v1.LayoutOrder = hintDef.priority
+        ActionText = v1:FindFirstChild("ActionText")
+        if ActionText then
+            ActionText.Text = hintDef.label
+        end
+        IconImage = v1:FindFirstChild("IconImage")
+        Separator = v1:FindFirstChild("Separator")
+        if IconImage and Separator and 0 < #keyCodes then
+            v2 = getIconId(keyCodes[1], v6, false)
+            v3 = getIconId(keyCodes[1], v6, true)
+            IconImage.Image = v2
+            IconImage.Visible = true
+            Separator.Visible = false
+            if v2 ~= "" then
+                table.insert(u273, v2)
+            end
+            if v3 ~= "" then
+                table.insert(u273, v3)
+            end
+            v4 = IconImage.LayoutOrder + 1
+            v5 = #keyCodes
+            v7 = 1
+            for i6 = 2, v5, v7 do
+                v8 = Separator:Clone()
+                v8.Name = "Separator" .. i6 - 1
+                v8.Text = "/"
+                v8.LayoutOrder = v4
+                v8.Visible = true
+                v8.Parent = v1
+                v4 = v4 + 1
+                v9 = IconImage:Clone()
+                v9.Name = "IconImage" .. i6
+                v10 = getIconId(keyCodes[i6], v6, false)
+                v11 = getIconId(keyCodes[i6], v6, true)
+                v9.Image = v10
+                v9.LayoutOrder = v4
+                v9.Visible = true
+                v9.Parent = v1
+                v4 = v4 + 1
+                if v10 ~= "" then
+                    table.insert(u273, v10)
+                end
+                if v11 ~= "" then
+                    table.insert(u273, v11)
+                end
+            end
+        end
+        v1.Visible = true
+        v1.Parent = Frame
+        table.insert(u288, {hintDef = hintDef, keyCodes = keyCodes, frame = v1})
+        v3 = keyCodes
+        v4 = nil
+        v5 = nil
+        for i7, i8 in v3, v4, v5 do
+            if not (u289[i8]) then
+                u289[i8] = {}
+            end
+            table.insert(u289[i8], v1)
+            v8 = u67[i8]
+            if v8 then
+                if not (u289[v8]) then
+                    u289[v8] = {}
+                end
+                table.insert(u289[v8], v1)
+            end
+        end
+    end
+    if 0 < #u273 then
+        task.spawn(function() -- Line: 391 -- upvalues: u273 (val), ContentProvider (upval)
+            local ImageLabel
+            local Folder = Instance.new("Folder")
+            local v1 = u273
+            local v2 = nil
+            local v3 = nil
+            for i, j in v1, v2, v3 do
+                ImageLabel = Instance.new("ImageLabel")
+                ImageLabel.Image = j
+                ImageLabel.Parent = Folder
+            end
+            ContentProvider:PreloadAsync(Folder:GetChildren())
+            Folder:Destroy()
+        end)
+    end
 end
-function v_u_107.Hide(_) -- name: Hide
-	-- upvalues: (copy) v_u_107, (copy) v_u_47
-	v_u_107.IsShowing = false
-	v_u_47.Enabled = false
+function u295.Toggle(p1) -- Line: 404 -- upvalues: Settings (val), peek (val)
+    Settings.Controls.ShowControlHints:set(not peek(Settings.Controls.ShowControlHints))
 end
-function v_u_107.Init(_, p119, p120) -- name: Init
-	-- upvalues: (ref) v_u_59, (ref) v_u_14, (ref) v_u_13, (copy) v_u_107, (copy) v_u_7, (copy) v_u_6, (copy) v_u_2, (copy) v_u_118
-	if not v_u_59 then
-		v_u_59 = true
-		v_u_14 = p119
-		v_u_13 = p120
-		v_u_14.WeaponEquipped:Connect(function()
-			-- upvalues: (ref) v_u_107
-			v_u_107:Update()
-		end)
-		v_u_14.WeaponUnequipped:Connect(function()
-			-- upvalues: (ref) v_u_107
-			v_u_107:Update()
-		end)
-		v_u_7.InputMethodChanged:Connect(function()
-			-- upvalues: (ref) v_u_107
-			v_u_107:Update()
-		end)
-		v_u_6.SettingsChanged:Connect(function(p121)
-			-- upvalues: (ref) v_u_107
-			if p121 and p121[1] == "Controls" then
-				v_u_107:Update()
-			end
-		end)
-		v_u_2.InputBegan:Connect(function(p122, p123)
-			-- upvalues: (ref) v_u_118
-			if not p123 then
-				local v124 = p122.KeyCode
-				if v124 == Enum.KeyCode.Unknown then
-					v124 = p122.UserInputType
-				end
-				v_u_118(v124, true)
-			end
-		end)
-		v_u_2.InputEnded:Connect(function(p125)
-			-- upvalues: (ref) v_u_118
-			local v126 = p125.KeyCode
-			if v126 == Enum.KeyCode.Unknown then
-				v126 = p125.UserInputType
-			end
-			v_u_118(v126, false)
-		end)
-		v_u_107:Update()
-	end
+local function updateIconsForKey(p1, p2) -- Line: 409 -- upvalues: BindUtil (val), Icons (val), u289 (val), u288 (val), u67 (val), getIconId (val)
+    local keyCodes, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11
+    if BindUtil.getInputMethod() ~= "Gamepad" then
+        v11 = "keyboard"
+    else
+        v11 = Icons.GetGamepadType()
+    end
+    local v12 = u289[p1]
+    if not v12 then
+        return
+    end
+    local v13 = v12
+    local v14 = nil
+    local v15 = nil
+    for i, j in v13, v14, v15 do
+        for k, n in j:GetChildren() do
+            if n:IsA("ImageLabel") and n.Name:match("^IconImage") then
+                v3 = u288
+                v4 = nil
+                v5 = nil
+                for m, i5 in v3, v4, v5 do
+                    if i5.frame == j then
+                        keyCodes = i5.keyCodes
+                        v6 = nil
+                        v7 = nil
+                        for i6, i7 in keyCodes, v6, v7 do
+                            if i6 ~= 1 then
+                                v8 = "IconImage" .. i6
+                            else
+                                v8 = "IconImage"
+                            end
+                            v9 = j:FindFirstChild(v8)
+                            if v9 then
+                                v10 = if i7 ~= v1 then u67[i7] == v1 else true
+                                if v10 then
+                                    v9.Image = getIconId(i7, v11, v2)
+                                end
+                            end
+                        end
+                        -- <loop back-edge to L27>
+                    end
+                end
+                break
+            end
+        end
+    end
 end
-return v_u_107
+function u295.Show(p1) -- Line: 444 -- upvalues: u295 (val), u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val)
+    u295.IsShowing = true
+    if u290 then
+        u295:Update()
+        return
+    end
+    if BindUtil.getInputMethod() ~= "Touch" then
+        ScreenGui.Enabled = peek(Settings.Controls.ShowControlHints)
+    end
+end
+function u295.Hide(p1) -- Line: 453 -- upvalues: u295 (val), ScreenGui (val)
+    u295.IsShowing = false
+    ScreenGui.Enabled = false
+end
+function u295.Init(p1, p2, p3) -- Line: 458 -- upvalues: u290 (ref), u58 (ref), u59 (ref), u295 (val), BindUtil (val), Settings (val), UserInputService (val), updateIconsForKey (val)
+    if u290 then
+        return
+    end
+    u290 = true
+    u58 = p2
+    u59 = p3
+    u58.WeaponEquipped:Connect(function() -- Line: 466 -- upvalues: u295 (upval)
+        u295:Update()
+    end)
+    u58.WeaponUnequipped:Connect(function() -- Line: 469 -- upvalues: u295 (upval)
+        u295:Update()
+    end)
+    BindUtil.InputMethodChanged:Connect(function() -- Line: 474 -- upvalues: u295 (upval)
+        u295:Update()
+    end)
+    Settings.SettingsChanged:Connect(function(p1) -- Line: 479 -- upvalues: u295 (upval)
+        if p1 and p1[1] == "Controls" then
+            u295:Update()
+        end
+    end)
+    UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 486 -- upvalues: updateIconsForKey (upval)
+        if p2 then
+            return
+        end
+        local KeyCode = p1.KeyCode
+        if KeyCode == Enum.KeyCode.Unknown then
+            KeyCode = p1.UserInputType
+        end
+        updateIconsForKey(KeyCode, true)
+    end)
+    UserInputService.InputEnded:Connect(function(p1) -- Line: 496 -- upvalues: updateIconsForKey (upval)
+        local KeyCode = p1.KeyCode
+        if KeyCode == Enum.KeyCode.Unknown then
+            KeyCode = p1.UserInputType
+        end
+        updateIconsForKey(KeyCode, false)
+    end)
+    u295:Update()
+end
+return u295

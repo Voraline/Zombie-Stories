@@ -1,82 +1,78 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require(v1.Packages.Fusion).Children
-return function(p_u_3) -- name: WheelFrame
-	-- upvalues: (copy) v_u_2
-	local v4 = p_u_3.scope
-	local v_u_5 = p_u_3.isLeft
-	local v8 = v4:Computed(function(p6)
-		-- upvalues: (copy) p_u_3, (copy) v_u_5
-		local v7 = p6(p_u_3.rotation)
-		if v_u_5 then
-			return math.max(180, v7)
-		else
-			return math.min(180, v7)
-		end
-	end)
-	local v10 = v4:Computed(function(p9)
-		-- upvalues: (copy) p_u_3
-		if p_u_3.wheelColor then
-			return p9(p_u_3.wheelColor)
-		else
-			return Color3.fromRGB(101, 206, 255)
-		end
-	end)
-	local v11 = v4:New("Frame")
-	local v12 = {
-		["Name"] = v_u_5 and "LeftFrame" or "RightFrame",
-		["BackgroundColor3"] = Color3.fromRGB(255, 255, 255),
-		["BackgroundTransparency"] = 1,
-		["BorderColor3"] = Color3.fromRGB(27, 42, 53),
-		["ClipsDescendants"] = true
-	}
-	local v13
-	if v_u_5 then
-		v13 = UDim2.fromScale(0, 0)
-	else
-		v13 = UDim2.fromScale(0.5, 0)
-	end
-	v12.Position = v13
-	v12.Size = UDim2.fromScale(0.5, 1)
-	v12.ZIndex = 2
-	local v14 = v_u_2
-	local v15 = {}
-	local v16 = v4:New("ImageLabel")
-	local v17 = {
-		["Name"] = "WheelImage"
-	}
-	local v18
-	if v_u_5 then
-		v18 = Vector2.new(0, 0)
-	else
-		v18 = Vector2.new(1, 0)
-	end
-	v17.AnchorPoint = v18
-	v17.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	v17.BackgroundTransparency = 1
-	v17.BorderColor3 = Color3.fromRGB(27, 42, 53)
-	v17.Image = "rbxassetid://13676717187"
-	v17.ImageColor3 = v10
-	local v19
-	if v_u_5 then
-		v19 = UDim2.fromScale(0, 0)
-	else
-		v19 = UDim2.fromScale(1, 0)
-	end
-	v17.Position = v19
-	v17.Size = UDim2.fromScale(2, 1)
-	v17[v_u_2] = { v4:New("UIGradient")({
-			["Name"] = "UIGradient",
-			["Rotation"] = nil,
-			["Transparency"] = nil,
-			["Rotation"] = v8,
-			["Transparency"] = NumberSequence.new({
-				NumberSequenceKeypoint.new(0, 1),
-				NumberSequenceKeypoint.new(0.5, 1),
-				NumberSequenceKeypoint.new(0.501, 0),
-				NumberSequenceKeypoint.new(1, 0)
-			})
-		}) }
-	__set_list(v15, 1, {v16(v17)})
-	v12[v14] = v15
-	return v11(v12)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Children = require(ReplicatedStorage.Packages.Fusion).Children
+return function(p1) -- Line: 14 -- upvalues: Children (val)
+    local v1, v2
+    local scope = p1.scope
+    local isLeft = p1.isLeft
+    local v3 = scope:Computed(function(a1) -- Line: 18 -- upvalues: p1 (val), isLeft (val)
+        local v1 = a1(p1.rotation)
+        if isLeft then
+            return (math.max(180, v1))
+        end
+        return (math.min(180, v1))
+    end)
+    local v4 = scope:Computed(function(a1) -- Line: 27 -- upvalues: p1 (val)
+        if p1.wheelColor then
+            return a1(p1.wheelColor)
+        end
+        return Color3.fromRGB(101, 206, 255)
+    end)
+    local v5 = scope:New("Frame")
+    local v6 = {}
+    if not isLeft then
+        v2 = "RightFrame"
+    else
+        v2 = "LeftFrame"
+    end
+    v6.Name = v2
+    v6.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v6.BackgroundTransparency = 1
+    v6.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    v6.ClipsDescendants = true
+    if not isLeft then
+        v2 = UDim2.fromScale(0.5, 0)
+    else
+        v2 = UDim2.fromScale(0, 0)
+    end
+    v6.Position = v2
+    v6.Size = UDim2.fromScale(0.5, 1)
+    v6.ZIndex = 2
+    local v7 = {}
+    local v8 = scope:New("ImageLabel")
+    local v9 = {Name = "WheelImage"}
+    if not isLeft then
+        v1 = Vector2.new(1, 0)
+    else
+        v1 = Vector2.new(0, 0)
+    end
+    v9.AnchorPoint = v1
+    v9.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v9.BackgroundTransparency = 1
+    v9.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    v9.Image = "rbxassetid://13676717187"
+    v9.ImageColor3 = v4
+    if not isLeft then
+        v1 = UDim2.fromScale(1, 0)
+    else
+        v1 = UDim2.fromScale(0, 0)
+    end
+    v9.Position = v1
+    v9.Size = UDim2.fromScale(2, 1)
+    local v10 = {}
+    local v11 = scope:New("UIGradient")
+    local v12 = {Name = "UIGradient", Rotation = v3}
+    local v13 = {}
+    local v14 = NumberSequenceKeypoint.new(0, 1)
+    local v15 = NumberSequenceKeypoint.new(0.5, 1)
+    local v16 = NumberSequenceKeypoint.new(0.501, 0)
+    v13[1] = v14
+    v13[2] = v15
+    v13[3] = v16
+    v13[4] = NumberSequenceKeypoint.new(1, 0)
+    v12.Transparency = NumberSequence.new(v13)
+    v10[1] = v11(v12)
+    v9[Children] = v10
+    v7[1] = v8(v9)
+    v6[Children] = v7
+    return v5(v6)
 end

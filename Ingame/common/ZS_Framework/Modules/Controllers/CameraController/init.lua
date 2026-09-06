@@ -1,887 +1,1077 @@
-local v_u_1 = UserSettings():GetService("UserGameSettings")
-local v2 = game:GetService("ContextActionService")
-local v3 = game:GetService("CollectionService")
-local v4 = game:GetService("ReplicatedStorage")
-local v_u_5 = game:GetService("UserInputService")
-local v_u_6 = game:GetService("RunService")
-local v_u_7 = game:GetService("Players").LocalPlayer
-local v_u_8 = workspace.CurrentCamera
-local v_u_9 = script.Resources
+local Remotes
+local UserGameSettings = UserSettings():GetService("UserGameSettings")
+local ContextActionService = game:GetService("ContextActionService")
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local CurrentCamera = workspace.CurrentCamera
+local Resources = script.Resources
 workspace:WaitForChild("Ignore")
-v4.common:WaitForChild("Remotes")
-local v10 = script:WaitForChild("CameraUtils")
-local v_u_11 = script.Parent
-v_u_11.Parent:WaitForChild("Classes")
-local v12 = v_u_11.Parent:WaitForChild("Utils")
-local v13 = v_u_11.Parent:WaitForChild("Shared")
-local v14 = game.ReplicatedStorage.common.RedEvents
-local v15 = require(v12:WaitForChild("SpringUtil"))
-local v_u_16 = require(v4.Packages.Fusion)
-local v_u_17 = require(v4.common.skillTree.SkillTreeData)
-local v_u_18 = require(v4.common.skillTree.SkillTreeMain)
-local v_u_19 = CFrame.new()
-local v_u_20 = v15.new(0)
-v_u_20.Target = 0
-v_u_20.Speed = 15
-v_u_20.Damper = 0.9
-local v21 = v15.new(0)
-v21.Target = 0
-v21.Speed = 12
-v21.Damper = 0.9
-local v22 = v15.new((Vector3.new()))
-v22.Target = Vector3.new(0.01, 0.01, 0.01)
-v22.Speed = 12
-v22.Damper = 0.9
-local v_u_23 = 0
-local v_u_24 = nil
+ReplicatedStorage.common:WaitForChild("Remotes")
+local CameraUtils = script:WaitForChild("CameraUtils")
+local Parent = script.Parent
+Parent.Parent:WaitForChild("Classes")
+local Utils = Parent.Parent:WaitForChild("Utils")
+local Shared = Parent.Parent:WaitForChild("Shared")
+local RedEvents = game.ReplicatedStorage.common.RedEvents
+local SpringUtil = require(Utils:WaitForChild("SpringUtil"))
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local SkillTreeData = require(ReplicatedStorage.common.skillTree.SkillTreeData)
+local SkillTreeMain = require(ReplicatedStorage.common.skillTree.SkillTreeMain)
+local unseatCharacter = require(ReplicatedStorage.common.ZS_Shared.Util.unseatCharacter)
+local u104 = CFrame.new()
+local u107 = SpringUtil.new(0)
+u107.Target = 0
+u107.Speed = 15
+u107.Damper = 0.9
+local v1 = SpringUtil.new(0)
+v1.Target = 0
+v1.Speed = 12
+v1.Damper = 0.9
+local v2 = SpringUtil.new((Vector3.new()))
+v2.Target = Vector3.new(0.009999999776482582, 0.009999999776482582, 0.009999999776482582)
+v2.Speed = 12
+v2.Damper = 0.9
+local u124 = 0
+local u125 = nil
 CFrame.new()
-local v_u_25 = {}
-local v_u_26 = {}
-local v_u_27 = CFrame.new()
-local v_u_28 = nil
-local v_u_29 = nil
-local v_u_30 = CFrame.new()
-local v_u_31 = CFrame.new()
-local v_u_32 = CFrame.new()
-local v_u_33 = CFrame.new()
-local v_u_34 = {}
-local v_u_35 = false
-local v_u_36 = {}
-local v_u_37 = nil
-local v_u_38 = 0
-local function v_u_47(p39) -- name: IsInThumbstickArea
-	-- upvalues: (copy) v_u_7
-	local v40 = v_u_7:FindFirstChildOfClass("PlayerGui")
-	if v40 then
-		v40 = v40:FindFirstChild("TouchGui")
-	end
-	if v40 then
-		v40 = v40:FindFirstChild("TouchControlFrame")
-	end
-	if not v40 then
-		return false
-	end
-	local v41 = v40:FindFirstChild("ThumbstickFrame")
-	if v41 and v41.Visible then
-		local v42 = v41.AbsolutePosition
-		local v43 = v42 + v41.AbsoluteSize
-		if p39.X >= v42.X and (p39.Y >= v42.Y and (p39.X <= v43.X and p39.Y <= v43.Y)) then
-			return true
-		end
-	end
-	local v44 = v40:FindFirstChild("DynamicThumbstickFrame")
-	if v44 and v44.Visible then
-		local v45 = v44.AbsolutePosition
-		local v46 = v45 + v44.AbsoluteSize
-		if p39.X >= v45.X and (p39.Y >= v45.Y and (p39.X <= v46.X and p39.Y <= v46.Y)) then
-			return true
-		end
-	end
-	return false
+local u128 = {}
+local u129 = {}
+local u131 = CFrame.new()
+local u132 = nil
+local u133 = nil
+local u135 = CFrame.new()
+local u137 = CFrame.new()
+local u139 = CFrame.new()
+local u141 = CFrame.new()
+local u142 = {}
+local u143 = false
+local u144 = {}
+local u145 = nil
+local u146 = 0
+local function IsInThumbstickArea(p1) -- Line: 91 -- upvalues: LocalPlayer (val)
+    local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    local TouchGui = PlayerGui
+    if TouchGui then
+        TouchGui = PlayerGui:FindFirstChild("TouchGui")
+    end
+    local TouchControlFrame = TouchGui
+    if TouchControlFrame then
+        TouchControlFrame = TouchGui:FindFirstChild("TouchControlFrame")
+    end
+    if not TouchControlFrame then
+        return false
+    end
+    local ThumbstickFrame = TouchControlFrame:FindFirstChild("ThumbstickFrame")
+    if not ThumbstickFrame then
+        local DynamicThumbstickFrame = TouchControlFrame:FindFirstChild("DynamicThumbstickFrame")
+        if not DynamicThumbstickFrame or not DynamicThumbstickFrame.Visible then
+            return false
+        end
+        local AbsolutePosition_2 = DynamicThumbstickFrame.AbsolutePosition
+        local v1 = AbsolutePosition_2 + DynamicThumbstickFrame.AbsoluteSize
+        if AbsolutePosition_2.X > p1.X or AbsolutePosition_2.Y > p1.Y or p1.X > v1.X then
+            return false
+        end
+        if p1.Y <= v1.Y then
+            return true
+        end
+        return false
+    elseif ThumbstickFrame.Visible then
+        local AbsolutePosition = ThumbstickFrame.AbsolutePosition
+        local v2 = AbsolutePosition + ThumbstickFrame.AbsoluteSize
+        if AbsolutePosition.X <= p1.X and AbsolutePosition.Y <= p1.Y and p1.X <= v2.X and p1.Y <= v2.Y then
+            return true
+        end
+    end
 end
-local v_u_48 = 1
-local v_u_49 = CFrame.new()
+local u148 = 1
+local u150 = CFrame.new()
 CFrame.new()
 CFrame.new()
-local v_u_50 = nil
-local v_u_51 = nil
-local _ = Vector2.new(1, 0.77) * 0.06981317007977318
-local v_u_52 = require(v10:WaitForChild("RecoilUtil"))
-local v_u_53 = require(v10:WaitForChild("TransparencyUtil"))
-local v_u_54 = require(v_u_11:WaitForChild("LocalPlayerController"))
-local v_u_55 = require(v12:WaitForChild("BobbingUtil"))
-local v_u_56 = require(v13:WaitForChild("SharedSprings"))
-local v_u_57 = require(v12:WaitForChild("RaycastUtil"))
-local v_u_58 = require(v12:WaitForChild("CursorRecoilUtil"))
-local v59 = require(v10:WaitForChild("CameraShaker"))
-local v_u_60 = require("@game/ReplicatedStorage/common/Settings")
-local v_u_61 = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
-local v_u_62 = require(v_u_11.CameraController.CameraUtils.CameraShaker.CameraShakePresets)
-local v63 = require(v14.Framework.CameraEvent)
-local v64 = require(v14.Framework.CameraShakeEvent)
-local v_u_65 = {}
-local v_u_66 = 0
-local v_u_67 = {}
-local v_u_68 = 0
-local v_u_69 = {}
-local v_u_70 = 0
-local v_u_71 = {}
-local v_u_72 = Vector2.new(0, 0)
-local v_u_73 = Vector2.new(0, 0)
-local v_u_74 = CFrame.new(3, 1.5, 6, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-local v_u_75 = CFrame.new(3, 1.5, 3)
-local v_u_76 = v_u_74
-local v_u_77 = {}
-local v_u_78 = {}
-local v_u_79 = {}
-local v_u_80 = 0
-local v_u_81 = false
-local function v_u_82() -- name: getMaxZoom
-	-- upvalues: (copy) v_u_61, (copy) v_u_60
-	return v_u_61(v_u_60.Camera.MaxCameraDistance)
+local u155 = nil
+local u156 = nil
+local RecoilUtil = require(CameraUtils:WaitForChild("RecoilUtil"))
+local TransparencyUtil = require(CameraUtils:WaitForChild("TransparencyUtil"))
+local LocalPlayerController = require(Parent:WaitForChild("LocalPlayerController"))
+local BobbingUtil = require(Utils:WaitForChild("BobbingUtil"))
+local SharedSprings = require(Shared:WaitForChild("SharedSprings"))
+local RaycastUtil = require(Utils:WaitForChild("RaycastUtil"))
+local CursorRecoilUtil = require(Utils:WaitForChild("CursorRecoilUtil"))
+local CameraShaker = require(CameraUtils:WaitForChild("CameraShaker"))
+local u212 = require("@game/ReplicatedStorage/common/Settings")
+local OutfitMorph = require(ReplicatedStorage.common:WaitForChild("OutfitMorph"))
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+local peek = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
+local CameraShakePresets = require(Parent.CameraController.CameraUtils.CameraShaker.CameraShakePresets)
+local CameraEvent = require(RedEvents.Framework.CameraEvent)
+local CameraShakeEvent = require(RedEvents.Framework.CameraShakeEvent)
+local u250 = {}
+local u251 = 0
+local u252 = {}
+local u253 = 0
+local u254 = {}
+local u255 = 0
+local u256 = false
+local u257 = {}
+local u262 = Vector2.new(0, 0)
+local u266 = Vector2.new(0, 0)
+local u281 = CFrame.new(3, 1.5, 6, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+local u286 = CFrame.new(3, 1.5, 3)
+local u287 = u281
+local u288 = {}
+local u289 = {}
+local u290 = {}
+local v3 = OutfitMorph.VfxTagFor(LocalPlayer)
+local u294 = 0
+local u295 = false
+local function getMaxZoom() -- Line: 185 -- upvalues: peek (val), u212 (val), GameState (val)
+    local v1 = peek(u212.Camera.MaxCameraDistance)
+    if GameState.Data.IsLobby then
+        return v1 * 1.3
+    end
+    return v1
 end
-local v_u_83 = 0
-local v_u_84 = 0
-local v_u_85 = false
-local v_u_86 = Enum.RenderPriority.Camera.Value + 1
-local v_u_87 = CFrame.new(0, 1.5, 0)
-local v_u_88 = Vector3.new(0, 0, 1)
-local v_u_123 = {
-	["X"] = 0,
-	["Y"] = 0,
-	["FOV"] = 70,
-	["Enabled"] = false,
-	["AimCFrame"] = CFrame.new(),
-	["CameraShaker"] = v59.new(Enum.RenderPriority.Camera.Value, "shakeOne"),
-	["CameraShakerAlt"] = v59.new(Enum.RenderPriority.Camera.Value, "shakeTwo"),
-	["Init"] = function(_) -- name: Init
-		-- upvalues: (copy) v_u_53, (copy) v_u_11, (ref) v_u_83
-		v_u_53:Init()
-		MakeConnections()
-		task.defer(function()
-			-- upvalues: (ref) v_u_11, (ref) v_u_83
-			require(v_u_11:WaitForChild("WeaponController")).GunFired:Connect(function()
-				-- upvalues: (ref) v_u_83
-				v_u_83 = os.clock()
-			end)
-		end)
-	end,
-	["GetCameraShakeCF"] = function(_) -- name: GetCameraShakeCF
-		-- upvalues: (ref) v_u_31
-		return v_u_31
-	end,
-	["GetCameraBoneAngle"] = function(_) -- name: GetCameraBoneAngle
-		-- upvalues: (ref) v_u_30
-		return v_u_30
-	end,
-	["NewRecoil"] = function(_, p89) -- name: NewRecoil
-		-- upvalues: (copy) v_u_26, (copy) v_u_52
-		v_u_26[p89] = v_u_52.new(p89)
-		return v_u_26[p89]
-	end,
-	["SetCameraBone"] = function(_, p90, p91) -- name: SetCameraBone
-		-- upvalues: (ref) v_u_28, (ref) v_u_29
-		v_u_28 = p90
-		v_u_29 = p91
-	end,
-	["ForceTeleport"] = function(_, p92) -- name: ForceTeleport
-		-- upvalues: (copy) v_u_34
-		local v93 = v_u_34
-		table.insert(v93, p92)
-	end,
-	["GetZoomDistance"] = function(_) -- name: GetZoomDistance
-		-- upvalues: (ref) v_u_80
-		return v_u_80
-	end,
-	["SetZoomDistance"] = function(_, p94) -- name: SetZoomDistance
-		-- upvalues: (ref) v_u_80, (copy) v_u_61, (copy) v_u_60, (copy) v_u_54
-		local v95 = v_u_61(v_u_60.Camera.MaxCameraDistance)
-		v_u_80 = math.clamp(p94, 0, v95)
-		v_u_54.RequestThirdPerson = v_u_80 >= 1
-	end,
-	["SetMouseUnlocked"] = function(_, p96, p97) -- name: SetMouseUnlocked
-		-- upvalues: (copy) v_u_67, (ref) v_u_68
-		local v98 = table.find(v_u_67, p96)
-		if p97 and not v98 then
-			local v99 = v_u_67
-			table.insert(v99, p96)
-			v_u_68 = v_u_68 + 1
-		elseif not p97 and v98 then
-			table.remove(v_u_67, v98)
-			v_u_68 = v_u_68 - 1
-		end
-	end,
-	["SetMouseLockPosition"] = function(_, p100, p101) -- name: SetMouseLockPosition
-		-- upvalues: (copy) v_u_69, (ref) v_u_70
-		local v102 = table.find(v_u_69, p100)
-		if p101 and not v102 then
-			local v103 = v_u_69
-			table.insert(v103, p100)
-			v_u_70 = v_u_70 + 1
-		elseif not p101 and v102 then
-			table.remove(v_u_69, v102)
-			v_u_70 = v_u_70 - 1
-		end
-	end,
-	["MouseIconEnabled"] = function(_, p104, p105, p106) -- name: MouseIconEnabled
-		-- upvalues: (copy) v_u_65, (copy) v_u_71, (copy) v_u_5, (ref) v_u_66
-		local v107 = table.find(v_u_65, p104)
-		if p105 and not v107 then
-			v_u_71[p104] = p106
-			v_u_5.MouseIcon = p106 or ""
-			local v108 = v_u_65
-			table.insert(v108, p104)
-			v_u_66 = v_u_66 + 1
-			return
-		end
-		if not p105 and v107 then
-			table.remove(v_u_65, v107)
-			v_u_66 = v_u_66 - 1
-			local v109 = v_u_71[p104]
-			if v109 ~= nil and v_u_5.MouseIcon == v109 then
-				local v110 = false
-				for v111 = #v_u_65, 1, -1 do
-					local v112 = v_u_71[v_u_65[v111]]
-					if v112 then
-						v_u_5.MouseIcon = v112
-						v110 = true
-						break
-					end
-				end
-				if not v110 then
-					v_u_5.MouseIcon = ""
-				end
-			end
-		end
-	end,
-	["SetMagnificationSensitivity"] = function(_, p113) -- name: SetMagnificationSensitivity
-		-- upvalues: (ref) v_u_48
-		v_u_48 = p113
-	end,
-	["GetMagnificationSensitivity"] = function(_) -- name: GetMagnificationSensitivity
-		-- upvalues: (copy) v_u_54, (ref) v_u_48
-		local v114 = v_u_54.CurrentWeapon
-		return not (v114 and v114.Aiming) and 1 or v_u_48
-	end,
-	["GetSensitivity"] = function(_) -- name: GetSensitivity
-		-- upvalues: (copy) v_u_54, (copy) v_u_61, (copy) v_u_60
-		local v115 = v_u_54.CurrentWeapon
-		if v115 and v115.Aiming then
-			return v_u_61(v_u_60.Controls.AimingSensitivity)
-		else
-			return v_u_61(v_u_60.Controls.Sensitivity)
-		end
-	end,
-	["ShouldGunRest"] = function(_) -- name: ShouldGunRest
-		-- upvalues: (copy) v_u_54, (ref) v_u_83, (ref) v_u_84
-		if not v_u_54.ThirdPerson then
-			return false
-		end
-		local v116 = v_u_54.CurrentWeapon
-		if not v116 then
-			return false
-		end
-		if v116.Aiming then
-			return false
-		end
-		local v117 = os.clock()
-		local v118 = v117 - v_u_83 < 2
-		local v119 = v117 - v_u_84 < 2
-		local v120 = not v118
-		if v120 then
-			v120 = not v119
-		end
-		return v120
-	end,
-	["LookAt"] = function(_, p121) -- name: LookAt
-		-- upvalues: (copy) v_u_123
-		local v122
-		if p121 == "s" then
-			v122 = nil
-		else
-			v122 = p121
-		end
-		v_u_123.Tracking = v122
-		v_u_123.TrackingEnd = os.clock() + 1
-	end
+local u297 = 0
+local u298 = 0
+local u299 = false
+local u302 = Enum.RenderPriority.Camera.Value + 1
+local u307 = CFrame.new(0, 1.5, 0)
+local function LerpAngle(p1, p2, p3) -- Line: 209
+    return p1 + ((p2 - p1 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793) * p3
+end
+local function GetYAngle(p1) -- Line: 215
+    local v1 = -p1.LookVector.X
+    return (math.atan2(v1, -p1.LookVector.Z))
+end
+local function UpdateDirectionCircular(p1, p2, p3, p4) -- Line: 221
+    local v1 = math.atan2(p1.Z, p1.X)
+    local v2 = (v1 + ((math.atan2(p2.Z, p2.X) - v1 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793) * p3 * p4 + 6.283185307179586) % 6.283185307179586
+    local v3 = math.cos(v2)
+    return (Vector3.new(v3, 0, (math.sin(v2))))
+end
+local u311 = Vector3.new(0, 0, 1)
+local u312 = {
+    X = 0,
+    Y = 0,
+    FOV = 70,
+    Enabled = false,
+    AimCFrame = CFrame.new(),
+    CameraShaker = CameraShaker.new(Enum.RenderPriority.Camera.Value, "shakeOne"),
+    CameraShakerAlt = CameraShaker.new(Enum.RenderPriority.Camera.Value, "shakeTwo"),
+    Init = function(p1) -- Line: 259 -- upvalues: TransparencyUtil (val), Parent (val), u297 (ref)
+        TransparencyUtil:Init()
+        MakeConnections()
+        task.defer(function() -- Line: 264 -- upvalues: Parent (upval), u297 (upval)
+            require(Parent:WaitForChild("WeaponController")).GunFired:Connect(function() -- Line: 266 -- upvalues: u297 (upval)
+                u297 = os.clock()
+            end)
+        end)
+    end,
+    GetCameraShakeCF = function(p1) -- Line: 272 -- upvalues: u137 (ref)
+        return u137
+    end,
+    GetCameraBoneAngle = function(p1) -- Line: 276 -- upvalues: u135 (ref)
+        return u135
+    end,
+    NewRecoil = function(p1, p2) -- Line: 280 -- upvalues: u129 (val), RecoilUtil (val)
+        u129[p2] = RecoilUtil.new(p2)
+        return u129[p2]
+    end,
+    SetCameraBone = function(p1, p2, p3) -- Line: 285 -- upvalues: u132 (ref), u133 (ref)
+        u132 = p2
+        u133 = p3
+    end,
+    ForceTeleport = function(p1, p2) -- Line: 290 -- upvalues: unseatCharacter (val), LocalPlayerController (val), u142 (val)
+        unseatCharacter(LocalPlayerController.character)
+        LocalPlayerController.LastForceTeleportClock = os.clock()
+        table.insert(u142, p2)
+    end,
+    GetZoomDistance = function(p1) -- Line: 297 -- upvalues: u294 (ref)
+        return u294
+    end,
+    GetMaxZoomDistance = function(p1) -- Line: 301 -- upvalues: peek (val), u212 (val), GameState (val)
+        local v1 = peek(u212.Camera.MaxCameraDistance)
+        if GameState.Data.IsLobby then
+            return v1 * 1.3
+        end
+        return v1
+    end,
+    SetZoomDistance = function(p1, p2) -- Line: 305 -- upvalues: u294 (ref), peek (val), u212 (val), GameState (val), LocalPlayerController (val)
+        local v1
+        local v2 = peek(u212.Camera.MaxCameraDistance)
+        if not GameState.Data.IsLobby then
+            v1 = v2
+        else
+            v1 = v2 * 1.3
+        end
+        u294 = math.clamp(p2, 0, v1)
+        local v3 = 1 <= u294
+        LocalPlayerController.RequestThirdPerson = v3
+    end,
+    SetMouseUnlocked = function(p1, p2, p3) -- Line: 310 -- upvalues: u252 (val), u253 (ref)
+        local v1 = table.find(u252, p2)
+        if not p3 then
+            if not p3 and v1 then
+                table.remove(u252, v1)
+                u253 = u253 - 1
+            end
+            return
+        end
+        if not v1 then
+            table.insert(u252, p2)
+            u253 = u253 + 1
+            return
+        end
+        if not p3 and v1 then
+            table.remove(u252, v1)
+            u253 = u253 - 1
+        end
+    end,
+    SetMouseLockPosition = function(p1, p2, p3) -- Line: 321 -- upvalues: u254 (val), u255 (ref)
+        local v1 = table.find(u254, p2)
+        if not p3 then
+            if not p3 and v1 then
+                table.remove(u254, v1)
+                u255 = u255 - 1
+            end
+            return
+        end
+        if not v1 then
+            table.insert(u254, p2)
+            u255 = u255 + 1
+            return
+        end
+        if not p3 and v1 then
+            table.remove(u254, v1)
+            u255 = u255 - 1
+        end
+    end,
+    MouseIconEnabled = function(p1, p2, p3, p4) -- Line: 332 -- upvalues: u250 (val), u257 (val), UserInputService (val), u251 (ref)
+        local v1 = table.find(u250, p2)
+        if not p3 then
+            if not p3 and v1 then
+                table.remove(u250, v1)
+                u251 = u251 - 1
+                local v2 = u257[p2]
+                if v2 ~= nil and UserInputService.MouseIcon == v2 then
+                    local v3
+                    local v4 = false
+                    local v5 = 1
+                    local v6 = -1
+                    for i = #u250, v5, v6 do
+                        v3 = u257[u250[i]]
+                        if v3 then
+                            UserInputService.MouseIcon = v3
+                            v4 = true
+                            break
+                        end
+                    end
+                    if not v4 then
+                        UserInputService.MouseIcon = ""
+                    end
+                end
+            end
+            return
+        elseif not v1 then
+            u257[p2] = p4
+            UserInputService.MouseIcon = p4 or ""
+            table.insert(u250, p2)
+            u251 = u251 + 1
+            return
+        end
+    end,
+    SetMagnificationSensitivity = function(p1, p2) -- Line: 364 -- upvalues: u148 (ref)
+        u148 = p2
+    end,
+    GetMagnificationSensitivity = function(p1) -- Line: 368 -- upvalues: LocalPlayerController (val), u148 (ref)
+        local CurrentWeapon = LocalPlayerController.CurrentWeapon
+        if not CurrentWeapon then
+            return 1
+        end
+        if CurrentWeapon.Aiming then
+            return u148
+        end
+        return 1
+    end,
+    GetSensitivity = function(p1) -- Line: 373 -- upvalues: LocalPlayerController (val), peek (val), u212 (val)
+        local CurrentWeapon = LocalPlayerController.CurrentWeapon
+        if not CurrentWeapon then
+            return peek(u212.Controls.Sensitivity)
+        end
+        if CurrentWeapon.Aiming then
+            return peek(u212.Controls.AimingSensitivity)
+        end
+        return peek(u212.Controls.Sensitivity)
+    end,
+    ShouldGunRest = function(p1) -- Line: 385 -- upvalues: LocalPlayerController (val), u297 (ref), u298 (ref)
+        if not LocalPlayerController.ThirdPerson then
+            return false
+        end
+        local CurrentWeapon = LocalPlayerController.CurrentWeapon
+        if not CurrentWeapon or CurrentWeapon.Aiming then
+            return false
+        end
+        local v1 = os.clock()
+        local v2 = v1 - u297
+        local v3 = v2 < 2
+        local v4 = v1 - u298
+        v2 = v4 < 2
+        v4 = not v3
+        if v4 then
+            v4 = not v2
+        end
+        return v4
+    end,
 }
-v_u_6.Heartbeat:Connect(function(_)
-	-- upvalues: (copy) v_u_54, (ref) v_u_35, (copy) v_u_123, (ref) v_u_70, (copy) v_u_18, (copy) v_u_16, (copy) v_u_5, (ref) v_u_68, (ref) v_u_66
-	local v124 = v_u_54.ThirdPerson
-	if v124 then
-		v124 = not v_u_54.CurrentWeapon
-	end
-	local v125
-	if v124 then
-		v125 = v_u_35
-	else
-		v125 = v124
-	end
-	if v_u_123.Enabled then
-		if v_u_70 > 0 or v125 and not (v_u_18.isSkillTreeOpen and v_u_16.peek(v_u_18.isSkillTreeOpen)) then
-			v_u_5.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
-		elseif v_u_68 <= 0 and not v124 then
-			v_u_5.MouseBehavior = Enum.MouseBehavior.LockCenter
-		else
-			v_u_5.MouseBehavior = Enum.MouseBehavior.Default
-		end
-		v_u_5.MouseIconEnabled = v_u_66 > 0 and true or v124
-	end
+local function adjustTouchPitchSensitivity(p1) -- Line: 409
+    local CurrentCamera = workspace.CurrentCamera
+    if not CurrentCamera then
+        return p1
+    end
+    local v1 = CurrentCamera.CFrame:ToEulerAnglesYXZ()
+    local v2 = p1.Y * v1
+    if 0 <= v2 then
+        return p1
+    end
+    return Vector2.new(1, (1 - (math.abs(v1) * 2 / 3.141592653589793) ^ 0.75) * 0.75 + 0.25) * p1
+end
+function u312.LookAt(p1, p2) -- Line: 435 -- upvalues: u312 (val)
+    local v1
+    if p2 ~= "s" then
+        v1 = p2
+    else
+        v1 = nil
+    end
+    u312.Tracking = v1
+    u312.TrackingEnd = os.clock() + 1
+end
+RunService.Heartbeat:Connect(function(p1) -- Line: 445 -- upvalues: LocalPlayerController (val), u143 (ref), u312 (val), u253 (ref), UserInputService (val), u251 (ref), u256 (ref), u255 (ref), SkillTreeMain (val), Fusion (val)
+    local v1
+    local ThirdPerson = LocalPlayerController.ThirdPerson
+    if ThirdPerson then
+        ThirdPerson = not LocalPlayerController.CurrentWeapon
+    end
+    local v2 = ThirdPerson
+    if v2 then
+        v2 = u143
+    end
+    if not u312.Enabled then
+        if 0 < u253 then
+            UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+            v1 = 0 < u251
+            UserInputService.MouseIconEnabled = v1
+            u256 = true
+            return
+        end
+        if u256 then
+            local Default
+            if not ThirdPerson then
+                Default = Enum.MouseBehavior.LockCenter
+            else
+                Default = Enum.MouseBehavior.Default
+            end
+            UserInputService.MouseBehavior = Default
+            v1 = if 0 >= u251 then ThirdPerson else true
+            UserInputService.MouseIconEnabled = v1
+            u256 = false
+        end
+        return
+    end
+    u256 = false
+    if 0 < u255 then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+    elseif not v2 then
+        if u253 > 0 then
+            UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+        elseif ThirdPerson then
+            UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+        else
+            UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+        end
+    elseif not SkillTreeMain.isSkillTreeOpen then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+    elseif not (Fusion.peek(SkillTreeMain.isSkillTreeOpen)) then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+    end
+    v1 = if 0 >= u251 then ThirdPerson else true
+    UserInputService.MouseIconEnabled = v1
 end)
-function v_u_123.SetEnabled(_, p126) -- name: SetEnabled
-	-- upvalues: (copy) v_u_123, (copy) v_u_6, (copy) v_u_86, (copy) v_u_54, (copy) v_u_8, (ref) v_u_48, (copy) v_u_61, (copy) v_u_60, (ref) v_u_72, (copy) v_u_1, (ref) v_u_73, (ref) v_u_31, (ref) v_u_32, (copy) v_u_58, (copy) v_u_55, (ref) v_u_23, (copy) v_u_20, (ref) v_u_27, (ref) v_u_30, (ref) v_u_33, (ref) v_u_19, (ref) v_u_81, (copy) v_u_56, (ref) v_u_88, (copy) v_u_53, (copy) v_u_79, (ref) v_u_76, (copy) v_u_57, (copy) v_u_87, (ref) v_u_50, (ref) v_u_51, (copy) v_u_9, (copy) v_u_34, (ref) v_u_85, (ref) v_u_84, (ref) v_u_83, (ref) v_u_49, (ref) v_u_24, (ref) v_u_80, (copy) v_u_75, (copy) v_u_74
-	v_u_123.Enabled = p126
-	if p126 then
-		v_u_6:BindToRenderStep("CameraController", v_u_86, function(p127)
-			-- upvalues: (ref) v_u_54, (ref) v_u_8, (ref) v_u_48, (ref) v_u_61, (ref) v_u_60, (ref) v_u_72, (ref) v_u_1, (ref) v_u_73, (ref) v_u_123, (ref) v_u_31, (ref) v_u_32, (ref) v_u_58, (ref) v_u_55, (ref) v_u_23, (ref) v_u_20, (ref) v_u_27, (ref) v_u_30, (ref) v_u_33, (ref) v_u_19, (ref) v_u_81, (ref) v_u_56, (ref) v_u_88, (ref) v_u_53, (ref) v_u_79, (ref) v_u_76, (ref) v_u_57, (ref) v_u_87, (ref) v_u_50, (ref) v_u_51, (ref) v_u_9, (ref) v_u_34, (ref) v_u_85, (ref) v_u_84, (ref) v_u_83, (ref) v_u_49, (ref) v_u_24, (ref) v_u_80, (ref) v_u_75, (ref) v_u_74
-			if not v_u_54.States.IsDead then
-				v_u_8.CameraType = Enum.CameraType.Scriptable
-			end
-			local v128 = v_u_54.CurrentWeapon
-			local v129 = 1
-			local v130
-			if v128 and v128.Aiming then
-				v129 = v_u_48
-				v130 = v_u_61(v_u_60.Controls.AimingSensitivity)
-			else
-				v130 = v_u_61(v_u_60.Controls.Sensitivity)
-			end
-			local v131 = v_u_72
-			local v132 = v131.X * v_u_1.MouseSensitivity * 9 + v_u_73.X * v129
-			local v133 = (v131.Y * v_u_1.MouseSensitivity * 9 + v_u_73.Y) * v129 * v_u_1:GetCameraYInvertValue()
-			local v134 = v132 * v130
-			local v135 = v133 * v130
-			v_u_73 = Vector2.new()
-			v_u_123.X = ((v_u_123.X - v134 / 150 * 1) % 6.283185307179586 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793
-			local v136 = v_u_123
-			local v137 = v_u_123.Y - v135 / 150 * 1
-			v136.Y = math.clamp(v137, -1.4, 1.4)
-			if v_u_54.humanoid.Humanoid then
-				v_u_54.humanoid.Humanoid.AutoRotate = false
-			end
-			if v_u_54.character and (v_u_54.hrp and v_u_54.PhysBall._fullyInitialized) then
-				local v138 = p127 * 10
-				local v139 = math.clamp(v138, 0.01, 1)
-				local v140 = v_u_54.hrp.Position
-				if v_u_54.PhysBall.isActive then
-					v140 = v_u_54.PhysBall.chasis.CFrame.p
-				end
-				CalculateAngles(v140, v139)
-				v_u_31 = v_u_123.CameraShaker:Update(p127)
-				v_u_32 = v_u_123.CameraShakerAlt:Update(p127)
-				local v141 = v_u_58
-				local v142
-				if v128 then
-					v142 = v128.Aiming
-				else
-					v142 = v128
-				end
-				v141:Update(p127, v142)
-				local v143 = v_u_55.cameraBobCF * CFrame.Angles(v_u_23, 0, v_u_20.Position) * v_u_27 * v_u_31 * (v_u_32 or CFrame.new())
-				local v144 = v_u_30 * CFrame.new() * v_u_33
-				v_u_19 = v_u_19:Lerp(v_u_54.States.Proning and CFrame.new(0, -1, 0) or CFrame.new(), v139)
-				local v145 = v_u_54.ThirdPerson and v_u_54.hrp and 1 or 0
-				local v146 = v145 == 1
-				local v147 = v146 ~= v_u_81
-				v_u_56.TPSpring.Target = v145
-				if v147 then
-					v_u_56.TPSpring.Position = v145
-					if v146 then
-						local v148 = CFrame.Angles(0, v_u_123.X, 0).LookVector
-						local v149 = v148.X
-						local v150 = v148.Z
-						v_u_88 = Vector3.new(v149, 0, v150).Unit
-					end
-				end
-				v_u_81 = v146
-				local v151 = false
-				if v_u_56.TPSpring.Position > 0.05 then
-					if v_u_53.TransparencyModifier == 1 then
-						v_u_53.TransparencyModifier = 0
-						v_u_53:Update()
-						for v152, v153 in v_u_79 do
-							v152.Parent = v153
-						end
-					end
-					v151 = true
-					if not v_u_54.States.IsDead then
-						v_u_123.AimCFrame = CFrame.new(v140) * CFrame.Angles(0, v_u_123.X, 0) * CFrame.Angles(v_u_123.Y, 0, 0) * CFrame.new(0, 1.5, 0):Lerp(v_u_76, v_u_56.TPSpring.Position) * v143
-						v_u_8.CFrame = v_u_123.AimCFrame * v144
-					end
-					local v154 = v_u_54.hrp.Position + Vector3.new(0, 1.5, 0)
-					local v155 = v_u_57.CustomRay(v154, v_u_8.CFrame.Position, true)
-					if v155.Instance and not v_u_54.States.IsDead then
-						v_u_8.CFrame = v_u_8.CFrame - (v_u_8.CFrame.Position - v155.Position) + (v154 - v_u_8.CFrame.Position).Unit
-					end
-				else
-					if v_u_53.TransparencyModifier == 0 then
-						v_u_53.TransparencyModifier = 1
-						v_u_53:Update()
-						for v156, _ in v_u_79 do
-							v156.Parent = game.ReplicatedStorage
-						end
-					end
-					if not v_u_54.States.IsDead then
-						v_u_123.AimCFrame = CFrame.new(v140) * v_u_87 * v_u_19 * CFrame.Angles(0, v_u_123.X, 0) * CFrame.Angles(v_u_123.Y, 0, 0) * CFrame.new(0, 0, 0):Lerp(v_u_76 * CFrame.new(0, -1.5, 0), v_u_56.TPSpring.Position) * v143
-						v_u_8.CFrame = v_u_123.AimCFrame * v144
-					end
-				end
-				if v_u_54.ThirdPerson or (not v_u_54.hrp or (not v_u_54.hrp.Parent or v_u_54.States.Proning)) then
-					if v_u_50 then
-						v_u_50.Parent = v_u_9
-					end
-				else
-					if not (v_u_50 and (v_u_50.Parent and (v_u_51.Parent and v_u_51.Parent.Parent))) then
-						if v_u_51 and (v_u_51.Parent and not v_u_51.Parent.Parent) then
-							v_u_51.Parent:Destroy()
-						end
-						if v_u_50 then
-							v_u_50:Destroy()
-						end
-						if v_u_51 then
-							v_u_51:Destroy()
-						end
-						v_u_50 = v_u_9.Collision:Clone()
-						v_u_51 = Instance.new("Weld")
-						v_u_51.Part0 = v_u_54.hrp.Parent.Head
-						v_u_51.Part1 = v_u_50
-						v_u_51.Parent = v_u_51.Part0
-						v_u_51.C0 = v_u_51.C0 * CFrame.new(0, -1, -1.5)
-						v_u_50.Name = "HeadCol"
-						v_u_50.Parent = workspace.Ignore
-					end
-					if v_u_50.Parent == v_u_9 then
-						v_u_50.Parent = workspace.Ignore
-					end
-				end
-				if #v_u_34 > 0 then
-					local v157 = v_u_34[1]
-					local v158 = nil
-					if typeof(v157) == "Vector3" then
-						v157 = CFrame.new(v157) * v_u_54.PhysBall.chasis.CFrame.Rotation
-					elseif typeof(v157) ~= "CFrame" then
-						v157 = v158
-					end
-					v140 = v157.Position
-					v_u_54.PhysBall.chasis.Velocity = Vector3.new()
-					v_u_54.PhysBall.chasis.CFrame = v157
-					v_u_54.character:PivotTo(v157)
-					table.remove(v_u_34, 1)
-				end
-				local v159 = Vector3.new()
-				if v_u_54.humanoid.Humanoid then
-					v159 = v_u_54.humanoid.Humanoid.MoveDirection
-				end
-				local v160
-				if v128 then
-					v160 = v128.Aiming
-				else
-					v160 = v128
-				end
-				if v_u_85 and not v160 then
-					v_u_84 = os.clock()
-				end
-				v_u_85 = v160
-				local v161 = os.clock()
-				local v162 = v160 or (v161 - v_u_83 < 1.5 or v161 - v_u_84 < 1.5)
-				local v163
-				if v151 then
-					v163 = v_u_54.States.Sprinting or v_u_54.States.Jogging or not (v_u_54.CurrentWeapon and v162)
-				else
-					v163 = v151
-				end
-				local v164 = nil
-				local v165 = 5
-				if v151 then
-					if v163 then
-						if v159.Magnitude > 0.1 then
-							v164 = v159.Unit
-						end
-					else
-						local v166 = CFrame.Angles(0, v_u_123.X, 0).LookVector
-						local v167 = v166.X
-						local v168 = v166.Z
-						v164 = Vector3.new(v167, 0, v168).Unit
-						v165 = 10
-					end
-					if v164 then
-						local v169 = v_u_88
-						local v170 = v169.Z
-						local v171 = v169.X
-						local v172 = math.atan2(v170, v171)
-						local v173 = v164.Z
-						local v174 = v164.X
-						local v175 = (v172 + ((math.atan2(v173, v174) - v172 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793) * p127 * v165 + 6.283185307179586) % 6.283185307179586
-						local v176 = math.cos(v175)
-						local v177 = math.sin(v175)
-						v_u_88 = Vector3.new(v176, 0, v177)
-					end
-					v_u_49 = CFrame.new(Vector3.new(0, 0, 0), v_u_88)
-				else
-					v_u_49 = CFrame.Angles(0, v_u_123.X, 0)
-				end
-				v_u_54.hrp.CFrame = CFrame.new(v140) * v_u_49 * (v_u_54.PhysBall.slideVector or CFrame.new()) * (v_u_54.ProneCF or CFrame.new())
-				if v_u_54.PhysBall then
-					v_u_54.PhysBall:update(p127)
-				end
-				v_u_24 = v140
-				local v178
-				if v_u_61(v_u_60.Camera.ScrollWheelZoom) then
-					v178 = v_u_80
-				else
-					v178 = v_u_61(v_u_60.Camera.MaxCameraDistance)
-				end
-				local v179
-				if v178 >= 1 then
-					local v180 = v178 / v_u_61(v_u_60.Camera.MaxCameraDistance)
-					local v181 = math.clamp(v180, 0, 1)
-					local v182
-					if v128 then
-						v182 = (1 - v181 * 0.1) * 2
-						if v_u_54.ThirdPersonSide < 0 then
-							v182 = -v182
-						end
-					else
-						v182 = 0
-					end
-					if v128 and v128.Aiming then
-						local v183 = v178 * 0.5
-						v178 = math.max(v183, 1) or v178
-					end
-					v179 = CFrame.new(v182, 1.5, v178)
-				else
-					v179 = v128 and v128.Aiming and v_u_75 or v_u_74
-					if v128 and v_u_54.ThirdPersonSide < 0 then
-						v179 = v179 * CFrame.new(-4, 0, 0)
-					end
-				end
-				if v147 then
-					v_u_76 = v179
-				else
-					v_u_76 = v_u_76:Lerp(v179, v139)
-				end
-				local v184 = v_u_61(v_u_60.Graphics.BaseFOV) * 0.8
-				if v128 and (v128.Config and v128.Config.AimFOVMultiplier) then
-					v184 = v184 * v128.Config.AimFOVMultiplier
-				end
-				if not (v128 and (v128.Aiming and v184)) then
-					v184 = v_u_61(v_u_60.Graphics.BaseFOV)
-				end
-				v_u_8.FieldOfView = Lerp(v_u_8.FieldOfView, v184, v139)
-				if v_u_123.Tracking then
-					local v185 = v_u_123.Tracking
-					local v186
-					if type(v185) == "userdata" and v_u_123.Tracking:IsA("BasePart") then
-						v186 = v_u_123.Tracking.Position
-					else
-						v186 = v_u_123.Tracking
-					end
-					local v187 = v_u_8.CFrame.Position - v186
-					local v188 = v187.X
-					local v189 = v187.Z
-					local v190 = math.atan2(v188, v189)
-					local v191 = v187.Y / v187.Magnitude
-					local v192 = -math.asin(v191)
-					local v193 = math.clamp(v192, -1.4, 1.4)
-					local v194 = v_u_123.TrackingEnd - os.clock()
-					local v195 = Lerp
-					local v196 = v139 * 5
-					local v197 = 1 - v194 / 1
-					local v198 = v195(v139, v196, (math.clamp(v197, 0, 1)))
-					v_u_123.X = Lerp(v_u_123.X, v190, v198)
-					v_u_123.Y = Lerp(v_u_123.Y, v193, v198)
-				end
-			end
-		end)
-	else
-		v_u_6:UnbindFromRenderStep("CameraController")
-	end
+function u312.SetEnabled(p1, p2) -- Line: 483 -- upvalues: u312 (val), RunService (val), u302 (val), LocalPlayerController (val), CurrentCamera (val), u148 (ref), peek (val), u212 (val), u262 (ref), UserGameSettings (val), u266 (ref), u137 (ref), u139 (ref), CursorRecoilUtil (val), BobbingUtil (val), u124 (ref), u107 (val), u131 (ref), u135 (ref), u141 (ref), u104 (ref), u295 (ref), SharedSprings (val), u311 (ref), TransparencyUtil (val), u290 (val), u287 (ref), RaycastUtil (val), u307 (val), u155 (ref), u156 (ref), Resources (val), u142 (val), u299 (ref), u298 (ref), u297 (ref), u150 (ref), u125 (ref), u294 (ref), GameState (val), u286 (val), u281 (val)
+    u312.Enabled = p2
+    if p2 then
+        RunService:BindToRenderStep("CameraController", u302, function(p1) -- Line: 486 -- upvalues: LocalPlayerController (upval), CurrentCamera (upval), u148 (upval), peek (upval), u212 (upval), u262 (upval), UserGameSettings (upval), u266 (upval), u312 (upval), u137 (upval), u139 (upval), CursorRecoilUtil (upval), BobbingUtil (upval), u124 (upval), u107 (upval), u131 (upval), u135 (upval), u141 (upval), u104 (upval), u295 (upval), SharedSprings (upval), u311 (upval), TransparencyUtil (upval), u290 (upval), u287 (upval), RaycastUtil (upval), u307 (upval), u155 (upval), u156 (upval), Resources (upval), u142 (upval), u299 (upval), u298 (upval), u297 (upval), u150 (upval), u125 (upval), u294 (upval), GameState (upval), u286 (upval), u281 (upval)
+            local Aiming, Humanoid, v1
+            if not LocalPlayerController.States.IsDead then
+                CurrentCamera.CameraType = Enum.CameraType.Scriptable
+            end
+            local CurrentWeapon = LocalPlayerController.CurrentWeapon
+            local v2 = 1
+            if not CurrentWeapon then
+                v1 = peek(u212.Controls.Sensitivity)
+            elseif CurrentWeapon.Aiming then
+                v2 = u148
+                v1 = peek(u212.Controls.AimingSensitivity)
+            end
+            local v3 = u262
+            local v4 = v3.X * UserGameSettings.MouseSensitivity * 9 + u266.X * v2
+            local v5 = (v3.Y * UserGameSettings.MouseSensitivity * 9 + u266.Y) * v2
+            u266 = Vector2.new()
+            local function normalizeAngle(p1) -- Line: 512
+                return (p1 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793
+            end
+            u312.X = ((u312.X - v4 * v1 / 150 * 1) % 6.283185307179586 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793
+            local v6 = u312.Y - v5 * UserGameSettings:GetCameraYInvertValue() * v1 / 150 * 1
+            u312.Y = math.clamp(v6, -1.4, 1.4)
+            if LocalPlayerController.humanoid.Humanoid then
+                LocalPlayerController.humanoid.Humanoid.AutoRotate = false
+            end
+            if LocalPlayerController.character and LocalPlayerController.hrp and LocalPlayerController.PhysBall._fullyInitialized then
+                local MoveDirection, Position, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21
+                local v22 = math.clamp(p1 * 10, 0.01, 1)
+                Humanoid = LocalPlayerController.humanoid.Humanoid
+                local Sit = Humanoid
+                if Sit then
+                    Sit = Humanoid.Sit
+                    if not Sit then
+                        Sit = Humanoid.SeatPart ~= nil
+                    end
+                end
+                Position = if LocalPlayerController.PhysBall.isActive and not Sit then LocalPlayerController.PhysBall.chasis.CFrame.p else LocalPlayerController.hrp.Position
+                CalculateAngles(Position, v22)
+                u137 = u312.CameraShaker:Update(p1)
+                u139 = u312.CameraShakerAlt:Update(p1)
+                Aiming = CurrentWeapon
+                if Aiming then
+                    Aiming = CurrentWeapon.Aiming
+                end
+                CursorRecoilUtil:Update(p1, Aiming)
+                local v23 = BobbingUtil.cameraBobCF * CFrame.Angles(u124, 0, u107.Position)
+                local v24 = v23 * u131
+                v24 = u139
+                if not v24 then
+                    v24 = CFrame.new()
+                end
+                local v25 = v24 * u137 * v24
+                v24 = u135 * CFrame.new()
+                local v26 = v24 * u141
+                v24 = u104
+                if not LocalPlayerController.States.Proning then
+                    v7 = CFrame.new()
+                else
+                    v7 = CFrame.new(0, -1, 0)
+                end
+                u104 = v24:Lerp(v7, v22)
+                if not LocalPlayerController.ThirdPerson then
+                    v24 = 0
+                elseif LocalPlayerController.hrp then
+                    v24 = 1
+                end
+                v23 = v24 == 1
+                v7 = v23 ~= u295
+                SharedSprings.TPSpring.Target = v24
+                if v7 then
+                    SharedSprings.TPSpring.Position = v24
+                    if v23 then
+                        local LookVector = CFrame.Angles(0, u312.X, 0).LookVector
+                        u311 = Vector3.new(LookVector.X, 0, LookVector.Z).Unit
+                    end
+                end
+                u295 = v23
+                local v27 = false
+                if 0.05 >= SharedSprings.TPSpring.Position then
+                    if TransparencyUtil.TransparencyModifier == 0 then
+                        TransparencyUtil.TransparencyModifier = 1
+                        TransparencyUtil:Update()
+                        v8 = u290
+                        v9 = nil
+                        v10 = nil
+                        for i, j in v8, v9, v10 do
+                            i.Parent = game.ReplicatedStorage
+                        end
+                    end
+                    if not LocalPlayerController.States.IsDead then
+                        local v28 = CFrame.new(Position)
+                        v12 = v28 * u307 * u104 * CFrame.Angles(0, u312.X, 0)
+                        v11 = v12 * CFrame.Angles(u312.Y, 0, 0)
+                        v12 = CFrame.new(0, 0, 0)
+                        local v29 = u287 * CFrame.new(0, -1.5, 0)
+                        u312.AimCFrame = v11 * v12:Lerp(v29, SharedSprings.TPSpring.Position) * v25
+                        CurrentCamera.CFrame = u312.AimCFrame * v26
+                    end
+                else
+                    if TransparencyUtil.TransparencyModifier == 1 then
+                        TransparencyUtil.TransparencyModifier = 0
+                        TransparencyUtil:Update()
+                        v8 = u290
+                        v9 = nil
+                        v10 = nil
+                        for k, n in v8, v9, v10 do
+                            k.Parent = n
+                        end
+                    end
+                    v27 = true
+                    if not LocalPlayerController.States.IsDead then
+                        v13 = CFrame.new(Position)
+                        v12 = v13 * CFrame.Angles(0, u312.X, 0)
+                        v11 = v12 * CFrame.Angles(u312.Y, 0, 0)
+                        v12 = CFrame.new(0, 1.5, 0)
+                        u312.AimCFrame = v11 * v12:Lerp(u287, SharedSprings.TPSpring.Position) * v25
+                        CurrentCamera.CFrame = u312.AimCFrame * v26
+                    end
+                    v8 = LocalPlayerController.hrp.Position + Vector3.new(0, 1.5, 0)
+                    v9 = RaycastUtil.CustomRay(v8, CurrentCamera.CFrame.Position, true)
+                    if v9.Instance and not LocalPlayerController.States.IsDead then
+                        CurrentCamera.CFrame = CurrentCamera.CFrame - (CurrentCamera.CFrame.Position - v9.Position) + (v8 - CurrentCamera.CFrame.Position).Unit
+                    end
+                end
+                if LocalPlayerController.ThirdPerson then
+                    if u155 then
+                        u155.Parent = Resources
+                    end
+                elseif LocalPlayerController.hrp and LocalPlayerController.hrp.Parent and not LocalPlayerController.States.Proning then
+                    if not u155 then
+                        if u156 and u156.Parent and not u156.Parent.Parent then
+                            u156.Parent:Destroy()
+                        end
+                        if u155 then
+                            u155:Destroy()
+                        end
+                        if u156 then
+                            u156:Destroy()
+                        end
+                        u155 = Resources.Collision:Clone()
+                        u156 = Instance.new("Weld")
+                        u156.Part0 = LocalPlayerController.hrp.Parent.Head
+                        u156.Part1 = u155
+                        u156.Parent = u156.Part0
+                        u156.C0 = u156.C0 * CFrame.new(0, -1, -1.5)
+                        u155.Name = "HeadCol"
+                        u155.Parent = workspace.Ignore
+                    elseif u155.Parent and u156.Parent and u156.Parent.Parent then
+                    end
+                    if u155.Parent == Resources then
+                        u155.Parent = workspace.Ignore
+                    end
+                end
+                v8 = #u142
+                if 0 < v8 then
+                    v8 = u142[1]
+                    v9 = nil
+                    if typeof(v8) == "Vector3" then
+                        v10 = CFrame.new(v8)
+                        v9 = v10 * LocalPlayerController.PhysBall.chasis.CFrame.Rotation
+                    elseif typeof(v8) == "CFrame" then
+                        local LookVector_2 = v8.LookVector
+                        v11 = Vector3.new(LookVector_2.X, 0, LookVector_2.Z)
+                        if 0.0001 < v11.Magnitude then
+                            local Unit = v11.Unit
+                            u312.X = math.atan2(-Unit.X, -Unit.Z)
+                            u311 = Unit
+                        end
+                    end
+                    Position = v9.Position
+                    LocalPlayerController.PhysBall.chasis.Velocity = Vector3.new()
+                    LocalPlayerController.PhysBall.chasis.CFrame = v9
+                    LocalPlayerController.character:PivotTo(v9)
+                    table.remove(u142, 1)
+                end
+                MoveDirection = if LocalPlayerController.humanoid.Humanoid then LocalPlayerController.humanoid.Humanoid.MoveDirection else Vector3.new()
+                local Aiming_2 = CurrentWeapon
+                if Aiming_2 then
+                    Aiming_2 = CurrentWeapon.Aiming
+                end
+                if u299 and not Aiming_2 then
+                    u298 = os.clock()
+                end
+                u299 = Aiming_2
+                v10 = os.clock()
+                v12 = v10 - u297
+                v11 = v12 < 1.5
+                v13 = v10 - u298
+                v12 = v13 < 1.5
+                v13 = Aiming_2
+                if not v13 then
+                    v13 = v11
+                    if not v13 then
+                        v13 = v12
+                    end
+                end
+                local Sprinting = v27
+                if Sprinting then
+                    Sprinting = LocalPlayerController.States.Sprinting
+                    if not Sprinting then
+                        Sprinting = LocalPlayerController.States.Jogging
+                        if not Sprinting then
+                            Sprinting = not LocalPlayerController.CurrentWeapon
+                            if not Sprinting then
+                                Sprinting = not v13
+                            end
+                        end
+                    end
+                end
+                local Unit_2 = nil
+                local v30 = 5
+                if v27 then
+                    if not Sprinting then
+                        local LookVector_3 = CFrame.Angles(0, u312.X, 0).LookVector
+                        Unit_2 = Vector3.new(LookVector_3.X, 0, LookVector_3.Z).Unit
+                        v30 = 10
+                    elseif 0.1 < MoveDirection.Magnitude then
+                        Unit_2 = MoveDirection.Unit
+                    end
+                    if Unit_2 then
+                        v15 = u311
+                        v16 = Unit_2
+                        v18 = math.atan2(v15.Z, v15.X)
+                        v20 = (v18 + ((math.atan2(v16.Z, v16.X) - v18 + 3.141592653589793) % 6.283185307179586 - 3.141592653589793) * p1 * v30 + 6.283185307179586) % 6.283185307179586
+                        v21 = math.cos(v20)
+                        u311 = Vector3.new(v21, 0, (math.sin(v20)))
+                    end
+                    u150 = CFrame.new(Vector3.new(0, 0, 0), u311)
+                else
+                    u150 = CFrame.Angles(0, u312.X, 0)
+                end
+                if not Sit then
+                    v18 = CFrame.new(Position)
+                    local slideVector = LocalPlayerController.PhysBall.slideVector
+                    if not slideVector then
+                        slideVector = CFrame.new()
+                    end
+                    local ProneCF = LocalPlayerController.ProneCF
+                    if not ProneCF then
+                        ProneCF = CFrame.new()
+                    end
+                    LocalPlayerController.hrp.CFrame = v18 * u150 * slideVector * ProneCF
+                end
+                if LocalPlayerController.PhysBall then
+                    LocalPlayerController.PhysBall:update(p1)
+                end
+                u125 = Position
+                if not (peek(u212.Camera.ScrollWheelZoom)) then
+                    v16 = peek(u212.Camera.MaxCameraDistance)
+                    if not GameState.Data.IsLobby then
+                        v15 = v16
+                    else
+                        v15 = v16 * 1.3
+                    end
+                else
+                    v15 = u294
+                end
+                if 1 > v15 then
+                    if not CurrentWeapon then
+                        v16 = u281
+                    elseif CurrentWeapon.Aiming then
+                        v16 = u286
+                    end
+                    v14 = v16
+                    if CurrentWeapon and LocalPlayerController.ThirdPersonSide < 0 then
+                        v14 = v14 * CFrame.new(-4, 0, 0)
+                    end
+                else
+                    v19 = peek(u212.Camera.MaxCameraDistance)
+                    if not GameState.Data.IsLobby then
+                        v18 = v19
+                    else
+                        v18 = v19 * 1.3
+                    end
+                    v16 = math.clamp(v15 / v18, 0, 1)
+                    v17 = 0
+                    if CurrentWeapon then
+                        v17 = (1 - v16 * 0.1) * 2
+                        if LocalPlayerController.ThirdPersonSide < 0 then
+                            v17 = -v17
+                        end
+                    end
+                    if not CurrentWeapon then
+                        v18 = v15
+                    elseif CurrentWeapon.Aiming then
+                        v18 = math.max(v15 * 0.5, 1)
+                    end
+                    v14 = CFrame.new(v17, 1.5, v18)
+                end
+                if not v7 then
+                    u287 = u287:Lerp(v14, v22)
+                else
+                    u287 = v14
+                end
+                v16 = peek(u212.Graphics.BaseFOV) * 0.8
+                if CurrentWeapon and CurrentWeapon.Config and CurrentWeapon.Config.AimFOVMultiplier then
+                    v16 = v16 * CurrentWeapon.Config.AimFOVMultiplier
+                end
+                if not CurrentWeapon then
+                    v17 = peek(u212.Graphics.BaseFOV)
+                elseif CurrentWeapon.Aiming then
+                    v17 = v16
+                end
+                CurrentCamera.FieldOfView = Lerp(CurrentCamera.FieldOfView, v17, v22)
+                if u312.Tracking then
+                    local Position_2
+                    if type(u312.Tracking) ~= "userdata" then
+                        Position_2 = u312.Tracking
+                    elseif not (u312.Tracking:IsA("BasePart")) then
+                        Position_2 = u312.Tracking
+                    else
+                        Position_2 = u312.Tracking.Position
+                    end
+                    v19 = CurrentCamera.CFrame.Position - Position_2
+                    local v31 = math.atan2(v19.X, v19.Z)
+                    local v32 = -math.asin(v19.Y / v19.Magnitude)
+                    v20 = math.clamp(v32, -1.4, 1.4)
+                    v32 = u312.TrackingEnd - os.clock()
+                    local v33 = 1 - v32 / 1
+                    v21 = Lerp(v22, v22 * 5, (math.clamp(v33, 0, 1)))
+                    u312.X = Lerp(u312.X, v31, v21)
+                    u312.Y = Lerp(u312.Y, v20, v21)
+                end
+            end
+        end)
+        return
+    end
+    RunService:UnbindFromRenderStep("CameraController")
 end
-function v_u_123.Shake(_, ...) -- name: Shake
-	-- upvalues: (copy) v_u_62, (copy) v_u_77, (copy) v_u_123, (copy) v_u_78
-	local v199 = { ... }
-	local v200 = v199[1]
-	if v200 == "Sustained" then
-		local v201 = v199[2]
-		local v202 = v199[4] or 0.3
-		if v199[3] then
-			local v203 = v_u_62[v201]
-			v_u_77[v201] = v203
-			v203.fadeInDuration = v202
-			v_u_123.CameraShakerAlt:ShakeSustain(v203)
-			return
-		end
-		if v_u_77[v201] then
-			v_u_77[v201]:StartFadeOut(v202)
-			v_u_77[v201] = nil
-			return
-		end
-	else
-		if v200 == "Duration" then
-			local v204 = v_u_62[v199[2]]
-			local v205 = v199[3] or 1
-			v204.fadeInDuration = v199[4] or 0.3
-			v_u_123.CameraShakerAlt:ShakeSustain(v204)
-			task.wait(v205)
-			v204:StartFadeOut(v199[5] or 0.3)
-			return
-		end
-		if v200 == "Single" then
-			local v206 = v_u_62[v199[2]]
-			v_u_123.CameraShakerAlt:Shake(v206)
-			return
-		end
-		if v200 == "SingleCustom" then
-			local v207 = v199[2] or 1
-			local v208 = v199[3] or 1
-			local v209 = v199[4]
-			local v210 = v199[5]
-			local v211 = v199[6]
-			local v212 = v199[7]
-			v_u_123.CameraShakerAlt:ShakeOnce(v207, v208, v209, v210, v211, v212)
-			return
-		end
-		if v200 == "SustainedCustom" then
-			local v213 = v199[2] or "custom"
-			local v214 = v199[4] or 1
-			local v215 = v199[5] or 1
-			local v216 = v199[6]
-			local v217 = v199[7]
-			local v218 = v199[8]
-			local v219 = v199[9]
-			if v199[3] and not v_u_78[v213] then
-				v_u_78[v213] = { v_u_123.CameraShakerAlt:StartShake(v214, v215, v216, v218, v219), v217 }
-				return
-			end
-			if v_u_78[v213] then
-				v_u_78[v213][1]:StartFadeOut(v_u_78[v213][2])
-				v_u_78[v213] = nil
-			end
-		end
-	end
+function u312.Shake(p1, ...) -- Line: 835 -- upvalues: CameraShakePresets (val), u288 (val), u312 (val), u289 (val)
+    local v1, v2, v3
+    local v4 = {...}
+    local v5 = v4[1]
+    if v5 == "Sustained" then
+        v1 = v4[2]
+        v2 = v4[4] or 0.3
+        if v4[3] then
+            v3 = CameraShakePresets[v1]
+            u288[v1] = v3
+            v3.fadeInDuration = v2
+            u312.CameraShakerAlt:ShakeSustain(v3)
+            return
+        end
+        if not (u288[v1]) then
+            return
+        end
+        u288[v1]:StartFadeOut(v2)
+        u288[v1] = nil
+        return
+    end
+    if v5 == "Duration" then
+        v1 = CameraShakePresets[v4[2]]
+        v2 = v4[3] or 1
+        v1.fadeInDuration = v4[4] or 0.3
+        u312.CameraShakerAlt:ShakeSustain(v1)
+        task.wait(v2)
+        v1:StartFadeOut(v4[5] or 0.3)
+        return
+    end
+    if v5 == "Single" then
+        u312.CameraShakerAlt:Shake(CameraShakePresets[v4[2]])
+        return
+    end
+    if v5 == "SingleCustom" then
+        u312.CameraShakerAlt:ShakeOnce(v4[2] or 1, v4[3] or 1, v4[4], v4[5], v4[6], v4[7])
+        return
+    end
+    if v5 ~= "SustainedCustom" then
+        return
+    end
+    v1 = v4[2] or "custom"
+    v2 = v4[4] or 1
+    v3 = v4[5] or 1
+    if not (v4[3]) then
+        if u289[v1] then
+            u289[v1][1]:StartFadeOut(u289[v1][2])
+            u289[v1] = nil
+        end
+        return
+    end
+    if not (u289[v1]) then
+        local v6 = u312.CameraShakerAlt:StartShake(v2, v3, v4[6], v4[8], v4[9])
+        u289[v1] = {v6, v4[7]}
+        return
+    end
+    if u289[v1] then
+        u289[v1][1]:StartFadeOut(u289[v1][2])
+        u289[v1] = nil
+    end
 end
-function CalculateAngles(p220, p221) -- name: CalculateAngles
-	-- upvalues: (ref) v_u_24, (copy) v_u_8, (copy) v_u_20, (ref) v_u_23, (copy) v_u_56, (copy) v_u_26, (copy) v_u_16, (copy) v_u_17, (ref) v_u_27, (ref) v_u_28, (ref) v_u_29, (ref) v_u_30, (copy) v_u_54, (ref) v_u_33
-	local v222 = p220 - (v_u_24 or p220)
-	if v222.Magnitude > 1 then
-		v222 = p220 - p220
-	end
-	local v223 = v222:Dot(v_u_8.CFrame.RightVector)
-	if v223 > 0.1 or v223 < 0.1 then
-		v_u_20.Target = -0.1 * v223
-	else
-		v_u_20.Target = 0
-	end
-	v_u_23 = Lerp(v_u_23, v_u_56.YawSpring.Position, p221)
-	local v224 = 0
-	local v225 = 0
-	local v226 = 0
-	for v227, v228 in v_u_26 do
-		v224 = v224 + v228.ImpulsePitch.p
-		v225 = v225 + v228.ImpulseYaw.p
-		v226 = v226 + v228.ImpulseRoll.p
-		if v227.IsDestroyed then
-			v_u_26[v227] = nil
-		end
-	end
-	local v229 = math.clamp(v224, -100, 100)
-	local v230 = math.clamp(v225, -100, 100)
-	local v231 = math.clamp(v226, -100, 100)
-	local v232 = v_u_16.peek(v_u_17.RecoilMult)
-	v_u_27 = v_u_27:lerp(CFrame.Angles(v229 * 0.5 * v232, v230 * 0.15 * v232, v231), p221)
-	if v_u_28 and v_u_29 then
-		v_u_30 = v_u_29.Transform:Lerp(CFrame.new(), v_u_56.EquipSpring.Position)
-		if v_u_29.Name ~= "Camera" then
-			local v233, v234, v235 = v_u_30:toEulerAnglesXYZ()
-			v_u_30 = CFrame.Angles(v233 * 0.05, v234 * 0.03, v235 * 0.015):Lerp(CFrame.new(), v_u_56.EquipSpring.Position)
-		end
-	else
-		v_u_30 = v_u_30:lerp(CFrame.new(), p221)
-	end
-	local v236 = v_u_54.CurrentWeapon
-	if v236 and (v236.Reloading and v236.Viewmodel) then
-		local v237 = v236.Viewmodel
-		if v237.HRPADSAttachment and v237._idleAimRelCF then
-			local v238 = (v237.PrimaryPart.CFrame * v237._idleAimRelCF:Inverse()):ToObjectSpace(v237.Aimpart.CFrame)
-			local v239 = v_u_29 and 0 or 0.02
-			local v240 = v236.Config.ReloadCameraMultiplier or v239
-			local v241, v242, v243 = v238:ToEulerAnglesYXZ()
-			local v244 = -v243
-			local v245 = Vector3.new(v242, v241, v244) * v240
-			v_u_33 = v_u_33:Lerp(CFrame.Angles(v245.Y, v245.X, v245.Z), p221)
-		else
-			v_u_33 = v_u_33:Lerp(CFrame.new(), p221)
-		end
-	else
-		v_u_33 = v_u_33:Lerp(CFrame.new(), p221)
-		return
-	end
+function CalculateAngles(p1, p2) -- Line: 893 -- upvalues: u125 (ref), CurrentCamera (val), u107 (val), u124 (ref), SharedSprings (val), u129 (val), Fusion (val), SkillTreeData (val), u131 (ref), u132 (ref), u133 (ref), u135 (ref), LocalPlayerController (val), u141 (ref)
+    local Viewmodel, v1
+    local v2 = p1 - (u125 or p1)
+    if 1 < v2.Magnitude then
+        v2 = p1 - p1
+    end
+    local v3 = v2:Dot(CurrentCamera.CFrame.RightVector)
+    if 0.1 < v3 then
+        u107.Target = -0.1 * v3
+    elseif v3 >= 0.1 then
+        u107.Target = 0
+    end
+    u124 = Lerp(u124, SharedSprings.YawSpring.Position, p2)
+    v2 = 0
+    v3 = 0
+    local v4 = 0
+    local v5 = u129
+    local v6 = nil
+    local v7 = nil
+    for i, j in v5, v6, v7 do
+        v2 = v2 + j.ImpulsePitch.p
+        v3 = v3 + j.ImpulseYaw.p
+        v4 = v4 + j.ImpulseRoll.p
+        if i.IsDestroyed then
+            u129[i] = nil
+        end
+    end
+    v2 = math.clamp(v2, -100, 100)
+    v3 = math.clamp(v3, -100, 100)
+    v4 = math.clamp(v4, -100, 100)
+    v5 = Fusion.peek(SkillTreeData.RecoilMult)
+    local v8 = v2 * 0.5 * v5
+    local v9 = v3 * 0.15 * v5
+    local v10 = CFrame.Angles(v8, v9, v4)
+    u131 = u131:lerp(v10, p2)
+    if not u132 then
+        u135 = u135:lerp(CFrame.new(), p2)
+    elseif u133 then
+        u135 = u133.Transform:Lerp(CFrame.new(), SharedSprings.EquipSpring.Position)
+        if u133.Name ~= "Camera" then
+            v2, v3, v4 = u135:toEulerAnglesXYZ()
+            v5 = CFrame.Angles(v2 * 0.05, v3 * 0.03, v4 * 0.015)
+            u135 = v5:Lerp(CFrame.new(), SharedSprings.EquipSpring.Position)
+        end
+    end
+    local CurrentWeapon = LocalPlayerController.CurrentWeapon
+    if not CurrentWeapon or not CurrentWeapon.Reloading or not CurrentWeapon.Viewmodel then
+        u141 = u141:Lerp(CFrame.new(), p2)
+        return
+    end
+    Viewmodel = CurrentWeapon.Viewmodel
+    if not Viewmodel.HRPADSAttachment or not Viewmodel._idleAimRelCF then
+        u141 = u141:Lerp(CFrame.new(), p2)
+        return
+    end
+    v4 = Viewmodel.PrimaryPart.CFrame * Viewmodel._idleAimRelCF:Inverse()
+    v6 = v4:ToObjectSpace(Viewmodel.Aimpart.CFrame)
+    if not u133 then
+        v7 = 0.02
+    else
+        v7 = 0
+    end
+    v10 = CurrentWeapon.Config.ReloadCameraMultiplier or v7
+    v8, v9, v1 = v6:ToEulerAnglesYXZ()
+    local v11 = Vector3.new(v9, v8, -v1) * v10
+    local v12 = CFrame.Angles(v11.Y, v11.X, v11.Z)
+    u141 = u141:Lerp(v12, p2)
 end
-function Lerp(p246, p247, p248) -- name: Lerp
-	return p246 * (1 - p248) + p247 * p248
+function Lerp(p1, p2, p3) -- Line: 970
+    return p1 * (1 - p3) + p2 * p3
 end
-local function v_u_252(p249) -- name: thumbstickCurve
-	local v250 = (math.abs(p249) - 0.1) / 0.9 * 2
-	local v251 = (math.exp(v250) - 1) / 6.38905609893065
-	return math.sign(p249) * math.clamp(v251, 0, 1)
+local function thumbstickCurve(p1) -- Line: 979
+    local v1 = math.sign(p1)
+    return v1 * math.clamp((math.exp((math.abs(p1) - 0.1) / 0.9 * 2) - 1) / 6.38905609893065, 0, 1)
 end
-v2:BindActionAtPriority("Testzsd", function(_, _, p253) -- name: thumbstick
-	-- upvalues: (ref) v_u_72, (ref) v_u_252
-	local v254 = p253.Position
-	v_u_72 = Vector2.new(v_u_252(v254.X), -v_u_252(v254.Y))
-	return Enum.ContextActionResult.Pass
+ContextActionService:BindActionAtPriority("Testzsd", function(p1, p2, p3) -- Line: 991 -- upvalues: u262 (ref), thumbstickCurve (ref)
+    local Position = p3.Position
+    local v1 = thumbstickCurve(Position.X)
+    u262 = Vector2.new(v1, -thumbstickCurve(Position.Y))
+    return Enum.ContextActionResult.Pass
 end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.Thumbstick2)
-function MakeConnections() -- name: MakeConnections
-	-- upvalues: (copy) v_u_25, (copy) v_u_5, (copy) v_u_123, (ref) v_u_73, (copy) v_u_20, (copy) v_u_61, (copy) v_u_60, (ref) v_u_80, (copy) v_u_82, (copy) v_u_54, (copy) v_u_47, (copy) v_u_36, (ref) v_u_37, (ref) v_u_38, (ref) v_u_35, (ref) v_u_72
-	CleanConnections()
-	local v255 = v_u_25
-	local v256 = v_u_5.InputChanged
-	local function v270(p257, p258)
-		-- upvalues: (ref) v_u_123, (ref) v_u_73, (ref) v_u_20, (ref) v_u_61, (ref) v_u_60, (ref) v_u_80, (ref) v_u_82, (ref) v_u_54, (ref) v_u_47, (ref) v_u_36, (ref) v_u_37, (ref) v_u_38
-		if v_u_123.Enabled then
-			if p257.UserInputType == Enum.UserInputType.MouseMovement then
-				v_u_73 = Vector2.new(p257.Delta.X, p257.Delta.Y)
-				v_u_20.Position = v_u_20.Position - p257.Delta.X * 0.0002
-			elseif p257.UserInputType == Enum.UserInputType.MouseWheel then
-				if v_u_61(v_u_60.Camera.ScrollWheelZoom) and not p258 then
-					local v259 = v_u_80 - p257.Position.Z * 1.5
-					local v260 = v_u_82
-					v_u_80 = math.clamp(v259, 0, v260())
-					v_u_54.RequestThirdPerson = v_u_80 >= 1
-					return
-				end
-			elseif p257.UserInputType == Enum.UserInputType.Touch then
-				if v_u_47(p257.Position) then
-					if v_u_36[p257] then
-						v_u_36[p257] = nil
-						v_u_37 = nil
-						v_u_38 = 0
-					end
-					return
-				end
-				if v_u_36[p257] then
-					v_u_36[p257] = p257.Position
-				end
-				local v261 = 0
-				local v262 = {}
-				for _, v263 in v_u_36 do
-					v261 = v261 + 1
-					table.insert(v262, v263)
-				end
-				if v261 == 2 and v_u_61(v_u_60.Camera.PinchToZoom) then
-					local v264 = (v262[1] - v262[2]).Magnitude
-					if v_u_37 then
-						v_u_38 = v_u_38 + (v_u_37 - v264)
-						while true do
-							local v265 = v_u_38
-							if math.abs(v265) < 50 then
-								break
-							end
-							if v_u_38 > 0 then
-								local v266 = v_u_80 + 1.5
-								local v267 = v_u_82
-								v_u_80 = math.clamp(v266, 0, v267())
-								v_u_38 = v_u_38 - 50
-							else
-								local v268 = v_u_80 - 1.5
-								local v269 = v_u_82
-								v_u_80 = math.clamp(v268, 0, v269())
-								v_u_38 = v_u_38 + 50
-							end
-							v_u_54.RequestThirdPerson = v_u_80 >= 1
-						end
-					end
-					v_u_37 = v264
-				end
-			end
-		else
-			return
-		end
-	end
-	table.insert(v255, v256:connect(v270))
-	local v271 = v_u_25
-	local v272 = v_u_5.InputBegan
-	local function v279(p273, p274)
-		-- upvalues: (ref) v_u_35, (ref) v_u_61, (ref) v_u_60, (ref) v_u_80, (ref) v_u_82, (ref) v_u_54, (ref) v_u_47, (ref) v_u_36
-		if p273.UserInputType == Enum.UserInputType.MouseButton2 then
-			v_u_35 = true
-		end
-		if not p274 and v_u_61(v_u_60.Camera.ScrollWheelZoom) then
-			if p273.KeyCode == Enum.KeyCode.I then
-				local v275 = v_u_80 - 1.5
-				local v276 = v_u_82
-				v_u_80 = math.clamp(v275, 0, v276())
-				v_u_54.RequestThirdPerson = v_u_80 >= 1
-			elseif p273.KeyCode == Enum.KeyCode.O then
-				local v277 = v_u_80 + 1.5
-				local v278 = v_u_82
-				v_u_80 = math.clamp(v277, 0, v278())
-				v_u_54.RequestThirdPerson = v_u_80 >= 1
-			end
-		end
-		if p273.UserInputType == Enum.UserInputType.Touch and not v_u_47(p273.Position) then
-			v_u_36[p273] = p273.Position
-		end
-	end
-	table.insert(v271, v272:connect(v279))
-	local v280 = v_u_25
-	local v281 = v_u_5.InputEnded
-	local function v283(p282, _)
-		-- upvalues: (ref) v_u_72, (ref) v_u_35, (ref) v_u_36, (ref) v_u_37, (ref) v_u_38
-		if p282.KeyCode == Enum.KeyCode.Thumbstick2 then
-			v_u_72 = Vector2.new()
-		end
-		if p282.UserInputType == Enum.UserInputType.MouseButton2 then
-			v_u_35 = false
-		end
-		if p282.UserInputType == Enum.UserInputType.Touch then
-			v_u_36[p282] = nil
-			v_u_37 = nil
-			v_u_38 = 0
-		end
-	end
-	table.insert(v280, v281:connect(v283))
+function MakeConnections() -- Line: 1005 -- upvalues: u128 (val), UserInputService (val), u312 (val), u266 (ref), u107 (val), peek (val), u212 (val), u294 (ref), GameState (val), LocalPlayerController (val), IsInThumbstickArea (val), u144 (val), u145 (ref), u146 (ref), u143 (ref), u262 (ref)
+    CleanConnections()
+    table.insert(u128, UserInputService.InputChanged:connect(function(p1, p2) -- Line: 1009 -- upvalues: u312 (upval), u266 (upval), u107 (upval), peek (upval), u212 (upval), u294 (upval), GameState (upval), LocalPlayerController (upval), IsInThumbstickArea (upval), u144 (upval), u145 (upval), u146 (upval)
+        local v1, v2, v3
+        if not u312.Enabled then
+            return
+        end
+        if p1.UserInputType == Enum.UserInputType.MouseMovement then
+            u266 = Vector2.new(p1.Delta.X, p1.Delta.Y)
+            u107.Position = u107.Position - p1.Delta.X * 0.0002
+            return
+        end
+        if p1.UserInputType == Enum.UserInputType.MouseWheel then
+            if not (peek(u212.Camera.ScrollWheelZoom)) or p2 then
+                return
+            end
+            v3 = peek(u212.Camera.MaxCameraDistance)
+            if not GameState.Data.IsLobby then
+                v2 = v3
+            else
+                v2 = v3 * 1.3
+            end
+            u294 = math.clamp(u294 - p1.Position.Z * 1.5, 0, v2)
+            v1 = 1 <= u294
+            LocalPlayerController.RequestThirdPerson = v1
+            return
+        end
+        if p1.UserInputType ~= Enum.UserInputType.Touch then
+            return
+        end
+        if IsInThumbstickArea(p1.Position) then
+            if u144[p1] then
+                u144[p1] = nil
+                u145 = nil
+                u146 = 0
+            end
+            return
+        end
+        if u144[p1] then
+            u144[p1] = p1.Position
+        end
+        local v4 = 0
+        local v5 = {}
+        v1 = u144
+        local v6 = nil
+        v2 = nil
+        for i, j in v1, v6, v2 do
+            v4 = v4 + 1
+            table.insert(v5, j)
+        end
+        if v4 == 2 and peek(u212.Camera.PinchToZoom) then
+            local Magnitude = (v5[1] - v5[2]).Magnitude
+            if u145 then
+                local v7, v8
+                u146 = u146 + (u145 - Magnitude)
+                while true do
+                    v2 = math.abs(u146)
+                    if 50 > v2 then
+                        break
+                    end
+                    if 0 >= u146 then
+                        v7 = peek(u212.Camera.MaxCameraDistance)
+                        if not GameState.Data.IsLobby then
+                            v8 = v7
+                        else
+                            v8 = v7 * 1.3
+                        end
+                        u294 = math.clamp(u294 - 1.5, 0, v8)
+                        u146 = u146 + 50
+                    else
+                        v7 = peek(u212.Camera.MaxCameraDistance)
+                        if not GameState.Data.IsLobby then
+                            v8 = v7
+                        else
+                            v8 = v7 * 1.3
+                        end
+                        u294 = math.clamp(u294 + 1.5, 0, v8)
+                        u146 = u146 - 50
+                    end
+                    v3 = 1 <= u294
+                    LocalPlayerController.RequestThirdPerson = v3
+                end
+            end
+            u145 = Magnitude
+        end
+    end))
+    table.insert(u128, UserInputService.InputBegan:connect(function(p1, p2) -- Line: 1082 -- upvalues: u143 (upval), peek (upval), u212 (upval), u294 (upval), GameState (upval), LocalPlayerController (upval), IsInThumbstickArea (upval), u144 (upval)
+        if p1.UserInputType == Enum.UserInputType.MouseButton2 then
+            u143 = true
+        end
+        if not p2 and peek(u212.Camera.ScrollWheelZoom) then
+            local v1, v2, v3
+            if p1.KeyCode == Enum.KeyCode.I then
+                v3 = peek(u212.Camera.MaxCameraDistance)
+                if not GameState.Data.IsLobby then
+                    v2 = v3
+                else
+                    v2 = v3 * 1.3
+                end
+                u294 = math.clamp(u294 - 1.5, 0, v2)
+                v1 = 1 <= u294
+                LocalPlayerController.RequestThirdPerson = v1
+            elseif p1.KeyCode == Enum.KeyCode.O then
+                v3 = peek(u212.Camera.MaxCameraDistance)
+                if not GameState.Data.IsLobby then
+                    v2 = v3
+                else
+                    v2 = v3 * 1.3
+                end
+                u294 = math.clamp(u294 + 1.5, 0, v2)
+                v1 = 1 <= u294
+                LocalPlayerController.RequestThirdPerson = v1
+            end
+        end
+        if p1.UserInputType == Enum.UserInputType.Touch and not (IsInThumbstickArea(p1.Position)) then
+            u144[p1] = p1.Position
+        end
+    end))
+    table.insert(u128, UserInputService.InputEnded:connect(function(p1, p2) -- Line: 1109 -- upvalues: u262 (upval), u143 (upval), u144 (upval), u145 (upval), u146 (upval)
+        if p1.KeyCode == Enum.KeyCode.Thumbstick2 then
+            u262 = Vector2.new()
+        end
+        if p1.UserInputType == Enum.UserInputType.MouseButton2 then
+            u143 = false
+        end
+        if p1.UserInputType == Enum.UserInputType.Touch then
+            u144[p1] = nil
+            u145 = nil
+            u146 = 0
+        end
+    end))
 end
-function CleanConnections() -- name: CleanConnections
-	-- upvalues: (copy) v_u_25
-	for _, v284 in v_u_25 do
-		v284:Disconnect()
-	end
-	table.clear(v_u_25)
+function CleanConnections() -- Line: 1128 -- upvalues: u128 (val)
+    local v1 = u128
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        j:Disconnect()
+    end
+    table.clear(u128)
 end
-v_u_60.OpenChanged:Connect(function(p285)
-	-- upvalues: (copy) v_u_123
-	v_u_123:MouseIconEnabled("Settings", p285)
-	v_u_123:SetMouseUnlocked("Settings", p285)
+u212.OpenChanged:Connect(function(p1) -- Line: 1135 -- upvalues: u312 (val)
+    u312:MouseIconEnabled("Settings", p1)
+    u312:SetMouseUnlocked("Settings", p1)
 end)
-v_u_54.CharacterChanged:Connect(function(p286)
-	-- upvalues: (copy) v_u_123, (ref) v_u_88
-	if p286 then
-		local v287 = CFrame.Angles(0, v_u_123.X, 0).LookVector
-		local v288 = v287.X
-		local v289 = v287.Z
-		v_u_88 = Vector3.new(v288, 0, v289).Unit
-	end
+LocalPlayerController.CharacterChanged:Connect(function(p1) -- Line: 1142 -- upvalues: u312 (val), u311 (ref)
+    if p1 then
+        local LookVector = CFrame.Angles(0, u312.X, 0).LookVector
+        u311 = Vector3.new(LookVector.X, 0, LookVector.Z).Unit
+    end
 end)
-v_u_54.ThirdPersonChanged:Connect(function(p290)
-	-- upvalues: (ref) v_u_80, (copy) v_u_61, (copy) v_u_60
-	if p290 and v_u_80 < 1 then
-		v_u_80 = v_u_61(v_u_60.Camera.MaxCameraDistance)
-	elseif not p290 and v_u_80 >= 1 then
-		v_u_80 = 0
-	end
+LocalPlayerController.ThirdPersonChanged:Connect(function(p1) -- Line: 1151 -- upvalues: u294 (ref), peek (val), u212 (val), GameState (val)
+    local v1
+    if not p1 or u294 >= 1 then
+        if not p1 and 1 <= u294 then
+            u294 = 0
+        end
+        return
+    end
+    local v2 = peek(u212.Camera.MaxCameraDistance)
+    if not GameState.Data.IsLobby then
+        v1 = v2
+    else
+        v1 = v2 * 1.3
+    end
+    u294 = v1
 end)
-v63:SetClientListener(function(p291)
-	-- upvalues: (copy) v_u_123
-	if p291 and p291.Type == "SetEnabled" then
-		v_u_123:SetEnabled(p291.Enabled)
-	end
+CameraEvent:SetClientListener(function(p1) -- Line: 1159 -- upvalues: u312 (val)
+    if p1 and p1.Type == "SetEnabled" then
+        u312:SetEnabled(p1.Enabled)
+    end
 end)
-v3:GetInstanceAddedSignal(v_u_7.Name .. "_OutfitVFX"):Connect(function(p292)
-	-- upvalues: (copy) v_u_79
-	local v293 = 10
-	repeat
-		v293 = v293 - task.wait()
-	until p292.Parent or v293 <= 0
-	if p292.Parent then
-		print(p292.Parent)
-	else
-		print("cannot resolve vfx parent of", p292)
-	end
-	v_u_79[p292] = p292.Parent
+local InstanceAddedSignal = CollectionService:GetInstanceAddedSignal(v3)
+InstanceAddedSignal:Connect(function(p1) -- Line: 1165 -- upvalues: u290 (val)
+    local v1 = 10
+    while true do
+        v1 = v1 - task.wait()
+        if p1.Parent or v1 <= 0 then
+            break
+        end
+    end
+    if p1.Parent then
+        print(p1.Parent)
+    else
+        print("cannot resolve vfx parent of", p1)
+    end
+    u290[p1] = p1.Parent
 end)
-v3:GetInstanceRemovedSignal(v_u_7.Name .. "_OutfitVFX"):Connect(function(p294)
-	-- upvalues: (copy) v_u_79
-	v_u_79[p294] = nil
+local InstanceRemovedSignal = CollectionService:GetInstanceRemovedSignal(v3)
+InstanceRemovedSignal:Connect(function(p1) -- Line: 1178 -- upvalues: u290 (val)
+    u290[p1] = nil
 end)
 if game.ReplicatedStorage:FindFirstChild("Remotes") and game.ReplicatedStorage.common.Remotes:FindFirstChild("CameraShake") then
-	game.ReplicatedStorage.common.Remotes.CameraShake.OnClientEvent:Connect(function(...)
-		-- upvalues: (copy) v_u_123
-		v_u_123:Shake(...)
-	end)
+    game.ReplicatedStorage.common.Remotes.CameraShake.OnClientEvent:Connect(function(...) -- Line: 1186 -- upvalues: u312 (val)
+        u312:Shake(...)
+    end)
 end
-v64:SetClientListener(function(p295)
-	-- upvalues: (copy) v_u_123
-	v_u_123:Shake(unpack(p295))
+CameraShakeEvent:SetClientListener(function(p1) -- Line: 1191 -- upvalues: u312 (val)
+    u312:Shake(unpack(p1))
 end)
-return v_u_123
+return u312

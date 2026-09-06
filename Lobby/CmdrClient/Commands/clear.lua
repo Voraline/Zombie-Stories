@@ -1,24 +1,21 @@
-local v_u_1 = game:GetService("Players")
+local Players = game:GetService("Players")
 return {
-	["Name"] = "clear",
-	["Aliases"] = nil,
-	["Description"] = "Clear all lines above the entry line of the Cmdr window.",
-	["Group"] = "DefaultUtil",
-	["Args"] = nil,
-	["ClientRun"] = nil,
-	["Aliases"] = {},
-	["Args"] = {},
-	["ClientRun"] = function() -- name: ClientRun
-		-- upvalues: (copy) v_u_1
-		local v2 = v_u_1.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("Cmdr")
-		local v3 = v2:WaitForChild("Frame")
-		if v2 and v3 then
-			for _, v4 in pairs(v3:GetChildren()) do
-				if v4.Name == "Line" and v4:IsA("TextBox") then
-					v4:Destroy()
-				end
-			end
-		end
-		return ""
-	end
+    Name = "clear",
+    Description = "Clear all lines above the entry line of the Cmdr window.",
+    Group = "DefaultUtil",
+    Aliases = {},
+    Args = {},
+    ClientRun = function() -- Line: 9 -- upvalues: Players (val)
+        local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+        local Cmdr = PlayerGui:WaitForChild("Cmdr")
+        local Frame = Cmdr:WaitForChild("Frame")
+        if Cmdr and Frame then
+            for k, v in pairs(Frame:GetChildren()) do
+                if v.Name == "Line" and v:IsA("TextBox") then
+                    v:Destroy()
+                end
+            end
+        end
+        return ""
+    end,
 }

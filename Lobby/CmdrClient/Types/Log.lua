@@ -1,16 +1,16 @@
-return function(p1)
-	if game:GetService("RunService"):IsClient() then
-		p1:RegisterHook("AfterRun", function(_) end)
-	else
-		local v2 = game:GetService("ServerScriptService")
-		local v3 = game:GetService("ReplicatedStorage").common:WaitForChild("CmdrShared")
-		local v_u_4 = require(v3:WaitForChild("PermissionsHandler"))
-		local v_u_5 = require(v2.common.ZS_Server.Services.LoggingService)
-		p1:RegisterHook("AfterRun", function(p6)
-			-- upvalues: (copy) v_u_4, (copy) v_u_5
-			if v_u_4:HasCommand(p6.Executor, p6.Group) then
-				v_u_5.LogCommand(p6)
-			end
-		end)
-	end
+return function(p1) -- Line: 1
+    if game:GetService("RunService"):IsClient() then
+        p1:RegisterHook("AfterRun", function(p1) end)
+        return
+    end
+    local ServerScriptService = game:GetService("ServerScriptService")
+    local CmdrShared = game:GetService("ReplicatedStorage").common:WaitForChild("CmdrShared")
+    local PermissionsHandler = require(CmdrShared:WaitForChild("PermissionsHandler"))
+    local LoggingService = require(ServerScriptService.common.ZS_Server.Services.LoggingService)
+    p1:RegisterHook("AfterRun", function(p1) -- Line: 19 -- upvalues: PermissionsHandler (val), LoggingService (val)
+        if not (PermissionsHandler:HasCommand(p1.Executor, p1.Group)) then
+            return
+        end
+        LoggingService.LogCommand(p1)
+    end)
 end

@@ -1,40 +1,40 @@
-return function(_)
-	local v1 = Instance.new("Frame")
-	v1.Name = "SelectionContainer"
-	v1.Visible = false
-	local v_u_2 = Instance.new("Frame")
-	v_u_2.Name = "Selection"
-	v_u_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	v_u_2.BackgroundTransparency = 1
-	v_u_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_2.BorderSizePixel = 0
-	v_u_2.Parent = v1
-	local v3 = Instance.new("UIStroke")
-	v3.Name = "UIStroke"
-	v3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	v3.Color = Color3.fromRGB(255, 255, 255)
-	v3.Thickness = 3
-	v3.Parent = v_u_2
-	local v_u_4 = Instance.new("UIGradient")
-	v_u_4.Name = "SelectionGradient"
-	v_u_4.Parent = v3
-	local v5 = Instance.new("UICorner")
-	v5:SetAttribute("Collective", "IconCorners")
-	v5.Name = "UICorner"
-	v5.CornerRadius = UDim.new(1, 0)
-	v5.Parent = v_u_2
-	local v6 = game:GetService("RunService")
-	local v_u_7 = game:GetService("GuiService")
-	local v_u_8 = 1
-	v_u_2:GetAttributeChangedSignal("RotationSpeed"):Connect(function()
-		-- upvalues: (ref) v_u_8, (copy) v_u_2
-		v_u_8 = v_u_2:GetAttribute("RotationSpeed")
-	end)
-	v6.Heartbeat:Connect(function()
-		-- upvalues: (copy) v_u_7, (copy) v_u_4, (ref) v_u_8
-		if v_u_7.SelectedObject then
-			v_u_4.Rotation = os.clock() * v_u_8 * 100 % 360
-		end
-	end)
-	return v1
+return function(p1) -- Line: 1
+    local Frame_2 = Instance.new("Frame")
+    Frame_2.Name = "SelectionContainer"
+    Frame_2.Visible = false
+    local Frame = Instance.new("Frame")
+    Frame.Name = "Selection"
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.BackgroundTransparency = 1
+    Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BorderSizePixel = 0
+    Frame.Parent = Frame_2
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Name = "UIStroke"
+    UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    UIStroke.Color = Color3.fromRGB(255, 255, 255)
+    UIStroke.Thickness = 3
+    UIStroke.Parent = Frame
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Name = "SelectionGradient"
+    UIGradient.Parent = UIStroke
+    local UICorner = Instance.new("UICorner")
+    UICorner:SetAttribute("Collective", "IconCorners")
+    UICorner.Name = "UICorner"
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Frame
+    local RunService = game:GetService("RunService")
+    local GuiService = game:GetService("GuiService")
+    local u60 = 1
+    local AttributeChangedSignal = Frame:GetAttributeChangedSignal("RotationSpeed")
+    AttributeChangedSignal:Connect(function() -- Line: 37 -- upvalues: u60 (ref), Frame (val)
+        u60 = Frame:GetAttribute("RotationSpeed")
+    end)
+    RunService.Heartbeat:Connect(function() -- Line: 40 -- upvalues: GuiService (val), UIGradient (val), u60 (ref)
+        if not GuiService.SelectedObject then
+            return
+        end
+        UIGradient.Rotation = os.clock() * u60 * 100 % 360
+    end)
+    return Frame_2
 end

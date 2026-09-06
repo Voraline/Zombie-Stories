@@ -1,96 +1,94 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Logging.logWarn)
-local v_u_3 = require(v1.State.Observer)
-local v_u_4 = require(v1.Utility.xtypeof)
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local logWarn = require(Parent.Logging.logWarn)
+local Observer = require(Parent.State.Observer)
+local xtypeof = require(Parent.Utility.xtypeof)
 return {
-	["type"] = "SpecialKey",
-	["kind"] = "Children",
-	["stage"] = "descendants",
-	["apply"] = function(_, p_u_5, p_u_6, p7) -- name: apply
-		-- upvalues: (copy) v_u_4, (copy) v_u_3, (copy) v_u_2
-		local v_u_8 = {}
-		local v_u_9 = {}
-		local v_u_10 = {}
-		local v_u_11 = {}
-		local v_u_12 = false
-		local v_u_13 = nil
-		local function v_u_28() -- name: updateChildren
-			-- upvalues: (ref) v_u_12, (ref) v_u_9, (ref) v_u_8, (ref) v_u_11, (ref) v_u_10, (ref) v_u_4, (copy) p_u_6, (ref) v_u_3, (ref) v_u_13, (ref) v_u_2, (ref) p_u_5
-			if v_u_12 then
-				v_u_12 = false
-				local v14 = v_u_9
-				v_u_9 = v_u_8
-				v_u_8 = v14
-				local v15 = v_u_11
-				v_u_11 = v_u_10
-				v_u_10 = v15
-				table.clear(v_u_8)
-				table.clear(v_u_10)
-				local function v_u_25(p16, p17) -- name: processChild
-					-- upvalues: (ref) v_u_4, (ref) v_u_8, (ref) v_u_9, (ref) p_u_6, (copy) v_u_25, (ref) v_u_11, (ref) v_u_3, (ref) v_u_13, (ref) v_u_10, (ref) v_u_2
-					local v18 = v_u_4(p16)
-					if v18 == "Instance" then
-						v_u_8[p16] = true
-						if v_u_9[p16] == nil then
-							p16.Parent = p_u_6
-						else
-							v_u_9[p16] = nil
-						end
-					elseif v18 == "State" then
-						local v19 = p16:get(false)
-						if v19 ~= nil then
-							v_u_25(v19, p17)
-						end
-						local v20 = v_u_11[p16]
-						if v20 == nil then
-							v20 = v_u_3(p16):onChange(v_u_13)
-						else
-							v_u_11[p16] = nil
-						end
-						v_u_10[p16] = v20
-						return
-					elseif v18 == "table" then
-						for v21, v22 in pairs(p16) do
-							local v23 = typeof(v21)
-							local v24 = nil
-							if v23 == "string" then
-								v24 = v21
-							elseif v23 == "number" and p17 ~= nil then
-								v24 = p17 .. "_" .. v21
-							end
-							v_u_25(v22, v24)
-						end
-					else
-						v_u_2("unrecognisedChildType", v18)
-					end
-				end
-				if p_u_5 ~= nil then
-					v_u_25(p_u_5)
-				end
-				for v26 in pairs(v_u_9) do
-					v26.Parent = nil
-				end
-				for _, v27 in pairs(v_u_11) do
-					v27()
-				end
-			end
-		end
-		v_u_13 = function()
-			-- upvalues: (ref) v_u_12, (copy) v_u_28
-			if not v_u_12 then
-				v_u_12 = true
-				task.defer(v_u_28)
-			end
-		end
-		local function v29()
-			-- upvalues: (ref) p_u_5, (ref) v_u_12, (copy) v_u_28
-			p_u_5 = nil
-			v_u_12 = true
-			v_u_28()
-		end
-		table.insert(p7, v29)
-		v_u_12 = true
-		v_u_28()
-	end
+    type = "SpecialKey",
+    kind = "Children",
+    stage = "descendants",
+    apply = function(p1, p2, p3, p4) -- Line: 24 -- upvalues: xtypeof (val), Observer (val), logWarn (val)
+        local u4 = {}
+        local u5 = {}
+        local u6 = {}
+        local u7 = {}
+        local u8 = false
+        local u9 = nil
+        local function updateChildren() -- Line: 38 -- upvalues: u8 (ref), u5 (ref), u4 (ref), u7 (ref), u6 (ref), xtypeof (upval), p3 (val), Observer (upval), u9 (ref), logWarn (upval), p2 (ref)
+            local processChild
+            if not u8 then
+                return
+            end
+            u8 = false
+            u5 = u4
+            u4 = u5
+            u7 = u6
+            u6 = u7
+            table.clear(u4)
+            table.clear(u6)
+            function processChild(p1, p2) -- Line: 49 -- upvalues: xtypeof (upval), u4 (upval), u5 (upval), p3 (upval), processChild (val), u7 (upval), Observer (upval), u9 (upval), u6 (upval), logWarn (upval)
+                local v1, v2
+                local v3 = xtypeof(p1)
+                if v3 == "Instance" then
+                    u4[p1] = true
+                    if u5[p1] == nil then
+                        p1.Parent = p3
+                        return
+                    end
+                    u5[p1] = nil
+                    return
+                end
+                if v3 == "State" then
+                    local v4 = p1:get(false)
+                    if v4 ~= nil then
+                        processChild(v4, p2)
+                    end
+                    local v5 = u7[p1]
+                    if v5 ~= nil then
+                        u7[p1] = nil
+                    else
+                        v5 = Observer(p1):onChange(u9)
+                    end
+                    u6[p1] = v5
+                    return
+                end
+                if v3 ~= "table" then
+                    logWarn("unrecognisedChildType", v3)
+                    return
+                end
+                local v6 = p2
+                for k, v in pairs(p1) do
+                    v1 = typeof(k)
+                    v2 = nil
+                    if v1 == "string" then
+                        v2 = k
+                    elseif v1 == "number" and v6 ~= nil then
+                        v2 = v6 .. "_" .. k
+                    end
+                    processChild(v, v2)
+                end
+            end
+            if p2 ~= nil then
+                processChild(p2)
+            end
+            for k in pairs(u5) do
+                k.Parent = nil
+            end
+            for k2, v in pairs(u7) do
+                v()
+            end
+        end
+        function u9() -- Line: 130 -- upvalues: u8 (ref), updateChildren (val)
+            if not u8 then
+                u8 = true
+                task.defer(updateChildren)
+            end
+        end
+        table.insert(p4, function() -- Line: 137 -- upvalues: p2 (ref), u8 (ref), updateChildren (val)
+            p2 = nil
+            u8 = true
+            updateChildren()
+        end)
+        updateChildren()
+    end,
 }

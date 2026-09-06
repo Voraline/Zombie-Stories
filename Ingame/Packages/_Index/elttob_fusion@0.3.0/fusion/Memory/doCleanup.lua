@@ -1,42 +1,40 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Memory.scopePool)
-local v_u_4 = require(v1.Memory.poisonScope)
-local v_u_5 = {}
-local function v_u_10(p6) -- name: doCleanup
-	-- upvalues: (copy) v_u_5, (copy) v_u_2, (copy) v_u_10, (copy) v_u_3, (copy) v_u_4
-	if v_u_5[p6] then
-		return v_u_2.logError("destroyedTwice")
-	end
-	v_u_5[p6] = true
-	if typeof(p6) == "Instance" then
-		p6:Destroy()
-	elseif typeof(p6) == "RBXScriptConnection" then
-		p6:Disconnect()
-	elseif typeof(p6) == "function" then
-		p6()
-	elseif typeof(p6) == "table" then
-		local v7 = p6.destroy
-		if typeof(v7) == "function" then
-			p6:destroy()
-		else
-			local v8 = p6.Destroy
-			if typeof(v8) == "function" then
-				p6:Destroy()
-			elseif p6[1] ~= nil then
-				for v9 = #p6, 1, -1 do
-					v_u_10(p6[v9])
-					p6[v9] = nil
-				end
-				if v_u_2.isTimeCritical() then
-					v_u_3.giveIfEmpty(p6)
-				else
-					v_u_4(p6, "`doCleanup()` was previously called on this scope. Ensure you are not reusing scopes after cleanup.")
-				end
-			end
-		end
-	end
-	v_u_5[p6] = nil
+local doCleanup
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local scopePool = require(Parent.Memory.scopePool)
+local poisonScope = require(Parent.Memory.poisonScope)
+local u17 = {}
+function doCleanup(p1) -- Line: 24 -- upvalues: u17 (val), External (val), doCleanup (val), scopePool (val), poisonScope (val)
+    if u17[p1] then
+        return External.logError("destroyedTwice")
+    end
+    u17[p1] = true
+    if typeof(p1) == "Instance" then
+        p1:Destroy()
+    elseif typeof(p1) == "RBXScriptConnection" then
+        p1:Disconnect()
+    elseif typeof(p1) == "function" then
+        p1()
+    elseif typeof(p1) == "table" then
+        if typeof(p1.destroy) == "function" then
+            p1:destroy()
+        elseif typeof(p1.Destroy) == "function" then
+            p1:Destroy()
+        elseif p1[1] ~= nil then
+            local v1 = 1
+            local v2 = -1
+            for i = #p1, v1, v2 do
+                doCleanup(p1[i])
+                p1[i] = nil
+            end
+            if not (External.isTimeCritical()) then
+                poisonScope(p1, "`doCleanup()` was previously called on this scope. Ensure you are not reusing scopes after cleanup.")
+            else
+                scopePool.giveIfEmpty(p1)
+            end
+        end
+    end
+    u17[p1] = nil
 end
-return v_u_10
+return doCleanup

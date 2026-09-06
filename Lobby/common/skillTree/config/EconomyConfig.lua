@@ -1,41 +1,39 @@
-local v_u_6 = {
-	["HEARTBEAT_INTERVAL"] = 60,
-	["MAX_SCORE_PER_INTERVAL"] = 100,
-	["SP_XP_PER_MAX_SCORE"] = 50,
-	["SP_XP_PER_SP"] = 600,
-	["BASE_SP_CAP"] = 20,
-	["BASE_DAILY_EARN_CAP"] = 5,
-	["DAILY_QUEST_SP"] = 1,
-	["DAILY_QUESTS_WITH_SP"] = 2,
-	["WEEKLY_QUEST_SP"] = 1,
-	["WEEKLY_QUESTS_WITH_SP"] = 1,
-	["XP_BOOST_PER_PRESTIGE"] = 0.03,
-	["MAX_XP_BOOST"] = 0.25,
-	["RESPEC_ZBUCKS_COST"] = 500,
-	["SKILL_TREE_VERSION"] = 1,
-	["IS_BETA"] = true,
-	["getPrestigeStats"] = function(p1) -- name: getPrestigeStats
-		-- upvalues: (copy) v_u_6
-		local v2 = v_u_6.BASE_SP_CAP
-		local v3 = v_u_6.BASE_DAILY_EARN_CAP
-		for v4 = 1, p1 do
-			if v4 <= 5 then
-				v2 = v2 + 2
-				v3 = v3 + 1
-			elseif v4 <= 15 then
-				v2 = v2 + 4
-			else
-				v2 = v2 + 2
-				v3 = v3 + 1
-			end
-		end
-		return {
-			["spCap"] = v2,
-			["dailyEarnCap"] = math.max(v3, 10)
-		}
-	end,
-	["getPrestigeZBucksCost"] = function(p5) -- name: getPrestigeZBucksCost
-		return p5 * 500 + 1000
-	end
+local u0 = {
+    HEARTBEAT_INTERVAL = 60,
+    MAX_SCORE_PER_INTERVAL = 100,
+    SP_XP_PER_MAX_SCORE = 50,
+    SP_XP_PER_SP = 600,
+    BASE_SP_CAP = 20,
+    BASE_DAILY_EARN_CAP = 5,
+    DAILY_QUEST_SP = 1,
+    DAILY_QUESTS_WITH_SP = 2,
+    WEEKLY_QUEST_SP = 1,
+    WEEKLY_QUESTS_WITH_SP = 1,
+    XP_BOOST_PER_PRESTIGE = 0.03,
+    MAX_XP_BOOST = 0.25,
+    RESPEC_ZBUCKS_COST = 500,
+    SKILL_TREE_VERSION = 1,
+    IS_BETA = true,
 }
-return v_u_6
+function u0.getPrestigeStats(p1) -- Line: 51 -- upvalues: u0 (val)
+    local BASE_SP_CAP = u0.BASE_SP_CAP
+    local BASE_DAILY_EARN_CAP = u0.BASE_DAILY_EARN_CAP
+    local v1 = p1
+    local v2 = 1
+    for i = 1, v1, v2 do
+        if i <= 5 then
+            BASE_SP_CAP = BASE_SP_CAP + 2
+            BASE_DAILY_EARN_CAP = BASE_DAILY_EARN_CAP + 1
+        elseif i > 15 then
+            BASE_SP_CAP = BASE_SP_CAP + 2
+            BASE_DAILY_EARN_CAP = BASE_DAILY_EARN_CAP + 1
+        else
+            BASE_SP_CAP = BASE_SP_CAP + 4
+        end
+    end
+    return {spCap = BASE_SP_CAP, dailyEarnCap = math.max(BASE_DAILY_EARN_CAP, 10)}
+end
+function u0.getPrestigeZBucksCost(p1) -- Line: 78
+    return p1 * 500 + 1000
+end
+return u0

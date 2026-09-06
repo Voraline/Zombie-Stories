@@ -1,26 +1,21 @@
-local v_u_1 = game:GetService("TweenService")
-return function(p2, p3) -- name: getTweenRatio
-	-- upvalues: (copy) v_u_1
-	local v4 = p2.DelayTime
-	local v5 = p2.Time
-	local v6 = p2.Reverses
-	local v7 = 1 + p2.RepeatCount
-	local v8 = p2.EasingStyle
-	local v9 = p2.EasingDirection
-	local v10 = v4 + v5
-	if v6 then
-		v10 = v10 + v5
-	end
-	if v10 * v7 <= p3 then
-		return 1
-	end
-	local v11 = p3 % v10
-	if v11 <= v4 then
-		return 0
-	end
-	local v12 = (v11 - v4) / v5
-	if v12 > 1 then
-		v12 = 2 - v12
-	end
-	return v_u_1:GetValue(v12, v8, v9)
+local TweenService = game:GetService("TweenService")
+return function(p1, p2) -- Line: 10 -- upvalues: TweenService (val)
+    local DelayTime = p1.DelayTime
+    local Time = p1.Time
+    local v1 = DelayTime + Time
+    if p1.Reverses then
+        v1 = v1 + Time
+    end
+    if v1 * (1 + p1.RepeatCount) <= p2 then
+        return 1
+    end
+    local v2 = p2 % v1
+    if v2 <= DelayTime then
+        return 0
+    end
+    local v3 = (v2 - DelayTime) / Time
+    if 1 < v3 then
+        v3 = 2 - v3
+    end
+    return (TweenService:GetValue(v3, p1.EasingStyle, p1.EasingDirection))
 end

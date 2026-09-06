@@ -1,21 +1,20 @@
-local v_u_1 = require("../Shared/Util")
-return function(p_u_2)
-	-- upvalues: (copy) v_u_1
-	local v7 = {
-		["Transform"] = function(p3) -- name: Transform
-			-- upvalues: (ref) v_u_1, (copy) p_u_2
-			return v_u_1.MakeFuzzyFinder(p_u_2:GetCommandNames())(p3)
-		end,
-		["Validate"] = function(p4) -- name: Validate
-			return #p4 > 0, "No command with that name could be found."
-		end,
-		["Autocomplete"] = function(p5) -- name: Autocomplete
-			return p5
-		end,
-		["Parse"] = function(p6) -- name: Parse
-			return p6[1]
-		end
-	}
-	p_u_2:RegisterType("command", v7)
-	p_u_2:RegisterType("commands", v_u_1.MakeListableType(v7))
+local u2 = require("../Shared/Util")
+return function(p1) -- Line: 3 -- upvalues: u2 (val)
+    local v1 = {
+        Transform = function(a1) -- Line: 5 -- upvalues: u2 (upval), p1 (val)
+            return u2.MakeFuzzyFinder(p1:GetCommandNames())(a1)
+        end,
+    }
+    function v1.Validate(p1) -- Line: 11
+        local v1 = 0 < #p1
+        return v1, "No command with that name could be found."
+    end
+    function v1.Autocomplete(p1) -- Line: 15
+        return p1
+    end
+    function v1.Parse(p1) -- Line: 19
+        return p1[1]
+    end
+    p1:RegisterType("command", v1)
+    p1:RegisterType("commands", u2.MakeListableType(v1))
 end

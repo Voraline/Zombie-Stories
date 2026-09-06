@@ -1,44 +1,56 @@
-return function(p1, p2)
-	for _, v3 in { p1:GetAttribute("attuid3"), p1:GetAttribute("attuid2"), p1:GetAttribute("attuid1") } do
-		if v3 and v3 ~= "None" then
-			local v4 = nil
-			for _, v5 in p1:GetDescendants() do
-				if v5:IsA("BasePart") and v5:GetAttribute("uid") == v3 then
-					v4 = v5
-					break
-				end
-			end
-			if v4 then
-				local v6 = {}
-				for _, v7 in v4:GetChildren() do
-					if v7:IsA("Texture") and not v6[v7.Texture] then
-						v6[v7.Texture] = v7
-					end
-				end
-				for _, v8 in p2:GetDescendants() do
-					if v8:IsA("BasePart") and v8.Transparency == 0 then
-						for _, v9 in v6 do
-							for _, v10 in Enum.NormalId:GetEnumItems() do
-								local v11 = v9:Clone()
-								v11.Face = v10
-								local v12 = v11.Transparency
-								local v13 = v8.Transparency
-								v11.Transparency = v12 + (1 - v12) * v13
-								v11.Parent = v8
-							end
-						end
-						v8.Color = v4.Color
-						v8.Material = v4.Material
-						if v8.Transparency == 0 then
-							v8.Transparency = v4.Transparency
-						end
-						v8.Reflectance = v4.Reflectance
-						if v8:IsA("UnionOperation") then
-							v8.UsePartColor = true
-						end
-					end
-				end
-			end
-		end
-	end
+return function(p1, p2) -- Line: 1
+    local Transparency, v1, v2, v3, v4, v5, v6, v7, v8
+    local v9 = {}
+    local Attribute = p1:GetAttribute("attuid3")
+    local Attribute_2 = p1:GetAttribute("attuid2")
+    v9[1] = Attribute
+    v9[2] = Attribute_2
+    v9[3] = p1:GetAttribute("attuid1")
+    local v10 = nil
+    local v11 = nil
+    v1, v2 = p1, p2
+    for i, j in v9, v10, v11 do
+        if j and j ~= "None" then
+            v7 = nil
+            for k, n in v1:GetDescendants() do
+                if n:IsA("BasePart") and n:GetAttribute("uid") == j then
+                    v7 = n
+                    break
+                end
+            end
+            if v7 then
+                v8 = {}
+                for m, i5 in v7:GetChildren() do
+                    if i5:IsA("Texture") and not (v8[i5.Texture]) then
+                        v8[i5.Texture] = i5
+                    end
+                end
+                for i6, i7 in v2:GetDescendants() do
+                    if i7:IsA("BasePart") and i7.Transparency == 0 then
+                        v3 = v8
+                        v4 = nil
+                        v5 = nil
+                        for i8, i9 in v3, v4, v5 do
+                            for i10, i11 in Enum.NormalId:GetEnumItems() do
+                                v6 = i9:Clone()
+                                v6.Face = i11
+                                Transparency = v6.Transparency
+                                v6.Transparency = Transparency + (1 - Transparency) * i7.Transparency
+                                v6.Parent = i7
+                            end
+                        end
+                        i7.Color = v7.Color
+                        i7.Material = v7.Material
+                        if i7.Transparency == 0 then
+                            i7.Transparency = v7.Transparency
+                        end
+                        i7.Reflectance = v7.Reflectance
+                        if i7:IsA("UnionOperation") then
+                            i7.UsePartColor = true
+                        end
+                    end
+                end
+            end
+        end
+    end
 end

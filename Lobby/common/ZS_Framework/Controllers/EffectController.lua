@@ -1,10 +1,9 @@
-local v1 = {
-	["Effects"] = {}
-}
-for v2, v3 in script.Parent.Parent.Effects:GetChildren() do
-	if v3:IsA("ModuleScript") then
-		local v4 = require(v3)
-		v1.Effects[v2] = v4
-	end
+local v1
+local v2 = {Effects = {}}
+for i, j in script.Parent.Parent.Effects:GetChildren() do
+    if j:IsA("ModuleScript") then
+        v1 = require(j)
+        v2.Effects[i] = v1
+    end
 end
-return v1
+return v2

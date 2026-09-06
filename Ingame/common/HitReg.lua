@@ -1,45 +1,46 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require(v1.common.zap)
-local v3 = {}
-local v_u_4 = {}
-local v_u_5 = {}
-function v3.Register(_, p6) -- name: Register
-	-- upvalues: (copy) v_u_4
-	local v7 = v_u_4
-	table.insert(v7, p6)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local zap = require(ReplicatedStorage.common.zap)
+local v1 = {}
+local u10 = {}
+local u11 = {}
+function v1.Register(p1, p2) -- Line: 23 -- upvalues: u10 (val)
+    table.insert(u10, p2)
 end
-function v3.ProcessHit(_, p8, p9, p10) -- name: ProcessHit
-	-- upvalues: (copy) v_u_4, (copy) v_u_5
-	local v11 = p8.Instance
-	if not v11 then
-		return nil
-	end
-	for _, v12 in v_u_4 do
-		if v12.validate(v11) then
-			local v13 = v12.onHitClient(p8, p9)
-			local v14 = not p10 and v12.buildNetworkData(p8, p9)
-			if v14 then
-				if not v_u_5[v12.moduleId] then
-					v_u_5[v12.moduleId] = {}
-				end
-				local v15 = v_u_5[v12.moduleId]
-				table.insert(v15, v14)
-			end
-			return v13
-		end
-	end
-	return nil
+function v1.ProcessHit(p1, p2, p3, p4) -- Line: 29 -- upvalues: u10 (val), u11 (val)
+    local v1, v2
+    local Instance = p2.Instance
+    if not Instance then
+        return nil
+    end
+    local v3 = u10
+    local v4 = nil
+    local v5 = nil
+    for i, j in v3, v4, v5 do
+        if j.validate(Instance) then
+            v1 = j.onHitClient(p2, p3)
+            if not p4 then
+                v2 = j.buildNetworkData(p2, p3)
+                if v2 then
+                    if not (u11[j.moduleId]) then
+                        u11[j.moduleId] = {}
+                    end
+                    table.insert(u11[j.moduleId], v2)
+                end
+            end
+            return v1
+        end
+    end
+    return nil
 end
-function v3.ProcessNetworkQueue(_) -- name: ProcessNetworkQueue
-	-- upvalues: (copy) v_u_5, (copy) v_u_2
-	for v16, v17 in v_u_5 do
-		if #v17 > 0 then
-			v_u_2.HitRegClaim.Fire({
-				["moduleId"] = v16,
-				["hits"] = v17
-			})
-		end
-	end
-	table.clear(v_u_5)
+function v1.ProcessNetworkQueue(p1) -- Line: 59 -- upvalues: u11 (val), zap (val)
+    local v1 = u11
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if 0 < #j then
+            zap.HitRegClaim.Fire({moduleId = i, hits = j})
+        end
+    end
+    table.clear(u11)
 end
-return v3
+return v1

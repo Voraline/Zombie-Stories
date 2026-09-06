@@ -1,9 +1,7 @@
 return {
-	["Name"] = "loadlastcheckpoint",
-	["Aliases"] = nil,
-	["Description"] = "Loads the last checkpoint",
-	["Group"] = "Debug",
-	["Args"] = nil,
-	["Aliases"] = { "llcp" },
-	["Args"] = {}
+    Name = "loadlastcheckpoint",
+    Description = "Loads the last checkpoint",
+    Group = "Debug",
+    Aliases = {"llcp"},
+    Args = {},
 }

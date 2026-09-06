@@ -1,36 +1,35 @@
 return {
-	["CanUseWithCurrentWeapon"] = function(p1) -- name: CanUseWithCurrentWeapon
-		if p1 then
-			if p1.Reloading then
-				return false, "Reloading"
-			else
-				return true, nil
-			end
-		else
-			return true, nil
-		end
-	end,
-	["CanUseItem"] = function(p2, p3) -- name: CanUseItem
-		if p2 then
-			if p2.Config.IsOffHand then
-				if p2.Config.IsTwoHandedAbility then
-					return false, "TwoHandedAbility"
-				elseif p2 == p3 then
-					return false, "SameAsCurrentWeapon"
-				elseif p2.Ammo and p2.Ammo > 0 then
-					if p2.Config.IsFullyActivated and p2.Config.IsFullyActivated(p2.Config) then
-						return false, "AlreadyActivated"
-					else
-						return true, nil
-					end
-				else
-					return false, "NoAmmo"
-				end
-			else
-				return false, "NotOffHandItem"
-			end
-		else
-			return false, "NoItem"
-		end
-	end
+    CanUseWithCurrentWeapon = function(p1) -- Line: 11
+        if not p1 then
+            return true, nil
+        end
+        if p1.Reloading then
+            return false, "Reloading"
+        end
+        return true, nil
+    end,
+    CanUseItem = function(p1, p2) -- Line: 32
+        if not p1 then
+            return false, "NoItem"
+        end
+        if not p1.Config.IsOffHand then
+            return false, "NotOffHandItem"
+        end
+        if p1.Config.IsTwoHandedAbility then
+            return false, "TwoHandedAbility"
+        end
+        if p1 == p2 then
+            return false, "SameAsCurrentWeapon"
+        end
+        if not p1.Ammo or p1.Ammo <= 0 then
+            return false, "NoAmmo"
+        end
+        if not p1.Config.IsFullyActivated then
+            return true, nil
+        end
+        if p1.Config.IsFullyActivated(p1.Config) then
+            return false, "AlreadyActivated"
+        end
+        return true, nil
+    end,
 }

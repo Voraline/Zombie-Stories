@@ -1,0 +1,78 @@
+local v1 = {
+    Containers = {"ImportantNPCLocations", "OtherNPCLocations"},
+    Tiers = {
+        High = {maxTracks = 20, radius = 140, frustum = false, lineOfSight = false},
+        Medium = {maxTracks = 10, radius = 90, frustum = true, lineOfSight = false},
+        Low = {maxTracks = 6, radius = 55, frustum = true, lineOfSight = true},
+    },
+}
+local v2 = {
+    Quartermaster = {
+        idle = "rbxassetid://123260729652697",
+        dialogue = "Quartermaster",
+        actionText = "TALK",
+        objectText = "QUARTERMASTER",
+        range = 9,
+    },
+    Rangemaster = {
+        idle = "rbxassetid://85498715832525",
+        dialogue = "Rangemaster",
+        actionText = "TALK",
+        objectText = "RANGEMASTER",
+        range = 9,
+    },
+    Izumi = {
+        idle = "rbxassetid://112637728039944",
+        dialogue = "Izumi",
+        actionText = "TALK",
+        objectText = "IZUMI",
+        range = 9,
+    },
+    Archivist = {
+        idle = "rbxassetid://86395820236167",
+        dialogue = "Archivist",
+        actionText = "TALK",
+        objectText = "ARCHIVIST",
+        range = 9,
+        preloadAnimations = {
+            "rbxassetid://86395820236167",
+            "rbxassetid://111202043693235",
+            "rbxassetid://76846303570457",
+            "rbxassetid://115126012482697",
+            "rbxassetid://93499907283172",
+            "rbxassetid://79848930648990",
+        },
+        attachedProps = {"chair", "personalDevice"},
+    },
+    Assistant = {runtimeDisabled = true},
+    Jenny = {runtimeDisabled = true},
+    Adam = {idle = "rbxassetid://75027671530883"},
+    Anderson = {idle = "rbxassetid://118966071522965"},
+    Ao = {idle = "rbxassetid://90626498668089"},
+    Daniel = {idle = "rbxassetid://78292800592779"},
+    Dennis = {idle = "rbxassetid://78228491871141"},
+    Emma = {idle = "rbxassetid://83896761003963"},
+    Errata = {idle = "rbxassetid://119846767301979"},
+    Evan = {idle = "rbxassetid://134680547514599"},
+    Galvin = {idle = "rbxassetid://117900132173205"},
+    Hannah = {idle = "rbxassetid://115799445229086"},
+    Jessica = {idle = "rbxassetid://125703006223978"},
+    Jones = {idle = "rbxassetid://132777105976182"},
+    Julia = {idle = "rbxassetid://125458591824998"},
+    Noah = {idle = "rbxassetid://104341331771748"},
+    Robert = {idle = "rbxassetid://123205196727480"},
+    Sarah = {idle = "rbxassetid://123505547589637"},
+    Scott = {idle = "rbxassetid://118359767546715"},
+    Smith = {idle = "rbxassetid://135759980900276"},
+    Steven = {idle = "rbxassetid://92540562122223"},
+    Tyler = {idle = "rbxassetid://103176376713994"},
+}
+v2["UMBRA Operative [Assault]"] = {
+    idle = "rbxassetid://82918203093172",
+    idleByOccurrence = {"rbxassetid://82918203093172", "rbxassetid://82918203093172", "rbxassetid://128509719540676"},
+}
+v2["UMBRA Operative [Assault]1"] = {idle = "rbxassetid://82918203093172"}
+v2["UMBRA Operative [Assault 2]"] = {idle = "rbxassetid://128509719540676"}
+v2["UMBRA Operative [Assault]2"] = {idle = "rbxassetid://128509719540676"}
+v1.Npcs = v2
+return v1

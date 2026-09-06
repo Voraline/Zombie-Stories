@@ -1,29 +1,20 @@
-local v_u_1 = {
-	["Enable"] = true,
-	["UpdateState"] = true,
-	["Disable"] = true
-}
-local v_u_2 = {
-	["Broken"] = true,
-	["Fixed"] = true
-}
-return require(game.ReplicatedStorage.Packages.Red).SharedEvent("Drill", function(p3)
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	if typeof(p3) ~= "table" then
-		return nil
-	end
-	local v4 = p3.action
-	if not v_u_1[v4] then
-		return nil
-	end
-	if v4 == "Disable" then
-		return {
-			["action"] = v4
-		}
-	end
-	local v5 = p3.state
-	return typeof(v5) == "string" and v_u_2[v5] and {
-		["action"] = v4,
-		["state"] = v5
-	} or nil
+local Red = require(game.ReplicatedStorage.Packages.Red)
+local u6 = {Enable = true, UpdateState = true, Disable = true}
+local u7 = {Broken = true, Fixed = true}
+return Red.SharedEvent("Drill", function(p1) -- Line: 14 -- upvalues: u6 (val), u7 (val)
+    if typeof(p1) ~= "table" then
+        return nil
+    end
+    local action = p1.action
+    if not (u6[action]) then
+        return nil
+    end
+    if action == "Disable" then
+        return {action = action}
+    end
+    local state = p1.state
+    if typeof(state) ~= "string" or not (u7[state]) then
+        return nil
+    end
+    return {action = action, state = state}
 end)

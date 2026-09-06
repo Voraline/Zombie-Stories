@@ -1,111 +1,123 @@
-local v_u_1 = game:GetService("DataStoreService")
-local v2 = script.Parent
-local v_u_3 = require(v2.Config)
-local v_u_5 = {
-	["\\n"] = "\n",
-	["&nbsp;"] = "",
-	["&amp;"] = "&",
-	["&lt;"] = "<",
-	["&gt;"] = ">",
-	["&quot;"] = "\"",
-	["&apos;"] = "\'",
-	["&#(%d+);"] = function(p4)
-		return string.char(p4)
-	end
-}
-local v_u_6 = {}
-local v_u_7 = nil
-local v_u_8 = {}
+local DataStoreService = game:GetService("DataStoreService")
+local Config = require(script.Parent.Config)
+local u10 = {}
+u10["\\n"] = "\n"
+u10["&nbsp;"] = ""
+u10["&amp;"] = "&"
+u10["&lt;"] = "<"
+u10["&gt;"] = ">"
+u10["&quot;"] = "\""
+u10["&apos;"] = "'"
+u10["&#(%d+);"] = function(p1) -- Line: 14
+    return (string.char(p1))
+end
+local u22 = {}
+local u24 = nil
+local function getDataStore() -- Line: 86 -- upvalues: Config (val), u24 (ref), DataStoreService (val)
+    local v1 = Config.AllowMultipleResponses == false
+    assert(v1)
+    if u24 == nil then
+        u24 = DataStoreService:GetDataStore(Config.DataStoreName)
+    end
+    return u24
+end
+local u26 = {}
 return {
-	["SanitizeEncodedHtml"] = function(p9, p10) -- name: sanitizeEncodedHtml
-		-- upvalues: (copy) v_u_5
-		for v11, v12 in pairs(v_u_5) do
-			if p10 then
-				p9 = string.gsub(p9, p10 .. v11, v12)
-			end
-			p9 = string.gsub(p9, v11, v12)
-		end
-		local v15 = string.gsub(p9, "\\u%x%x%x%x", function(p13)
-			local v14 = string.sub(p13, 3)
-			return utf8.char("0x" .. v14)
-		end)
-		local v16 = string.gsub(v15, "\160", "")
-		return string.gsub(v16, "\194", " ")
-	end,
-	["IsValidFormId"] = function(p17) -- name: isValidFormId
-		if p17 == nil or typeof(p17) ~= "string" then
-			return false
-		end
-		local v18 = string.len(p17)
-		return v18 ~= 0 and v18 <= 128
-	end,
-	["IsRenderedContentEqual"] = function(p19, p20) -- name: isRenderedContentEqual
-		return (string.gsub(p19, "</?[biu]>", "") or "") == (p20 or "")
-	end,
-	["ThrottleRequest"] = function(p21, p22) -- name: throttleRequest
-		-- upvalues: (copy) v_u_6, (copy) v_u_3
-		local v23 = v_u_6[p21]
-		local v24 = time()
-		if v23 then
-			local v25 = v23[p22]
-			if v25 and v_u_3.RateLimits[p22] > v24 - v25 then
-				return true
-			end
-		else
-			v23 = {}
-			v_u_6[p21] = v23
-		end
-		v23[p22] = v24
-		return false
-	end,
-	["HasPlayerResponded"] = function(p26, p27) -- name: hasPlayerResponded
-		-- upvalues: (copy) v_u_3, (copy) v_u_8, (ref) v_u_7, (copy) v_u_1
-		local v28 = v_u_3.AllowMultipleResponses == false
-		assert(v28)
-		local v29 = p26.UserId
-		local v30 = v_u_8[v29]
-		if v30 == nil then
-			local v31 = v_u_3.AllowMultipleResponses == false
-			assert(v31)
-			if v_u_7 == nil then
-				v_u_7 = v_u_1:GetDataStore(v_u_3.DataStoreName)
-			end
-			v30 = v_u_7:GetAsync(v29)
-			v_u_8[v29] = v30
-		end
-		local v32
-		if v30 == nil then
-			v32 = false
-		else
-			v32 = v30[p27] ~= nil
-		end
-		return v32
-	end,
-	["SetPlayerFormResponse"] = function(p33, p34, p35) -- name: setPlayerFormResponse
-		-- upvalues: (copy) v_u_3, (copy) v_u_8
-		local v36 = v_u_3.AllowMultipleResponses == false
-		assert(v36)
-		local v37 = p33.UserId
-		local v38 = v_u_8[v37]
-		if v38 == nil then
-			v38 = {}
-			v_u_8[v37] = v38
-		end
-		v38[p34] = p35
-	end,
-	["SavePlayerFormResponses"] = function(p39) -- name: savePlayerFormReponses
-		-- upvalues: (copy) v_u_3, (copy) v_u_8, (ref) v_u_7, (copy) v_u_1
-		local v40 = v_u_3.AllowMultipleResponses == false
-		assert(v40)
-		local v41 = p39.UserId
-		local v42 = v_u_8[v41]
-		if v42 ~= nil then
-			local v43 = v_u_3.AllowMultipleResponses == false
-			assert(v43)
-			if v_u_7 == nil then
-				v_u_7 = v_u_1:GetDataStore(v_u_3.DataStoreName)
-			end
-			v_u_7:SetAsync(v41, v42, { v41 })
-		end
-	end
+    SanitizeEncodedHtml = function(p1, p2) -- Line: 19 -- upvalues: u10 (val)
+        local v1 = p1
+        local v2 = p2
+        for k, v in pairs(u10) do
+            if v2 then
+                v1 = string.gsub(v1, v2 .. k, v)
+            end
+            v1 = string.gsub(v1, k, v)
+        end
+        v1 = string.gsub(v1, "\\u%x%x%x%x", function(p1) -- Line: 31
+            local v1 = string.sub(p1, 3)
+            return utf8.char("0x" .. v1)
+        end)
+        v1 = string.gsub(v1, " ", "")
+        return (string.gsub(v1, "Â", " "))
+    end,
+    IsValidFormId = function(p1) -- Line: 43
+        if p1 == nil or typeof(p1) ~= "string" then
+            return false
+        end
+        local v1 = string.len(p1)
+        if v1 == 0 or 128 < v1 then
+            return false
+        end
+        return true
+    end,
+    IsRenderedContentEqual = function(p1, p2) -- Line: 57
+        local v1
+        if string.gsub(p1, "</?[biu]>", "") or "" == p2 or "" then
+            v1 = true
+        else
+            v1 = false
+        end
+        return v1
+    end,
+    ThrottleRequest = function(p1, p2) -- Line: 64 -- upvalues: u22 (val), Config (val)
+        local v1 = u22[p1]
+        local v2 = time()
+        if not v1 then
+            v1 = {}
+            u22[p1] = v1
+            v1[p2] = v2
+            return false
+        end
+        local v3 = v1[p2]
+        local v4 = Config.RateLimits[p2]
+        if not v3 then
+            v1[p2] = v2
+            return false
+        end
+        if v2 - v3 < v4 then
+            return true
+        end
+        v1[p2] = v2
+        return false
+    end,
+    HasPlayerResponded = function(p1, p2) -- Line: 97 -- upvalues: Config (val), u26 (val), u24 (ref), DataStoreService (val)
+        local v1 = Config.AllowMultipleResponses == false
+        assert(v1)
+        local UserId = p1.UserId
+        v1 = u26[UserId]
+        if v1 == nil then
+            local v2 = Config.AllowMultipleResponses == false
+            assert(v2)
+            if u24 == nil then
+                u24 = DataStoreService:GetDataStore(Config.DataStoreName)
+            end
+            v1 = u24:GetAsync(UserId)
+            u26[UserId] = v1
+        end
+        local v3 = if v1 ~= nil then v1[p2] ~= nil else false
+        return v3
+    end,
+    SetPlayerFormResponse = function(p1, p2, p3) -- Line: 112 -- upvalues: Config (val), u26 (val)
+        local v1 = Config.AllowMultipleResponses == false
+        assert(v1)
+        local UserId = p1.UserId
+        v1 = u26[UserId]
+        if v1 == nil then
+            u26[UserId] = {}
+        end
+        v1[p2] = p3
+    end,
+    SavePlayerFormResponses = function(p1) -- Line: 126 -- upvalues: Config (val), u26 (val), u24 (ref), DataStoreService (val)
+        local v1 = Config.AllowMultipleResponses == false
+        assert(v1)
+        local UserId = p1.UserId
+        v1 = u26[UserId]
+        if v1 ~= nil then
+            local v2 = Config.AllowMultipleResponses == false
+            assert(v2)
+            if u24 == nil then
+                u24 = DataStoreService:GetDataStore(Config.DataStoreName)
+            end
+            u24:SetAsync(UserId, v1, {UserId})
+        end
+    end,
 }

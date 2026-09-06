@@ -1,36 +1,50 @@
 require("./types/fusion")
-local v_u_1 = require(script.Parent.utils["lock-value"])
-local function v_u_8(p2, p3) -- name: isSimilar
-	local v4 = typeof(p2)
-	local v5 = v4 == "table"
-	local v6 = v4 == "userdata"
-	local v7
-	if v5 or v6 then
-		if v4 == typeof(p3) and (v6 or (table.isfrozen(p2) or getmetatable(p2) ~= nil)) then
-			return p2 == p3
-		end
-		v7 = false
-	elseif p2 == p3 then
-		v7 = true
-	else
-		if p2 ~= p2 then
-			return p3 ~= p3
-		end
-		v7 = false
-	end
-	return v7
+local u8 = require(script.Parent.utils["lock-value"])
+local function isSimilar(p1, p2) -- Line: 4
+    local v1
+    local v2 = typeof(p1)
+    local v3 = v2 == "table"
+    local v4 = v2 == "userdata"
+    if v3 then
+        if v2 ~= typeof(p2) then
+            return false
+        end
+        if v4 or table.isfrozen(p1) then
+            v1 = p1 == p2
+            return v1
+        end
+        if getmetatable(p1) == nil then
+            return false
+        end
+        v1 = p1 == p2
+        return v1
+    elseif not v4 then
+        v1 = true
+        if p1 == p2 then
+            return v1
+        end
+        v1 = false
+        if p1 == p1 then
+            return v1
+        end
+        v1 = p2 ~= p2
+        return v1
+    end
 end
-return function(p9, p_u_10, p11) -- name: usePrevious
-	-- upvalues: (copy) v_u_8, (copy) v_u_1
-	local v_u_12 = p9.peek
-	local v_u_13 = p9:Value(nil)
-	local v_u_14 = p11 or v_u_8
-	p9:Observer(p_u_10):onChange(function()
-		-- upvalues: (copy) v_u_12, (copy) p_u_10, (copy) v_u_13, (copy) v_u_14
-		local v15 = v_u_12(p_u_10)
-		if not v_u_14(v_u_12(v_u_13), v15) then
-			v_u_13:set(v15)
-		end
-	end)
-	return v_u_1(v_u_13)
+return function(p1, p2, p3) -- Line: 24 -- upvalues: isSimilar (val), u8 (val)
+    local peek = p1.peek
+    local u7 = p1:Value(nil)
+    local u9 = p3
+    if not u9 then
+        u9 = isSimilar
+    end
+    local v1 = p1:Observer(p2)
+    v1:onChange(function() -- Line: 34 -- upvalues: peek (val), p2 (val), u7 (val), u9 (val)
+        local v1 = peek(p2)
+        local v2 = peek(u7)
+        if not (u9(v2, v1)) then
+            u7:set(v1)
+        end
+    end)
+    return u8(u7)
 end

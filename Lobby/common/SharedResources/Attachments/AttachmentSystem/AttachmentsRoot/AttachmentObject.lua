@@ -1,75 +1,74 @@
-local v_u_1 = {}
-v_u_1.__index = v_u_1
-function v_u_1.new(p2, p3, p4, p5) -- name: new
-	-- upvalues: (copy) v_u_1
-	local v6 = {
-		["AttachmentIndex"] = p2,
-		["Nodes"] = {},
-		["AttachmentNodeData"] = p4,
-		["NodeID"] = p3,
-		["Parent"] = p5
-	}
-	local v7 = v_u_1
-	setmetatable(v6, v7)
-	return v6
+local u0 = {}
+u0.__index = u0
+function u0.new(p1, p2, p3, p4) -- Line: 4 -- upvalues: u0 (val)
+    local v1 = {
+        AttachmentIndex = p1,
+        Nodes = {},
+        AttachmentNodeData = p3,
+        NodeID = p2,
+        Parent = p4,
+    }
+    setmetatable(v1, u0)
+    return v1
 end
-function v_u_1.AddNode(p8, p9) -- name: AddNode
-	p8.Nodes[p9] = {
-		["ConnectedAttachment"] = nil
-	}
+function u0:AddNode(p2) -- Line: 21
+    self.Nodes[p2] = {}
 end
-function v_u_1.RemoveNode(p10, p11) -- name: RemoveNode
-	p10.Nodes[p11] = nil
+function u0.RemoveNode(p1, p2) -- Line: 28
+    p1.Nodes[p2] = nil
 end
-function v_u_1.SetNodeAttachment(p12, p13, p14) -- name: SetNodeAttachment
-	-- upvalues: (copy) v_u_1
-	local v15 = p12.Nodes[p13]
-	if not v15 then
-		p12:AddNode(p13)
-		v15 = p12.Nodes[p13]
-	end
-	local v16 = p12:GetAttachmentNodeData()
-	if p14 <= #v16[p13].PotentialAttachments then
-		if v16[p13].PotentialAttachments[p14] then
-			v15.ConnectedAttachment = v_u_1.new(p14, p13, p12.AttachmentNodeData, p12)
-		else
-			v15.ConnectedAttachment = nil
-		end
-	else
-		warn(("index \'%d\' is not within the range of potential attachments"):format(p14))
-		return
-	end
+function u0.SetNodeAttachment(p1, p2, p3) -- Line: 33 -- upvalues: u0 (val)
+    local v1 = p1.Nodes[p2]
+    if not v1 then
+        p1:AddNode(p2)
+        v1 = p1.Nodes[p2]
+    end
+    local AttachmentNodeData = p1:GetAttachmentNodeData()
+    if p3 > #AttachmentNodeData[p2].PotentialAttachments then
+        warn(("index '%d' is not within the range of potential attachments"):format(p3))
+        return
+    end
+    if AttachmentNodeData[p2].PotentialAttachments[p3] then
+        v1.ConnectedAttachment = u0.new(p3, p2, p1.AttachmentNodeData, p1)
+        return
+    end
+    v1.ConnectedAttachment = nil
 end
-function v_u_1.GetAttachmentIndex(p17) -- name: GetAttachmentIndex
-	return p17.AttachmentIndex
+function u0:GetAttachmentIndex() -- Line: 52
+    return self.AttachmentIndex
 end
-function v_u_1.GetNodes(p18) -- name: GetNodes
-	return p18.Nodes
+function u0:GetNodes() -- Line: 57
+    return self.Nodes
 end
-function v_u_1.GetNodeIDFromName(p19, p20) -- name: GetNodeIDFromName
-	for v21, v22 in p19.AttachmentNodeData do
-		if v22.Name == p20 then
-			return v21
-		end
-	end
-	return nil
+function u0:GetNodeIDFromName(p2) -- Line: 62
+    local AttachmentNodeData = self.AttachmentNodeData
+    local v1 = nil
+    local v2 = nil
+    for i, j in AttachmentNodeData, v1, v2 do
+        if j.Name == p2 then
+            return i
+        end
+    end
+    return nil
 end
-function v_u_1.GetAttachmentFromNodeName(p23, p24) -- name: GetAttachmentFromNodeName
-	local v25 = p23:GetNodeIDFromName(p24)
-	local v26 = v25 and p23:GetNodes()[v25]
-	if v26 then
-		return v26.ConnectedAttachment
-	else
-		return nil
-	end
+function u0.GetAttachmentFromNodeName(p1, p2) -- Line: 72
+    local NodeIDFromName = p1:GetNodeIDFromName(p2)
+    if not NodeIDFromName then
+        return nil
+    end
+    local v1 = p1:GetNodes()[NodeIDFromName]
+    if v1 then
+        return v1.ConnectedAttachment
+    end
+    return nil
 end
-function v_u_1.GetAttachmentNodeData(p27) -- name: GetAttachmentNodeData
-	return p27.AttachmentNodeData
+function u0:GetAttachmentNodeData() -- Line: 84
+    return self.AttachmentNodeData
 end
-function v_u_1.GetNodeID(p28) -- name: GetNodeID
-	return p28.NodeID
+function u0:GetNodeID() -- Line: 89
+    return self.NodeID
 end
-function v_u_1.GetAttachmentData(p29, _, _, _) -- name: GetAttachmentData
-	return p29.AttachmentNodeData[p29:GetNodeID()].PotentialAttachments[p29:GetAttachmentIndex()]
+function u0.GetAttachmentData(p1, p2, p3, p4) -- Line: 93
+    return p1.AttachmentNodeData[p1:GetNodeID()].PotentialAttachments[p1:GetAttachmentIndex()]
 end
-return v_u_1
+return u0

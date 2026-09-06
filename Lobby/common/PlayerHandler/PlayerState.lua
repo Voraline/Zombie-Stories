@@ -1,586 +1,565 @@
-local v1 = game.ReplicatedStorage.common
-local v2 = game.ReplicatedStorage.common.RedEvents
-local v3 = game:GetService("ReplicatedStorage")
-local v_u_4 = require(v1.TableKit)
-local v_u_5 = require(v1.Signal)
-local v_u_6 = require("./StatusEffects")
-local v_u_7 = require(v2.Framework.StatusEffectsEvent)
-local v_u_8
-if game:GetService("RunService"):IsServer() then
-	v_u_8 = require(v3.common.skillTree.SkillTreeData)
+local common = game.ReplicatedStorage.common
+local RedEvents = game.ReplicatedStorage.common.RedEvents
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TableKit = require(common.TableKit)
+local Signal = require(common.Signal)
+local u20 = require("./StatusEffects")
+local StatusEffectsEvent = require(RedEvents.Framework.StatusEffectsEvent)
+local u39 = if game:GetService("RunService"):IsServer() then require(ReplicatedStorage.common.skillTree.SkillTreeData) else nil
+local u40 = true
+local u48 = game:GetService("RunService"):IsServer()
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+local Value = workspace.Values.IsLobby.Value
+local PlayerStateEvent = require(RedEvents.Framework.PlayerStateEvent)
+local u65 = {}
+local u66 = {
+    Sprinting = false,
+    Crouching = false,
+    Proning = false,
+    Sliding = false,
+    Jogging = false,
+    Diving = false,
+    Aiming = false,
+    Equipped = false,
+    WepId = false,
+    SecondaryEquipped = false,
+    SecondaryWepId = false,
+    QuickSwapActive = false,
+    DualWieldActive = false,
+    OffHandActive = false,
+    OffHandEquipped = false,
+    OffHandWepId = false,
+    LastHit = os.clock(),
+    PreviousDamage = 0,
+    ImmunityTime = 0.05,
+    HP = 100,
+    MaxHP = 100,
+    GodMode = false,
+    IsDead = false,
+    IsDowned = false,
+    InSwanSong = false,
+    SwanSongEndTime = 0,
+    SwanSongUsed = false,
+    SpartanShield = 0,
+    SpartanShieldMax = 0,
+    SpartanShieldRegenDelay = 5,
+    SpartanLastHitTime = 0,
+    SecondWindDamage = 0,
+    SecondWindMaxDamage = 500,
+    SecondWindUsed = false,
+    IsFocused = false,
+    InstantKill = false,
+    BeingRevived = false,
+    Blocking = false,
+    Charging = false,
+    EquippedGun = false,
+    BlockingStart = os.clock(),
+}
+local u110 = {
+    Sprinting = "boolean",
+    Crouching = "boolean",
+    Proning = "boolean",
+    Sliding = "boolean",
+    Jogging = "boolean",
+    Diving = "boolean",
+    Aiming = "boolean",
+    Charging = "boolean",
+    Blocking = "boolean",
+    QuickSwapActive = "boolean",
+    DualWieldActive = "boolean",
+    SecondaryEquipped = "string_or_false",
+    SecondaryWepId = "string_or_false",
+    OffHandActive = "boolean",
+    OffHandEquipped = "string_or_false",
+    OffHandWepId = "string_or_false",
+}
+local v1 = {Equipped = true, WepId = true}
+local u130 = {StateAdded = Signal.new()}
+function u130.__index(p1, p2) -- Line: 112 -- upvalues: u66 (val), u130 (val)
+    local v1 = rawget(p1, p2)
+    if u66[p2] ~= nil then
+        return rawget(p1, "Properties")[p2]
+    end
+    if v1 ~= nil then
+        return v1
+    end
+    if u130[p2] then
+        return u130[p2]
+    end
+    local v2 = ("%q is not a valid member of playerState"):format((tostring(p2)))
+    error(v2, 2)
+end
+function u130.__newindex(p1, p2, p3) -- Line: 126 -- upvalues: u66 (val), u48 (val), u130 (val)
+    local v1 = rawget(p1, p2)
+    if u66[p2] ~= nil then
+        p1:_SetProperty(p2, p3, not u48)
+        return p1
+    end
+    if v1 ~= nil then
+        p1[p2] = p3
+        return p1
+    end
+    u130[p2] = p3
+    return p1
+end
+function u130.new(p1, p2) -- Line: 139 -- upvalues: u65 (val), TableKit (val), u66 (val), u20 (val), u130 (val), Signal (val), u48 (val), PlayerStateEvent (val)
+    if u65[p1] then
+        return u65[p1]
+    end
+    local v1 = p1 ~= nil
+    assert(v1, "PlayerState requires player parameter")
+    local u12 = {Player = p1}
+    if not p2 then
+        v1 = TableKit.DeepCopy(u66)
+    else
+        v1 = p2
+    end
+    u12.Properties = v1
+    u12._Events = {}
+    u12.StatusEffects = u20.new(p1)
+    setmetatable(u12, u130)
+    rawset(u12, "HPChanged", u12:GetPropertyChangedSignal("HP"))
+    rawset(u12, "HealthChanged", u12:GetPropertyChangedSignal("HP"))
+    rawset(u12, "Died", Signal.new())
+    rawset(u12, "Downed", Signal.new())
+    rawset(u12, "Damaged", Signal.new())
+    local PropertyChangedSignal = u12:GetPropertyChangedSignal("IsDead")
+    PropertyChangedSignal:Connect(function(p1) -- Line: 162 -- upvalues: u12 (val)
+        if p1 then
+            u12.Died:Fire()
+        end
+    end)
+    local PropertyChangedSignal_2 = u12:GetPropertyChangedSignal("IsDowned")
+    PropertyChangedSignal_2:Connect(function(p1) -- Line: 167 -- upvalues: u12 (val)
+        if p1 then
+            u12.Downed:Fire()
+        end
+    end)
+    if u48 then
+        PlayerStateEvent:FireAllClientsExcept(p1, createAddPacket(u12))
+    end
+    u65[p1] = u12
+    u130.StateAdded:Fire(u12)
+    u20.StateAdded:Fire(u12)
+    return u12
+end
+function u130.CopyState(p1, p2) -- Line: 189 -- upvalues: u66 (val)
+    local v1 = u66
+    local v2 = nil
+    local v3 = nil
+    for i in v1, v2, v3 do
+        if i ~= "StatusEffects" then
+            p1[i] = p2.Properties[i]
+        end
+    end
+    p1.StatusEffects:CopyEffects(p2.StatusEffects)
+end
+function u130.SetPeerReplicationEnabled(p1) -- Line: 198 -- upvalues: u40 (ref)
+    u40 = p1
+end
+function u130:ApplyStatus(p2, ...) -- Line: 202 -- upvalues: u48 (val)
+    if u48 then
+        self.StatusEffects:Apply(p2, ...)
+    end
+end
+function u130.Heal(p1, p2) -- Line: 208 -- upvalues: u48 (val)
+    if u48 then
+        p1.HP = math.clamp(p1.HP + p2, 0, p1.MaxHP)
+    end
+end
+function u130.RefreshMaxHP(p1) -- Line: 218 -- upvalues: u48 (val), u39 (ref)
+    if not u48 or not u39 then
+        return
+    end
+    local v1 = math.floor(100 * u39.getMaxHPMult(p1.Player))
+    local MaxHP = p1.MaxHP
+    if v1 ~= MaxHP then
+        local HP
+        local v2 = MaxHP <= p1.HP
+        p1.MaxHP = v1
+        if v2 then
+            p1.HP = v1
+        end
+        local Character = p1.Player.Character
+        if Character then
+            local MaxHP_2 = Character:FindFirstChild("MaxHP")
+            HP = Character:FindFirstChild("HP")
+            if MaxHP_2 and MaxHP_2:IsA("NumberValue") then
+                MaxHP_2.Value = v1
+            end
+            if HP and HP:IsA("NumberValue") then
+                HP.Value = p1.HP
+            end
+        end
+        if _G.plrDictionary and _G.plrDictionary[p1.Player] then
+            local v3 = _G.plrDictionary[p1.Player]
+            if v3.MaxHealth then
+                v3.MaxHealth.Value = v1
+            end
+            if v3.Health then
+                v3.Health.Value = p1.HP
+            end
+        end
+        p1.Player:SetAttribute("Skill_MaxHP", v1)
+        p1.Player:SetAttribute("Skill_CurrentHP", p1.HP)
+        print((("[PlayerState] %* MaxHP updated: %* -> %*"):format(p1.Player.Name, MaxHP, v1)))
+    end
+end
+function u130.RefreshSpartanShield(p1) -- Line: 269 -- upvalues: u48 (val), u39 (ref)
+    if not u48 or not u39 then
+        return
+    end
+    if not (u39.hasTheSpartan(p1.Player)) then
+        p1.SpartanShieldMax = 0
+        p1.SpartanShield = 0
+        return
+    end
+    p1.SpartanShieldMax = 50
+    p1.SpartanShield = 50
+    p1.SpartanLastHitTime = 0
+    print((("[PlayerState] %* Spartan Shield initialized: %*"):format(p1.Player.Name, 50)))
+end
+function u130:ResetSecondWind() -- Line: 288 -- upvalues: u48 (val)
+    if not u48 then
+        return
+    end
+    self.SecondWindDamage = 0
+end
+function u130.AddSecondWindDamage(p1, p2) -- Line: 298 -- upvalues: u48 (val), u39 (ref)
+    if not u48 or not u39 or not p1.IsDowned or not (u39.hasSecondWind(p1.Player)) or p1.SecondWindUsed then
+        return false
+    end
+    p1.SecondWindDamage = p1.SecondWindDamage + p2
+    if p1.SecondWindMaxDamage > p1.SecondWindDamage then
+        return false
+    end
+    p1.SecondWindDamage = 0
+    p1.IsDowned = false
+    p1.HP = math.floor(p1.MaxHP * 0.25)
+    p1.SecondWindUsed = true
+    p1.GodMode = true
+    task.delay(3, function() -- Line: 324 -- upvalues: p1 (val)
+        if 0 < p1.HP and not p1.IsDead then
+            p1.GodMode = false
+        end
+    end)
+    local Character = p1.Player.Character
+    if Character then
+        local ForceField = Instance.new("ForceField")
+        ForceField.Parent = Character
+        local Debris = game:GetService("Debris")
+        Debris:AddItem(ForceField, 3)
+    end
+    print((("[PlayerState] %* triggered Second Wind self-revive!"):format(p1.Player.Name)))
+    return true
+end
+function u130.UpdateSpartanShield(p1, p2) -- Line: 346 -- upvalues: u48 (val), PlayerStateEvent (val)
+    local SpartanShield
+    if not u48 or p1.SpartanShieldMax <= 0 or p1.SpartanShieldMax <= p1.SpartanShield or p1.IsDowned or p1.IsDead then
+        return
+    end
+    local v1 = os.clock() - p1.SpartanLastHitTime
+    if p1.SpartanShieldRegenDelay <= v1 then
+        SpartanShield = p1.SpartanShield
+        p1.SpartanShield = math.min(p1.SpartanShield + p1.SpartanShieldMax / 3 * p2, p1.SpartanShieldMax)
+        if SpartanShield == 0 and 0 < p1.SpartanShield then
+            PlayerStateEvent:FireAllClients({Type = "ShieldRegenStart", Player = p1.Player})
+        end
+    end
+end
+function u130.Damage(p1, p2, p3, p4, p5) -- Line: 369 -- upvalues: u48 (val), GameState (val), u39 (ref), PlayerStateEvent (val)
+    if not u48 then
+        return
+    elseif p1.HP <= 0 then
+        return
+    else
+        if p1.GodMode then
+            return
+        end
+        if p4 then
+            p1.InstantKill = true
+        end
+        if os.clock() >= p1.LastHit then
+            local PlayerDamageTaken
+            p1.LastHit = os.clock() + p1.ImmunityTime
+            p1.PreviousDamage = p2
+            if p5 then
+                PlayerDamageTaken = 1
+            else
+                PlayerDamageTaken = GameState.Data.Variables.PlayerDamageTaken
+            end
+            local v1 = p2 * PlayerDamageTaken
+            if not p4 and not p5 and u39 then
+                v1 = v1 * u39.getDamageReductionMult(p1.Player)
+            end
+            if v1 ~= v1 then
+                print("NaN HP detected!")
+                v1 = 0
+            end
+            local v2 = 0
+            if not p4 and 0 < p1.SpartanShieldMax then
+                p1.SpartanLastHitTime = os.clock()
+                if 0 < p1.SpartanShield then
+                    v2 = math.min(p1.SpartanShield, v1)
+                    p1.SpartanShield = p1.SpartanShield - v2
+                    v1 = v1 - v2
+                end
+            end
+            p1.HP = math.clamp(p1.HP - v1, 0, p1.MaxHP)
+            p1.Damaged:Fire(p1.HP, v1, p3, v2)
+            PlayerStateEvent:FireAllClients({
+                Type = "Damaged",
+                Player = p1.Player,
+                Data = {
+                    p1.HP,
+                    v1,
+                    p3,
+                    v2,
+                    p1.SpartanShield,
+                },
+            })
+            return
+        elseif p2 <= p1.PreviousDamage then
+            return
+        end
+    end
+end
+function u130:GetPropertyChangedSignal(p2) -- Line: 424 -- upvalues: u66 (val), Signal (val)
+    local v1 = u66[p2] ~= nil
+    assert(v1, ("PlayerState has no property '%s'"):format(p2))
+    if not (self._Events[p2]) then
+        self._Events[p2] = Signal.new()
+    end
+    return self._Events[p2]
+end
+function u130.GetStatusChangedSignal(p1, p2) -- Line: 432
+    return p1.StatusEffects:GetPropertyChangedSignal(p2)
+end
+function u130:Destroy() -- Line: 436 -- upvalues: u65 (val)
+    u65[self.Player] = nil
+    rawset(self, "_Destroyed", true)
+    self.Died:DisconnectAll()
+    self.Downed:DisconnectAll()
+    self.Damaged:DisconnectAll()
+    local _Events = self._Events
+    local v1 = nil
+    local v2 = nil
+    for i, j in _Events, v1, v2 do
+        j:DisconnectAll()
+    end
+    self.StatusEffects:Destroy()
+end
+function u130:_SetProperty(p2, p3, p4, p5) -- Line: 449 -- upvalues: u66 (val), u48 (val), Value (val), u39 (ref), u40 (ref), PlayerStateEvent (val), u110 (val)
+    local v1
+    if u66[p2] == nil then
+        return
+    end
+    local v2 = p2 ~= "StatusEffects"
+    assert(v2, "Can't set StatusEffects property, please modify the StatusEffects object instead")
+    local v3 = self.Properties[p2]
+    if v3 == p3 then
+        return
+    end
+    self.Properties[p2] = p3
+    v2 = self._Events[p2]
+    if v2 then
+        v2:Fire(p3, v3)
+    end
+    if not u48 then
+        if p4 and u110[p2] ~= nil then
+            PlayerStateEvent:FireServer({Type = "PropertyChanged", Index = p2, Value = p3})
+        end
+        return
+    end
+    if p2 == "Blocking" then
+        if not p3 then
+            v1 = false
+        else
+            v1 = os.clock()
+        end
+        self.BlockingStart = v1
+    elseif p2 == "HP" and self.HP == 0 then
+        if not Value then
+            local Downed = self.StatusEffects.Downed
+            if self.InstantKill then
+                self.IsDead = true
+                self.InstantKill = false
+                if Downed then
+                    Downed:ResetRunState()
+                end
+            elseif not Downed then
+                local v4 = u39
+                if v4 then
+                    v4 = u39.hasSwanSong(self.Player)
+                end
+                if not v4 then
+                    if not self.InSwanSong then
+                        local v5
+                        if not u39 then
+                            v5 = 1
+                        else
+                            v5 = u39.getDownedTimeMult(self.Player)
+                        end
+                        self:ApplyStatus("Downed", 30 * v5)
+                        self.IsDowned = true
+                        self:ResetSecondWind()
+                    else
+                        self.HP = 1
+                    end
+                elseif not self.InSwanSong and not self.SwanSongUsed then
+                    self.InSwanSong = true
+                    self.SwanSongUsed = true
+                    self.SwanSongEndTime = workspace:GetServerTimeNow() + 4
+                    self.HP = 1
+                    task.spawn(function() -- Line: 505 -- upvalues: self (val)
+                        task.wait(4)
+                        if self.InSwanSong and not (rawget(self, "_Destroyed")) then
+                            self.InSwanSong = false
+                            self.SwanSongEndTime = 0
+                            self.HP = 0
+                        end
+                    end)
+                end
+            elseif Downed._RevivesLeft and Downed._RevivesLeft > 0 then
+            end
+        elseif not self.InstantKill and not (rawget(self, "Revival")) then
+            rawset(self, "Revival", true)
+            task.spawn(function() -- Line: 475 -- upvalues: self (val)
+                task.wait(1)
+                while true do
+                    task.wait()
+                    self.HP = self.HP + 1
+                    if self.MaxHP or 100 <= self.HP then
+                        break
+                    end
+                end
+                self.HP = self.MaxHP
+                rawset(self, "Revival", nil)
+            end)
+        end
+    end
+    if u40 then
+        v1 = {Type = "PropertyChanged", Player = self.Player, Index = p2, Value = p3}
+        if p5 then
+            PlayerStateEvent:FireAllClientsExcept(p5, v1)
+            return
+        end
+        PlayerStateEvent:FireAllClients(v1)
+        return
+    end
+    if p5 then
+        return
+    end
+    v1 = {Type = "PropertyChanged", Player = self.Player, Index = p2, Value = p3}
+    if p5 then
+        PlayerStateEvent:FireAllClientsExcept(p5, v1)
+        return
+    end
+    PlayerStateEvent:FireAllClients(v1)
+end
+function createAddPacket(p1) -- Line: 559
+    return {Type = "Add", Player = p1.Player, Properties = p1.Properties}
+end
+local function isValidPropertyType(p1, p2) -- Line: 570
+    local v1
+    if p2 ~= "string_or_false" then
+        v1 = typeof(p1) == p2
+        return v1
+    end
+    v1 = if typeof(p1) ~= "string" then p1 == false else true
+    return v1
+end
+if not u48 then
+    PlayerStateEvent:SetClientListener(function(p1) -- Line: 618 -- upvalues: u65 (val), u130 (val)
+        local v1, v2, v3
+        if not p1 then
+            return
+        end
+        local Type = p1.Type
+        if Type == "Add" then
+            v1 = u65[p1.Player]
+            if not v1 then
+                u130.new(p1.Player, p1.Properties)
+                return
+            end
+            local Properties = p1.Properties
+            v2 = nil
+            v3 = nil
+            for i, j in Properties, v2, v3 do
+                if v1.Properties[i] ~= j then
+                    v1:_SetProperty(i, j)
+                end
+            end
+            return
+        end
+        if Type == "PropertyChanged" then
+            v1 = u65[p1.Player]
+            if not v1 then
+                return
+            end
+            v1:_SetProperty(p1.Index, p1.Value)
+            return
+        end
+        if Type == "Damaged" then
+            v1 = u65[p1.Player]
+            if v1 then
+                local v4
+                v4, v2, v3 = unpack(p1.Data)
+                v1.Damaged:Fire(v4, v2, v3)
+            end
+        end
+    end)
+    PlayerStateEvent:FireServer()
 else
-	v_u_8 = nil
+    PlayerStateEvent:SetServerListener(function(p1, p2) -- Line: 580 -- upvalues: u110 (val), u65 (val), PlayerStateEvent (val), StatusEffectsEvent (val)
+        local StatusEffects, v1, v2, v3, v4, v5
+        if p2 then
+            local v6
+            if p2.Type ~= "PropertyChanged" then
+                return
+            end
+            v2 = u110[p2.Index]
+            v3 = u65[p1]
+            if not v2 then
+                return
+            end
+            local Value = p2.Value
+            if v2 ~= "string_or_false" then
+                v6 = typeof(Value) == v2
+            else
+                v6 = if typeof(Value) ~= "string" then Value == false else true
+            end
+            if not v6 or not v3 then
+                return
+            end
+            v3:_SetProperty(p2.Index, p2.Value, nil, p1)
+            return
+        end
+        local v7 = u65
+        v2 = nil
+        v3 = nil
+        for i, j in v7, v2, v3 do
+            PlayerStateEvent:FireClient(p1, createAddPacket(j))
+        end
+        v7 = u65
+        v2 = nil
+        v3 = nil
+        for k, n in v7, v2, v3 do
+            StatusEffects = n.StatusEffects
+            if StatusEffects then
+                StatusEffects = n.StatusEffects.EffectObjects
+            end
+            if StatusEffects then
+                v4 = StatusEffects
+                v5 = nil
+                v1 = nil
+                for m, i5 in v4, v5, v1 do
+                    if not i5.Inactive then
+                        StatusEffectsEvent:FireClient(v8, {Type = "StatusApplied", Player = n.Player, Status = m, Params = i5:Serialize()})
+                    end
+                end
+            end
+        end
+    end)
 end
-local v_u_9 = true
-local v_u_10 = game:GetService("RunService"):IsServer()
-local v_u_11 = require(v3.common.ZS_Shared.Data.GameState)
-local v_u_12 = workspace.Values.IsLobby.Value
-local v_u_13 = require(v2.Framework.PlayerStateEvent)
-local v_u_14 = {}
-local v_u_15 = {
-	["Sprinting"] = false,
-	["Crouching"] = false,
-	["Proning"] = false,
-	["Sliding"] = false,
-	["Jogging"] = false,
-	["Diving"] = false,
-	["Aiming"] = false,
-	["Equipped"] = false,
-	["WepId"] = false,
-	["SecondaryEquipped"] = false,
-	["SecondaryWepId"] = false,
-	["QuickSwapActive"] = false,
-	["DualWieldActive"] = false,
-	["OffHandActive"] = false,
-	["OffHandEquipped"] = false,
-	["OffHandWepId"] = false,
-	["LastHit"] = os.clock(),
-	["PreviousDamage"] = 0,
-	["ImmunityTime"] = 0.05,
-	["HP"] = 100,
-	["MaxHP"] = 100,
-	["GodMode"] = false,
-	["IsDead"] = false,
-	["IsDowned"] = false,
-	["InSwanSong"] = false,
-	["SwanSongEndTime"] = 0,
-	["SwanSongUsed"] = false,
-	["SpartanShield"] = 0,
-	["SpartanShieldMax"] = 0,
-	["SpartanShieldRegenDelay"] = 5,
-	["SpartanLastHitTime"] = 0,
-	["SecondWindDamage"] = 0,
-	["SecondWindMaxDamage"] = 500,
-	["SecondWindUsed"] = false,
-	["IsFocused"] = false,
-	["InstantKill"] = false,
-	["BeingRevived"] = false,
-	["Blocking"] = false,
-	["Charging"] = false,
-	["EquippedGun"] = false,
-	["BlockingStart"] = os.clock()
-}
-local v_u_16 = {
-	["Sprinting"] = "boolean",
-	["Crouching"] = "boolean",
-	["Proning"] = "boolean",
-	["Sliding"] = "boolean",
-	["Jogging"] = "boolean",
-	["Diving"] = "boolean",
-	["Aiming"] = "boolean",
-	["Charging"] = "boolean",
-	["Blocking"] = "boolean",
-	["QuickSwapActive"] = "boolean",
-	["DualWieldActive"] = "boolean",
-	["SecondaryEquipped"] = "string_or_false",
-	["SecondaryWepId"] = "string_or_false",
-	["OffHandActive"] = "boolean",
-	["OffHandEquipped"] = "string_or_false",
-	["OffHandWepId"] = "string_or_false"
-}
-local v_u_99 = {
-	["StateAdded"] = v_u_5.new(),
-	["__index"] = function(p17, p18) -- name: __index
-		-- upvalues: (copy) v_u_15, (copy) v_u_99
-		local v19 = rawget(p17, p18)
-		if v_u_15[p18] ~= nil then
-			return rawget(p17, "Properties")[p18]
-		end
-		if v19 ~= nil then
-			return v19
-		end
-		if v_u_99[p18] then
-			return v_u_99[p18]
-		end
-		error(("%q is not a valid member of playerState"):format((tostring(p18))), 2)
-	end,
-	["__newindex"] = function(p20, p21, p22) -- name: __newindex
-		-- upvalues: (copy) v_u_15, (copy) v_u_10, (copy) v_u_99
-		local v23 = rawget(p20, p21)
-		if v_u_15[p21] == nil then
-			if v23 == nil then
-				v_u_99[p21] = p22
-				return p20
-			else
-				p20[p21] = p22
-				return p20
-			end
-		else
-			p20:_SetProperty(p21, p22, not v_u_10)
-			return p20
-		end
-	end,
-	["new"] = function(p24, p25) -- name: new
-		-- upvalues: (copy) v_u_14, (copy) v_u_4, (copy) v_u_15, (copy) v_u_6, (copy) v_u_99, (copy) v_u_5, (copy) v_u_10, (copy) v_u_13
-		if v_u_14[p24] then
-			return v_u_14[p24]
-		end
-		local v26 = p24 ~= nil
-		assert(v26, "PlayerState requires player parameter")
-		local v_u_27 = {
-			["Player"] = p24,
-			["Properties"] = p25 or v_u_4.DeepCopy(v_u_15),
-			["_Events"] = {},
-			["StatusEffects"] = v_u_6.new(p24)
-		}
-		local v28 = v_u_99
-		setmetatable(v_u_27, v28)
-		rawset(v_u_27, "HPChanged", v_u_27:GetPropertyChangedSignal("HP"))
-		rawset(v_u_27, "HealthChanged", v_u_27:GetPropertyChangedSignal("HP"))
-		local v29 = v_u_5.new
-		rawset(v_u_27, "Died", v29())
-		local v30 = v_u_5.new
-		rawset(v_u_27, "Downed", v30())
-		local v31 = v_u_5.new
-		rawset(v_u_27, "Damaged", v31())
-		v_u_27:GetPropertyChangedSignal("IsDead"):Connect(function(p32)
-			-- upvalues: (copy) v_u_27
-			if p32 then
-				v_u_27.Died:Fire()
-			end
-		end)
-		v_u_27:GetPropertyChangedSignal("IsDowned"):Connect(function(p33)
-			-- upvalues: (copy) v_u_27
-			if p33 then
-				v_u_27.Downed:Fire()
-			end
-		end)
-		if v_u_10 then
-			v_u_13:FireAllClientsExcept(p24, createAddPacket(v_u_27))
-		end
-		v_u_14[p24] = v_u_27
-		v_u_99.StateAdded:Fire(v_u_27)
-		v_u_6.StateAdded:Fire(v_u_27)
-		return v_u_27
-	end,
-	["CopyState"] = function(p34, p35) -- name: CopyState
-		-- upvalues: (copy) v_u_15
-		for v36 in v_u_15 do
-			if v36 ~= "StatusEffects" then
-				p34[v36] = p35.Properties[v36]
-			end
-		end
-		p34.StatusEffects:CopyEffects(p35.StatusEffects)
-	end,
-	["SetPeerReplicationEnabled"] = function(p37) -- name: SetPeerReplicationEnabled
-		-- upvalues: (ref) v_u_9
-		v_u_9 = p37
-	end,
-	["ApplyStatus"] = function(p38, p39, ...) -- name: ApplyStatus
-		-- upvalues: (copy) v_u_10
-		if v_u_10 then
-			p38.StatusEffects:Apply(p39, ...)
-		end
-	end,
-	["Heal"] = function(p40, p41) -- name: Heal
-		-- upvalues: (copy) v_u_10
-		if v_u_10 then
-			local v42 = p40.HP + p41
-			local v43 = p40.MaxHP
-			p40.HP = math.clamp(v42, 0, v43)
-		end
-	end,
-	["RefreshMaxHP"] = function(p44) -- name: RefreshMaxHP
-		-- upvalues: (copy) v_u_10, (ref) v_u_8
-		if v_u_10 and v_u_8 then
-			local v45 = 100 * v_u_8.getMaxHPMult(p44.Player)
-			local v46 = math.floor(v45)
-			local v47 = p44.MaxHP
-			if v46 ~= v47 then
-				local v48 = v47 <= p44.HP
-				p44.MaxHP = v46
-				if v48 then
-					p44.HP = v46
-				end
-				local v49 = p44.Player.Character
-				if v49 then
-					local v50 = v49:FindFirstChild("MaxHP")
-					local v51 = v49:FindFirstChild("HP")
-					if v50 and v50:IsA("NumberValue") then
-						v50.Value = v46
-					end
-					if v51 and v51:IsA("NumberValue") then
-						v51.Value = p44.HP
-					end
-				end
-				if _G.plrDictionary and _G.plrDictionary[p44.Player] then
-					local v52 = _G.plrDictionary[p44.Player]
-					if v52.MaxHealth then
-						v52.MaxHealth.Value = v46
-					end
-					if v52.Health then
-						v52.Health.Value = p44.HP
-					end
-				end
-				p44.Player:SetAttribute("Skill_MaxHP", v46)
-				p44.Player:SetAttribute("Skill_CurrentHP", p44.HP)
-				print((("[PlayerState] %* MaxHP updated: %* -> %*"):format(p44.Player.Name, v47, v46)))
-			end
-		end
-	end,
-	["RefreshSpartanShield"] = function(p53) -- name: RefreshSpartanShield
-		-- upvalues: (copy) v_u_10, (ref) v_u_8
-		if v_u_10 and v_u_8 then
-			if v_u_8.hasTheSpartan(p53.Player) then
-				p53.SpartanShieldMax = 50
-				p53.SpartanShield = 50
-				p53.SpartanLastHitTime = 0
-				print((("[PlayerState] %* Spartan Shield initialized: %*"):format(p53.Player.Name, 50)))
-			else
-				p53.SpartanShieldMax = 0
-				p53.SpartanShield = 0
-			end
-		else
-			return
-		end
-	end,
-	["ResetSecondWind"] = function(p54) -- name: ResetSecondWind
-		-- upvalues: (copy) v_u_10
-		if v_u_10 then
-			p54.SecondWindDamage = 0
-		end
-	end,
-	["AddSecondWindDamage"] = function(p_u_55, p56) -- name: AddSecondWindDamage
-		-- upvalues: (copy) v_u_10, (ref) v_u_8
-		if not (v_u_10 and v_u_8) then
-			return false
-		end
-		if not p_u_55.IsDowned then
-			return false
-		end
-		if not v_u_8.hasSecondWind(p_u_55.Player) then
-			return false
-		end
-		if p_u_55.SecondWindUsed then
-			return false
-		end
-		p_u_55.SecondWindDamage = p_u_55.SecondWindDamage + p56
-		if p_u_55.SecondWindDamage < p_u_55.SecondWindMaxDamage then
-			return false
-		end
-		p_u_55.SecondWindDamage = 0
-		p_u_55.IsDowned = false
-		local v57 = p_u_55.MaxHP * 0.25
-		p_u_55.HP = math.floor(v57)
-		p_u_55.SecondWindUsed = true
-		p_u_55.GodMode = true
-		task.delay(3, function()
-			-- upvalues: (copy) p_u_55
-			if p_u_55.HP > 0 and not p_u_55.IsDead then
-				p_u_55.GodMode = false
-			end
-		end)
-		local v58 = p_u_55.Player.Character
-		if v58 then
-			local v59 = Instance.new("ForceField")
-			v59.Parent = v58
-			game:GetService("Debris"):AddItem(v59, 3)
-		end
-		print((("[PlayerState] %* triggered Second Wind self-revive!"):format(p_u_55.Player.Name)))
-		return true
-	end,
-	["UpdateSpartanShield"] = function(p60, p61) -- name: UpdateSpartanShield
-		-- upvalues: (copy) v_u_10, (copy) v_u_13
-		if v_u_10 then
-			if p60.SpartanShieldMax <= 0 then
-				return
-			elseif p60.SpartanShield >= p60.SpartanShieldMax then
-				return
-			elseif not (p60.IsDowned or p60.IsDead) then
-				if os.clock() - p60.SpartanLastHitTime >= p60.SpartanShieldRegenDelay then
-					local v62 = p60.SpartanShieldMax / 3
-					local v63 = p60.SpartanShield
-					local v64 = p60.SpartanShield + v62 * p61
-					local v65 = p60.SpartanShieldMax
-					p60.SpartanShield = math.min(v64, v65)
-					if v63 == 0 and p60.SpartanShield > 0 then
-						v_u_13:FireAllClients({
-							["Type"] = "ShieldRegenStart",
-							["Player"] = nil,
-							["Player"] = p60.Player
-						})
-					end
-				end
-			end
-		else
-			return
-		end
-	end,
-	["Damage"] = function(p66, p67, p68, p69, p70) -- name: Damage
-		-- upvalues: (copy) v_u_10, (copy) v_u_11, (ref) v_u_8, (copy) v_u_13
-		if v_u_10 then
-			if p66.HP <= 0 or p66.GodMode then
-				return
-			end
-			if p69 then
-				p66.InstantKill = true
-			end
-			if os.clock() < p66.LastHit and p67 <= p66.PreviousDamage then
-				return
-			end
-			local v71 = p66.ImmunityTime
-			local v72 = v_u_11.Data.Variables.PlayerDamageTaken
-			local _ = v71 * math.min(4, v72)
-			p66.LastHit = os.clock() + p66.ImmunityTime
-			p66.PreviousDamage = p67
-			local v73 = p67 * (p70 and 1 or v_u_11.Data.Variables.PlayerDamageTaken)
-			if not p69 and (not p70 and v_u_8) then
-				v73 = v73 * v_u_8.getDamageReductionMult(p66.Player)
-			end
-			if v73 ~= v73 then
-				print("NaN HP detected!")
-				v73 = 0
-			end
-			local v74 = 0
-			if not p69 and p66.SpartanShieldMax > 0 then
-				p66.SpartanLastHitTime = os.clock()
-				if p66.SpartanShield > 0 then
-					local v75 = p66.SpartanShield
-					v74 = math.min(v75, v73)
-					p66.SpartanShield = p66.SpartanShield - v74
-					v73 = v73 - v74
-				end
-			end
-			local v76 = p66.HP - v73
-			local v77 = p66.MaxHP
-			p66.HP = math.clamp(v76, 0, v77)
-			p66.Damaged:Fire(p66.HP, v73, p68, v74)
-			v_u_13:FireAllClients({
-				["Type"] = "Damaged",
-				["Player"] = nil,
-				["Data"] = nil,
-				["Player"] = p66.Player,
-				["Data"] = {
-					p66.HP,
-					v73,
-					p68,
-					v74,
-					p66.SpartanShield
-				}
-			})
-		end
-	end,
-	["GetPropertyChangedSignal"] = function(p78, p79) -- name: GetPropertyChangedSignal
-		-- upvalues: (copy) v_u_15, (copy) v_u_5
-		local v80 = v_u_15[p79] ~= nil
-		assert(v80, ("PlayerState has no property \'%s\'"):format(p79))
-		if not p78._Events[p79] then
-			p78._Events[p79] = v_u_5.new()
-		end
-		return p78._Events[p79]
-	end,
-	["GetStatusChangedSignal"] = function(p81, p82) -- name: GetStatusChangedSignal
-		return p81.StatusEffects:GetPropertyChangedSignal(p82)
-	end,
-	["Destroy"] = function(p83) -- name: Destroy
-		-- upvalues: (copy) v_u_14
-		v_u_14[p83.Player] = nil
-		rawset(p83, "_Destroyed", true)
-		p83.Died:DisconnectAll()
-		p83.Downed:DisconnectAll()
-		p83.Damaged:DisconnectAll()
-		for _, v84 in p83._Events do
-			v84:DisconnectAll()
-		end
-		p83.StatusEffects:Destroy()
-	end,
-	["_SetProperty"] = function(p_u_85, p86, p87, p88, p89) -- name: _SetProperty
-		-- upvalues: (copy) v_u_15, (copy) v_u_10, (copy) v_u_12, (ref) v_u_8, (ref) v_u_9, (copy) v_u_13, (copy) v_u_16
-		if v_u_15[p86] ~= nil then
-			local v90 = p86 ~= "StatusEffects"
-			assert(v90, "Can\'t set StatusEffects property, please modify the StatusEffects object instead")
-			local v91 = p_u_85.Properties[p86]
-			if v91 == p87 then
-				return
-			end
-			p_u_85.Properties[p86] = p87
-			local v92 = p_u_85._Events[p86]
-			if v92 then
-				v92:Fire(p87, v91)
-			end
-			if v_u_10 then
-				if p86 == "Blocking" then
-					local v93
-					if p87 then
-						v93 = os.clock()
-					else
-						v93 = false
-					end
-					p_u_85.BlockingStart = v93
-				elseif p86 == "HP" and p_u_85.HP == 0 then
-					if v_u_12 and not p_u_85.InstantKill then
-						if not rawget(p_u_85, "Revival") then
-							rawset(p_u_85, "Revival", true)
-							task.spawn(function()
-								-- upvalues: (copy) p_u_85
-								task.wait(1)
-								repeat
-									task.wait()
-									p_u_85.HP = p_u_85.HP + 1
-								until p_u_85.HP >= (p_u_85.MaxHP or 100)
-								p_u_85.HP = p_u_85.MaxHP
-								local v94 = p_u_85
-								rawset(v94, "Revival", nil)
-							end)
-						end
-					else
-						local v95 = p_u_85.StatusEffects.Downed
-						if p_u_85.InstantKill or v95 and (v95._RevivesLeft and v95._RevivesLeft <= 0) then
-							p_u_85.IsDead = true
-							p_u_85.InstantKill = false
-							if v95 then
-								v95:InitalizeRevives()
-							end
-						else
-							local v96 = v_u_8
-							if v96 then
-								v96 = v_u_8.hasSwanSong(p_u_85.Player)
-							end
-							if v96 and not (p_u_85.InSwanSong or p_u_85.SwanSongUsed) then
-								p_u_85.InSwanSong = true
-								p_u_85.SwanSongUsed = true
-								p_u_85.SwanSongEndTime = workspace:GetServerTimeNow() + 4
-								p_u_85.HP = 1
-								task.spawn(function()
-									-- upvalues: (copy) p_u_85
-									task.wait(4)
-									if p_u_85.InSwanSong then
-										local v97 = p_u_85
-										if not rawget(v97, "_Destroyed") then
-											p_u_85.InSwanSong = false
-											p_u_85.SwanSongEndTime = 0
-											p_u_85.HP = 0
-										end
-									end
-								end)
-							elseif p_u_85.InSwanSong then
-								p_u_85.HP = 1
-							else
-								p_u_85:ApplyStatus("Downed", 30 * (v_u_8 and (v_u_8.getDownedTimeMult(p_u_85.Player) or 1) or 1))
-								p_u_85.IsDowned = true
-								p_u_85:ResetSecondWind()
-							end
-						end
-					end
-				end
-				if v_u_9 or not p89 then
-					local v98 = {
-						["Type"] = "PropertyChanged",
-						["Player"] = nil,
-						["Index"] = nil,
-						["Value"] = nil,
-						["Player"] = p_u_85.Player,
-						["Index"] = p86,
-						["Value"] = p87
-					}
-					if p89 then
-						v_u_13:FireAllClientsExcept(p89, v98)
-					else
-						v_u_13:FireAllClients(v98)
-					end
-				end
-			elseif p88 and v_u_16[p86] ~= nil then
-				v_u_13:FireServer({
-					["Type"] = "PropertyChanged",
-					["Index"] = nil,
-					["Value"] = nil,
-					["Index"] = p86,
-					["Value"] = p87
-				})
-			end
-		end
-	end
-}
-function createAddPacket(p100) -- name: createAddPacket
-	return {
-		["Type"] = "Add",
-		["Player"] = nil,
-		["Properties"] = nil,
-		["Player"] = p100.Player,
-		["Properties"] = p100.Properties
-	}
-end
-if v_u_10 then
-	v_u_13:SetServerListener(function(p101, p102)
-		-- upvalues: (copy) v_u_16, (copy) v_u_14, (copy) v_u_13, (copy) v_u_7
-		if p102 then
-			if p102.Type == "PropertyChanged" then
-				local v103 = v_u_16[p102.Index]
-				local v104 = v_u_14[p101]
-				if v103 then
-					local v105 = p102.Value
-					local v106
-					if v103 == "string_or_false" then
-						v106 = typeof(v105) == "string" and true or v105 == false
-					else
-						v106 = typeof(v105) == v103
-					end
-					if v106 and v104 then
-						v104:_SetProperty(p102.Index, p102.Value, nil, p101)
-						return
-					end
-				end
-			end
-		else
-			for _, v107 in v_u_14 do
-				v_u_13:FireClient(p101, createAddPacket(v107))
-			end
-			for _, v108 in v_u_14 do
-				local v109 = v108.StatusEffects
-				if v109 then
-					v109 = v108.StatusEffects.EffectObjects
-				end
-				if v109 then
-					for v110, v111 in v109 do
-						if not v111.Inactive then
-							v_u_7:FireClient(p101, {
-								["Type"] = "StatusApplied",
-								["Player"] = nil,
-								["Status"] = nil,
-								["Params"] = nil,
-								["Player"] = v108.Player,
-								["Status"] = v110,
-								["Params"] = v111:Serialize()
-							})
-						end
-					end
-				end
-			end
-		end
-	end)
-else
-	v_u_13:SetClientListener(function(p112)
-		-- upvalues: (copy) v_u_14, (copy) v_u_99
-		if p112 then
-			local v113 = p112.Type
-			if v113 == "Add" then
-				local v114 = v_u_14[p112.Player]
-				if v114 then
-					for v115, v116 in p112.Properties do
-						if v114.Properties[v115] ~= v116 then
-							v114:_SetProperty(v115, v116)
-						end
-					end
-				else
-					v_u_99.new(p112.Player, p112.Properties)
-				end
-			end
-			if v113 == "PropertyChanged" then
-				local v117 = v_u_14[p112.Player]
-				if v117 then
-					v117:_SetProperty(p112.Index, p112.Value)
-					return
-				end
-			else
-				local v118 = v113 == "Damaged" and v_u_14[p112.Player]
-				if v118 then
-					local v119 = p112.Data
-					local v120, v121, v122 = unpack(v119)
-					v118.Damaged:Fire(v120, v121, v122)
-				end
-			end
-		end
-	end)
-	v_u_13:FireServer()
-end
-return v_u_99
+return u130

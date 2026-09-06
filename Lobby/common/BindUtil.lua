@@ -1,143 +1,142 @@
-local v_u_1 = game:GetService("UserInputService")
-local v_u_2 = require("@game/ReplicatedStorage/common/Settings/Binding")
-local v_u_3 = require("@game/ReplicatedStorage/common/InputLabel")
-local v4 = require("@game/ReplicatedStorage/common/Signal")
-local v_u_5 = {}
-local v_u_6 = "MouseKeyboard"
-local v34 = {
-	["new"] = function(p7, p8, p9) -- name: new
-		-- upvalues: (copy) v_u_5
-		v_u_5[p7] = {
-			["Activate"] = p8,
-			["Deactivate"] = p9,
-			["Binds"] = {}
-		}
-	end,
-	["bind"] = function(p_u_10, p11, p12, _) -- name: bind
-		-- upvalues: (copy) v_u_5, (copy) v_u_2, (copy) v_u_1
-		local v_u_13 = p12 or p11
-		local v_u_14 = v_u_5[p11]
-		if not v_u_14 then
-			error("NO BIND DATA FOR " .. p11)
-		end
-		local v15 = nil
-		local v16
-		if v_u_14.Activate then
-			local function v20(p17, p18) -- name: onInput
-				-- upvalues: (ref) v_u_2, (copy) p_u_10, (copy) v_u_14, (ref) v_u_13
-				if not v_u_2.IsBinding then
-					local v19 = p17.UserInputType
-					if p17.KeyCode == p_u_10 or v19 == p_u_10 then
-						v_u_14.Activate(v_u_13, p18, p17)
-					end
-				end
-			end
-			if p_u_10 == Enum.UserInputType.MouseWheel then
-				v16 = v_u_1.InputChanged:Connect(v20)
-			else
-				v16 = v_u_1.InputBegan:Connect(v20)
-			end
-		else
-			v16 = nil
-		end
-		if v_u_14.Deactivate then
-			v15 = v_u_1.InputEnded:Connect(function(p21, p22)
-				-- upvalues: (ref) v_u_2, (copy) p_u_10, (copy) v_u_14, (ref) v_u_13
-				if not v_u_2.IsBinding then
-					local v23 = p21.UserInputType
-					if p21.KeyCode == p_u_10 or v23 == p_u_10 then
-						v_u_14.Deactivate(v_u_13, p22, p21)
-					end
-				end
-			end)
-		end
-		v_u_14.Binds[p_u_10] = {
-			["ActivateConnection"] = v16,
-			["DeactivateConnection"] = v15
-		}
-	end,
-	["unbindAction"] = function(p24) -- name: unbindAction
-		-- upvalues: (copy) v_u_5
-		local v25 = v_u_5[p24]
-		if v25 then
-			for _, v26 in v25.Binds do
-				if v26.ActivateConnection then
-					v26.ActivateConnection:Disconnect()
-				end
-				if v26.DeactivateConnection then
-					v26.DeactivateConnection:Disconnect()
-				end
-			end
-		end
-	end,
-	["unbindActionInput"] = function(p27, p28) -- name: unbindActionInput
-		-- upvalues: (copy) v_u_5
-		local v29 = v_u_5[p27]
-		local v30 = v29 and v29.Binds[p28]
-		if v30 then
-			if v30.ActivateConnection then
-				v30.ActivateConnection:Disconnect()
-			end
-			if v30.DeactivateConnection then
-				v30.DeactivateConnection:Disconnect()
-			end
-		end
-	end,
-	["unbindAllActions"] = function() -- name: unbindAllActions
-		-- upvalues: (copy) v_u_5
-		for _, v31 in pairs(v_u_5) do
-			for _, v32 in v31.Binds do
-				if v32.ActivateConnection then
-					v32.ActivateConnection:Disconnect()
-				end
-				if v32.DeactivateConnection then
-					v32.DeactivateConnection:Disconnect()
-				end
-			end
-			table.clear(v31.Binds)
-		end
-	end,
-	["getActionBinds"] = function(p33) -- name: getActionBinds
-		-- upvalues: (copy) v_u_5
-		if v_u_5[p33] then
-			return v_u_5[p33].Binds
-		else
-			return nil
-		end
-	end,
-	["getInputMethod"] = function() -- name: getInputMethod
-		-- upvalues: (ref) v_u_6
-		return v_u_6
-	end
+local UserInputService = game:GetService("UserInputService")
+local u7 = require("@game/ReplicatedStorage/common/Settings/Binding")
+local u10 = require("@game/ReplicatedStorage/common/InputLabel")
+local v1 = require("@game/ReplicatedStorage/common/Signal")
+local u14 = {}
+local u34 = "MouseKeyboard"
+local v2 = {
+    new = function(p1, p2, p3) -- Line: 44 -- upvalues: u14 (val)
+        u14[p1] = {Activate = p2, Deactivate = p3, Binds = {}}
+    end,
 }
-local v_u_35 = v4.new()
-v34.InputMethodChanged = v_u_35
-local function v39(p36, _) -- name: updateInputMethod
-	-- upvalues: (ref) v_u_6, (copy) v_u_3, (copy) v_u_2, (copy) v_u_35
-	local v37 = v_u_6
-	local v38 = p36.Value
-	if v38 >= 0 and v38 <= 4 or v38 == 8 then
-		v_u_6 = "MouseKeyboard"
-	elseif v38 == 7 then
-		v_u_6 = "Touch"
-	elseif v38 >= 12 and v38 <= 19 then
-		v_u_6 = "Gamepad"
-	end
-	if v_u_6 ~= v37 then
-		v_u_3.SetInputMethod(v_u_6)
-		v_u_2.SetInputMethod(v_u_6)
-		v_u_35:Fire(v_u_6)
-	end
+function v2.bind(p1, p2, p3, p4) -- Line: 58 -- upvalues: u14 (val), u7 (val), UserInputService (val)
+    local u4 = p3 or p2
+    local u6 = u14[p2]
+    if not u6 then
+        error("NO BIND DATA FOR " .. p2)
+    end
+    local v1 = nil
+    local v2 = nil
+    if u6.Activate then
+        local function onInput(a1, p2) -- Line: 73 -- upvalues: u7 (upval), p1 (val), u6 (val), u4 (ref)
+            if not u7.IsBinding then
+                if a1.KeyCode == p1 then
+                    u6.Activate(u4, p2, a1)
+                elseif a1.UserInputType == p1 then
+                    u6.Activate(u4, p2, a1)
+                end
+            end
+        end
+        if p1 ~= Enum.UserInputType.MouseWheel then
+            v1 = UserInputService.InputBegan:Connect(onInput)
+        else
+            v1 = UserInputService.InputChanged:Connect(onInput)
+        end
+    end
+    if u6.Deactivate then
+        v2 = UserInputService.InputEnded:Connect(function(a1, p2) -- Line: 97 -- upvalues: u7 (upval), p1 (val), u6 (val), u4 (ref)
+            if not u7.IsBinding then
+                if a1.KeyCode == p1 then
+                    u6.Deactivate(u4, p2, a1)
+                elseif a1.UserInputType == p1 then
+                    u6.Deactivate(u4, p2, a1)
+                end
+            end
+        end)
+    end
+    u6.Binds[p1] = {ActivateConnection = v1, DeactivateConnection = v2}
 end
-if v_u_1.GamepadEnabled then
-	v_u_6 = "Gamepad"
-elseif v_u_1.KeyboardEnabled and v_u_1.MouseEnabled then
-	v_u_6 = "MouseKeyboard"
-else
-	v_u_6 = v_u_1.TouchEnabled and "Touch" or v_u_6
+function v2.unbindAction(p1) -- Line: 120 -- upvalues: u14 (val)
+    local v1 = u14[p1]
+    if v1 then
+        local Binds = v1.Binds
+        local v2 = nil
+        local v3 = nil
+        for i, j in Binds, v2, v3 do
+            if j.ActivateConnection then
+                j.ActivateConnection:Disconnect()
+            end
+            if j.DeactivateConnection then
+                j.DeactivateConnection:Disconnect()
+            end
+        end
+    end
 end
-v_u_3.SetInputMethod(v_u_6)
-v_u_2.SetInputMethod(v_u_6)
-v_u_35:Fire(v_u_6)
-v_u_1.LastInputTypeChanged:Connect(v39)
-return v34
+function v2.unbindActionInput(p1, p2) -- Line: 135 -- upvalues: u14 (val)
+    local v1 = u14[p1]
+    if v1 then
+        local v2 = v1.Binds[p2]
+        if v2 then
+            if v2.ActivateConnection then
+                v2.ActivateConnection:Disconnect()
+            end
+            if v2.DeactivateConnection then
+                v2.DeactivateConnection:Disconnect()
+            end
+        end
+    end
+end
+function v2.unbindAllActions() -- Line: 151 -- upvalues: u14 (val)
+    local Binds, v1, v2
+    for k, v in pairs(u14) do
+        Binds = v.Binds
+        v1 = nil
+        v2 = nil
+        for i, j in Binds, v1, v2 do
+            if j.ActivateConnection then
+                j.ActivateConnection:Disconnect()
+            end
+            if j.DeactivateConnection then
+                j.DeactivateConnection:Disconnect()
+            end
+        end
+        table.clear(v.Binds)
+    end
+end
+function v2.getActionBinds(p1) -- Line: 166 -- upvalues: u14 (val)
+    if u14[p1] then
+        return u14[p1].Binds
+    end
+    return nil
+end
+function v2.getInputMethod() -- Line: 174 -- upvalues: u34 (ref)
+    return u34
+end
+local u25 = v1.new()
+v2.InputMethodChanged = u25
+local function updateInputMethod(p1, p2) -- Line: 182 -- upvalues: u34 (ref), u10 (val), u7 (val), u25 (val)
+    local v1 = u34
+    local Value = p1.Value
+    if 0 > Value then
+        if Value == 8 then
+            u34 = "MouseKeyboard"
+        elseif Value == 7 then
+            u34 = "Touch"
+        elseif 12 <= Value and Value <= 19 then
+            u34 = "Gamepad"
+        end
+    elseif Value <= 4 then
+        u34 = "MouseKeyboard"
+    end
+    if u34 ~= v1 then
+        u10.SetInputMethod(u34)
+        u7.SetInputMethod(u34)
+        u25:Fire(u34)
+    end
+end
+if UserInputService.GamepadEnabled then
+    u34 = "Gamepad"
+elseif not UserInputService.KeyboardEnabled then
+    if UserInputService.TouchEnabled then
+        u34 = "Touch"
+    end
+elseif UserInputService.MouseEnabled then
+    u34 = "MouseKeyboard"
+elseif UserInputService.TouchEnabled then
+    u34 = "Touch"
+end
+u10.SetInputMethod(u34)
+u7.SetInputMethod(u34)
+u25:Fire(u34)
+UserInputService.LastInputTypeChanged:Connect(updateInputMethod)
+return v2

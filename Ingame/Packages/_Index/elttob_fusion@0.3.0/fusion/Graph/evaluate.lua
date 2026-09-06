@@ -1,40 +1,47 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local function v_u_10(p3, p4) -- name: evaluate
-	-- upvalues: (copy) v_u_2, (copy) v_u_10
-	if p3.validity == "busy" then
-		return v_u_2.logError("infiniteLoop")
-	end
-	local v5 = p3.lastChange == nil
-	if not v5 and (p3.validity ~= "invalid" and not p4) then
-		return false
-	end
-	local v6 = v5 or p4
-	if not v6 then
-		for v7 in p3.dependencySet do
-			v_u_10(v7, false)
-			if v7.lastChange > p3.lastChange then
-				v6 = true
-				break
-			end
-		end
-	end
-	local v8
-	if v6 then
-		for v9 in p3.dependencySet do
-			v9.dependentSet[p3] = nil
-			p3.dependencySet[v9] = nil
-		end
-		p3.validity = "busy"
-		v8 = p3:_evaluate() or v5
-	else
-		v8 = false
-	end
-	if v8 then
-		p3.lastChange = os.clock()
-	end
-	p3.validity = "valid"
-	return v8
+local evaluate
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+function evaluate(p1, p2) -- Line: 17 -- upvalues: External (val), evaluate (val)
+    if p1.validity == "busy" then
+        return External.logError("infiniteLoop")
+    end
+    local v1 = p1.lastChange == nil
+    local v2 = p1.validity == "invalid"
+    if v1 then
+        local v3
+        local v4 = v1 or p2
+        if not v4 then
+            local dependencySet = p1.dependencySet
+            local v5 = nil
+            v3 = nil
+            for i in dependencySet, v5, v3 do
+                evaluate(i, false)
+                if p1.lastChange < i.lastChange then
+                    v4 = true
+                    break
+                end
+            end
+        end
+        local v6 = false
+        if v4 then
+            local dependencySet_2 = p1.dependencySet
+            v3 = nil
+            local v7 = nil
+            for j in dependencySet_2, v3, v7 do
+                j.dependentSet[p1] = nil
+                p1.dependencySet[j] = nil
+            end
+            p1.validity = "busy"
+            v6 = p1:_evaluate() or v1
+        end
+        if v6 then
+            p1.lastChange = os.clock()
+        end
+        p1.validity = "valid"
+        return v6
+    elseif not v2 and not p2 then
+        return false
+    end
 end
-return v_u_10
+return evaluate

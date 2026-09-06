@@ -1,6 +1,1 @@
-return {
-	["Success"] = "Success",
-	["Error"] = "Error",
-	["RateLimit"] = "RateLimit",
-	["NotAllowed"] = "NotAllowed"
-}
+return {Success = "Success", Error = "Error", RateLimit = "RateLimit", NotAllowed = "NotAllowed"}

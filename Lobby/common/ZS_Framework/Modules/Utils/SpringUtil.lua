@@ -1,147 +1,146 @@
-local v_u_61 = {
-	["new"] = function(p1, p2) -- name: new
-		-- upvalues: (copy) v_u_61
-		local v3 = p1 or 0
-		local v4 = p2 or tick
-		local v5 = {
-			["_clock"] = nil,
-			["_time0"] = nil,
-			["_position0"] = nil,
-			["_velocity0"] = nil,
-			["_target"] = nil,
-			["_damper"] = 1,
-			["_speed"] = 1,
-			["_clock"] = v4,
-			["_time0"] = v4(),
-			["_position0"] = v3,
-			["_velocity0"] = 0 * v3,
-			["_target"] = v3
-		}
-		local v6 = v_u_61
-		return setmetatable(v5, v6)
-	end,
-	["Impulse"] = function(p7, p8) -- name: Impulse
-		p7.Velocity = p7.Velocity + p8
-	end,
-	["TimeSkip"] = function(p9, p10) -- name: TimeSkip
-		local v11 = p9._clock()
-		local v12, v13 = p9:_positionVelocity(v11 + p10)
-		p9._position0 = v12
-		p9._velocity0 = v13
-		p9._time0 = v11
-	end,
-	["__index"] = function(p14, p15) -- name: __index
-		-- upvalues: (copy) v_u_61
-		if v_u_61[p15] then
-			return v_u_61[p15]
-		end
-		if p15 == "Value" or (p15 == "Position" or p15 == "p") then
-			local v16, _ = p14:_positionVelocity(p14._clock())
-			return v16
-		end
-		if p15 == "Velocity" or p15 == "v" then
-			local _, v17 = p14:_positionVelocity(p14._clock())
-			return v17
-		end
-		if p15 == "Target" or p15 == "t" then
-			return p14._target
-		end
-		if p15 == "Damper" or p15 == "d" then
-			return p14._damper
-		end
-		if p15 == "Speed" or p15 == "s" then
-			return p14._speed
-		end
-		if p15 == "Clock" then
-			return p14._clock
-		end
-		error(("%q is not a valid member of Spring"):format((tostring(p15))), 2)
-	end,
-	["__newindex"] = function(p18, p19, p20) -- name: __newindex
-		local v21 = p18._clock()
-		if p19 == "Value" or (p19 == "Position" or p19 == "p") then
-			local _, v22 = p18:_positionVelocity(v21)
-			p18._position0 = p20
-			p18._velocity0 = v22
-			p18._time0 = v21
-			return
-		elseif p19 == "Velocity" or p19 == "v" then
-			local v23, _ = p18:_positionVelocity(v21)
-			p18._position0 = v23
-			p18._velocity0 = p20
-			p18._time0 = v21
-			return
-		elseif p19 == "Target" or p19 == "t" then
-			local v24, v25 = p18:_positionVelocity(v21)
-			p18._position0 = v24
-			p18._velocity0 = v25
-			p18._target = p20
-			p18._time0 = v21
-			return
-		elseif p19 == "Damper" or p19 == "d" then
-			local v26, v27 = p18:_positionVelocity(v21)
-			p18._position0 = v26
-			p18._velocity0 = v27
-			p18._damper = math.clamp(p20, 0, 1)
-			p18._time0 = v21
-			return
-		elseif p19 == "Speed" or p19 == "s" then
-			local v28, v29 = p18:_positionVelocity(v21)
-			p18._position0 = v28
-			p18._velocity0 = v29
-			p18._speed = p20 < 0 and 0 or p20
-			p18._time0 = v21
-			return
-		elseif p19 == "Clock" then
-			local v30, v31 = p18:_positionVelocity(v21)
-			p18._position0 = v30
-			p18._velocity0 = v31
-			p18._clock = p20
-			p18._time0 = p20()
-		else
-			error(("%q is not a valid member of Spring"):format((tostring(p19))), 2)
-		end
-	end,
-	["_positionVelocity"] = function(p32, p33) -- name: _positionVelocity
-		local v34 = p32._position0
-		local v35 = p32._velocity0
-		local v36 = p32._target
-		local v37 = p32._damper
-		local v38 = p32._speed
-		local v39 = v38 * (p33 - p32._time0)
-		local v40 = v37 * v37
-		local v41, v42, v43
-		if v40 < 1 then
-			local v44 = 1 - v40
-			v41 = math.sqrt(v44)
-			local v45 = -v37 * v39
-			local v46 = math.exp(v45) / v41
-			local v47 = v41 * v39
-			v42 = v46 * math.cos(v47)
-			local v48 = v41 * v39
-			v43 = v46 * math.sin(v48)
-		elseif v40 == 1 then
-			v41 = 1
-			local v49 = -v37 * v39
-			v42 = math.exp(v49) / v41
-			v43 = v42 * v39
-		else
-			local v50 = v40 - 1
-			v41 = math.sqrt(v50)
-			local v51 = (-v37 + v41) * v39
-			local v52 = math.exp(v51) / (2 * v41)
-			local v53 = (-v37 - v41) * v39
-			local v54 = math.exp(v53) / (2 * v41)
-			v42 = v52 + v54
-			v43 = v52 - v54
-		end
-		local v55 = v41 * v42 + v37 * v43
-		local v56 = 1 - (v41 * v42 + v37 * v43)
-		local v57 = v43 / v38
-		local v58 = -v38 * v43
-		local v59 = v38 * v43
-		local v60 = v41 * v42 - v37 * v43
-		return v55 * v34 + v56 * v36 + v57 * v35, v58 * v34 + v59 * v36 + v60 * v35
-	end
-}
-return v_u_61
+local u0 = {}
+function u0.new(p1, p2) -- Line: 42 -- upvalues: u0 (val)
+    local v1 = p1 or 0
+    local v2 = p2
+    if not v2 then
+        v2 = tick
+    end
+    local v3 = v2
+    local v4 = {
+        _damper = 1,
+        _speed = 1,
+        _clock = v3,
+        _time0 = v3(),
+        _position0 = v1,
+        _velocity0 = 0 * v1,
+        _target = v1,
+    }
+    return (setmetatable(v4, u0))
+end
+function u0.Impulse(p1, p2) -- Line: 58
+    p1.Velocity = p1.Velocity + p2
+end
+function u0.TimeSkip(p1, p2) -- Line: 64
+    local v1, v2
+    local v3 = p1._clock()
+    v1, v2 = p1:_positionVelocity(v3 + p2)
+    p1._position0 = v1
+    p1._velocity0 = v2
+    p1._time0 = v3
+end
+function u0.__index(p1, p2) -- Line: 72 -- upvalues: u0 (val)
+    local v1
+    if u0[p2] then
+        return u0[p2]
+    end
+    if p2 == "Value" or p2 == "Position" or p2 == "p" then
+        local v2 = p1:_positionVelocity(p1._clock())
+        return v2
+    end
+    if p2 == "Velocity" or p2 == "v" then
+        _, v1 = p1:_positionVelocity(p1._clock())
+        return v1
+    end
+    if p2 == "Target" or p2 == "t" then
+        return p1._target
+    end
+    if p2 == "Damper" or p2 == "d" then
+        return p1._damper
+    end
+    if p2 == "Speed" or p2 == "s" then
+        return p1._speed
+    end
+    if p2 == "Clock" then
+        return p1._clock
+    end
+    v1 = ("%q is not a valid member of Spring"):format((tostring(p2)))
+    error(v1, 2)
+end
+function u0.__newindex(p1, p2, p3) -- Line: 94
+    local v1, v2
+    local v3 = p1._clock()
+    if p2 == "Value" or p2 == "Position" or p2 == "p" then
+        _, v2 = p1:_positionVelocity(v3)
+        p1._position0 = p3
+        p1._velocity0 = v2
+        p1._time0 = v3
+        return
+    end
+    if p2 == "Velocity" or p2 == "v" then
+        v1 = p1:_positionVelocity(v3)
+        p1._position0 = v1
+        p1._velocity0 = p3
+        p1._time0 = v3
+        return
+    end
+    if p2 == "Target" or p2 == "t" then
+        v1, v2 = p1:_positionVelocity(v3)
+        p1._position0 = v1
+        p1._velocity0 = v2
+        p1._target = p3
+        p1._time0 = v3
+        return
+    end
+    if p2 == "Damper" or p2 == "d" then
+        v1, v2 = p1:_positionVelocity(v3)
+        p1._position0 = v1
+        p1._velocity0 = v2
+        p1._damper = math.clamp(p3, 0, 1)
+        p1._time0 = v3
+        return
+    end
+    if p2 == "Speed" or p2 == "s" then
+        local v4
+        v1, v2 = p1:_positionVelocity(v3)
+        p1._position0 = v1
+        p1._velocity0 = v2
+        if p3 >= 0 then
+            v4 = p3
+        else
+            v4 = 0
+        end
+        p1._speed = v4
+        p1._time0 = v3
+        return
+    end
+    if p2 ~= "Clock" then
+        v2 = ("%q is not a valid member of Spring"):format((tostring(p2)))
+        error(v2, 2)
+        return
+    end
+    v1, v2 = p1:_positionVelocity(v3)
+    p1._position0 = v1
+    p1._velocity0 = v2
+    p1._clock = p3
+    p1._time0 = p3()
+end
+function u0:_positionVelocity(p2) -- Line: 136
+    local v1, v2, v3, v4
+    local _position0 = self._position0
+    local _velocity0 = self._velocity0
+    local _target = self._target
+    local _damper = self._damper
+    local _speed = self._speed
+    local v5 = _speed * (p2 - self._time0)
+    local v6 = _damper * _damper
+    if v6 < 1 then
+        v4 = math.sqrt(1 - v6)
+        v3 = math.exp(-_damper * v5) / v4
+        v2 = v3 * math.cos(v4 * v5)
+        v1 = v3 * math.sin(v4 * v5)
+    elseif v6 ~= 1 then
+        v4 = math.sqrt(v6 - 1)
+        local v7 = math.exp((-_damper + v4) * v5)
+        v3 = v7 / (2 * v4)
+        local v8 = math.exp((-_damper - v4) * v5)
+        v7 = v8 / (2 * v4)
+        v2 = v3 + v7
+        v1 = v3 - v7
+    else
+        v3 = math.exp(-_damper * v5) / 1
+        v2 = v3
+        v1 = v3 * v5
+    end
+    return (v4 * v2 + _damper * v1) * _position0 + (1 - (v4 * v2 + _damper * v1)) * _target + v1 / _speed * _velocity0, -_speed * v1 * _position0 + _speed * v1 * _target + (v4 * v2 - _damper * v1) * _velocity0
+end
+return u0

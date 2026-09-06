@@ -1,528 +1,526 @@
-local v_u_1 = game:GetService("Workspace")
-local v2 = game:GetService("ReplicatedStorage")
-local v_u_3 = game:GetService("Players")
-local v_u_4 = v_u_1:WaitForChild("Ignore")
-v2.common:WaitForChild("Remotes")
-local _ = v2.common
-local v_u_5 = v_u_1.CurrentCamera
-local v_u_6 = script.Parent.Parent:WaitForChild("Controllers")
-local v_u_7 = require(v_u_6:WaitForChild("LocalPlayerController"))
-local v_u_8 = nil
-local v_u_9 = Random.new(os.clock())
-local v_u_10 = v_u_3.LocalPlayer
-v_u_10:GetMouse()
-local v_u_11 = {}
-local v_u_12 = {}
-local v_u_13 = {}
-local v_u_14 = {}
-local v_u_15 = game:GetService("GuiService"):GetGuiInset()
-local v_u_16 = RaycastParams.new()
-v_u_16.FilterType = Enum.RaycastFilterType.Blacklist
-v_u_16.FilterDescendantsInstances = v_u_11
-v_u_16.IgnoreWater = true
-local v_u_17 = RaycastParams.new()
-v_u_17.FilterType = Enum.RaycastFilterType.Blacklist
-v_u_17.FilterDescendantsInstances = v_u_12
-v_u_17.IgnoreWater = true
-v_u_17.RespectCanCollide = true
-local v_u_18 = RaycastParams.new()
-v_u_18.FilterType = Enum.RaycastFilterType.Blacklist
-v_u_18.FilterDescendantsInstances = v_u_13
-v_u_18.IgnoreWater = true
-v_u_18.RespectCanCollide = true
-local v74 = {
-	["GetRaycastParams"] = function(_) -- name: GetRaycastParams
-		-- upvalues: (copy) v_u_16
-		return v_u_16
-	end,
-	["GetAltRaycastParams"] = function(_) -- name: GetAltRaycastParams
-		-- upvalues: (copy) v_u_17
-		return v_u_17
-	end,
-	["GetCollisionRaycastParams"] = function(_) -- name: GetCollisionRaycastParams
-		-- upvalues: (copy) v_u_18
-		return v_u_18
-	end,
-	["GetAltFilter"] = function() -- name: GetAltFilter
-		-- upvalues: (copy) v_u_17
-		return v_u_17.FilterDescendantsInstances
-	end,
-	["GetCenterDirection"] = function() -- name: GetCenterDirection
-		-- upvalues: (copy) v_u_5, (ref) v_u_8, (copy) v_u_6, (copy) v_u_15
-		local v19 = v_u_5.CFrame
-		local v20 = v_u_5
-		if not v_u_8 then
-			v_u_8 = require(v_u_6:WaitForChild("CameraController"))
-		end
-		v20.CFrame = v_u_8.AimCFrame
-		local v21 = Vector2.new(v_u_5.ViewportSize.X / 2, v_u_5.ViewportSize.Y / 2)
-		local v22 = v_u_5:ScreenPointToRay(v21.X - v_u_15.X, v21.Y - v_u_15.Y)
-		v_u_5.CFrame = v19
-		return v22.Direction
-	end,
-	["CustomRayDirection"] = function(p23, p24, p25) -- name: CustomRayDirection
-		-- upvalues: (copy) v_u_17, (copy) v_u_16
-		local v26 = workspace
-		local v27
-		if p25 then
-			v27 = v_u_17
-		else
-			v27 = v_u_16
-		end
-		return v26:Raycast(p23, p24, v27) or {
-			["Position"] = p23 + p24
-		}
-	end,
-	["CustomRay"] = function(p28, p29, p30) -- name: CustomRay
-		-- upvalues: (copy) v_u_17, (copy) v_u_16
-		local v31 = p29 - p28
-		local v32 = workspace
-		local v33
-		if p30 then
-			v33 = v_u_17
-		else
-			v33 = v_u_16
-		end
-		return v32:Raycast(p28, v31, v33) or {
-			["Position"] = p28 + v31
-		}
-	end,
-	["CollisionRayDirection"] = function(p34, p35) -- name: CollisionRayDirection
-		-- upvalues: (copy) v_u_18
-		return workspace:Raycast(p34, p35, v_u_18) or {
-			["Position"] = p34 + p35
-		}
-	end,
-	["CollisionRay"] = function(p36, p37) -- name: CollisionRay
-		-- upvalues: (copy) v_u_18
-		local v38 = p37 - p36
-		return workspace:Raycast(p36, v38, v_u_18) or {
-			["Position"] = p36 + v38
-		}
-	end,
-	["CastBaseRay"] = function(p39) -- name: CastBaseRay
-		-- upvalues: (copy) v_u_5, (copy) v_u_15, (copy) v_u_17, (copy) v_u_16
-		local v40 = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
-		local v41 = v_u_5:ScreenPointToRay(v40.X - v_u_15.X, v40.Y - v_u_15.Y).Direction * 50
-		local v42 = workspace
-		local v43 = v_u_5.CFrame.Position
-		local v44
-		if p39 then
-			v44 = v_u_17
-		else
-			v44 = v_u_16
-		end
-		return v42:Raycast(v43, v41, v44) or {
-			["Position"] = v_u_5.CFrame.Position + v41
-		}
-	end,
-	["CastNoneRay"] = function() -- name: CastNoneRay
-		-- upvalues: (copy) v_u_5, (ref) v_u_8, (copy) v_u_6, (copy) v_u_15
-		local v45 = v_u_5.CFrame
-		if not v_u_8 then
-			v_u_8 = require(v_u_6:WaitForChild("CameraController"))
-		end
-		local v46 = v_u_8.AimCFrame
-		v_u_5.CFrame = v46
-		local v47 = Vector2.new(v_u_5.ViewportSize.X / 2, v_u_5.ViewportSize.Y / 2)
-		local v48 = v_u_5:ScreenPointToRay(v47.X - v_u_15.X, v47.Y - v_u_15.Y)
-		v_u_5.CFrame = v45
-		local v49 = v48.Direction * 50
-		return {
-			["Position"] = v46.Position + v49
-		}
-	end,
-	["CastRay"] = function(p50, p51, p52) -- name: CastRay
-		-- upvalues: (copy) v_u_5, (ref) v_u_8, (copy) v_u_6, (copy) v_u_15, (ref) v_u_11, (copy) v_u_16
-		local v53 = v_u_5.CFrame
-		if not v_u_8 then
-			v_u_8 = require(v_u_6:WaitForChild("CameraController"))
-		end
-		local v54 = v_u_8.AimCFrame
-		v_u_5.CFrame = v54
-		local v55 = Vector2.new(v_u_5.ViewportSize.X / 2, v_u_5.ViewportSize.Y / 2)
-		local v56 = v_u_5:ScreenPointToRay(v55.X - v_u_15.X, v55.Y - v_u_15.Y).Direction
-		if p52 and p52.Magnitude > 0.0001 then
-			v56 = v56 + v54.RightVector.Unit * p52.X + v54.UpVector.Unit * p52.Y
-		end
-		v_u_5.CFrame = v53
-		local v57 = p50.Inaccuracy / 6
-		local v58 = math.rad(v57)
-		local v59 = rand(v58)
-		local v60 = rand(v58)
-		local v61 = rand
-		local v62 = (v56 + Vector3.new(v59, v60, v61(v58))) * 5000
-		if p51 then
-			local v63 = {}
-			for _, v64 in v_u_11 do
-				table.insert(v63, v64)
-			end
-			for _, v65 in p51 do
-				table.insert(v63, v65)
-			end
-			v_u_16.FilterDescendantsInstances = v63
-		end
-		local v66 = workspace:Raycast(v54.Position, v62, v_u_16)
-		v_u_16.FilterDescendantsInstances = v_u_11
-		return v66 or {
-			["Position"] = v54.Position + v62
-		}
-	end,
-	["StandardCast"] = function(p67, p68, p69) -- name: StandardCast
-		-- upvalues: (ref) v_u_11, (copy) v_u_16
-		if p69 then
-			local v70 = {}
-			for _, v71 in v_u_11 do
-				table.insert(v70, v71)
-			end
-			for _, v72 in p69 do
-				table.insert(v70, v72)
-			end
-			v_u_16.FilterDescendantsInstances = v70
-		end
-		local v73 = workspace:Raycast(p67, p68, v_u_16)
-		v_u_16.FilterDescendantsInstances = v_u_11
-		return v73
-	end
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Ignore = Workspace:WaitForChild("Ignore")
+ReplicatedStorage.common:WaitForChild("Remotes")
+local CurrentCamera = Workspace.CurrentCamera
+local Controllers = script.Parent.Parent:WaitForChild("Controllers")
+local LocalPlayerController = require(Controllers:WaitForChild("LocalPlayerController"))
+local u39 = nil
+local function getCameraController() -- Line: 16 -- upvalues: u39 (ref), Controllers (val)
+    if not u39 then
+        u39 = require(Controllers:WaitForChild("CameraController"))
+    end
+    return u39
+end
+local u44 = Random.new(os.clock())
+local LocalPlayer = Players.LocalPlayer
+LocalPlayer:GetMouse()
+local u49 = {}
+local u50 = {}
+local u51 = {}
+local u52 = {}
+local GuiInset = game:GetService("GuiService"):GetGuiInset()
+local u62 = RaycastParams.new()
+u62.FilterType = Enum.RaycastFilterType.Blacklist
+u62.FilterDescendantsInstances = u49
+u62.IgnoreWater = true
+local u66 = RaycastParams.new()
+u66.FilterType = Enum.RaycastFilterType.Blacklist
+u66.FilterDescendantsInstances = u50
+u66.IgnoreWater = true
+u66.RespectCanCollide = true
+local u71 = RaycastParams.new()
+u71.FilterType = Enum.RaycastFilterType.Blacklist
+u71.FilterDescendantsInstances = u51
+u71.IgnoreWater = true
+u71.RespectCanCollide = true
+local v1 = {
+    GetRaycastParams = function(p1) -- Line: 55 -- upvalues: u62 (val)
+        return u62
+    end,
+    GetAltRaycastParams = function(p1) -- Line: 59 -- upvalues: u66 (val)
+        return u66
+    end,
+    GetCollisionRaycastParams = function(p1) -- Line: 63 -- upvalues: u71 (val)
+        return u71
+    end,
+    GetAltFilter = function() -- Line: 67 -- upvalues: u66 (val)
+        return u66.FilterDescendantsInstances
+    end,
+    GetCenterDirection = function() -- Line: 71 -- upvalues: CurrentCamera (val), u39 (ref), Controllers (val), GuiInset (val)
+        if not u39 then
+            u39 = require(Controllers:WaitForChild("CameraController"))
+        end
+        CurrentCamera.CFrame = u39.AimCFrame
+        local v1 = Vector2.new(CurrentCamera.ViewportSize.X / 2, CurrentCamera.ViewportSize.Y / 2)
+        local v2 = CurrentCamera:ScreenPointToRay(v1.X - GuiInset.X, v1.Y - GuiInset.Y)
+        CurrentCamera.CFrame = CurrentCamera.CFrame
+        return v2.Direction
+    end,
+    CustomRayDirection = function(p1, p2, p3) -- Line: 82 -- upvalues: u66 (val), u62 (val)
+        local v1
+        if not p3 then
+            v1 = u62
+        else
+            v1 = u66
+        end
+        local v2 = workspace:Raycast(p1, p2, v1)
+        if v2 then
+            return v2
+        end
+        return {Position = p1 + p2}
+    end,
+    CustomRay = function(p1, p2, p3) -- Line: 94 -- upvalues: u66 (val), u62 (val)
+        local v1
+        local v2 = p2 - p1
+        if not p3 then
+            v1 = u62
+        else
+            v1 = u66
+        end
+        local v3 = workspace:Raycast(p1, v2, v1)
+        if v3 then
+            return v3
+        end
+        return {Position = p1 + v2}
+    end,
+    CollisionRayDirection = function(p1, p2) -- Line: 111 -- upvalues: u71 (val)
+        local v1 = workspace:Raycast(p1, p2, u71)
+        if v1 then
+            return v1
+        end
+        return {Position = p1 + p2}
+    end,
+    CollisionRay = function(p1, p2) -- Line: 120 -- upvalues: u71 (val)
+        local v1 = p2 - p1
+        local v2 = workspace:Raycast(p1, v1, u71)
+        if v2 then
+            return v2
+        end
+        return {Position = p1 + v1}
+    end,
+    CastBaseRay = function(p1) -- Line: 131 -- upvalues: CurrentCamera (val), GuiInset (val), u66 (val), u62 (val)
+        local v1
+        local v2 = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
+        local v3 = CurrentCamera:ScreenPointToRay(v2.X - GuiInset.X, v2.Y - GuiInset.Y).Direction * 50
+        if not p1 then
+            v1 = u62
+        else
+            v1 = u66
+        end
+        local v4 = workspace:Raycast(CurrentCamera.CFrame.Position, v3, v1)
+        if v4 then
+            return v4
+        end
+        return {Position = CurrentCamera.CFrame.Position + v3}
+    end,
+    CastNoneRay = function() -- Line: 148 -- upvalues: CurrentCamera (val), u39 (ref), Controllers (val), GuiInset (val)
+        if not u39 then
+            u39 = require(Controllers:WaitForChild("CameraController"))
+        end
+        local AimCFrame = u39.AimCFrame
+        CurrentCamera.CFrame = AimCFrame
+        local v1 = Vector2.new(CurrentCamera.ViewportSize.X / 2, CurrentCamera.ViewportSize.Y / 2)
+        local v2 = CurrentCamera:ScreenPointToRay(v1.X - GuiInset.X, v1.Y - GuiInset.Y)
+        CurrentCamera.CFrame = CurrentCamera.CFrame
+        return {Position = AimCFrame.Position + v2.Direction * 50}
+    end,
+    CastRay = function(p1, p2, p3) -- Line: 163 -- upvalues: CurrentCamera (val), u39 (ref), Controllers (val), GuiInset (val), u49 (ref), u62 (val)
+        if not u39 then
+            u39 = require(Controllers:WaitForChild("CameraController"))
+        end
+        local AimCFrame = u39.AimCFrame
+        CurrentCamera.CFrame = AimCFrame
+        local v1 = Vector2.new(CurrentCamera.ViewportSize.X / 2, CurrentCamera.ViewportSize.Y / 2)
+        local Direction = CurrentCamera:ScreenPointToRay(v1.X - GuiInset.X, v1.Y - GuiInset.Y).Direction
+        if p3 and 0.0001 < p3.Magnitude then
+            Direction = Direction + AimCFrame.RightVector.Unit * p3.X + AimCFrame.UpVector.Unit * p3.Y
+        end
+        CurrentCamera.CFrame = CurrentCamera.CFrame
+        local v2 = math.rad(p1.Inaccuracy / 6)
+        local v3 = rand(v2)
+        local v4 = rand(v2)
+        v3 = (Direction + Vector3.new(v3, v4, rand(v2))) * 5000
+        if p2 then
+            v4 = {}
+            local v5 = u49
+            local v6 = nil
+            local v7 = nil
+            for i, j in v5, v6, v7 do
+                table.insert(v4, j)
+            end
+            v5 = p2
+            v6 = nil
+            v7 = nil
+            for k, n in v5, v6, v7 do
+                table.insert(v4, n)
+            end
+            u62.FilterDescendantsInstances = v4
+        end
+        v4 = workspace:Raycast(AimCFrame.Position, v3, u62)
+        u62.FilterDescendantsInstances = u49
+        if v4 then
+            return v4
+        end
+        return {Position = AimCFrame.Position + v3}
+    end,
+    StandardCast = function(p1, p2, p3) -- Line: 209 -- upvalues: u49 (ref), u62 (val)
+        local v1
+        if p3 then
+            v1 = {}
+            local v2 = u49
+            local v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                table.insert(v1, j)
+            end
+            v2 = p3
+            v3 = nil
+            v4 = nil
+            for k, n in v2, v3, v4 do
+                table.insert(v1, n)
+            end
+            u62.FilterDescendantsInstances = v1
+        end
+        v1 = workspace:Raycast(p1, p2, u62)
+        u62.FilterDescendantsInstances = u49
+        return v1
+    end,
 }
-function rand(p75) -- name: rand
-	-- upvalues: (copy) v_u_9
-	return v_u_9:NextNumber(-p75, p75)
+function rand(p1) -- Line: 227 -- upvalues: u44 (val)
+    return u44:NextNumber(-p1, p1)
 end
-local v_u_76 = {}
-local v_u_77 = {}
-local v_u_78 = 0
-local v_u_79 = {}
-local v_u_80 = {}
-local v_u_81 = {}
-local v_u_82 = nil
-local v_u_83 = false
-local function v_u_84() -- name: requestRefresh
-	-- upvalues: (ref) v_u_83, (ref) v_u_82
-	if not v_u_83 then
-		v_u_83 = true
-		task.defer(function()
-			-- upvalues: (ref) v_u_83, (ref) v_u_82
-			v_u_83 = false
-			if v_u_82 then
-				v_u_82()
-			end
-		end)
-	end
+local u90 = {}
+local u91 = {}
+local u92 = 0
+local u93 = {}
+local u94 = {}
+local u95 = {}
+local u96 = nil
+local u97 = false
+local function requestRefresh() -- Line: 242 -- upvalues: u97 (ref), u96 (ref)
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-local function v_u_89() -- name: rebuildFriendlyResolverOrder
-	-- upvalues: (ref) v_u_77, (copy) v_u_76
-	v_u_77 = {}
-	for _, v85 in pairs(v_u_76) do
-		local v86 = v_u_77
-		table.insert(v86, v85)
-	end
-	table.sort(v_u_77, function(p87, p88)
-		if p87.priority == p88.priority then
-			return p87.sequence < p88.sequence
-		else
-			return p87.priority > p88.priority
-		end
-	end)
+local function rebuildFriendlyResolverOrder() -- Line: 256 -- upvalues: u91 (ref), u90 (val)
+    u91 = {}
+    for k, v in pairs(u90) do
+        table.insert(u91, v)
+    end
+    table.sort(u91, function(p1, p2) -- Line: 262
+        local v1
+        if p1.priority == p2.priority then
+            v1 = p1.sequence < p2.sequence
+            return v1
+        end
+        v1 = p2.priority < p1.priority
+        return v1
+    end)
 end
-local function v_u_95(p90, p91) -- name: evaluateFriendlyResolvers
-	-- upvalues: (ref) v_u_77
-	for _, v92 in ipairs(v_u_77) do
-		local v93, v94 = pcall(v92.fn, p90, p91)
-		if v93 and v94 ~= nil then
-			return v94
-		end
-	end
+local function evaluateFriendlyResolvers(p1, p2) -- Line: 270 -- upvalues: u91 (ref)
+    local v1, v2
+    for i, v in ipairs(u91) do
+        v1, v2 = pcall(v.fn, p1, p2)
+        if v1 and v2 ~= nil then
+            return v2
+        end
+    end
 end
-local function v_u_98(p96, p97) -- name: attachAttributeTracker
-	-- upvalues: (copy) v_u_81, (copy) v_u_84
-	v_u_81[p96] = v_u_81[p96] or {}
-	if v_u_81[p96][p97] then
-		v_u_81[p96][p97]:Disconnect()
-	end
-	v_u_81[p96][p97] = p96:GetAttributeChangedSignal(p97):Connect(v_u_84)
+local function playersAreFriendly(p1, p2) -- Line: 279 -- upvalues: evaluateFriendlyResolvers (val)
+    if not p1 or not p2 then
+        return true
+    end
+    local v1 = evaluateFriendlyResolvers(p1, p2)
+    if v1 ~= nil then
+        return v1
+    end
+    local v2 = p2.TeamColor == p1.TeamColor
+    return v2
 end
-local function v_u_101(p99) -- name: bindPlayer
-	-- upvalues: (copy) v_u_80, (copy) v_u_84, (copy) v_u_79, (copy) v_u_98
-	if v_u_80[p99] then
-		v_u_80[p99]:Disconnect()
-	end
-	v_u_80[p99] = p99.CharacterAdded:Connect(v_u_84)
-	for v100 in pairs(v_u_79) do
-		v_u_98(p99, v100)
-	end
+local function attachAttributeTracker(p1, p2) -- Line: 292 -- upvalues: u95 (val), requestRefresh (val)
+    local v1 = u95[p1]
+    if not v1 then
+        v1 = {}
+    end
+    u95[p1] = v1
+    if u95[p1][p2] then
+        u95[p1][p2]:Disconnect()
+    end
+    local v2 = u95[p1]
+    local AttributeChangedSignal = p1:GetAttributeChangedSignal(p2)
+    v2[p2] = AttributeChangedSignal:Connect(requestRefresh)
 end
-local function v_u_105(p102) -- name: cleanupPlayer
-	-- upvalues: (copy) v_u_80, (copy) v_u_81
-	if v_u_80[p102] then
-		v_u_80[p102]:Disconnect()
-		v_u_80[p102] = nil
-	end
-	if v_u_81[p102] then
-		for v103, v104 in pairs(v_u_81[p102]) do
-			v104:Disconnect()
-			v_u_81[p102][v103] = nil
-		end
-		v_u_81[p102] = nil
-	end
+local function detachAttributeTracker(p1, p2) -- Line: 302 -- upvalues: u95 (val)
+    local v1 = u95[p1]
+    if not v1 then
+        return
+    end
+    if v1[p2] then
+        v1[p2]:Disconnect()
+        v1[p2] = nil
+    end
+    if next(v1) == nil then
+        u95[p1] = nil
+    end
 end
-function v74.RegisterFriendlyResolver(p_u_106, p107, p108) -- name: RegisterFriendlyResolver
-	-- upvalues: (ref) v_u_78, (copy) v_u_76, (copy) v_u_89, (ref) v_u_83, (ref) v_u_82
-	local v109
-	if typeof(p_u_106) == "string" then
-		v109 = p_u_106 ~= ""
-	else
-		v109 = false
-	end
-	assert(v109, "Resolver id must be a non-empty string")
-	local v110 = typeof(p107) == "function"
-	assert(v110, "Resolver must be a function")
-	v_u_78 = v_u_78 + 1
-	v_u_76[p_u_106] = {
-		["id"] = p_u_106,
-		["fn"] = p107,
-		["priority"] = p108 or 0,
-		["sequence"] = v_u_78
-	}
-	v_u_89()
-	if not v_u_83 then
-		v_u_83 = true
-		task.defer(function()
-			-- upvalues: (ref) v_u_83, (ref) v_u_82
-			v_u_83 = false
-			if v_u_82 then
-				v_u_82()
-			end
-		end)
-	end
-	return function()
-		-- upvalues: (ref) v_u_76, (copy) p_u_106, (ref) v_u_89, (ref) v_u_83, (ref) v_u_82
-		if v_u_76[p_u_106] then
-			v_u_76[p_u_106] = nil
-			v_u_89()
-			if v_u_83 then
-				return
-			end
-			v_u_83 = true
-			task.defer(function()
-				-- upvalues: (ref) v_u_83, (ref) v_u_82
-				v_u_83 = false
-				if v_u_82 then
-					v_u_82()
-				end
-			end)
-		end
-	end
+local function bindPlayer(p1) -- Line: 318 -- upvalues: u94 (val), requestRefresh (val), u93 (val), attachAttributeTracker (val)
+    if u94[p1] then
+        u94[p1]:Disconnect()
+    end
+    u94[p1] = p1.CharacterAdded:Connect(requestRefresh)
+    for k in pairs(u93) do
+        attachAttributeTracker(p1, k)
+    end
 end
-function v74.UnregisterFriendlyResolver(p111) -- name: UnregisterFriendlyResolver
-	-- upvalues: (copy) v_u_76, (copy) v_u_89, (ref) v_u_83, (ref) v_u_82
-	if v_u_76[p111] then
-		v_u_76[p111] = nil
-		v_u_89()
-		if v_u_83 then
-			return
-		end
-		v_u_83 = true
-		task.defer(function()
-			-- upvalues: (ref) v_u_83, (ref) v_u_82
-			v_u_83 = false
-			if v_u_82 then
-				v_u_82()
-			end
-		end)
-	end
+local function cleanupPlayer(p1) -- Line: 330 -- upvalues: u94 (val), u95 (val)
+    if u94[p1] then
+        u94[p1]:Disconnect()
+        u94[p1] = nil
+    end
+    if u95[p1] then
+        local v1
+        for k, v in pairs(u95[p1]) do
+            v:Disconnect()
+            v1 = u95[p1]
+            v1[k] = nil
+        end
+        u95[p1] = nil
+    end
 end
-function v74.RegisterFriendlyAttribute(p112) -- name: RegisterFriendlyAttribute
-	-- upvalues: (copy) v_u_79, (copy) v_u_3, (copy) v_u_98, (ref) v_u_83, (ref) v_u_82
-	local v113
-	if typeof(p112) == "string" then
-		v113 = p112 ~= ""
-	else
-		v113 = false
-	end
-	assert(v113, "Attribute name must be a non-empty string")
-	if v_u_79[p112] then
-		return
-	else
-		v_u_79[p112] = true
-		for _, v114 in ipairs(v_u_3:GetPlayers()) do
-			v_u_98(v114, p112)
-		end
-		if not v_u_83 then
-			v_u_83 = true
-			task.defer(function()
-				-- upvalues: (ref) v_u_83, (ref) v_u_82
-				v_u_83 = false
-				if v_u_82 then
-					v_u_82()
-				end
-			end)
-		end
-	end
+function v1.RegisterFriendlyResolver(p1, p2, p3) -- Line: 345 -- upvalues: u92 (ref), u90 (val), rebuildFriendlyResolverOrder (val), u97 (ref), u96 (ref)
+    local v1 = if typeof(p1) == "string" then p1 ~= "" else false
+    assert(v1, "Resolver id must be a non-empty string")
+    v1 = typeof(p2) == "function"
+    assert(v1, "Resolver must be a function")
+    u92 = u92 + 1
+    u90[p1] = {id = p1, fn = p2, priority = p3 or 0, sequence = u92}
+    rebuildFriendlyResolverOrder()
+    if not u97 then
+        u97 = true
+        task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+            u97 = false
+            if u96 then
+                u96()
+            end
+        end)
+    end
+    return function() -- Line: 360 -- upvalues: u90 (upval), p1 (val), rebuildFriendlyResolverOrder (upval), u97 (upval), u96 (upval)
+        if not (u90[p1]) then
+            return
+        end
+        u90[p1] = nil
+        rebuildFriendlyResolverOrder()
+        if u97 then
+            return
+        end
+        u97 = true
+        task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+            u97 = false
+            if u96 then
+                u96()
+            end
+        end)
+    end
 end
-function v74.UnregisterFriendlyAttribute(p115) -- name: UnregisterFriendlyAttribute
-	-- upvalues: (copy) v_u_79, (copy) v_u_3, (copy) v_u_81, (ref) v_u_83, (ref) v_u_82
-	if v_u_79[p115] then
-		v_u_79[p115] = nil
-		for _, v116 in ipairs(v_u_3:GetPlayers()) do
-			local v117 = v_u_81[v116]
-			if v117 then
-				if v117[p115] then
-					v117[p115]:Disconnect()
-					v117[p115] = nil
-				end
-				if next(v117) == nil then
-					v_u_81[v116] = nil
-				end
-			end
-		end
-		if not v_u_83 then
-			v_u_83 = true
-			task.defer(function()
-				-- upvalues: (ref) v_u_83, (ref) v_u_82
-				v_u_83 = false
-				if v_u_82 then
-					v_u_82()
-				end
-			end)
-		end
-	else
-		return
-	end
+function v1.UnregisterFriendlyResolver(p1) -- Line: 369 -- upvalues: u90 (val), rebuildFriendlyResolverOrder (val), u97 (ref), u96 (ref)
+    if not (u90[p1]) then
+        return
+    end
+    u90[p1] = nil
+    rebuildFriendlyResolverOrder()
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-function v74.NotifyFriendlyStateChanged() -- name: NotifyFriendlyStateChanged
-	-- upvalues: (ref) v_u_83, (ref) v_u_82
-	if not v_u_83 then
-		v_u_83 = true
-		task.defer(function()
-			-- upvalues: (ref) v_u_83, (ref) v_u_82
-			v_u_83 = false
-			if v_u_82 then
-				v_u_82()
-			end
-		end)
-	end
+function v1.RegisterFriendlyAttribute(p1) -- Line: 377 -- upvalues: u93 (val), Players (val), attachAttributeTracker (val), u97 (ref), u96 (ref)
+    local v1 = if typeof(p1) == "string" then p1 ~= "" else false
+    assert(v1, "Attribute name must be a non-empty string")
+    if u93[p1] then
+        return
+    end
+    u93[p1] = true
+    for i, v in ipairs(Players:GetPlayers()) do
+        attachAttributeTracker(v, p1)
+    end
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-v_u_82 = function()
-	-- upvalues: (copy) v_u_10, (ref) v_u_14, (copy) v_u_3, (copy) v_u_95, (ref) v_u_11, (copy) v_u_4, (copy) v_u_7, (ref) v_u_12, (copy) v_u_1, (ref) v_u_13, (copy) v_u_16, (copy) v_u_17, (copy) v_u_18
-	local v118 = v_u_10
-	if v118 then
-		v_u_14 = {}
-		local v119 = {}
-		for _, v120 in v_u_3:GetPlayers() do
-			if v120 ~= v118 and v120.Character then
-				local v121
-				if v118 and v120 then
-					v121 = v_u_95(v118, v120)
-					if v121 == nil then
-						v121 = v120.TeamColor == v118.TeamColor
-					end
-				else
-					v121 = true
-				end
-				if v121 then
-					local v122 = v120.Character
-					table.insert(v119, v122)
-					local v123 = v_u_14
-					local v124 = v120.Character
-					table.insert(v123, v124)
-				end
-			end
-		end
-		local v125 = workspace:FindFirstChild("NPCRaycastCollide")
-		v_u_11 = {
-			v_u_4,
-			v125,
-			v_u_7.character,
-			unpack(v119)
-		}
-		v_u_12 = {
-			v_u_4,
-			v125,
-			v_u_7.character,
-			v_u_1:FindFirstChild("Zombies"),
-			unpack(v119)
-		}
-		v_u_13 = {
-			v125,
-			v_u_7.character,
-			v_u_1:FindFirstChild("Zombies"),
-			unpack(v119)
-		}
-		v_u_16.FilterDescendantsInstances = v_u_11
-		v_u_17.FilterDescendantsInstances = v_u_12
-		v_u_18.FilterDescendantsInstances = v_u_13
-	end
+function v1.UnregisterFriendlyAttribute(p1) -- Line: 393 -- upvalues: u93 (val), Players (val), u95 (val), u97 (ref), u96 (ref)
+    local v1
+    if not (u93[p1]) then
+        return
+    end
+    u93[p1] = nil
+    local v2 = p1
+    for i, v in ipairs(Players:GetPlayers()) do
+        v1 = u95[v]
+        if v1 then
+            if v1[v2] then
+                v1[v2]:Disconnect()
+                v1[v2] = nil
+            end
+            if next(v1) == nil then
+                u95[v] = nil
+            end
+        end
+    end
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-local function v129() -- name: setupPlayerBindings
-	-- upvalues: (copy) v_u_3, (copy) v_u_101, (ref) v_u_83, (ref) v_u_82, (copy) v_u_105
-	for _, v126 in ipairs(v_u_3:GetPlayers()) do
-		v_u_101(v126)
-	end
-	v_u_3.PlayerAdded:Connect(function(p127)
-		-- upvalues: (ref) v_u_101, (ref) v_u_83, (ref) v_u_82
-		v_u_101(p127)
-		if not v_u_83 then
-			v_u_83 = true
-			task.defer(function()
-				-- upvalues: (ref) v_u_83, (ref) v_u_82
-				v_u_83 = false
-				if v_u_82 then
-					v_u_82()
-				end
-			end)
-		end
-	end)
-	v_u_3.PlayerRemoving:Connect(function(p128)
-		-- upvalues: (ref) v_u_105, (ref) v_u_83, (ref) v_u_82
-		v_u_105(p128)
-		if not v_u_83 then
-			v_u_83 = true
-			task.defer(function()
-				-- upvalues: (ref) v_u_83, (ref) v_u_82
-				v_u_83 = false
-				if v_u_82 then
-					v_u_82()
-				end
-			end)
-		end
-	end)
+function v1.NotifyFriendlyStateChanged() -- Line: 407 -- upvalues: u97 (ref), u96 (ref)
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-if v_u_7.character then
-	v_u_11[2] = v_u_7.character
-	v_u_12[2] = v_u_7.character
-	v_u_16.FilterDescendantsInstances = v_u_11
-	v_u_17.FilterDescendantsInstances = v_u_12
+function u96() -- Line: 411 -- upvalues: LocalPlayer (val), u52 (ref), Players (val), evaluateFriendlyResolvers (val), u49 (ref), Ignore (val), LocalPlayerController (val), u50 (ref), Workspace (val), u51 (ref), u62 (val), u66 (val), u71 (val)
+    local v1, v2
+    local v3 = LocalPlayer
+    if not v3 then
+        return
+    end
+    u52 = {}
+    local v4 = {}
+    for i, j in Players:GetPlayers() do
+        if j ~= v3 and j.Character then
+            if not v3 then
+                v1 = true
+            elseif j then
+                v2 = evaluateFriendlyResolvers(v3, j)
+                if v2 == nil then
+                    v1 = j.TeamColor == v3.TeamColor
+                else
+                    v1 = v2
+                end
+            end
+            if v1 then
+                table.insert(v4, j.Character)
+                table.insert(u52, j.Character)
+            end
+        end
+    end
+    local NPCRaycastCollide = workspace:FindFirstChild("NPCRaycastCollide")
+    u49 = {Ignore, NPCRaycastCollide, LocalPlayerController.character, unpack(v4)}
+    local v5 = {}
+    local Zombies = Workspace:FindFirstChild("Zombies")
+    v5[1] = Ignore
+    v5[2] = NPCRaycastCollide
+    v5[3] = LocalPlayerController.character
+    v5[4] = Zombies
+    v5[5] = unpack(v4)
+    u50 = v5
+    v5 = {}
+    local Zombies_2 = Workspace:FindFirstChild("Zombies")
+    v5[1] = NPCRaycastCollide
+    v5[2] = LocalPlayerController.character
+    v5[3] = Zombies_2
+    v5[4] = unpack(v4)
+    u51 = v5
+    u62.FilterDescendantsInstances = u49
+    u66.FilterDescendantsInstances = u50
+    u71.FilterDescendantsInstances = u51
 end
-v_u_7.CharacterChanged:Connect(function(p130)
-	-- upvalues: (ref) v_u_11, (ref) v_u_12, (copy) v_u_16, (copy) v_u_17, (ref) v_u_83, (ref) v_u_82
-	if p130 then
-		v_u_11[2] = p130
-		v_u_12[2] = p130
-		v_u_16.FilterDescendantsInstances = v_u_11
-		v_u_17.FilterDescendantsInstances = v_u_12
-		if v_u_83 then
-			return
-		end
-		v_u_83 = true
-		task.defer(function()
-			-- upvalues: (ref) v_u_83, (ref) v_u_82
-			v_u_83 = false
-			if v_u_82 then
-				v_u_82()
-			end
-		end)
-	end
+if LocalPlayerController.character then
+    u49[2] = LocalPlayerController.character
+    u50[2] = LocalPlayerController.character
+    u62.FilterDescendantsInstances = u49
+    u66.FilterDescendantsInstances = u50
+end
+LocalPlayerController.CharacterChanged:Connect(function(p1) -- Line: 460 -- upvalues: u49 (ref), u50 (ref), u62 (val), u66 (val), u97 (ref), u96 (ref)
+    if not p1 then
+        return
+    end
+    u49[2] = p1
+    u50[2] = p1
+    u62.FilterDescendantsInstances = u49
+    u66.FilterDescendantsInstances = u50
+    if u97 then
+        return
+    end
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end)
-v129()
-if not v_u_83 then
-	v_u_83 = true
-	task.defer(function()
-		-- upvalues: (ref) v_u_83, (ref) v_u_82
-		v_u_83 = false
-		if v_u_82 then
-			v_u_82()
-		end
-	end)
+;(function() -- Line: 436 -- upvalues: Players (val), bindPlayer (val), u97 (ref), u96 (ref), cleanupPlayer (val)
+    for i, v in ipairs(Players:GetPlayers()) do
+        bindPlayer(v)
+    end
+    Players.PlayerAdded:Connect(function(p1) -- Line: 441 -- upvalues: bindPlayer (upval), u97 (upval), u96 (upval)
+        bindPlayer(p1)
+        if u97 then
+            return
+        end
+        u97 = true
+        task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+            u97 = false
+            if u96 then
+                u96()
+            end
+        end)
+    end)
+    Players.PlayerRemoving:Connect(function(p1) -- Line: 446 -- upvalues: cleanupPlayer (upval), u97 (upval), u96 (upval)
+        cleanupPlayer(p1)
+        if u97 then
+            return
+        end
+        u97 = true
+        task.defer(function() -- Line: 248 -- upvalues: u97 (upval), u96 (upval)
+            u97 = false
+            if u96 then
+                u96()
+            end
+        end)
+    end)
+end)()
+if not u97 then
+    u97 = true
+    task.defer(function() -- Line: 248 -- upvalues: u97 (ref), u96 (ref)
+        u97 = false
+        if u96 then
+            u96()
+        end
+    end)
 end
-return v74
+return v1

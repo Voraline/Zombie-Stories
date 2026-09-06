@@ -1,57 +1,63 @@
-local v_u_1 = game:GetService("HttpService")
+local HttpService = game:GetService("HttpService")
 return {
-	["classify"] = function(p2) -- name: classify
-		return p2:IsA("Model") and p2:GetAttribute("SkinSDKVersion") and {
-			["type"] = "skinsdk_model",
-			["baseWeapon"] = nil,
-			["instance"] = nil,
-			["baseWeapon"] = p2:GetAttribute("BaseWeapon"),
-			["instance"] = p2
-		} or (p2:IsA("ModuleScript") and (p2:GetAttribute("Skin") and {
-			["type"] = "diff",
-			["baseWeapon"] = nil,
-			["instance"] = nil,
-			["baseWeapon"] = p2:GetAttribute("BaseWeapon"),
-			["instance"] = p2
-		} or {
-			["type"] = "stock",
-			["instance"] = nil,
-			["instance"] = p2
-		}) or (p2:IsA("Configuration") and {
-			["type"] = "configuration",
-			["baseWeapon"] = nil,
-			["instance"] = nil,
-			["baseWeapon"] = p2:GetAttribute("BaseWeapon"),
-			["instance"] = p2
-		} or (p2:IsA("Model") and {
-			["type"] = "derived_model",
-			["baseWeapon"] = nil,
-			["instance"] = nil,
-			["baseWeapon"] = p2:GetAttribute("BaseWeapon"),
-			["instance"] = p2
-		} or {
-			["type"] = "stock",
-			["instance"] = nil,
-			["instance"] = p2
-		})))
-	end,
-	["getBaseWeapon"] = function(p3) -- name: getBaseWeapon
-		-- upvalues: (copy) v_u_1
-		local v4 = p3:GetAttribute("BaseWeapon")
-		if v4 then
-			return v4
-		end
-		if p3:IsA("ModuleScript") and not p3:GetAttribute("Skin") then
-			local v5, v6 = pcall(require, p3)
-			if v5 and type(v6) == "string" then
-				local v7, v8 = pcall(v_u_1.JSONDecode, v_u_1, v6)
-				local v9 = v7 and type(v8) == "table" and (v8.Attributes or v8.a)
-				if v9 then
-					return v9.BaseWeapon
-				end
-			end
-		end
-		return nil
-	end,
-	["stampAttributes"] = function(_) -- name: stampAttributes end
+    classify = function(p1) -- Line: 42
+        if not (p1:IsA("Model")) then
+            if p1:IsA("ModuleScript") then
+                if p1:GetAttribute("Skin") then
+                    return {type = "diff", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+                end
+                return {type = "stock", instance = p1}
+            end
+            if p1:IsA("Configuration") then
+                return {type = "configuration", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+            end
+            if p1:IsA("Model") then
+                return {type = "derived_model", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+            end
+            return {type = "stock", instance = p1}
+        end
+        if p1:GetAttribute("SkinSDKVersion") then
+            return {type = "skinsdk_model", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+        end
+        if p1:IsA("ModuleScript") then
+            if p1:GetAttribute("Skin") then
+                return {type = "diff", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+            end
+            return {type = "stock", instance = p1}
+        end
+        if p1:IsA("Configuration") then
+            return {type = "configuration", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+        end
+        if p1:IsA("Model") then
+            return {type = "derived_model", baseWeapon = p1:GetAttribute("BaseWeapon"), instance = p1}
+        end
+        return {type = "stock", instance = p1}
+    end,
+    getBaseWeapon = function(p1) -- Line: 100 -- upvalues: HttpService (val)
+        local v1, v2, v3, v4
+        local Attribute = p1:GetAttribute("BaseWeapon")
+        if Attribute then
+            return Attribute
+        end
+        if not (p1:IsA("ModuleScript")) or p1:GetAttribute("Skin") then
+            return nil
+        end
+        v1, v2 = pcall(require, p1)
+        if not v1 or type(v2) ~= "string" then
+            return nil
+        end
+        v3, v4 = pcall(HttpService.JSONDecode, HttpService, v2)
+        if not v3 or type(v4) ~= "table" then
+            return nil
+        end
+        local Attributes = v4.Attributes
+        if not Attributes then
+            Attributes = v4.a
+        end
+        if Attributes then
+            return Attributes.BaseWeapon
+        end
+        return nil
+    end,
+    stampAttributes = function(p1) end,
 }

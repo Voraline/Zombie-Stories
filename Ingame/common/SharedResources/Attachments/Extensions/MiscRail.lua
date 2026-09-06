@@ -1,6 +1,5 @@
-local v1 = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
+local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
 return {
-	["Name"] = "Misc Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = { v1["Green Laser"], v1["Orange Laser"], v1["Small Flashlight"] }
+    Name = "Misc Rail",
+    PotentialAttachments = {AttachmentProperties["Green Laser"], AttachmentProperties["Orange Laser"], AttachmentProperties["Small Flashlight"]},
 }

@@ -1,256 +1,243 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("TweenService")
-local v3 = require(v1.Packages.Fusion)
-local v4 = v3.Children
-local v5 = require("../../Data/PlayerDatabase")
-local v6 = require("@game/ReplicatedStorage/common/skillTree/SkillTreeData")
-local v_u_7 = require("@game/ReplicatedStorage/common/skillTree/config/EconomyConfig").SP_XP_PER_SP
-local v_u_8 = UDim2.new(0, -280, 0.45, 0)
-local v_u_9 = UDim2.new(0, 16, 0.45, 0)
-local v10 = Color3.fromRGB(20, 20, 30)
-local v11 = Color3.fromRGB(40, 40, 50)
-local v12 = Color3.fromRGB(38, 175, 255)
-local v13 = Color3.fromRGB(180, 180, 200)
-local v14 = Color3.fromRGB(38, 175, 255)
-local v15 = Color3.fromRGB(100, 210, 255)
-local v16 = Color3.fromRGB(255, 200, 100)
-local v17 = v3.scoped(v3)
-local v_u_18 = {}
-local v_u_19 = false
-local v_u_20 = v17:Value((("0 / %*"):format(v_u_7)))
-local v_u_21 = v17:Value(0)
-local v_u_22 = v17:Value("")
-local v_u_23 = v17:Value(false)
-local v_u_24 = v17:Value("")
-local v_u_25 = v17:Value(false)
-local v_u_26 = v17:Spring(v_u_21, 20, 1)
-local v27 = v17:New("Frame")
-local v28 = {
-	["Name"] = "SkillXPPopup",
-	["Size"] = UDim2.new(0, 250, 0, 76),
-	["Position"] = v_u_8,
-	["AnchorPoint"] = Vector2.new(0, 0.5),
-	["BackgroundColor3"] = v10,
-	["BackgroundTransparency"] = 0.15,
-	["BorderSizePixel"] = 0
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local Children = Fusion.Children
+local v1 = require("../../Data/PlayerDatabase")
+local v2 = require("@game/ReplicatedStorage/common/skillTree/SkillTreeData")
+local v3 = require("@game/ReplicatedStorage/common/skillTree/config/EconomyConfig")
+local v4 = {}
+local SP_XP_PER_SP = v3.SP_XP_PER_SP
+local u31 = UDim2.new(0, -280, 0.45, 0)
+local u37 = UDim2.new(0, 16, 0.45, 0)
+local v5 = Color3.fromRGB(20, 20, 30)
+local v6 = Color3.fromRGB(40, 40, 50)
+local v7 = Color3.fromRGB(38, 175, 255)
+local v8 = Color3.fromRGB(180, 180, 200)
+local v9 = Color3.fromRGB(38, 175, 255)
+local v10 = Color3.fromRGB(100, 210, 255)
+local v11 = Color3.fromRGB(255, 200, 100)
+local v12 = Fusion.scoped(Fusion)
+local u76 = {}
+local u77 = false
+local u85 = v12:Value((("0 / %*"):format(SP_XP_PER_SP)))
+local u89 = v12:Value(0)
+local u93 = v12:Value("")
+local u97 = v12:Value(false)
+local u101 = v12:Value("")
+local u105 = v12:Value(false)
+local u111 = v12:Spring(u89, 20, 1)
+local v13 = v12:New("Frame")
+local v14 = {
+    Name = "SkillXPPopup",
+    Size = UDim2.new(0, 250, 0, 76),
+    Position = u31,
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundColor3 = v5,
+    BackgroundTransparency = 0.15,
+    BorderSizePixel = 0,
 }
-local v29 = {}
-local v30 = v17:New("UICorner")({
-	["CornerRadius"] = UDim.new(0, 8)
+local v15 = {}
+local v16 = v12:New("UICorner")
+v16 = v16({CornerRadius = UDim.new(0, 8)})
+local v17 = v12:New("UIPadding")
+v17 = v17({PaddingTop = UDim.new(0, 8), PaddingBottom = UDim.new(0, 8), PaddingLeft = UDim.new(0, 12), PaddingRight = UDim.new(0, 12)})
+local v18 = v12:New("Frame")
+local v19 = {Name = "HeaderRow", Size = UDim2.new(1, 0, 0, 16), Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}
+local v20 = {}
+local v21 = v12:New("TextLabel")
+v21 = v21({
+    Name = "Header",
+    BackgroundTransparency = 1,
+    Text = "SKILL XP",
+    TextSize = 12,
+    Size = UDim2.new(0.5, 0, 1, 0),
+    Font = Enum.Font.GothamBold,
+    TextColor3 = v8,
+    TextXAlignment = Enum.TextXAlignment.Left,
 })
-local v31 = v17:New("UIPadding")({
-	["PaddingTop"] = UDim.new(0, 8),
-	["PaddingBottom"] = UDim.new(0, 8),
-	["PaddingLeft"] = UDim.new(0, 12),
-	["PaddingRight"] = UDim.new(0, 12)
-})
-local v32 = v17:New("Frame")
-local v33 = {
-	["Name"] = "HeaderRow",
-	["Size"] = UDim2.new(1, 0, 0, 16),
-	["Position"] = UDim2.new(0, 0, 0, 0),
-	["BackgroundTransparency"] = 1,
-	[v4] = { v17:New("TextLabel")({
-			["Name"] = "Header",
-			["Size"] = nil,
-			["BackgroundTransparency"] = 1,
-			["Font"] = nil,
-			["Text"] = "SKILL XP",
-			["TextColor3"] = nil,
-			["TextSize"] = 12,
-			["TextXAlignment"] = nil,
-			["Size"] = UDim2.new(0.5, 0, 1, 0),
-			["Font"] = Enum.Font.GothamBold,
-			["TextColor3"] = v13,
-			["TextXAlignment"] = Enum.TextXAlignment.Left
-		}), v17:New("TextLabel")({
-			["Name"] = "GainLabel",
-			["Size"] = nil,
-			["Position"] = nil,
-			["BackgroundTransparency"] = 1,
-			["Font"] = nil,
-			["Text"] = nil,
-			["TextColor3"] = nil,
-			["TextSize"] = 12,
-			["TextXAlignment"] = nil,
-			["Visible"] = nil,
-			["Size"] = UDim2.new(0.5, 0, 1, 0),
-			["Position"] = UDim2.new(0.5, 0, 0, 0),
-			["Font"] = Enum.Font.GothamBold,
-			["Text"] = v_u_22,
-			["TextColor3"] = v15,
-			["TextXAlignment"] = Enum.TextXAlignment.Right,
-			["Visible"] = v_u_23
-		}) }
+local v22 = v12:New("TextLabel")
+local v23 = {
+    Name = "GainLabel",
+    BackgroundTransparency = 1,
+    TextSize = 12,
+    Size = UDim2.new(0.5, 0, 1, 0),
+    Position = UDim2.new(0.5, 0, 0, 0),
+    Font = Enum.Font.GothamBold,
+    Text = u93,
+    TextColor3 = v10,
+    TextXAlignment = Enum.TextXAlignment.Right,
+    Visible = u97,
 }
-local v34 = v32(v33)
-local v35 = v17:New("TextLabel")({
-	["Name"] = "Counter",
-	["Size"] = nil,
-	["Position"] = nil,
-	["BackgroundTransparency"] = 1,
-	["Font"] = nil,
-	["Text"] = nil,
-	["TextColor3"] = nil,
-	["TextSize"] = 16,
-	["TextXAlignment"] = nil,
-	["Size"] = UDim2.new(1, 0, 0, 18),
-	["Position"] = UDim2.new(0, 0, 0, 18),
-	["Font"] = Enum.Font.GothamBold,
-	["Text"] = v_u_20,
-	["TextColor3"] = v14,
-	["TextXAlignment"] = Enum.TextXAlignment.Left
+v20[1] = v21
+v20[2] = v22(v23)
+v19[Children] = v20
+v18 = v18(v19)
+v19 = v12:New("TextLabel")
+v19 = v19({
+    Name = "Counter",
+    BackgroundTransparency = 1,
+    TextSize = 16,
+    Size = UDim2.new(1, 0, 0, 18),
+    Position = UDim2.new(0, 0, 0, 18),
+    Font = Enum.Font.GothamBold,
+    Text = u85,
+    TextColor3 = v9,
+    TextXAlignment = Enum.TextXAlignment.Left,
 })
-local v36 = v17:New("Frame")
-local v37 = {
-	["Name"] = "BarBG",
-	["Size"] = UDim2.new(1, 0, 0, 8),
-	["Position"] = UDim2.new(0, 0, 0, 40),
-	["BackgroundColor3"] = v11,
-	["BorderSizePixel"] = 0
+v20 = v12:New("Frame")
+v21 = {
+    Name = "BarBG",
+    Size = UDim2.new(1, 0, 0, 8),
+    Position = UDim2.new(0, 0, 0, 40),
+    BackgroundColor3 = v6,
+    BorderSizePixel = 0,
 }
-local v38 = {}
-local v39 = v17:New("UICorner")({
-	["CornerRadius"] = UDim.new(0.5, 0)
-})
-local v40 = v17:New("Frame")
-local v42 = {
-	["Name"] = "Fill",
-	["Size"] = v17:Computed(function(p41)
-		-- upvalues: (copy) v_u_26
-		return UDim2.new(p41(v_u_26), 0, 1, 0)
-	end),
-	["BackgroundColor3"] = v12,
-	["BorderSizePixel"] = 0,
-	[v4] = { v17:New("UICorner")({
-			["CornerRadius"] = UDim.new(0.5, 0)
-		}) }
+v22 = {}
+v23 = v12:New("UICorner")
+v23 = v23({CornerRadius = UDim.new(0.5, 0)})
+local v24 = v12:New("Frame")
+local v25 = {Name = "Fill", Size = v12:Computed(function(p1) -- Line: 139 -- upvalues: u111 (val)
+    local v1 = p1(u111)
+    return UDim2.new(v1, 0, 1, 0)
+end), BackgroundColor3 = v7, BorderSizePixel = 0}
+local v26 = {}
+local v27 = v12:New("UICorner")
+v26[1] = v27({CornerRadius = UDim.new(0.5, 0)})
+v25[Children] = v26
+v22[1] = v23
+v22[2] = v24(v25)
+v21[Children] = v22
+v20 = v20(v21)
+v21 = v12:New("TextLabel")
+v22 = {
+    Name = "SPLabel",
+    BackgroundTransparency = 1,
+    TextSize = 14,
+    Size = UDim2.new(1, 0, 0, 16),
+    Position = UDim2.new(0, 0, 0, 52),
+    Font = Enum.Font.GothamBlack,
+    Text = u101,
+    TextColor3 = v11,
+    TextXAlignment = Enum.TextXAlignment.Center,
+    Visible = u105,
 }
-__set_list(v38, 1, {v39, v40(v42)})
-v37[v4] = v38
-__set_list(v29, 1, {v30, v31, v34, v35, v36(v37), v17:New("TextLabel")({
-	["Name"] = "SPLabel",
-	["Size"] = nil,
-	["Position"] = nil,
-	["BackgroundTransparency"] = 1,
-	["Font"] = nil,
-	["Text"] = nil,
-	["TextColor3"] = nil,
-	["TextSize"] = 14,
-	["TextXAlignment"] = nil,
-	["Visible"] = nil,
-	["Size"] = UDim2.new(1, 0, 0, 16),
-	["Position"] = UDim2.new(0, 0, 0, 52),
-	["Font"] = Enum.Font.GothamBlack,
-	["Text"] = v_u_24,
-	["TextColor3"] = v16,
-	["TextXAlignment"] = Enum.TextXAlignment.Center,
-	["Visible"] = v_u_25
-})})
-v28[v4] = v29
-local v_u_43 = v27(v28)
-v17:New("ScreenGui")({
-	["Parent"] = v5.PlayerGui,
-	["Name"] = "SkillXPPopupGui",
-	["DisplayOrder"] = 8,
-	["ResetOnSpawn"] = false,
-	["IgnoreGuiInset"] = true,
-	[v4] = { v_u_43 }
-})
-local function v_u_48(p44, p45, p46) -- name: tweenPosition
-	-- upvalues: (copy) v_u_2, (copy) v_u_43
-	local v47 = v_u_2:Create(v_u_43, TweenInfo.new(p45, Enum.EasingStyle.Quad, p46), {
-		["Position"] = p44
-	})
-	v47:Play()
-	v47.Completed:Wait()
+v15[1] = v16
+v15[2] = v17
+v15[3] = v18
+v15[4] = v19
+v15[5] = v20
+v15[6] = v21(v22)
+v14[Children] = v15
+local u312 = v13(v14)
+v14 = v12:New("ScreenGui")
+v15 = {
+    Parent = v1.PlayerGui,
+    Name = "SkillXPPopupGui",
+    DisplayOrder = 8,
+    ResetOnSpawn = false,
+    IgnoreGuiInset = true,
+}
+v15[Children] = {u312}
+v14(v15)
+local function tweenPosition(p1, p2, p3) -- Line: 180 -- upvalues: TweenService (val), u312 (val)
+    local v1 = TweenInfo.new(p2, Enum.EasingStyle.Quad, p3)
+    local v2 = TweenService:Create(u312, v1, {Position = p1})
+    v2:Play()
+    v2.Completed:Wait()
 end
-local function v_u_53(p49, p50, p51) -- name: animateSegment
-	-- upvalues: (copy) v_u_20, (copy) v_u_7, (copy) v_u_21
-	while p49 < p50 do
-		local v52 = p49 + p51
-		p49 = math.min(v52, p50)
-		v_u_20:set((("%* / %*"):format(math.floor(p49), v_u_7)))
-		v_u_21:set(p49 / v_u_7)
-		task.wait(0.03)
-	end
+local function animateSegment(p1, p2, p3) -- Line: 192 -- upvalues: u85 (val), SP_XP_PER_SP (val), u89 (val)
+    local v1
+    local v2 = p1
+    while v2 < p2 do
+        v2 = math.min(v2 + p3, p2)
+        v1 = math.floor(v2)
+        u85:set((("%* / %*"):format(v1, SP_XP_PER_SP)))
+        u89:set(v2 / SP_XP_PER_SP)
+        task.wait(0.03)
+    end
 end
-local function v_u_61(p54, p55, p56) -- name: animateXP
-	-- upvalues: (copy) v_u_7, (copy) v_u_53, (copy) v_u_24, (copy) v_u_25, (copy) v_u_21, (copy) v_u_20
-	local v57
-	if p56 > 0 then
-		v57 = v_u_7 - p54 + p55 + (p56 - 1) * v_u_7
-	else
-		v57 = p55 - p54
-	end
-	local v58 = v57 / 40
-	local v59 = math.max(1, v58)
-	if p56 > 0 then
-		for v60 = 1, p56 do
-			v_u_53(p54, v_u_7, v59)
-			v_u_24:set(p56 == 1 and "+1 SP!" or ("+%* SP!"):format(v60))
-			v_u_25:set(true)
-			task.wait(0.6)
-			v_u_25:set(false)
-			v_u_21:set(0)
-			v_u_20:set((("0 / %*"):format(v_u_7)))
-			p54 = 0
-		end
-		if p55 > 0 then
-			v_u_53(0, p55, v59)
-			return
-		end
-	else
-		v_u_53(p54, p55, v59)
-	end
+local function animateXP(p1, p2, p3) -- Line: 206 -- upvalues: SP_XP_PER_SP (val), animateSegment (val), u101 (val), u105 (val), u89 (val), u85 (val)
+    local v1, v2, v3
+    if 0 >= p3 then
+        v3 = p2 - p1
+    else
+        v3 = SP_XP_PER_SP - p1 + p2 + (p3 - 1) * SP_XP_PER_SP
+    end
+    local v4 = math.max(1, v3 / 40)
+    if 0 >= p3 then
+        animateSegment(p1, p2, v4)
+        return
+    end
+    local v5 = p1
+    local v6 = p3
+    local v7 = 1
+    local v8 = p3
+    for i = 1, v6, v7 do
+        animateSegment(v5, SP_XP_PER_SP, v4)
+        if v8 ~= 1 then
+            v2 = ("+%* SP!"):format(i)
+        else
+            v2 = "+1 SP!"
+        end
+        u101:set(v2)
+        u105:set(true)
+        task.wait(0.6)
+        u105:set(false)
+        v5 = 0
+        u89:set(0)
+        u85:set((("0 / %*"):format(SP_XP_PER_SP)))
+    end
+    if 0 >= v1 then
+        return
+    end
+    animateSegment(0, v1, v4)
 end
-local function v_u_68(p62, p63, p64, p65) -- name: showPopup
-	-- upvalues: (copy) v_u_7, (copy) v_u_20, (copy) v_u_21, (copy) v_u_22, (copy) v_u_23, (copy) v_u_25, (copy) v_u_48, (copy) v_u_9, (copy) v_u_61, (copy) v_u_8
-	local v66 = p65 - p64
-	local v67
-	if v66 > 0 then
-		v67 = v_u_7 - p62 + p63 + (v66 - 1) * v_u_7
-	else
-		v67 = p63 - p62
-	end
-	if v67 > 0 then
-		v_u_20:set((("%* / %*"):format(p62, v_u_7)))
-		v_u_21:set(p62 / v_u_7)
-		v_u_22:set((("+%* XP"):format(v67)))
-		v_u_23:set(true)
-		v_u_25:set(false)
-		v_u_48(v_u_9, 0.35, Enum.EasingDirection.Out)
-		task.wait(0.2)
-		v_u_61(p62, p63, v66)
-		task.wait(1.5)
-		v_u_23:set(false)
-		v_u_25:set(false)
-		v_u_48(v_u_8, 0.3, Enum.EasingDirection.In)
-	end
+local function showPopup(p1, p2, p3, p4) -- Line: 249 -- upvalues: SP_XP_PER_SP (val), u85 (val), u89 (val), u93 (val), u97 (val), u105 (val), tweenPosition (val), u37 (val), animateXP (val), u31 (val)
+    local v1
+    local v2 = p4 - p3
+    if 0 >= v2 then
+        v1 = p2 - p1
+    else
+        v1 = SP_XP_PER_SP - p1 + p2 + (v2 - 1) * SP_XP_PER_SP
+    end
+    if v1 <= 0 then
+        return
+    end
+    u85:set((("%* / %*"):format(p1, SP_XP_PER_SP)))
+    u89:set(p1 / SP_XP_PER_SP)
+    u93:set((("+%* XP"):format(v1)))
+    u97:set(true)
+    u105:set(false)
+    tweenPosition(u37, 0.35, Enum.EasingDirection.Out)
+    task.wait(0.2)
+    animateXP(p1, p2, v2)
+    task.wait(1.5)
+    u97:set(false)
+    u105:set(false)
+    tweenPosition(u31, 0.3, Enum.EasingDirection.In)
 end
-local function v_u_70() -- name: processQueue
-	-- upvalues: (ref) v_u_19, (copy) v_u_18, (copy) v_u_68
-	if not v_u_19 then
-		v_u_19 = true
-		while #v_u_18 > 0 do
-			local v69 = table.remove(v_u_18, 1)
-			v_u_68(v69.oldXP, v69.newXP, v69.oldSP, v69.newSP)
-			if #v_u_18 > 0 then
-				task.wait(0.3)
-			end
-		end
-		v_u_19 = false
-	end
+local function processQueue() -- Line: 290 -- upvalues: u77 (ref), u76 (val), showPopup (val)
+    local v1, v2
+    if u77 then
+        return
+    end
+    u77 = true
+    while true do
+        v1 = #u76
+        if 0 >= v1 then
+            break
+        end
+        v1 = table.remove(u76, 1)
+        showPopup(v1.oldXP, v1.newXP, v1.oldSP, v1.newSP)
+        v2 = #u76
+        if 0 < v2 then
+            task.wait(0.3)
+        end
+    end
+    u77 = false
 end
-v6.XPChanged:Connect(function(p71, p72, p73, p74)
-	-- upvalues: (copy) v_u_18, (copy) v_u_70
-	local v75 = v_u_18
-	table.insert(v75, {
-		["oldXP"] = p71,
-		["newXP"] = p72,
-		["oldSP"] = p73,
-		["newSP"] = p74
-	})
-	task.spawn(v_u_70)
+v2.XPChanged:Connect(function(p1, p2, p3, p4) -- Line: 310 -- upvalues: u76 (val), processQueue (val)
+    table.insert(u76, {oldXP = p1, newXP = p2, oldSP = p3, newSP = p4})
+    task.spawn(processQueue)
 end)
-return {}
+return v4

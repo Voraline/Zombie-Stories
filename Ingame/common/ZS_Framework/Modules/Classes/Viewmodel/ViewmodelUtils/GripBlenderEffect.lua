@@ -1,71 +1,80 @@
 local v1 = require("../../../Utils/SpringUtil")
-local v_u_2 = CFrame.new
-local v_u_3 = v1.new(0)
-v_u_3.Target = 0
-v_u_3.Speed = 24
-v_u_3.Damper = 0.8
-local v_u_4 = {
-	["Inspect"] = true,
-	["ReloadEmpty"] = true,
-	["Reload"] = true,
-	["LoadStart"] = true,
-	["LoadLoop"] = true,
-	["Equip"] = true,
-	["LoadStop"] = true,
-	["LoadIdle"] = true
-}
-local function v_u_7(p5) -- name: checkAnimations
-	-- upvalues: (copy) v_u_4
-	for v6, _ in v_u_4 do
-		if p5.Viewmodel.Animations[v6] and p5.Viewmodel.Animations[v6].IsPlaying then
-			return false
-		end
-	end
-	return true
+local new = CFrame.new
+local u6 = v1.new(0)
+u6.Target = 0
+u6.Speed = 24
+u6.Damper = 0.8
+local function Lerp(p1, p2, p3) -- Line: 10
+    return p1 * (1 - p3) + p2 * p3
 end
-local v_u_8 = nil
-return function(p9, p10)
-	-- upvalues: (ref) v_u_8, (copy) v_u_3, (copy) v_u_7, (copy) v_u_2
-	local v11 = p9.LeftWeld.Part0.CFrame:Inverse() * p10.Config.LeftArmGrip.CFrame
-	local v12 = false
-	if p9.OGLArmWeld ~= v_u_8 then
-		v_u_8 = p9.OGLArmWeld
-		p9.OGLArmWeld_BaseTransform = nil
-		p9.OGLArmWeld_OldTransform = nil
-		v_u_3.Position = 0
-		v_u_3.Target = 0
-	end
-	local v13 = not p10.Reloading
-	if v13 then
-		v13 = v_u_7(p10)
-	end
-	if v13 then
-		if p9.OGLArmWeld_OldTransform and p9.OGLArmWeld.Transform == p9.OGLArmWeld_OldTransform then
-			p9.OGLArmWeld_BaseTransform = p9.OGLArmWeld.Transform
-		end
-		p9.OGLArmWeld_OldTransform = p9.OGLArmWeld.Transform
-	end
-	if p9.OGLArmWeld_BaseTransform and v13 then
-		local v14 = (p9.OGLArmWeld_BaseTransform.p - p9.OGLArmWeld.Transform.Position).Magnitude <= 0.17
-		local v15 = p9.OGLArmWeld_BaseTransform.LookVector:Dot(p9.OGLArmWeld.Transform.LookVector)
-		local v16 = math.acos(v15)
-		local v17 = math.deg(v16)
-		local v18
-		if v17 == v17 then
-			v18 = v17 <= 0.04
-		else
-			v18 = false
-		end
-		v12 = (v14 or v18) and true or v12
-	end
-	v_u_3.Target = v12 and 1 or 0
-	if p9.MoveCF then
-		local v19 = p9.LeftWeld
-		local v20 = v_u_2()
-		local v21 = v_u_2(0, 1, 0)
-		local v22 = v_u_3.Position
-		v19.C1 = v20:Lerp(v21, 1 * (1 - v22) + 0 * v22)
-	end
-	p9.LeftWeld.C0 = v_u_2():Lerp(v11, v_u_3.Position)
-	return p9.LeftWeld.C0
+local u11 = {
+    Inspect = true,
+    ReloadEmpty = true,
+    Reload = true,
+    LoadStart = true,
+    LoadLoop = true,
+    Equip = true,
+    LoadStop = true,
+    LoadIdle = true,
+}
+local function checkAnimations(p1) -- Line: 25 -- upvalues: u11 (val)
+    local v1 = u11
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if p1.Viewmodel.Animations[i] and p1.Viewmodel.Animations[i].IsPlaying then
+            return false
+        end
+    end
+    return true
+end
+local u13 = nil
+return function(p1, p2) -- Line: 37 -- upvalues: u13 (ref), u6 (val), checkAnimations (val), new (val)
+    local Position, v1, v2
+    local v3 = p1.LeftWeld.Part0.CFrame:Inverse()
+    local v4 = v3 * p2.Config.LeftArmGrip.CFrame
+    v3 = false
+    if p1.OGLArmWeld ~= u13 then
+        u13 = p1.OGLArmWeld
+        p1.OGLArmWeld_BaseTransform = nil
+        p1.OGLArmWeld_OldTransform = nil
+        u6.Position = 0
+        u6.Target = 0
+    end
+    local v5 = not p2.Reloading
+    if v5 then
+        v5 = checkAnimations(p2)
+    end
+    if v5 then
+        if p1.OGLArmWeld_OldTransform and p1.OGLArmWeld.Transform == p1.OGLArmWeld_OldTransform then
+            p1.OGLArmWeld_BaseTransform = p1.OGLArmWeld.Transform
+        end
+        p1.OGLArmWeld_OldTransform = p1.OGLArmWeld.Transform
+    end
+    if p1.OGLArmWeld_BaseTransform and v5 then
+        local v6 = (p1.OGLArmWeld_BaseTransform.p - p1.OGLArmWeld.Transform.Position).Magnitude <= 0.17
+        v2 = math.deg((math.acos((p1.OGLArmWeld_BaseTransform.LookVector:Dot(p1.OGLArmWeld.Transform.LookVector)))))
+        if v2 == v2 then
+            v2 = v2 <= 0.04
+        else
+            v2 = false
+        end
+        if v6 then
+            v3 = true
+        elseif not v2 then
+        end
+    end
+    if not v3 then
+        v1 = 0
+    else
+        v1 = 1
+    end
+    u6.Target = v1
+    if p1.MoveCF then
+        v2 = new(0, 1, 0)
+        Position = u6.Position
+        p1.LeftWeld.C1 = new():Lerp(v2, 1 * (1 - Position) + 0 * Position)
+    end
+    p1.LeftWeld.C0 = new():Lerp(v4, u6.Position)
+    return p1.LeftWeld.C0
 end

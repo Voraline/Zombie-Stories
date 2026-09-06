@@ -1,15 +1,11 @@
 require("./types/fusion")
-return function(p1, p_u_2, ...) -- name: useCoroutine
-	if typeof(p_u_2) == "function" then
-		p_u_2 = coroutine.create(p_u_2)
-	end
-	coroutine.resume(p_u_2, ...)
-	local function v3()
-		-- upvalues: (ref) p_u_2
-		if coroutine.status(p_u_2) ~= "dead" then
-			coroutine.close(p_u_2)
-		end
-	end
-	table.insert(p1, v3)
-	return p_u_2
+return function(p1, p2, ...) -- Line: 10
+    local u9 = if typeof(p2) == "function" then coroutine.create(p2) else p2
+    coroutine.resume(u9, ...)
+    table.insert(p1, function() -- Line: 21 -- upvalues: u9 (ref)
+        if coroutine.status(u9) ~= "dead" then
+            coroutine.close(u9)
+        end
+    end)
+    return u9
 end

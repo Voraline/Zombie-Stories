@@ -1,37 +1,87 @@
-local v1 = game:GetService("ReplicatedStorage")
-require(v1.Packages.Fusion)
-local v_u_2 = require(v1.common.ZS_Shared.Data.ModifierData)
-local v_u_3 = require(v1.common.ZS_Shared.Data.GameState)
-local v_u_4 = require(v1.common.ZS_Shared.Util.deepCopy)
-return function(_, _, p5)
-	-- upvalues: (copy) v_u_4, (copy) v_u_3, (copy) v_u_2
-	local v_u_6 = {}
-	v_u_4(v_u_3.Data)
-	local function v_u_11(p7) -- name: turnOnModifier
-		-- upvalues: (ref) v_u_2, (copy) v_u_6
-		local v8 = v_u_2[p7]
-		for v9, v10 in v_u_6 do
-			if v_u_2[v9].Grouping == v8.Grouping then
-				v10.IsActive:set(false)
-			end
-		end
-		v_u_6[p7].IsActive:set(true)
-	end
-	for v12, _ in v_u_2 do
-		v_u_6[v12] = {
-			["IsLocked"] = p5:Value(false),
-			["IsActive"] = p5:Value(false)
-		}
-	end
-	return {
-		["ModifierList"] = v_u_6,
-		["ActivateModifier"] = function(p13) -- name: activateModifier
-			-- upvalues: (copy) v_u_11
-			v_u_11(p13)
-		end,
-		["DeactivateModifier"] = function(p14) -- name: deactivateModifier
-			-- upvalues: (copy) v_u_6
-			v_u_6[p14].IsActive:set(false)
-		end
-	}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local peek = require(ReplicatedStorage.Packages.Fusion).peek
+local ModifierData = require(ReplicatedStorage.common.ZS_Shared.Data.ModifierData)
+return function(p1) -- Line: 7 -- upvalues: ModifierData (val), peek (val)
+    local v1, v2
+    local u1 = {}
+    local function turnOnModifier(p1) -- Line: 23 -- upvalues: ModifierData (upval), u1 (val)
+        local v1 = ModifierData[p1]
+        if not v1 or not (u1[p1]) then
+            return false
+        end
+        local v2 = u1
+        local v3 = nil
+        local v4 = nil
+        for i, j in v2, v3, v4 do
+            if ModifierData[i].Grouping == v1.Grouping then
+                j.IsActive:set(false)
+            end
+        end
+        u1[p1].IsActive:set(true)
+        return true
+    end
+    v1 = ModifierData
+    v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        u1[i] = {IsLocked = p1:Value(false), IsActive = p1:Value(false)}
+    end
+    return {
+        ModifierList = u1,
+        ActivateModifier = function(p1) -- Line: 47 -- upvalues: turnOnModifier (val)
+            return (turnOnModifier(p1))
+        end,
+        DeactivateModifier = function(p1) -- Line: 51 -- upvalues: u1 (val)
+            local v1 = u1[p1]
+            if not v1 then
+                return false
+            end
+            v1.IsActive:set(false)
+            return true
+        end,
+        ToggleModifier = function(p1) -- Line: 60 -- upvalues: u1 (val), peek (upval), turnOnModifier (val)
+            local v1 = u1[p1]
+            if not v1 then
+                return false
+            end
+            if not (peek(v1.IsActive)) then
+                return (turnOnModifier(p1))
+            end
+            v1.IsActive:set(false)
+            return true
+        end,
+        GetSelected = function() -- Line: 72 -- upvalues: u1 (val), peek (upval)
+            local v1 = {}
+            local v2 = u1
+            local v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                if peek(j.IsActive) then
+                    v1[i] = true
+                end
+            end
+            return v1
+        end,
+        Clear = function() -- Line: 82 -- upvalues: u1 (val)
+            local v1 = u1
+            local v2 = nil
+            local v3 = nil
+            for i, j in v1, v2, v3 do
+                j.IsActive:set(false)
+            end
+        end,
+        IsGroupActive = function(p1, p2) -- Line: 88 -- upvalues: u1 (val), ModifierData (upval)
+            local v1
+            local v2 = u1
+            local v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                v1 = ModifierData[i]
+                if v1 and v1.Grouping == p1 and p2(j.IsActive) then
+                    return true
+                end
+            end
+            return false
+        end,
+    }
 end

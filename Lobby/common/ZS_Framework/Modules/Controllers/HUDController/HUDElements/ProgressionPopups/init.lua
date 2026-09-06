@@ -1,189 +1,182 @@
-local v1 = game.ReplicatedStorage.common.RedEvents
 game:GetService("TweenService")
-local v_u_2 = script.UI.Earnings
-local v_u_3 = v_u_2.Earnings
-local v_u_4 = v_u_2.Items
-local v_u_5 = v_u_4.Template
-local v_u_6 = script.UI.LevelUp
-local v_u_7 = v_u_6.ClipFrame
-local v_u_8 = v_u_7.ContentFrame
-local v_u_9 = script.UI.WeaponUp
-local v_u_10 = v_u_9.ClipFrame
-local v_u_11 = v_u_10.ContentFrame
-local v12 = game.ReplicatedStorage.common
-local v_u_13 = workspace:FindFirstChild("Values")
-local v_u_14
-if v_u_13 then
-	v_u_14 = v_u_13:FindFirstChild("IsDoubleXP")
-else
-	v_u_14 = v_u_13
+local Earnings = script.UI.Earnings
+local Earnings_2 = Earnings.Earnings
+local Items = Earnings.Items
+local Template = Items.Template
+local LevelUp = script.UI.LevelUp
+local ClipFrame = LevelUp.ClipFrame
+local ContentFrame = ClipFrame.ContentFrame
+local WeaponUp = script.UI.WeaponUp
+local ClipFrame_2 = WeaponUp.ClipFrame
+local ContentFrame_2 = ClipFrame_2.ContentFrame
+local Values = workspace:FindFirstChild("Values")
+local IsDoubleXP = Values
+if IsDoubleXP then
+    IsDoubleXP = Values:FindFirstChild("IsDoubleXP")
 end
-local v_u_15
-if v_u_13 then
-	v_u_15 = v_u_13:FindFirstChild("IsWeekend")
-else
-	v_u_15 = v_u_13
+local IsWeekend = Values
+if IsWeekend then
+    IsWeekend = Values:FindFirstChild("IsWeekend")
 end
-if v_u_13 then
-	v_u_13 = v_u_13:FindFirstChild("StackableDoubleXP")
+local StackableDoubleXP = Values
+if StackableDoubleXP then
+    StackableDoubleXP = Values:FindFirstChild("StackableDoubleXP")
 end
 require(game.ReplicatedStorage.common:WaitForChild("HUDService"))
-local v_u_16 = require(v12.ItemData)
-local v17 = require(v1.General.ProgressionEvent)
-local v_u_18 = {}
-local v_u_19 = {}
-local v_u_20 = {}
-local v_u_21 = false
-local v_u_22 = {
-	["Assault"] = "rbxassetid://4458718282",
-	["Medic"] = "rbxassetid://2706886795",
-	["Support"] = "rbxassetid://2706886028",
-	["Sniper"] = "rbxassetid://4458692655"
-}
-local v_u_23 = 0
-local v_u_24 = nil
-local v_u_25 = nil
-local v_u_26 = nil
-v_u_2.Parent = game.Players.LocalPlayer.PlayerGui
-v_u_6.Parent = game.Players.LocalPlayer.PlayerGui
-v_u_9.Parent = game.Players.LocalPlayer.PlayerGui
-local v_u_27 = {
-	["IsShowing"] = true,
-	["Show"] = function(_) -- name: Show
-		-- upvalues: (copy) v_u_27, (copy) v_u_2, (copy) v_u_6, (copy) v_u_9
-		v_u_27.IsShowing = true
-		v_u_2.Enabled = true
-		v_u_6.Enabled = true
-		v_u_9.Enabled = true
-	end,
-	["Hide"] = function(_) -- name: Hide
-		-- upvalues: (copy) v_u_27, (copy) v_u_2, (copy) v_u_6, (copy) v_u_9
-		v_u_27.IsShowing = false
-		v_u_2.Enabled = false
-		v_u_6.Enabled = false
-		v_u_9.Enabled = false
-	end
-}
-v17:SetClientListener(function(p28)
-	-- upvalues: (copy) v_u_18, (copy) v_u_19, (copy) v_u_20, (copy) v_u_14, (copy) v_u_13, (copy) v_u_15, (ref) v_u_25, (copy) v_u_3, (ref) v_u_26, (ref) v_u_24, (ref) v_u_23, (copy) v_u_5, (copy) v_u_4
-	if p28.Type then
-		if p28.Type == "LevelUpClass" then
-			local v29 = v_u_18
-			local v30 = {
-				["Class"] = p28.Class,
-				["Level"] = p28.Level,
-				["ZBucks"] = p28.ZBucks
-			}
-			table.insert(v29, v30)
-			runQueue()
-			return
-		end
-		if p28.Type == "LevelUpWeapon" then
-			local v31 = v_u_19
-			local v32 = {
-				["WeaponID"] = p28.ID,
-				["Level"] = p28.Level
-			}
-			table.insert(v31, v32)
-			runQueue()
-			return
-		end
-		if p28.Type == "UnlockedWeapon" then
-			local v33 = v_u_20
-			local v34 = {
-				["WeaponID"] = p28.ID
-			}
-			table.insert(v33, v34)
-			runQueue()
-			return
-		end
-		if p28.Type == "XPEarned" then
-			local v35 = v_u_14 and v_u_14.Value and (v_u_13 and (v_u_13.Value and (v_u_15 and v_u_15.Value)) and "XP (x4)" or "XP (x2)") or "XP"
-			if not v_u_25 then
-				v_u_25 = 0
-			end
-			v_u_25 = v_u_25 + p28.AddedXP
-			v_u_3.XP.Text = ("+%d %s"):format(v_u_25, v35)
-			v_u_3:TweenSize(UDim2.new(0.35, 0, 0.05, 0), "Out", "Quad", 0.25, true)
-			local v36 = tick() * 1000
-			local v37 = math.floor(v36)
-			v_u_26 = v37
-			task.wait(3)
-			if v_u_26 == v37 then
-				v_u_24 = nil
-				v_u_25 = nil
-				v_u_3:TweenSize(UDim2.new(0, 0, 0.05, 0), "Out", "Quad", 0.25, true)
-				return
-			end
-		elseif p28.Type == "AddXPItem" then
-			v_u_23 = v_u_23 + 1
-			local v38 = v_u_5:Clone()
-			v38.LayoutOrder = -v_u_23
-			v38:WaitForChild("Reason").Text = p28.Reason
-			if p28.Color then
-				v38.Reason.TextColor3 = p28.Color
-			end
-			v38.Parent = v_u_4
-			v38.Visible = true
-			v38.Reason:TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Quad", 0.25, true)
-			task.wait(3)
-			v38.Reason:TweenPosition(UDim2.new(0, 0, 1, 0), "Out", "Quad", 0.25, true)
-			task.wait(0.25)
-			v38:Destroy()
-		end
-	end
-end)
-function runQueue() -- name: runQueue
-	-- upvalues: (ref) v_u_21, (copy) v_u_18, (copy) v_u_8, (copy) v_u_22, (copy) v_u_7, (copy) v_u_20, (copy) v_u_16, (copy) v_u_11, (copy) v_u_10, (copy) v_u_19
-	if v_u_21 then
-		::l2::
-		return
-	else
-		v_u_21 = true
-		while true do
-			if #v_u_18 > 0 then
-				script.LevelUp:Play()
-				local v39 = v_u_18[1]
-				v_u_8.ClassIcon.Image = v_u_22[v39.Class]
-				v_u_8.Class.Text = ("%s LEVEL %d!"):format(string.upper(v39.Class), v39.Level)
-				v_u_8.ZB.Text = ("+ %d Z$"):format(v39.ZBucks)
-				v_u_7:TweenSize(UDim2.new(0.7, 0, 0.14, 0), "Out", "Quad", 0.2, true)
-				task.wait(3)
-				v_u_7:TweenSize(UDim2.new(0.7, 0, 0, 0), "Out", "Quad", 0.2, true)
-				task.wait(0.25)
-				table.remove(v_u_18, 1)
-			end
-			if #v_u_20 > 0 then
-				script.LevelUp:Play()
-				local v40 = v_u_20[1]
-				local v41 = v_u_16.List[v40.WeaponID].Name
-				local v42 = "rbxgameasset://Images/" .. v41
-				v_u_11.WeaponImage.ImageLabel.Image = v42
-				v_u_11.LevelLabel.Text = ("%s UNLOCKED!"):format(string.upper(v41))
-				v_u_10:TweenSize(UDim2.new(0.6, 0, 0.12, 0), "Out", "Quad", 0.2, true)
-				task.wait(3)
-				v_u_10:TweenSize(UDim2.new(0.6, 0, 0, 0), "Out", "Quad", 0.2, true)
-				task.wait(0.25)
-				table.remove(v_u_20, 1)
-			end
-			if #v_u_19 > 0 then
-				script.LevelUp:Play()
-				local v43 = v_u_19[1]
-				local v44 = v_u_16.List[v43.WeaponID].Name
-				local v45 = "rbxgameasset://Images/" .. v44
-				v_u_11.WeaponImage.ImageLabel.Image = v45
-				v_u_11.LevelLabel.Text = ("%s LEVEL %d!"):format(string.upper(v44), v43.Level)
-				v_u_10:TweenSize(UDim2.new(0.6, 0, 0.12, 0), "Out", "Quad", 0.2, true)
-				task.wait(3)
-				v_u_10:TweenSize(UDim2.new(0.6, 0, 0, 0), "Out", "Quad", 0.2, true)
-				task.wait(0.25)
-				table.remove(v_u_19, 1)
-			end
-			if #v_u_18 == 0 and (#v_u_20 == 0 and #v_u_19 == 0) then
-				v_u_21 = false
-				goto l2
-			end
-		end
-	end
+local ItemData = require(game.ReplicatedStorage.common.ItemData)
+local ProgressionEvent = require(game.ReplicatedStorage.common.RedEvents.General.ProgressionEvent)
+local u72 = {}
+local u73 = {}
+local u74 = {}
+local u75 = false
+local u76 = {Assault = "rbxassetid://4458718282", Medic = "rbxassetid://2706886795", Support = "rbxassetid://2706886028", Sniper = "rbxassetid://4458692655"}
+local u77 = 0
+local u78 = nil
+local u79 = nil
+local u80 = nil
+Earnings.Parent = game.Players.LocalPlayer.PlayerGui
+LevelUp.Parent = game.Players.LocalPlayer.PlayerGui
+WeaponUp.Parent = game.Players.LocalPlayer.PlayerGui
+local u102 = {IsShowing = true}
+function u102.Show(p1) -- Line: 53 -- upvalues: u102 (val), Earnings (val), LevelUp (val), WeaponUp (val)
+    u102.IsShowing = true
+    Earnings.Enabled = true
+    LevelUp.Enabled = true
+    WeaponUp.Enabled = true
 end
-return v_u_27
+function u102.Hide(p1) -- Line: 61 -- upvalues: u102 (val), Earnings (val), LevelUp (val), WeaponUp (val)
+    u102.IsShowing = false
+    Earnings.Enabled = false
+    LevelUp.Enabled = false
+    WeaponUp.Enabled = false
+end
+ProgressionEvent:SetClientListener(function(p1) -- Line: 68 -- upvalues: u72 (val), u73 (val), u74 (val), IsDoubleXP (val), StackableDoubleXP (val), IsWeekend (val), u79 (ref), Earnings_2 (val), u80 (ref), u78 (ref), u77 (ref), Template (val), Items (val)
+    local v1, v2
+    if not p1.Type then
+        return
+    end
+    if p1.Type == "LevelUpClass" then
+        table.insert(u72, {Class = p1.Class, Level = p1.Level, ZBucks = p1.ZBucks})
+        runQueue()
+        return
+    end
+    if p1.Type == "LevelUpWeapon" then
+        table.insert(u73, {WeaponID = p1.ID, Level = p1.Level})
+        runQueue()
+        return
+    end
+    if p1.Type == "UnlockedWeapon" then
+        table.insert(u74, {WeaponID = p1.ID})
+        runQueue()
+        return
+    end
+    if p1.Type ~= "XPEarned" then
+        if p1.Type == "AddXPItem" then
+            u77 = u77 + 1
+            v1 = Template:Clone()
+            v1.LayoutOrder = -u77
+            local Reason = v1:WaitForChild("Reason")
+            Reason.Text = p1.Reason
+            if p1.Color then
+                v1.Reason.TextColor3 = p1.Color
+            end
+            v1.Parent = Items
+            v1.Visible = true
+            v2 = UDim2.new(0, 0, 0, 0)
+            v1.Reason:TweenPosition(v2, "Out", "Quad", 0.25, true)
+            task.wait(3)
+            v2 = UDim2.new(0, 0, 1, 0)
+            v1.Reason:TweenPosition(v2, "Out", "Quad", 0.25, true)
+            task.wait(0.25)
+            v1:Destroy()
+        end
+        return
+    end
+    v1 = "XP"
+    if IsDoubleXP and IsDoubleXP.Value then
+        if not StackableDoubleXP then
+            v1 = "XP (x2)"
+        elseif StackableDoubleXP.Value and IsWeekend and IsWeekend.Value then
+            v1 = "XP (x4)"
+        end
+    end
+    if not u79 then
+        u79 = 0
+    end
+    u79 = u79 + p1.AddedXP
+    Earnings_2.XP.Text = ("+%d %s"):format(u79, v1)
+    v2 = UDim2.new(0.35, 0, 0.05, 0)
+    Earnings_2:TweenSize(v2, "Out", "Quad", 0.25, true)
+    local v3 = math.floor(tick() * 1000)
+    u80 = v3
+    task.wait(3)
+    if u80 ~= v3 then
+        return
+    end
+    u78 = nil
+    u79 = nil
+    local v4 = UDim2.new(0, 0, 0.05, 0)
+    Earnings_2:TweenSize(v4, "Out", "Quad", 0.25, true)
+end)
+function runQueue() -- Line: 132 -- upvalues: u75 (ref), u72 (val), ContentFrame (val), u76 (val), ClipFrame (val), u74 (val), ItemData (val), ContentFrame_2 (val), ClipFrame_2 (val), u73 (val)
+    if not u75 then
+        local Name, Name_2, v1, v2, v3, v4, v5
+        u75 = true
+        while true do
+            v1 = #u72
+            if 0 < v1 then
+                script.LevelUp:Play()
+                v1 = u72[1]
+                ContentFrame.ClassIcon.Image = u76[v1.Class]
+                v3 = string.upper(v1.Class)
+                ContentFrame.Class.Text = ("%s LEVEL %d!"):format(v3, v1.Level)
+                ContentFrame.ZB.Text = ("+ %d Z$"):format(v1.ZBucks)
+                v2 = UDim2.new(0.7, 0, 0.14, 0)
+                ClipFrame:TweenSize(v2, "Out", "Quad", 0.2, true)
+                task.wait(3)
+                v2 = UDim2.new(0.7, 0, 0, 0)
+                ClipFrame:TweenSize(v2, "Out", "Quad", 0.2, true)
+                task.wait(0.25)
+                table.remove(u72, 1)
+            end
+            v1 = #u74
+            if 0 < v1 then
+                script.LevelUp:Play()
+                Name = ItemData.List[u74[1].WeaponID].Name
+                ContentFrame_2.WeaponImage.ImageLabel.Image = "rbxgameasset://Images/" .. Name
+                ContentFrame_2.LevelLabel.Text = ("%s UNLOCKED!"):format(string.upper(Name))
+                v4 = UDim2.new(0.6, 0, 0.12, 0)
+                ClipFrame_2:TweenSize(v4, "Out", "Quad", 0.2, true)
+                task.wait(3)
+                v4 = UDim2.new(0.6, 0, 0, 0)
+                ClipFrame_2:TweenSize(v4, "Out", "Quad", 0.2, true)
+                task.wait(0.25)
+                table.remove(u74, 1)
+            end
+            v1 = #u73
+            if 0 < v1 then
+                script.LevelUp:Play()
+                v1 = u73[1]
+                Name_2 = ItemData.List[v1.WeaponID].Name
+                ContentFrame_2.WeaponImage.ImageLabel.Image = "rbxgameasset://Images/" .. Name_2
+                v5 = string.upper(Name_2)
+                ContentFrame_2.LevelLabel.Text = ("%s LEVEL %d!"):format(v5, v1.Level)
+                v4 = UDim2.new(0.6, 0, 0.12, 0)
+                ClipFrame_2:TweenSize(v4, "Out", "Quad", 0.2, true)
+                task.wait(3)
+                v4 = UDim2.new(0.6, 0, 0, 0)
+                ClipFrame_2:TweenSize(v4, "Out", "Quad", 0.2, true)
+                task.wait(0.25)
+                table.remove(u73, 1)
+            end
+            if #u72 == 0 then
+                if #u74 ~= 0 then end
+                if #u73 == 0 then
+                    break
+                end
+            end
+        end
+        u75 = false
+    end
+end
+return u102

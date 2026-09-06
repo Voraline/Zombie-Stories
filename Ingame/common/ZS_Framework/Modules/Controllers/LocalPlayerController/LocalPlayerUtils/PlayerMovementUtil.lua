@@ -1,112 +1,137 @@
 local v1 = game:GetService("UserInputService")
-local v_u_2 = game:GetService("RunService")
-local v_u_3 = game.Players.LocalPlayer
-local v_u_4 = v_u_3.Character
-local v5 = script.Parent.Parent.Parent.Parent:WaitForChild("Utils")
-local v_u_6 = Vector3.new
-local v_u_7 = Instance.new("BindableEvent")
-local v_u_8
-if v_u_4 then
-	v_u_8 = v_u_4:WaitForChild("Humanoid")
-else
-	v_u_8 = nil
+local RunService = game:GetService("RunService")
+local LocalPlayer = game.Players.LocalPlayer
+local Character = LocalPlayer.Character
+local u33 = nil
+local Utils = script.Parent.Parent.Parent.Parent:WaitForChild("Utils")
+local new = Vector3.new
+local BindableEvent = Instance.new("BindableEvent")
+if Character then
+    u33 = Character:WaitForChild("Humanoid")
 end
-v_u_3.CharacterAdded:Connect(function(p9)
-	-- upvalues: (ref) v_u_4, (ref) v_u_8
-	v_u_4 = p9
-	v_u_8 = p9:WaitForChild("Humanoid")
+LocalPlayer.CharacterAdded:Connect(function(p1) -- Line: 15 -- upvalues: Character (ref), u33 (ref)
+    Character = p1
+    u33 = p1:WaitForChild("Humanoid")
 end)
-v_u_3.CharacterRemoving:Connect(function()
-	-- upvalues: (ref) v_u_4, (ref) v_u_8
-	v_u_4 = nil
-	v_u_8 = nil
+LocalPlayer.CharacterRemoving:Connect(function() -- Line: 19 -- upvalues: Character (ref), u33 (ref)
+    Character = nil
+    u33 = nil
 end)
-local v_u_10 = nil
-local v_u_11 = false
-local v_u_12 = v_u_6()
-local v_u_13 = 0
-local v_u_14 = false
-local _ = {
-	{
-		["KeyCode"] = nil,
-		["Direction"] = Vector3.new(-0, -0, -1),
-		["KeyCode"] = Enum.KeyCode.W
-	},
-	{
-		["KeyCode"] = nil,
-		["Direction"] = Vector3.new(-1, -0, -0),
-		["KeyCode"] = Enum.KeyCode.A
-	},
-	{
-		["KeyCode"] = nil,
-		["Direction"] = Vector3.new(0, 0, 1),
-		["KeyCode"] = Enum.KeyCode.S
-	},
-	{
-		["KeyCode"] = nil,
-		["Direction"] = Vector3.new(1, 0, 0),
-		["KeyCode"] = Enum.KeyCode.D
-	}
-}
-local v_u_15 = require(v_u_3:WaitForChild("PlayerScripts"):WaitForChild("ControlScript"):WaitForChild("MasterControl"))
-local v_u_16 = {
-	["Direction"] = require(v5:WaitForChild("SpringUtil")).new((v_u_6()))
-}
-v_u_16.Direction.Speed = 16
-v_u_16.MoveVector = Vector3.new()
-v_u_16.ShuffleEvent = v_u_7.Event
-v_u_16.Diving = false
-function v_u_16.Init(_) -- name: Init
-	-- upvalues: (ref) v_u_10, (copy) v_u_2, (copy) v_u_16
-	v_u_10 = require(script.Parent.Parent)
-	v_u_2:BindToRenderStep("movement", Enum.RenderPriority.Input.Value, function()
-		-- upvalues: (ref) v_u_16
-		v_u_16:Update()
-	end)
+local function isSeated() -- Line: 24 -- upvalues: u33 (ref)
+    local Sit = false
+    if u33 ~= nil then
+        Sit = u33.Sit
+        if not Sit then
+            Sit = u33.SeatPart ~= nil
+        end
+    end
+    return Sit
 end
-function v_u_16.Update(_) -- name: Update
-	-- upvalues: (copy) v_u_16, (copy) v_u_15, (ref) v_u_10, (ref) v_u_12, (copy) v_u_6, (ref) v_u_11, (copy) v_u_7, (ref) v_u_4, (copy) v_u_3
-	v_u_16.Direction.Target = v_u_15:GetMoveVector() + (v_u_10.AutoRun and Vector3.new(-0, -0, -1) or Vector3.new())
-	if v_u_10.humanoid.HasLanded ~= true and v_u_16.MoveVector.Magnitude <= 0 then
-		v_u_12 = v_u_6()
-	end
-	if v_u_16.Direction.Target.Magnitude <= 0.01 and v_u_11 then
-		v_u_11 = false
-		v_u_7:Fire()
-	elseif v_u_16.Direction.Target.Magnitude > 0.01 and not v_u_11 then
-		v_u_11 = true
-	end
-	if v_u_4 then
-		if v_u_10.MovementEnabled then
-			if v_u_16.Direction.Position.Magnitude > 0.001 and not v_u_16.Diving then
-				v_u_3:Move(v_u_16.Direction.Position, true)
-				v_u_12 = v_u_16.Direction.Position
-				v_u_16.MoveVector = v_u_12
-				return
-			end
-			if v_u_16.Diving then
-				v_u_16.MoveVector = v_u_12
-				return
-			end
-		else
-			v_u_3:Move(v_u_6(), true)
-		end
-	end
+local u48 = nil
+local u49 = false
+local u52 = new()
+local u53 = 0
+local u55 = false
+local v2 = {}
+local v3 = {Direction = Vector3.new(-0, -0, -1), KeyCode = Enum.KeyCode.W}
+local v4 = {Direction = Vector3.new(-1, -0, -0), KeyCode = Enum.KeyCode.A}
+local v5 = {Direction = Vector3.new(0, 0, 1), KeyCode = Enum.KeyCode.S}
+local v6 = {Direction = Vector3.new(1, 0, 0), KeyCode = Enum.KeyCode.D}
+v2[1] = v3
+v2[2] = v4
+v2[3] = v5
+v2[4] = v6
+local PlayerScripts = LocalPlayer:WaitForChild("PlayerScripts")
+local ControlScript = PlayerScripts:WaitForChild("ControlScript")
+local MasterControl = require(ControlScript:WaitForChild("MasterControl"))
+local SpringUtil = require(Utils:WaitForChild("SpringUtil"))
+local u86 = {Direction = SpringUtil.new((new()))}
+u86.Direction.Speed = 16
+u86.MoveVector = Vector3.new()
+u86.ShuffleEvent = BindableEvent.Event
+u86.Diving = false
+function u86.Init(p1) -- Line: 78 -- upvalues: u48 (ref), RunService (val), u86 (val)
+    u48 = require(script.Parent.Parent)
+    RunService:BindToRenderStep("movement", Enum.RenderPriority.Input.Value, function() -- Line: 81 -- upvalues: u86 (upval)
+        u86:Update()
+    end)
 end
-v1.InputBegan:Connect(function(p17, p18)
-	-- upvalues: (ref) v_u_8, (ref) v_u_14, (ref) v_u_13
-	if not p18 and (p17.UserInputType == Enum.UserInputType.Keyboard and (v_u_8 and p17.KeyCode == Enum.KeyCode.Space)) then
-		v_u_14 = true
-		if os.clock() - v_u_13 >= 1.4 then
-			v_u_8.Jump = true
-			v_u_13 = os.clock()
-		end
-	end
+function u86.Update(p1) -- Line: 131 -- upvalues: u86 (val), MasterControl (val), u48 (ref), u33 (ref), new (val), u52 (ref), LocalPlayer (val), u49 (ref), BindableEvent (val), Character (ref)
+    local v1
+    local MoveVector = MasterControl:GetMoveVector()
+    if not u48.AutoRun then
+        v1 = Vector3.new()
+    else
+        v1 = Vector3.new(-0, -0, -1)
+    end
+    u86.Direction.Target = MoveVector + v1
+    local Sit = false
+    if u33 ~= nil then
+        Sit = u33.Sit
+        if not Sit then
+            Sit = u33.SeatPart ~= nil
+        end
+    end
+    if Sit then
+        u86.Direction.Target = new()
+        u86.MoveVector = new()
+        u52 = new()
+        LocalPlayer:Move(new(), true)
+        return
+    end
+    local v2 = u48.humanoid.HasLanded == true
+    if not v2 and u86.MoveVector.Magnitude <= 0 then
+        u52 = new()
+    end
+    if u86.Direction.Target.Magnitude > 0.01 then
+        if 0.01 < u86.Direction.Target.Magnitude and not u49 then
+            u49 = true
+        end
+    elseif u49 then
+        u49 = false
+        BindableEvent:Fire()
+    end
+    if not Character then
+        return
+    end
+    if not u48.MovementEnabled then
+        u86.Direction.Target = new()
+        u86.MoveVector = new()
+        u52 = new()
+        LocalPlayer:Move(new(), true)
+        return
+    end
+    if 0.001 >= u86.Direction.Position.Magnitude then
+        if u86.Diving then
+            u86.MoveVector = u52
+            return
+        end
+        return
+    end
+    if not u86.Diving then
+        LocalPlayer:Move(u86.Direction.Position, true)
+        u52 = u86.Direction.Position
+        u86.MoveVector = u52
+        return
+    end
+    if not u86.Diving then
+        return
+    end
+    u86.MoveVector = u52
+end
+v1.InputBegan:Connect(function(p1, p2) -- Line: 173 -- upvalues: u33 (ref), u55 (ref), u53 (ref)
+    if not p2 and p1.UserInputType == Enum.UserInputType.Keyboard and u33 and p1.KeyCode == Enum.KeyCode.Space then
+        u55 = true
+        local v1 = os.clock() - u53
+        if 1.4 <= v1 then
+            u33.Jump = true
+            u53 = os.clock()
+        end
+    end
 end)
-v1.InputEnded:Connect(function(p19, _)
-	-- upvalues: (ref) v_u_14
-	if p19.UserInputType == Enum.UserInputType.Keyboard and p19.KeyCode == Enum.KeyCode.Space then
-		v_u_14 = false
-	end
+v1.InputEnded:Connect(function(p1, p2) -- Line: 185 -- upvalues: u55 (ref)
+    if p1.UserInputType == Enum.UserInputType.Keyboard and p1.KeyCode == Enum.KeyCode.Space then
+        u55 = false
+    end
 end)
-return v_u_16
+return u86

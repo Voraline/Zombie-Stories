@@ -1,34 +1,34 @@
-local v_u_1 = game:GetService("HttpService")
-local v_u_2 = require("./Output")
-return {
-	["CreateUUID"] = function() -- name: CreateUUID
-		-- upvalues: (copy) v_u_1
-		return string.gsub(v_u_1:GenerateGUID(false), "-", "")
-	end,
-	["FromHex"] = function(p3) -- name: FromHex
-		return string.gsub(p3, "..", function(p4)
-			local v5 = tonumber(p4, 16)
-			return string.char(v5)
-		end)
-	end,
-	["ToHex"] = function(p6) -- name: ToHex
-		-- upvalues: (copy) v_u_2
-		v_u_2.fatalAssert(typeof(p6) == "string", (("ToHex takes string, got %*"):format(p6)))
-		return string.gsub(p6, ".", function(p7)
-			return string.format("%02X", string.byte(p7))
-		end)
-	end,
-	["ToReadableHex"] = function(p8) -- name: ToReadableHex
-		-- upvalues: (copy) v_u_2
-		v_u_2.fatalAssert(typeof(p8) == "string", (("ToReadableHex takes string, got %*"):format(p8)))
-		return string.format(string.rep("%02X ", #p8), string.byte(p8, 1, -1))
-	end,
-	["NumberToBestForm"] = function(p9) -- name: NumberToBestForm
-		local v10 = tostring(p9)
-		if #v10 <= 7 then
-			return v10
-		else
-			return p9
-		end
-	end
+local HttpService = game:GetService("HttpService")
+local u7 = require("./Output")
+local v1 = {
+    CreateUUID = function() -- Line: 8 -- upvalues: HttpService (val)
+        local v1 = HttpService:GenerateGUID(false)
+        return (string.gsub(v1, "-", ""))
+    end,
+    FromHex = function(p1) -- Line: 13
+        return (string.gsub(p1, "..", function(p1) -- Line: 15
+    return (string.char((tonumber(p1, 16))))
+end))
+    end,
 }
+function v1.ToHex(p1) -- Line: 20 -- upvalues: u7 (val)
+    local v1 = typeof(p1) == "string"
+    u7.fatalAssert(v1, (("ToHex takes string, got %*"):format(p1)))
+    return (string.gsub(p1, ".", function(p1) -- Line: 23
+    return string.format("%02X", string.byte(p1))
+end))
+end
+function v1.ToReadableHex(p1) -- Line: 28 -- upvalues: u7 (val)
+    local v1 = typeof(p1) == "string"
+    u7.fatalAssert(v1, (("ToReadableHex takes string, got %*"):format(p1)))
+    v1 = string.rep("%02X ", #p1)
+    return string.format(v1, string.byte(p1, 1, -1))
+end
+function v1.NumberToBestForm(p1) -- Line: 34
+    local v1 = tostring(p1)
+    if #v1 <= 7 then
+        return v1
+    end
+    return p1
+end
+return v1

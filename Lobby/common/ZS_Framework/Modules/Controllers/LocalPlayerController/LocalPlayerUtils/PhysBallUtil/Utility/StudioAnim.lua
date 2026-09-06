@@ -1,13 +1,19 @@
 game:GetService("RunService")
-local v_u_1 = game:GetService("KeyframeSequenceProvider")
-return function(p2)
-	-- upvalues: (copy) v_u_1
-	local v3 = next
-	local v4, v5 = p2:GetChildren()
-	for _, v6 in v3, v4, v5 do
-		local v7 = v6:FindFirstChildWhichIsA("KeyframeSequence")
-		if v7 then
-			v6.AnimationId = v_u_1:RegisterKeyframeSequence(v7)
-		end
-	end
+local KeyframeSequenceProvider = game:GetService("KeyframeSequenceProvider")
+local function convert(p1) -- Line: 11 -- upvalues: KeyframeSequenceProvider (val)
+    local KeyframeSequence = p1:FindFirstChildWhichIsA("KeyframeSequence")
+    if KeyframeSequence then
+        p1.AnimationId = KeyframeSequenceProvider:RegisterKeyframeSequence(KeyframeSequence)
+    end
+end
+return function(p1) -- Line: 18 -- upvalues: KeyframeSequenceProvider (val)
+    local Children, Children_2, KeyframeSequence
+    local v1 = next
+    Children, Children_2 = p1:GetChildren()
+    for k, v in v1, Children, Children_2 do
+        KeyframeSequence = v:FindFirstChildWhichIsA("KeyframeSequence")
+        if KeyframeSequence then
+            v.AnimationId = KeyframeSequenceProvider:RegisterKeyframeSequence(KeyframeSequence)
+        end
+    end
 end

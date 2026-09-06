@@ -1,273 +1,349 @@
-local v_u_1 = game:GetService("GuiService")
-local v_u_2 = game:GetService("UserInputService")
-local v_u_3 = game:GetService("TextChatService")
-local v_u_4 = game:GetService("Players").LocalPlayer
-local v_u_5 = { Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.Touch }
-local v_u_6 = {
-	["Valid"] = true,
-	["AutoComplete"] = nil,
-	["ProcessEntry"] = nil,
-	["OnTextChanged"] = nil,
-	["Cmdr"] = nil,
-	["HistoryState"] = nil
-}
-local v_u_7 = v_u_4:WaitForChild("PlayerGui"):WaitForChild("Cmdr"):WaitForChild("Frame")
-local v_u_8 = v_u_7:WaitForChild("Line")
-local v_u_9 = v_u_7:WaitForChild("Entry")
-v_u_8.Parent = nil
-function v_u_6.UpdateLabel(p10) -- name: UpdateLabel
-	-- upvalues: (copy) v_u_9, (copy) v_u_4
-	v_u_9.TextLabel.Text = v_u_4.Name .. "@" .. p10.Cmdr.PlaceName .. "$"
+local GuiService = game:GetService("GuiService")
+local UserInputService = game:GetService("UserInputService")
+local TextChatService = game:GetService("TextChatService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local u21 = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.Touch}
+local u25 = {Valid = true}
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local Cmdr = PlayerGui:WaitForChild("Cmdr")
+local Frame = Cmdr:WaitForChild("Frame")
+local Line = Frame:WaitForChild("Line")
+local Entry = Frame:WaitForChild("Entry")
+Line.Parent = nil
+function u25.UpdateLabel(p1) -- Line: 29 -- upvalues: Entry (val), LocalPlayer (val)
+    Entry.TextLabel.Text = LocalPlayer.Name .. "@" .. p1.Cmdr.PlaceName .. "$"
 end
-function v_u_6.GetLabel(_) -- name: GetLabel
-	-- upvalues: (copy) v_u_9
-	return v_u_9.TextLabel.Text
+function u25.GetLabel(p1) -- Line: 34 -- upvalues: Entry (val)
+    return Entry.TextLabel.Text
 end
-function v_u_6.UpdateWindowHeight(_) -- name: UpdateWindowHeight
-	-- upvalues: (copy) v_u_7
-	local v11 = v_u_7.UIListLayout.AbsoluteContentSize.Y + v_u_7.UIPadding.PaddingTop.Offset + v_u_7.UIPadding.PaddingBottom.Offset
-	v_u_7.Size = UDim2.new(v_u_7.Size.X.Scale, v_u_7.Size.X.Offset, 0, (math.clamp(v11, 0, 300)))
-	v_u_7.CanvasPosition = Vector2.new(0, v11)
+function u25.UpdateWindowHeight(p1) -- Line: 39 -- upvalues: Frame (val)
+    local v1 = Frame.UIListLayout.AbsoluteContentSize.Y + Frame.UIPadding.PaddingTop.Offset + Frame.UIPadding.PaddingBottom.Offset
+    Frame.Size = UDim2.new(Frame.Size.X.Scale, Frame.Size.X.Offset, 0, (math.clamp(v1, 0, 300)))
+    Frame.CanvasPosition = Vector2.new(0, v1)
 end
-function v_u_6.AddLine(p12, p13, p14) -- name: AddLine
-	-- upvalues: (copy) v_u_6, (copy) v_u_8, (copy) v_u_7
-	local v15 = p14 or {}
-	local v16 = tostring(p13)
-	local v17 = typeof(v15) == "Color3" and {
-		["Color"] = v15
-	} or v15
-	if #v16 == 0 then
-		v_u_6:UpdateWindowHeight()
-	else
-		local v18 = p12.Cmdr.Util.EmulateTabstops(v16 or "nil", 8)
-		local v19 = v_u_8:Clone()
-		v19.Text = v18
-		v19.TextColor3 = v17.Color or v19.TextColor3
-		v19.RichText = v17.RichText or false
-		v19.Parent = v_u_7
-	end
+function u25:AddLine(p2, p3) -- Line: 48 -- upvalues: u25 (val), Line (val), Frame (val)
+    local v1 = p3
+    if not v1 then
+        v1 = {}
+    end
+    local v2 = v1
+    local v3 = tostring(p2)
+    if typeof(v2) == "Color3" then
+        v2 = {Color = v2}
+    end
+    if #v3 == 0 then
+        u25:UpdateWindowHeight()
+        return
+    end
+    v1 = self.Cmdr.Util.EmulateTabstops(v3 or "nil", 8)
+    local v4 = Line:Clone()
+    v4.Text = v1
+    local Color = v2.Color
+    if not Color then
+        Color = v4.TextColor3
+    end
+    v4.TextColor3 = Color
+    v4.RichText = v2.RichText or false
+    v4.Parent = Frame
 end
-function v_u_6.IsVisible(_) -- name: IsVisible
-	-- upvalues: (copy) v_u_7
-	return v_u_7.Visible
+function u25.IsVisible(p1) -- Line: 71 -- upvalues: Frame (val)
+    return Frame.Visible
 end
-function v_u_6.SetVisible(p20, p21) -- name: SetVisible
-	-- upvalues: (copy) v_u_7, (copy) v_u_3, (copy) v_u_9, (copy) v_u_2
-	v_u_7.Visible = p21
-	if p21 then
-		p20.PreviousChatWindowConfigurationEnabled = v_u_3.ChatWindowConfiguration.Enabled
-		p20.PreviousChatInputBarConfigurationEnabled = v_u_3.ChatInputBarConfiguration.Enabled
-		p20.PreviousChannelTabsConfigurationEnabled = v_u_3.ChannelTabsConfiguration.Enabled
-		v_u_3.ChatWindowConfiguration.Enabled = false
-		v_u_3.ChatInputBarConfiguration.Enabled = false
-		v_u_3.ChannelTabsConfiguration.Enabled = false
-		v_u_9.TextBox:CaptureFocus()
-		p20:SetEntryText("")
-		if p20.Cmdr.ActivationUnlocksMouse then
-			p20.PreviousMouseBehavior = v_u_2.MouseBehavior
-			v_u_2.MouseBehavior = Enum.MouseBehavior.Default
-			return
-		end
-	else
-		v_u_3.ChatWindowConfiguration.Enabled = p20.PreviousChatWindowConfigurationEnabled == nil and true or p20.PreviousChatWindowConfigurationEnabled
-		v_u_3.ChatInputBarConfiguration.Enabled = p20.PreviousChatInputBarConfigurationEnabled == nil and true or p20.PreviousChatInputBarConfigurationEnabled
-		v_u_3.ChannelTabsConfiguration.Enabled = p20.PreviousChannelTabsConfigurationEnabled == nil and true or p20.PreviousChannelTabsConfigurationEnabled
-		v_u_9.TextBox:ReleaseFocus()
-		p20.AutoComplete:Hide()
-		if p20.PreviousMouseBehavior then
-			v_u_2.MouseBehavior = p20.PreviousMouseBehavior
-			p20.PreviousMouseBehavior = nil
-		end
-	end
+function u25:SetVisible(p2) -- Line: 76 -- upvalues: Frame (val), TextChatService (val), Entry (val), UserInputService (val)
+    local PreviousChannelTabsConfigurationEnabled, PreviousChatInputBarConfigurationEnabled, PreviousChatWindowConfigurationEnabled
+    Frame.Visible = p2
+    if p2 then
+        self.PreviousChatWindowConfigurationEnabled = TextChatService.ChatWindowConfiguration.Enabled
+        self.PreviousChatInputBarConfigurationEnabled = TextChatService.ChatInputBarConfiguration.Enabled
+        self.PreviousChannelTabsConfigurationEnabled = TextChatService.ChannelTabsConfiguration.Enabled
+        TextChatService.ChatWindowConfiguration.Enabled = false
+        TextChatService.ChatInputBarConfiguration.Enabled = false
+        TextChatService.ChannelTabsConfiguration.Enabled = false
+        Entry.TextBox:CaptureFocus()
+        self:SetEntryText("")
+        if not self.Cmdr.ActivationUnlocksMouse then
+            return
+        end
+        self.PreviousMouseBehavior = UserInputService.MouseBehavior
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+        return
+    end
+    if self.PreviousChatWindowConfigurationEnabled == nil then
+        PreviousChatWindowConfigurationEnabled = true
+    else
+        PreviousChatWindowConfigurationEnabled = self.PreviousChatWindowConfigurationEnabled
+    end
+    TextChatService.ChatWindowConfiguration.Enabled = PreviousChatWindowConfigurationEnabled
+    if self.PreviousChatInputBarConfigurationEnabled == nil then
+        PreviousChatInputBarConfigurationEnabled = true
+    else
+        PreviousChatInputBarConfigurationEnabled = self.PreviousChatInputBarConfigurationEnabled
+    end
+    TextChatService.ChatInputBarConfiguration.Enabled = PreviousChatInputBarConfigurationEnabled
+    if self.PreviousChannelTabsConfigurationEnabled == nil then
+        PreviousChannelTabsConfigurationEnabled = true
+    else
+        PreviousChannelTabsConfigurationEnabled = self.PreviousChannelTabsConfigurationEnabled
+    end
+    TextChatService.ChannelTabsConfiguration.Enabled = PreviousChannelTabsConfigurationEnabled
+    Entry.TextBox:ReleaseFocus()
+    self.AutoComplete:Hide()
+    if self.PreviousMouseBehavior then
+        UserInputService.MouseBehavior = self.PreviousMouseBehavior
+        self.PreviousMouseBehavior = nil
+    end
 end
-function v_u_6.Hide(p22) -- name: Hide
-	return p22:SetVisible(false)
+function u25:Hide() -- Line: 113
+    return self:SetVisible(false)
 end
-function v_u_6.Show(p23) -- name: Show
-	return p23:SetVisible(true)
+function u25.Show(p1) -- Line: 118
+    return p1:SetVisible(true)
 end
-function v_u_6.SetEntryText(p24, p25) -- name: SetEntryText
-	-- upvalues: (copy) v_u_9, (copy) v_u_6
-	v_u_9.TextBox.Text = p25
-	if p24:IsVisible() then
-		v_u_9.TextBox:CaptureFocus()
-		v_u_9.TextBox.CursorPosition = #p25 + 1
-		v_u_6:UpdateWindowHeight()
-	end
+function u25:SetEntryText(p2) -- Line: 123 -- upvalues: Entry (val), u25 (val)
+    Entry.TextBox.Text = p2
+    if self:IsVisible() then
+        Entry.TextBox:CaptureFocus()
+        Entry.TextBox.CursorPosition = #p2 + 1
+        u25:UpdateWindowHeight()
+    end
 end
-function v_u_6.GetEntryText(_) -- name: GetEntryText
-	-- upvalues: (copy) v_u_9
-	return v_u_9.TextBox.Text:gsub("\t", "")
+function u25.GetEntryText(p1) -- Line: 134 -- upvalues: Entry (val)
+    return Entry.TextBox.Text:gsub("\t", "")
 end
-function v_u_6.SetIsValidInput(p26, p27, p28) -- name: SetIsValidInput
-	-- upvalues: (copy) v_u_9
-	v_u_9.TextBox.TextColor3 = p27 and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(255, 73, 73)
-	p26.Valid = p27
-	p26._errorText = p28
+function u25.SetIsValidInput(p1, p2, p3) -- Line: 140 -- upvalues: Entry (val)
+    local v1
+    local TextBox = Entry.TextBox
+    if not p2 then
+        v1 = Color3.fromRGB(255, 73, 73)
+    else
+        v1 = Color3.fromRGB(255, 255, 255)
+        if not v1 then
+            v1 = Color3.fromRGB(255, 73, 73)
+        end
+    end
+    TextBox.TextColor3 = v1
+    p1.Valid = p2
+    p1._errorText = p3
 end
-function v_u_6.HideInvalidState(_) -- name: HideInvalidState
-	-- upvalues: (copy) v_u_9
-	v_u_9.TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+function u25.HideInvalidState(p1) -- Line: 146 -- upvalues: Entry (val)
+    Entry.TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 end
-function v_u_6.LoseFocus(p29, p30) -- name: LoseFocus
-	-- upvalues: (copy) v_u_9, (copy) v_u_7, (copy) v_u_1
-	local v31 = v_u_9.TextBox.Text
-	p29:ClearHistoryState()
-	if v_u_7.Visible and not v_u_1.MenuIsOpen then
-		v_u_9.TextBox:CaptureFocus()
-	elseif v_u_1.MenuIsOpen and v_u_7.Visible then
-		p29:Hide()
-	end
-	if p30 and p29.Valid then
-		wait()
-		p29:SetEntryText("")
-		p29.ProcessEntry(v31)
-	elseif p30 then
-		p29:AddLine(p29._errorText, Color3.fromRGB(255, 153, 153))
-	end
+function u25:LoseFocus(p2) -- Line: 151 -- upvalues: Entry (val), Frame (val), GuiService (val)
+    local Text = Entry.TextBox.Text
+    self:ClearHistoryState()
+    if not Frame.Visible then
+        if GuiService.MenuIsOpen and Frame.Visible then
+            self:Hide()
+        end
+    elseif not GuiService.MenuIsOpen then
+        Entry.TextBox:CaptureFocus()
+    end
+    if not p2 or not self.Valid then
+        if p2 then
+            self:AddLine(self._errorText, Color3.fromRGB(255, 153, 153))
+        end
+        return
+    end
+    wait()
+    self:SetEntryText("")
+    self.ProcessEntry(Text)
 end
-function v_u_6.TraverseHistory(p32, p33) -- name: TraverseHistory
-	local v34 = p32.Cmdr.Dispatcher:GetHistory()
-	if p32.HistoryState == nil then
-		p32.HistoryState = {
-			["Position"] = #v34 + 1,
-			["InitialText"] = p32:GetEntryText()
-		}
-	end
-	local v35 = p32.HistoryState
-	local v36 = p32.HistoryState.Position + p33
-	local v37 = #v34 + 1
-	v35.Position = math.clamp(v36, 1, v37)
-	p32:SetEntryText(p32.HistoryState.Position == #v34 + 1 and p32.HistoryState.InitialText or v34[p32.HistoryState.Position])
+function u25:TraverseHistory(p2) -- Line: 172
+    local InitialText
+    local History = self.Cmdr.Dispatcher:GetHistory()
+    if self.HistoryState == nil then
+        self.HistoryState = {Position = #History + 1, InitialText = self:GetEntryText()}
+    end
+    self.HistoryState.Position = math.clamp(self.HistoryState.Position + p2, 1, #History + 1)
+    if self.HistoryState.Position ~= #History + 1 then
+        InitialText = History[self.HistoryState.Position]
+    else
+        InitialText = self.HistoryState.InitialText
+        if not InitialText then
+            InitialText = History[self.HistoryState.Position]
+        end
+    end
+    self:SetEntryText(InitialText)
 end
-function v_u_6.ClearHistoryState(p38) -- name: ClearHistoryState
-	p38.HistoryState = nil
+function u25:ClearHistoryState() -- Line: 190
+    self.HistoryState = nil
 end
-function v_u_6.SelectVertical(p39, p40) -- name: SelectVertical
-	if p39.AutoComplete:IsVisible() and not p39.HistoryState then
-		p39.AutoComplete:Select(p40)
-	else
-		p39:TraverseHistory(p40)
-	end
+function u25:SelectVertical(p2) -- Line: 194
+    if not (self.AutoComplete:IsVisible()) then
+        self:TraverseHistory(p2)
+        return
+    end
+    if not self.HistoryState then
+        self.AutoComplete:Select(p2)
+        return
+    end
+    self:TraverseHistory(p2)
 end
-local v_u_41 = 0
-local v_u_42 = 0
-function v_u_6.BeginInput(p43, p44, p45) -- name: BeginInput
-	-- upvalues: (copy) v_u_1, (ref) v_u_41, (ref) v_u_42, (copy) v_u_5, (copy) v_u_7
-	if v_u_1.MenuIsOpen then
-		p43:Hide()
-	end
-	if p45 and p43:IsVisible() == false then
-		return
-	elseif p43.Cmdr.ActivationKeys[p44.KeyCode] then
-		if p43.Cmdr.MashToEnable and not p43.Cmdr.Enabled then
-			if tick() - v_u_41 < 1 then
-				if v_u_42 >= 5 then
-					return p43.Cmdr:SetEnabled(true)
-				end
-				v_u_42 = v_u_42 + 1
-			else
-				v_u_42 = 1
-			end
-			v_u_41 = tick()
-		elseif p43.Cmdr.Enabled then
-			p43:SetVisible(not p43:IsVisible())
-			wait()
-			p43:SetEntryText("")
-			if v_u_1.MenuIsOpen then
-				p43:Hide()
-			end
-		end
-	elseif p43.Cmdr.Enabled == false or not p43:IsVisible() then
-		if p43:IsVisible() then
-			p43:Hide()
-		end
-	elseif p43.Cmdr.HideOnLostFocus and table.find(v_u_5, p44.UserInputType) then
-		local v46 = p44.Position
-		local v47 = v_u_7.AbsolutePosition
-		local v48 = v_u_7.AbsoluteSize
-		if v46.X < v47.X or (v46.X > v47.X + v48.X or (v46.Y < v47.Y or v46.Y > v47.Y + v48.Y)) then
-			p43:Hide()
-			return
-		end
-	else
-		if p44.KeyCode == Enum.KeyCode.Down then
-			p43:SelectVertical(1)
-			return
-		end
-		if p44.KeyCode == Enum.KeyCode.Up then
-			p43:SelectVertical(-1)
-			return
-		end
-		if p44.KeyCode == Enum.KeyCode.Return then
-			wait()
-			p43:SetEntryText(p43:GetEntryText():gsub("\n", ""):gsub("\r", ""))
-			return
-		end
-		if p44.KeyCode == Enum.KeyCode.Tab then
-			local v49 = p43.AutoComplete:GetSelectedItem()
-			local v50 = p43:GetEntryText()
-			if v49 and not (v50:sub(#v50, #v50):match("%s") and p43.AutoComplete.LastItem) then
-				local v51 = v49[2]
-				local v52 = p43.AutoComplete.Command
-				local v53, v54
-				if v52 then
-					local v55 = p43.AutoComplete.Arg
-					v53 = v52.Alias
-					if p43.AutoComplete.NumArgs == #v52.ArgumentDefinitions then
-						v54 = false
-					else
-						v54 = p43.AutoComplete.IsPartial == false
-					end
-					local v56 = v52.Arguments
-					for v57 = 1, #v56 do
-						local v58 = v56[v57]
-						local v59 = v58.RawSegments
-						if v58 == v55 then
-							v59[#v59] = v51
-						end
-						local v60 = v58.Prefix .. table.concat(v59, ",")
-						if v60:find(" ") or v60 == "" then
-							v60 = ("%q"):format(v60)
-						end
-						v53 = ("%s %s"):format(v53, v60)
-						if v58 == v55 then
-							break
-						end
-					end
-				else
-					v53 = v51
-					v54 = true
-				end
-				wait()
-				p43:SetEntryText(v53 .. (v54 and " " or ""))
-			else
-				wait()
-				p43:SetEntryText(p43:GetEntryText())
-			end
-		end
-		p43:ClearHistoryState()
-	end
+local u63 = 0
+local u64 = 0
+function u25:BeginInput(p2, p3) -- Line: 205 -- upvalues: GuiService (val), u63 (ref), u64 (ref), u21 (val), Frame (val)
+    if GuiService.MenuIsOpen then
+        self:Hide()
+    end
+    if not p3 then
+        if self.Cmdr.ActivationKeys[p2.KeyCode] then
+            if not self.Cmdr.MashToEnable or self.Cmdr.Enabled then
+                if self.Cmdr.Enabled then
+                    self:SetVisible(not self:IsVisible())
+                    wait()
+                    self:SetEntryText("")
+                    if GuiService.MenuIsOpen then
+                        self:Hide()
+                    end
+                end
+                return
+            end
+            local v1 = tick() - u63
+            if v1 >= 1 then
+                u64 = 1
+                u63 = tick()
+                return
+            end
+            if 5 <= u64 then
+                return self.Cmdr:SetEnabled(true)
+            end
+            u64 = u64 + 1
+            u63 = tick()
+            return
+        end
+        if self.Cmdr.Enabled == false then
+            if self:IsVisible() then
+                self:Hide()
+            end
+            return
+        else
+            if not (self:IsVisible()) then
+                if self:IsVisible() then
+                    self:Hide()
+                end
+                return
+            end
+            if not self.Cmdr.HideOnLostFocus then
+                local v2
+                if p2.KeyCode == Enum.KeyCode.Down then
+                    self:SelectVertical(1)
+                    return
+                end
+                if p2.KeyCode == Enum.KeyCode.Up then
+                    self:SelectVertical(-1)
+                    return
+                end
+                if p2.KeyCode == Enum.KeyCode.Return then
+                    wait()
+                    v2 = self:GetEntryText():gsub("\n", "")
+                    self:SetEntryText(v2:gsub("\r", ""))
+                    return
+                end
+                if p2.KeyCode ~= Enum.KeyCode.Tab then
+                    self:ClearHistoryState()
+                    return
+                else
+                    local SelectedItem = self.AutoComplete:GetSelectedItem()
+                    local EntryText = self:GetEntryText()
+                    if not SelectedItem then
+                        wait()
+                        self:SetEntryText(self:GetEntryText())
+                        return
+                    else
+                        local v3 = #EntryText
+                        v2 = EntryText:sub(v3, #EntryText)
+                        if not (v2:match("%s")) then
+                            local Alias, v4, v5
+                            v2 = SelectedItem[2]
+                            v3 = true
+                            local Command = self.AutoComplete.Command
+                            if not Command then
+                                Alias = v2
+                            else
+                                local RawSegments, v6, v7
+                                local Arg = self.AutoComplete.Arg
+                                Alias = Command.Alias
+                                local v8 = if self.AutoComplete.NumArgs ~= #Command.ArgumentDefinitions then self.AutoComplete.IsPartial == false else false
+                                v3 = v8
+                                local Arguments = Command.Arguments
+                                local v9 = #Arguments
+                                local v10 = 1
+                                for i = 1, v9, v10 do
+                                    v6 = Arguments[i]
+                                    RawSegments = v6.RawSegments
+                                    if v6 == Arg then
+                                        RawSegments[#RawSegments] = v2
+                                    end
+                                    v7 = v6.Prefix .. table.concat(RawSegments, ",")
+                                    if v7:find(" ") then
+                                        v7 = ("%q"):format(v7)
+                                    elseif v7 ~= "" then
+                                    end
+                                    Alias = ("%s %s"):format(Alias, v7)
+                                    if v6 == Arg then
+                                        wait()
+                                        if not v3 then
+                                            v5 = ""
+                                        else
+                                            v5 = " "
+                                        end
+                                        v4:SetEntryText(Alias .. v5)
+                                        return
+                                    end
+                                end
+                            end
+                            wait()
+                            if not v3 then
+                                v5 = ""
+                            else
+                                v5 = " "
+                            end
+                            v4:SetEntryText(Alias .. v5)
+                            return
+                        elseif self.AutoComplete.LastItem then
+                            wait()
+                            self:SetEntryText(self:GetEntryText())
+                            return
+                        end
+                    end
+                end
+            elseif table.find(u21, p2.UserInputType) then
+                local Position = p2.Position
+                local AbsolutePosition = Frame.AbsolutePosition
+                local AbsoluteSize = Frame.AbsoluteSize
+                if Position.X < AbsolutePosition.X or AbsolutePosition.X + AbsoluteSize.X < Position.X or Position.Y < AbsolutePosition.Y then
+                    self:Hide()
+                    return
+                end
+                if AbsolutePosition.Y + AbsoluteSize.Y >= Position.Y then
+                    return
+                end
+                self:Hide()
+                return
+            end
+        end
+    elseif self:IsVisible() == false then
+        return
+    end
 end
-v_u_9.TextBox.FocusLost:Connect(function(p61)
-	-- upvalues: (copy) v_u_6
-	return v_u_6:LoseFocus(p61)
+Entry.TextBox.FocusLost:Connect(function(p1) -- Line: 316 -- upvalues: u25 (val)
+    return u25:LoseFocus(p1)
 end)
-v_u_2.InputBegan:Connect(function(p62, p63)
-	-- upvalues: (copy) v_u_6
-	return v_u_6:BeginInput(p62, p63)
+UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 320 -- upvalues: u25 (val)
+    return u25:BeginInput(p1, p2)
 end)
-v_u_9.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
-	-- upvalues: (copy) v_u_7, (copy) v_u_9, (copy) v_u_6
-	v_u_7.CanvasPosition = Vector2.new(0, v_u_7.AbsoluteCanvasSize.Y)
-	if v_u_9.TextBox.Text:match("\t") then
-		v_u_9.TextBox.Text = v_u_9.TextBox.Text:gsub("\t", "")
-	elseif v_u_6.OnTextChanged then
-		return v_u_6.OnTextChanged(v_u_9.TextBox.Text)
-	end
+local PropertyChangedSignal = Entry.TextBox:GetPropertyChangedSignal("Text")
+PropertyChangedSignal:Connect(function() -- Line: 324 -- upvalues: Frame (val), Entry (val), u25 (val)
+    Frame.CanvasPosition = Vector2.new(0, Frame.AbsoluteCanvasSize.Y)
+    if Entry.TextBox.Text:match("\t") then
+        Entry.TextBox.Text = Entry.TextBox.Text:gsub("\t", "")
+        return
+    end
+    if u25.OnTextChanged then
+        return u25.OnTextChanged(Entry.TextBox.Text)
+    end
 end)
-v_u_7.ChildAdded:Connect(function()
-	-- upvalues: (copy) v_u_6
-	task.defer(v_u_6.UpdateWindowHeight)
+Frame.ChildAdded:Connect(function() -- Line: 336 -- upvalues: u25 (val)
+    task.defer(u25.UpdateWindowHeight)
 end)
-return v_u_6
+return u25

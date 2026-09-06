@@ -1,53 +1,64 @@
 return {
-	["OpenDoor"] = function(_, p1, p2, p3, p4) -- name: OpenDoor
-		local v5 = p2 or 1
-		local v6 = p3 or Enum.EasingStyle.Quad
-		local v7 = p4 or Enum.EasingDirection.Out
-		local v8 = p1:GetChildren()
-		local v9 = p1:FindFirstChild("OriginalCF")
-		local v10 = p1:FindFirstChild("OpenOffset")
-		if v10 then
-			local v11 = v10.Value
-			if not v9 then
-				for _, v12 in pairs(v8) do
-					if v12:IsA("BasePart") then
-						if p1.PrimaryPart then
-							local v13 = Instance.new("Weld")
-							v13.Part0 = p1.PrimaryPart
-							v13.Parent = p1.PrimaryPart
-							v13.Part1 = v12
-							v13.C0 = p1.PrimaryPart.CFrame:Inverse() * v12.CFrame
-							v12.Anchored = false
-						else
-							p1.PrimaryPart = v12
-						end
-					end
-				end
-				v9 = Instance.new("CFrameValue")
-				v9.Value = p1.PrimaryPart.CFrame
-				v9.Name = "OriginalCF"
-				v9.Parent = p1
-			end
-			local v14 = v9.Value
-			game:GetService("TweenService"):Create(p1.PrimaryPart, TweenInfo.new(v5, v6, v7), {
-				["CFrame"] = v14 + v11
-			}):Play()
-		else
-			print("Door " .. p1.Name .. " had no open offset")
-		end
-	end,
-	["CloseDoor"] = function(_, p15, p16, p17, p18) -- name: CloseDoor
-		local v19 = p16 or 1
-		local v20 = p17 or Enum.EasingStyle.Quad
-		local v21 = p18 or Enum.EasingDirection.Out
-		local v22 = p15:FindFirstChild("OriginalCF")
-		if v22 then
-			local v23 = {
-				["CFrame"] = v22.Value
-			}
-			game:GetService("TweenService"):Create(p15.PrimaryPart, TweenInfo.new(v19, v20, v21), v23):Play()
-		else
-			print("Door " .. p15.Name .. " had no original CFrame")
-		end
-	end
+    OpenDoor = function(p1, p2, p3, p4, p5) -- Line: 3
+        local v1 = p3 or 1
+        local Quad = p4
+        if not Quad then
+            Quad = Enum.EasingStyle.Quad
+        end
+        local Out = p5
+        if not Out then
+            Out = Enum.EasingDirection.Out
+        end
+        local Children = p2:GetChildren()
+        local OriginalCF = p2:FindFirstChild("OriginalCF")
+        local OpenOffset = p2:FindFirstChild("OpenOffset")
+        if not OpenOffset then
+            print("Door " .. p2.Name .. " had no open offset")
+            return
+        end
+        local Value = OpenOffset.Value
+        if not OriginalCF then
+            local Weld, v2
+            for k, v in pairs(Children) do
+                if v:IsA("BasePart") then
+                    if not p2.PrimaryPart then
+                        p2.PrimaryPart = v
+                    else
+                        Weld = Instance.new("Weld")
+                        Weld.Part0 = p2.PrimaryPart
+                        Weld.Parent = p2.PrimaryPart
+                        Weld.Part1 = v
+                        v2 = p2.PrimaryPart.CFrame:Inverse()
+                        Weld.C0 = v2 * v.CFrame
+                        v.Anchored = false
+                    end
+                end
+            end
+            OriginalCF = Instance.new("CFrameValue")
+            OriginalCF.Value = p2.PrimaryPart.CFrame
+            OriginalCF.Name = "OriginalCF"
+            OriginalCF.Parent = p2
+        end
+        local TweenService = game:GetService("TweenService")
+        local v3 = TweenInfo.new(v1, Quad, Out)
+        TweenService:Create(p2.PrimaryPart, v3, {CFrame = OriginalCF.Value + Value}):Play()
+    end,
+    CloseDoor = function(p1, p2, p3, p4, p5) -- Line: 43
+        local Quad = p4
+        if not Quad then
+            Quad = Enum.EasingStyle.Quad
+        end
+        local Out = p5
+        if not Out then
+            Out = Enum.EasingDirection.Out
+        end
+        local OriginalCF = p2:FindFirstChild("OriginalCF")
+        if not OriginalCF then
+            print("Door " .. p2.Name .. " had no original CFrame")
+            return
+        end
+        local TweenService = game:GetService("TweenService")
+        local v1 = TweenInfo.new(p3 or 1, Quad, Out)
+        TweenService:Create(p2.PrimaryPart, v1, {CFrame = OriginalCF.Value}):Play()
+    end,
 }

@@ -1,62 +1,66 @@
-local v_u_1 = game:GetService("TweenService")
-local v_u_2 = TweenInfo.new(0)
-local v3 = {
-	["Cache"] = {}
-}
-local v_u_4 = {
-	"BackgroundTransparency",
-	"ImageTransparency",
-	"TextTransparency",
-	"TextStrokeTransparency"
-}
-local function v_u_9(p_u_5, p6) -- name: CreateCache
-	-- upvalues: (copy) v_u_4
-	local v7 = {}
-	for _, v_u_8 in next, v_u_4 do
-		if pcall(function()
-			-- upvalues: (copy) p_u_5, (copy) v_u_8
-			return p_u_5[v_u_8]
-		end) then
-			v7[v_u_8] = p_u_5[v_u_8]
-		end
-	end
-	p6[p_u_5] = v7
+local TweenService = game:GetService("TweenService")
+local u7 = TweenInfo.new(0)
+local v1 = {}
+local v2 = {}
+v1.Cache = v2
+local u10 = {"BackgroundTransparency", "ImageTransparency", "TextTransparency", "TextStrokeTransparency"}
+local function CreateCache(p1, p2) -- Line: 38 -- upvalues: u10 (val)
+    local v1 = {}
+    local v2 = next
+    local v3 = u10
+    local v4 = nil
+    for k, v in v2, v3, v4 do
+        if pcall(function() -- Line: 42 -- upvalues: p1 (val), v (val)
+    return p1[v]
+end) then
+            v1[v] = p1[v]
+        end
+    end
+    p2[p1] = v1
 end
-local function v_u_19(p10, p11, p12) -- name: Set
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	for v13, v14 in next, p10 do
-		local v15 = {}
-		for v16, v17 in next, v14 do
-			v15[v16] = v17 + (1 - v17) * p11
-		end
-		local v_u_18 = v_u_1:Create(v13, p12 or v_u_2, v15)
-		v_u_18:Play()
-		v_u_18.Completed:Connect(function()
-			-- upvalues: (copy) v_u_18
-			v_u_18:Destroy()
-		end)
-	end
+local function Set(p1, p2, p3) -- Line: 50 -- upvalues: TweenService (val), u7 (val)
+    local v1, v2, v3, v4, v5
+    local v6 = next
+    local v7 = p1
+    local v8 = nil
+    for k, v in v6, v7, v8 do
+        v4 = {}
+        v5 = next
+        v1 = v
+        v2 = nil
+        for k2, i in v5, v1, v2 do
+            v4[k2] = i + (1 - i) * v9
+        end
+        v3 = v10
+        if not v3 then
+            v3 = u7
+        end
+        local u38 = TweenService:Create(k, v3, v4)
+        u38:Play()
+        u38.Completed:Connect(function() -- Line: 59 -- upvalues: u38 (val)
+            u38:Destroy()
+        end)
+    end
 end
-function v3.Revert(p20, p21, p22) -- name: Revert
-	-- upvalues: (copy) v_u_19
-	local v23 = p20.Cache[p21]
-	if v23 then
-		v_u_19(v23, 0, p22)
-	end
+function v1.Revert(p1, p2, p3) -- Line: 66 -- upvalues: Set (val)
+    local v1 = p1.Cache[p2]
+    if v1 then
+        Set(v1, 0, p3)
+    end
 end
-function v3.SetTransparency(p24, p25, p26, p27) -- name: SetTransparency
-	-- upvalues: (copy) v_u_9, (copy) v_u_19
-	local v28 = p24.Cache[p25]
-	if not v28 then
-		v28 = {}
-		v_u_9(p25, v28)
-		local v29 = next
-		local v30, v31 = p25:GetDescendants()
-		for _, v32 in v29, v30, v31 do
-			v_u_9(v32, v28)
-		end
-		p24.Cache[p25] = v28
-	end
-	v_u_19(v28, p26, p27)
+function v1.SetTransparency(p1, p2, p3, p4) -- Line: 74 -- upvalues: CreateCache (val), Set (val)
+    local v1 = p1.Cache[p2]
+    if not v1 then
+        local Descendants, Descendants_2
+        v1 = {}
+        CreateCache(p2, v1)
+        local v2 = next
+        Descendants, Descendants_2 = p2:GetDescendants()
+        for k, v in v2, Descendants, Descendants_2 do
+            CreateCache(v, v1)
+        end
+        p1.Cache[p2] = v1
+    end
+    Set(v1, p3, p4)
 end
-return v3
+return v1

@@ -1,159 +1,136 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-require(v1.Types)
-local v_u_2 = require(v1.Logging.logError)
-local v_u_3 = require(v1.Logging.logErrorNonFatal)
-local v_u_4 = require(v1.Animation.unpackType)
-local v_u_5 = require(v1.Animation.SpringScheduler)
-local v_u_6 = require(v1.Dependencies.useDependency)
-local v_u_7 = require(v1.Dependencies.initDependency)
-local v_u_8 = require(v1.Dependencies.updateAll)
-local v_u_9 = require(v1.Utility.xtypeof)
-local v_u_10 = require(v1.State.unwrap)
-local v11 = {}
-local v_u_12 = {
-	["__index"] = v11
-}
-local v_u_13 = {
-	["__mode"] = "k"
-}
-function v11.get(p14, p15) -- name: get
-	-- upvalues: (copy) v_u_6
-	if p15 ~= false then
-		v_u_6(p14)
-	end
-	return p14._currentValue
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+require(Parent.Types)
+local logError = require(Parent.Logging.logError)
+local logErrorNonFatal = require(Parent.Logging.logErrorNonFatal)
+local unpackType = require(Parent.Animation.unpackType)
+local SpringScheduler = require(Parent.Animation.SpringScheduler)
+local useDependency = require(Parent.Dependencies.useDependency)
+local initDependency = require(Parent.Dependencies.initDependency)
+local updateAll = require(Parent.Dependencies.updateAll)
+local xtypeof = require(Parent.Utility.xtypeof)
+local unwrap = require(Parent.State.unwrap)
+local v1 = {}
+local u46 = {__index = v1}
+local u47 = {__mode = "k"}
+function v1:get(p2) -- Line: 30 -- upvalues: useDependency (val)
+    if p2 ~= false then
+        useDependency(self)
+    end
+    return self._currentValue
 end
-function v11.setPosition(p16, p17) -- name: setPosition
-	-- upvalues: (copy) v_u_2, (copy) v_u_4, (copy) v_u_5, (copy) v_u_8
-	local v18 = typeof(p17)
-	if v18 ~= p16._currentType then
-		v_u_2("springTypeMismatch", nil, v18, p16._currentType)
-	end
-	p16._springPositions = v_u_4(p17, v18)
-	p16._currentValue = p17
-	v_u_5.add(p16)
-	v_u_8(p16)
+function v1.setPosition(p1, p2) -- Line: 44 -- upvalues: logError (val), unpackType (val), SpringScheduler (val), updateAll (val)
+    local v1 = typeof(p2)
+    if v1 ~= p1._currentType then
+        logError("springTypeMismatch", nil, v1, p1._currentType)
+    end
+    p1._springPositions = unpackType(p2, v1)
+    p1._currentValue = p2
+    SpringScheduler.add(p1)
+    updateAll(p1)
 end
-function v11.setVelocity(p19, p20) -- name: setVelocity
-	-- upvalues: (copy) v_u_2, (copy) v_u_4, (copy) v_u_5
-	local v21 = typeof(p20)
-	if v21 ~= p19._currentType then
-		v_u_2("springTypeMismatch", nil, v21, p19._currentType)
-	end
-	p19._springVelocities = v_u_4(p20, v21)
-	v_u_5.add(p19)
+function v1.setVelocity(p1, p2) -- Line: 63 -- upvalues: logError (val), unpackType (val), SpringScheduler (val)
+    local v1 = typeof(p2)
+    if v1 ~= p1._currentType then
+        logError("springTypeMismatch", nil, v1, p1._currentType)
+    end
+    p1._springVelocities = unpackType(p2, v1)
+    SpringScheduler.add(p1)
 end
-function v11.addVelocity(p22, p23) -- name: addVelocity
-	-- upvalues: (copy) v_u_2, (copy) v_u_4, (copy) v_u_5
-	local v24 = typeof(p23)
-	if v24 ~= p22._currentType then
-		v_u_2("springTypeMismatch", nil, v24, p22._currentType)
-	end
-	local v25 = v_u_4(p23, v24)
-	for v26, v27 in ipairs(v25) do
-		local v28 = p22._springVelocities
-		v28[v26] = v28[v26] + v27
-	end
-	v_u_5.add(p22)
+function v1.addVelocity(p1, p2) -- Line: 80 -- upvalues: logError (val), unpackType (val), SpringScheduler (val)
+    local _springVelocities
+    local v1 = typeof(p2)
+    if v1 ~= p1._currentType then
+        logError("springTypeMismatch", nil, v1, p1._currentType)
+    end
+    local v2 = unpackType(p2, v1)
+    for i, v in ipairs(v2) do
+        _springVelocities = p1._springVelocities
+        _springVelocities[i] = _springVelocities[i] + v
+    end
+    SpringScheduler.add(p1)
 end
-function v11.update(p29) -- name: update
-	-- upvalues: (copy) v_u_10, (copy) v_u_3, (copy) v_u_4, (copy) v_u_5
-	local v30 = p29._goalState:get(false)
-	if v30 == p29._goalValue then
-		local v31 = v_u_10(p29._damping)
-		if typeof(v31) == "number" then
-			if v31 < 0 then
-				v_u_3("invalidSpringDamping", nil, v31)
-			else
-				p29._currentDamping = v31
-			end
-		else
-			v_u_3("mistypedSpringDamping", nil, (typeof(v31)))
-		end
-		local v32 = v_u_10(p29._speed)
-		if typeof(v32) == "number" then
-			if v32 < 0 then
-				v_u_3("invalidSpringSpeed", nil, v32)
-			else
-				p29._currentSpeed = v32
-			end
-		else
-			v_u_3("mistypedSpringSpeed", nil, (typeof(v32)))
-		end
-		return false
-	else
-		p29._goalValue = v30
-		local v33 = p29._currentType
-		local v34 = typeof(v30)
-		p29._currentType = v34
-		local v35 = v_u_4(v30, v34)
-		local v36 = #v35
-		p29._springGoals = v35
-		if v34 == v33 then
-			if v36 == 0 then
-				p29._currentValue = p29._goalValue
-				return true
-			else
-				v_u_5.add(p29)
-				return false
-			end
-		else
-			p29._currentValue = p29._goalValue
-			local v37 = table.create(v36, 0)
-			local v38 = table.create(v36, 0)
-			for v39, v40 in ipairs(v35) do
-				v37[v39] = v40
-			end
-			p29._springPositions = v37
-			p29._springVelocities = v38
-			v_u_5.remove(p29)
-			return true
-		end
-	end
+function v1:update() -- Line: 97 -- upvalues: unwrap (val), logErrorNonFatal (val), unpackType (val), SpringScheduler (val)
+    local v1
+    local v2 = self._goalState:get(false)
+    if v2 == self._goalValue then
+        local v3 = unwrap(self._damping)
+        if typeof(v3) ~= "number" then
+            logErrorNonFatal("mistypedSpringDamping", nil, (typeof(v3)))
+        elseif v3 >= 0 then
+            self._currentDamping = v3
+        else
+            logErrorNonFatal("invalidSpringDamping", nil, v3)
+        end
+        v1 = unwrap(self._speed)
+        if typeof(v1) ~= "number" then
+            logErrorNonFatal("mistypedSpringSpeed", nil, (typeof(v1)))
+        elseif v1 >= 0 then
+            self._currentSpeed = v1
+        else
+            logErrorNonFatal("invalidSpringSpeed", nil, v1)
+        end
+        return false
+    end
+    self._goalValue = v2
+    local _currentType = self._currentType
+    v1 = typeof(v2)
+    self._currentType = v1
+    local v4 = unpackType(v2, v1)
+    local v5 = #v4
+    self._springGoals = v4
+    if v1 == _currentType then
+        if v5 == 0 then
+            self._currentValue = self._goalValue
+            return true
+        end
+        SpringScheduler.add(self)
+        return false
+    end
+    self._currentValue = self._goalValue
+    local v6 = table.create(v5, 0)
+    local v7 = table.create(v5, 0)
+    for i, v in ipairs(v4) do
+        v6[i] = v
+    end
+    self._springPositions = v6
+    self._springVelocities = v7
+    SpringScheduler.remove(self)
+    return true
 end
-return function(p41, p42, p43) -- name: Spring
-	-- upvalues: (copy) v_u_9, (copy) v_u_13, (copy) v_u_10, (copy) v_u_12, (copy) v_u_7
-	local v44 = p42 == nil and 10 or p42
-	local v45 = p43 == nil and 1 or p43
-	local v46 = {
-		[p41] = true
-	}
-	if v_u_9(v44) == "State" then
-		v46[v44] = true
-	end
-	if v_u_9(v45) == "State" then
-		v46[v45] = true
-	end
-	local v47 = {
-		["type"] = "State",
-		["kind"] = "Spring",
-		["dependencySet"] = nil,
-		["dependentSet"] = nil,
-		["_speed"] = nil,
-		["_damping"] = nil,
-		["_goalState"] = nil,
-		["_goalValue"] = nil,
-		["_currentType"] = nil,
-		["_currentValue"] = nil,
-		["_currentSpeed"] = nil,
-		["_currentDamping"] = nil,
-		["_springPositions"] = nil,
-		["_springGoals"] = nil,
-		["_springVelocities"] = nil,
-		["dependencySet"] = v46
-	}
-	local v48 = v_u_13
-	v47.dependentSet = setmetatable({}, v48)
-	v47._speed = v44
-	v47._damping = v45
-	v47._goalState = p41
-	v47._currentSpeed = v_u_10(v44)
-	v47._currentDamping = v_u_10(v45)
-	local v49 = v_u_12
-	local v50 = setmetatable(v47, v49)
-	v_u_7(v50)
-	p41.dependentSet[v50] = true
-	v50:update()
-	return v50
+return function(p1, p2, p3) -- Line: 165 -- upvalues: xtypeof (val), u47 (val), unwrap (val), u46 (val), initDependency (val)
+    local v1, v2
+    if p2 ~= nil then
+        v1 = p2
+    else
+        v1 = 10
+    end
+    if p3 ~= nil then
+        v2 = p3
+    else
+        v2 = 1
+    end
+    local v3 = {}
+    v3[p1] = true
+    if xtypeof(v1) == "State" then
+        v3[v1] = true
+    end
+    if xtypeof(v2) == "State" then
+        v3[v2] = true
+    end
+    local v4 = setmetatable({
+        type = "State",
+        kind = "Spring",
+        dependencySet = v3,
+        dependentSet = setmetatable({}, u47),
+        _speed = v1,
+        _damping = v2,
+        _goalState = p1,
+        _currentSpeed = unwrap(v1),
+        _currentDamping = unwrap(v2),
+    }, u46)
+    initDependency(v4)
+    p1.dependentSet[v4] = true
+    v4:update()
+    return v4
 end

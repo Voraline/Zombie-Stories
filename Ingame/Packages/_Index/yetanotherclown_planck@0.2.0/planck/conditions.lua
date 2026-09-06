@@ -1,90 +1,78 @@
-local v_u_1 = require(script.Parent.utils)
-local v_u_2 = v_u_1.getConnectFunction
-local v_u_3 = {}
+local utils = require(script.Parent.utils)
+local getConnectFunction = utils.getConnectFunction
+local u8 = {}
 return {
-	["timePassed"] = function(p_u_4) -- name: timePassed
-		local v_u_5 = nil
-		return function()
-			-- upvalues: (ref) v_u_5, (copy) p_u_4
-			if v_u_5 ~= nil and p_u_4 > os.clock() - v_u_5 then
-				return false
-			end
-			v_u_5 = os.clock()
-			return true
-		end
-	end,
-	["runOnce"] = function() -- name: runOnce
-		local v_u_6 = false
-		return function()
-			-- upvalues: (ref) v_u_6
-			if v_u_6 then
-				return false
-			end
-			v_u_6 = true
-			return true
-		end
-	end,
-	["onEvent"] = function(p7, p8) -- name: onEvent
-		-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-		local v9 = v_u_2(p7, p8)
-		assert(v9, "Event passed to .onEvent is not valid")
-		local v_u_10 = false
-		local v_u_11 = {}
-		local v_u_12 = nil
-		local function v_u_13() -- name: disconnect
-			-- upvalues: (ref) v_u_12, (ref) v_u_1
-			if v_u_12 then
-				v_u_1.disconnectEvent(v_u_12)
-				v_u_12 = nil
-			end
-		end
-		v_u_12 = v9(function(...) -- name: callback
-			-- upvalues: (ref) v_u_10, (copy) v_u_11
-			v_u_10 = true
-			local v14 = v_u_11
-			table.insert(v14, { ... })
-		end)
-		local function v15() -- name: hasNewEvent
-			-- upvalues: (ref) v_u_10, (copy) v_u_11
-			if v_u_10 then
-				v_u_10 = false
-				return true
-			else
-				table.clear(v_u_11)
-				return false
-			end
-		end
-		v_u_3[v15] = v_u_13
-		return v15, function() -- name: collectEvents
-			-- upvalues: (copy) v_u_11
-			local v_u_16 = 0
-			return function()
-				-- upvalues: (ref) v_u_16, (ref) v_u_11
-				v_u_16 = v_u_16 + 1
-				local v17 = table.remove(v_u_11, 1)
-				if v17 then
-					return v_u_16, table.unpack(v17)
-				else
-					return nil
-				end
-			end
-		end, function() -- name: getDisconnectFn
-			-- upvalues: (copy) v_u_13
-			return v_u_13
-		end
-	end,
-	["isNot"] = function(p_u_18, ...) -- name: isNot
-		return function()
-			-- upvalues: (copy) p_u_18
-			return not p_u_18()
-		end
-	end,
-	["cleanupCondition"] = function(p19) -- name: cleanupCondition
-		-- upvalues: (copy) v_u_3
-		local v20 = v_u_3[p19]
-		if v20 then
-			v20()
-			v_u_3[p19] = nil
-		end
-	end
+    timePassed = function(p1) -- Line: 22
+        local u1 = nil
+        return function() -- Line: 25 -- upvalues: u1 (ref), p1 (val)
+            if u1 == nil then
+                u1 = os.clock()
+                return true
+            end
+            local v1 = os.clock() - u1
+            if p1 > v1 then
+                return false
+            end
+            u1 = os.clock()
+            return true
+        end
+    end,
+    runOnce = function() -- Line: 39
+        local u0 = false
+        return function() -- Line: 42 -- upvalues: u0 (ref)
+            if u0 then
+                return false
+            end
+            u0 = true
+            return true
+        end
+    end,
+    onEvent = function(p1, p2) -- Line: 107 -- upvalues: getConnectFunction (val), utils (val), u8 (val)
+        local v1 = getConnectFunction(p1, p2)
+        assert(v1, "Event passed to .onEvent is not valid")
+        local u10 = false
+        local u11 = {}
+        local u12 = nil
+        local function disconnect() -- Line: 119 -- upvalues: u12 (ref), utils (upval)
+            if not u12 then
+                return
+            end
+            utils.disconnectEvent(u12)
+            u12 = nil
+        end
+        local function hasNewEvent() -- Line: 135 -- upvalues: u10 (ref), u11 (val)
+            if u10 then
+                u10 = false
+                return true
+            end
+            table.clear(u11)
+            return false
+        end
+        u8[hasNewEvent] = disconnect
+        return hasNewEvent, function() -- Line: 145 -- upvalues: u11 (val)
+            local u0 = 0
+            return function() -- Line: 147 -- upvalues: u0 (ref), u11 (upval)
+                u0 = u0 + 1
+                local v1 = table.remove(u11, 1)
+                if v1 then
+                    return u0, table.unpack(v1)
+                end
+                return nil
+            end
+        end, function() -- Line: 160 -- upvalues: disconnect (val)
+            return disconnect
+        end
+    end,
+    isNot = function(p1, ...) -- Line: 176
+        return function() -- Line: 177 -- upvalues: p1 (val)
+            return not p1()
+        end
+    end,
+    cleanupCondition = function(p1) -- Line: 56 -- upvalues: u8 (val)
+        local v1 = u8[p1]
+        if v1 then
+            v1()
+            u8[p1] = nil
+        end
+    end,
 }

@@ -1,89 +1,99 @@
-local v_u_1 = game:GetService("SoundService")
-local v2 = {}
-local v_u_3 = script:WaitForChild("HitMarkLense")
-local v_u_4 = v_u_3:WaitForChild("Crosshair"):WaitForChild("Hitmarker")
-v_u_3.Parent = game.Players.LocalPlayer.PlayerGui
-local v5 = require(script:WaitForChild("SpriteClip"))
-local v_u_6 = game:GetService("TweenService")
-local v_u_7 = v5.new()
-v_u_7.InheritSpriteSheet = true
-v_u_7.SpriteSizePixel = Vector2.new(341.3333333333333, 341.3333333333333)
-v_u_7.SpriteCountX = 3
-v_u_7.SpriteCount = 9
-v_u_7.FrameRate = 60
-v_u_7.CurrentFrame = 9
-v_u_7.Looped = false
-local v_u_8 = nil
-local v_u_9 = nil
-function v2.Init(_, p10) -- name: Init
-	-- upvalues: (ref) v_u_8, (copy) v_u_7, (ref) v_u_9, (copy) v_u_6
-	v_u_8 = p10
-	v_u_7.Adornee = v_u_8:WaitForChild("Crosshair"):WaitForChild("SpriteLabel")
-	v_u_9 = v_u_6:Create(v_u_8.Crosshair.ArmorIcon, TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-		["ImageTransparency"] = 1
-	})
+local SoundService = game:GetService("SoundService")
+local v1 = {}
+local HitMarkLense = script:WaitForChild("HitMarkLense")
+local Crosshair = HitMarkLense:WaitForChild("Crosshair")
+local Hitmarker = Crosshair:WaitForChild("Hitmarker")
+HitMarkLense.Parent = game.Players.LocalPlayer.PlayerGui
+local SpriteClip = require(script:WaitForChild("SpriteClip"))
+local TweenService = game:GetService("TweenService")
+local u36 = SpriteClip.new()
+u36.InheritSpriteSheet = true
+u36.SpriteSizePixel = Vector2.new(341.3333333333333, 341.3333333333333)
+u36.SpriteCountX = 3
+u36.SpriteCount = 9
+u36.FrameRate = 60
+u36.CurrentFrame = 9
+u36.Looped = false
+local u47 = nil
+local u48 = nil
+function v1.Init(p1, p2) -- Line: 25 -- upvalues: u47 (ref), u36 (val), u48 (ref), TweenService (val)
+    u47 = p2
+    local Crosshair = u47:WaitForChild("Crosshair")
+    u36.Adornee = Crosshair:WaitForChild("SpriteLabel")
+    local v1 = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    u48 = TweenService:Create(u47.Crosshair.ArmorIcon, v1, {ImageTransparency = 1})
 end
-function v2.UpdateLense(_, p11) -- name: UpdateLense
-	-- upvalues: (copy) v_u_7, (copy) v_u_4, (copy) v_u_3, (ref) v_u_8
-	if p11 and p11.Parent then
-		v_u_7.Adornee.Parent = v_u_4
-		v_u_3.Enabled = true
-		local v12 = p11.Position
-		local v13 = p11:FindFirstAncestorWhichIsA("Part")
-		local v14 = Vector2.new(v12.X.Scale, v12.Y.Scale)
-		local _ = v13.Size
-		local v15 = v13.CFrame * CFrame.new(-(v13.Size.X / 2) + v13.Size.X * v14.X, v13.Size.Y / 2 - v13.Size.Y * v14.Y, 0)
-		local v16 = workspace.Camera:WorldToScreenPoint(v15.p)
-		v_u_4.Position = UDim2.new(0, v16.X, 0, v16.Y)
-	else
-		v_u_7.Adornee.Parent = v_u_8.Crosshair
-		v_u_3.Enabled = false
-	end
+function v1.UpdateLense(p1, p2) -- Line: 31 -- upvalues: u36 (val), Hitmarker (val), HitMarkLense (val), u47 (ref)
+    if not p2 or not p2.Parent then
+        u36.Adornee.Parent = u47.Crosshair
+        HitMarkLense.Enabled = false
+        return
+    end
+    u36.Adornee.Parent = Hitmarker
+    HitMarkLense.Enabled = true
+    local Position = p2.Position
+    local v1 = p2:FindFirstAncestorWhichIsA("Part")
+    local v2 = Vector2.new(Position.X.Scale, Position.Y.Scale)
+    local v3 = v1.CFrame * CFrame.new(-(v1.Size.X / 2) + v1.Size.X * v2.X, v1.Size.Y / 2 - v1.Size.Y * v2.Y, 0)
+    local v4 = workspace.Camera:WorldToScreenPoint(v3.p)
+    Hitmarker.Position = UDim2.new(0, v4.X, 0, v4.Y)
 end
-function v2.Emit(_, p17, p18, p19) -- name: Emit
-	-- upvalues: (ref) v_u_9, (ref) v_u_8, (copy) v_u_1, (copy) v_u_7
-	local v20 = p17 or Color3.new(1, 1, 1)
-	if p18 == "HitArmor" then
-		v_u_9:Cancel()
-		v_u_8.Crosshair.ArmorIcon.Image = "rbxassetid://9021696258"
-		v_u_8.Crosshair.ArmorIcon.ImageTransparency = -2
-		v_u_8.Crosshair.ArmorIcon.ImageColor3 = Color3.new(1, 1, 1)
-		v_u_9:Play()
-		local v_u_21 = script.Parent.Parent.Resources.hitarmor:Clone()
-		v_u_21.TimePosition = 0.08
-		v_u_21.Parent = v_u_1
-		v_u_21:Play()
-		task.delay(5, function()
-			-- upvalues: (copy) v_u_21
-			v_u_21:Destroy()
-		end)
-	elseif p18 == "BrokeArmor" then
-		v_u_9:Cancel()
-		v_u_8.Crosshair.ArmorIcon.Image = "rbxassetid://9021696096"
-		v_u_8.Crosshair.ArmorIcon.ImageColor3 = Color3.new(0, 0.65098, 1)
-		v_u_8.Crosshair.ArmorIcon.ImageTransparency = -2
-		v_u_9:Play()
-		local v_u_22 = script.Parent.Parent.Resources.breakarmor:Clone()
-		v_u_22.TimePosition = 0.08
-		v_u_22.Parent = v_u_1
-		v_u_22:Play()
-		task.delay(5, function()
-			-- upvalues: (copy) v_u_22
-			v_u_22:Destroy()
-		end)
-	elseif not (p19 and p19.dontDoSound) then
-		local v_u_23 = script.Parent.Parent.Resources.hitmarker:Clone()
-		v_u_23.Parent = v_u_1
-		v_u_23:Play()
-		task.delay(5, function()
-			-- upvalues: (copy) v_u_23
-			v_u_23:Destroy()
-		end)
-	end
-	if p18 ~= "HitArmor" then
-		v_u_7.Adornee.Visible = true
-		v_u_7.Adornee.ImageColor3 = v20
-		v_u_7:Play()
-	end
+function v1.Emit(p1, p2, p3, p4) -- Line: 48 -- upvalues: u48 (ref), u47 (ref), SoundService (val), u36 (val)
+    local v1 = p2
+    if not v1 then
+        v1 = Color3.new(1, 1, 1)
+    end
+    local v2 = v1
+    if p3 == "HitArmor" then
+        u48:Cancel()
+        u47.Crosshair.ArmorIcon.Image = "rbxassetid://9021696258"
+        u47.Crosshair.ArmorIcon.ImageTransparency = -2
+        local ArmorIcon = u47.Crosshair.ArmorIcon
+        ArmorIcon.ImageColor3 = Color3.new(1, 1, 1)
+        u48:Play()
+        local u44 = script.Parent.Parent.Resources.hitarmor:Clone()
+        u44.TimePosition = 0.08
+        u44.Parent = SoundService
+        u44:Play()
+        task.delay(5, function() -- Line: 62 -- upvalues: u44 (val)
+            u44:Destroy()
+        end)
+    elseif p3 == "BrokeArmor" then
+        u48:Cancel()
+        u47.Crosshair.ArmorIcon.Image = "rbxassetid://9021696096"
+        local ArmorIcon_2 = u47.Crosshair.ArmorIcon
+        ArmorIcon_2.ImageColor3 = Color3.new(0, 0.65098, 1)
+        u47.Crosshair.ArmorIcon.ImageTransparency = -2
+        u48:Play()
+        local u85 = script.Parent.Parent.Resources.breakarmor:Clone()
+        u85.TimePosition = 0.08
+        u85.Parent = SoundService
+        u85:Play()
+        task.delay(5, function() -- Line: 76 -- upvalues: u85 (val)
+            u85:Destroy()
+        end)
+    else
+        local u104
+        if not p4 then
+            u104 = script.Parent.Parent.Resources.hitmarker:Clone()
+            u104.Parent = SoundService
+            u104:Play()
+            task.delay(5, function() -- Line: 84 -- upvalues: u104 (val)
+                u104:Destroy()
+            end)
+        elseif not p4.dontDoSound then
+            u104 = script.Parent.Parent.Resources.hitmarker:Clone()
+            u104.Parent = SoundService
+            u104:Play()
+            task.delay(5, function() -- Line: 84 -- upvalues: u104 (val)
+                u104:Destroy()
+            end)
+        end
+    end
+    if p3 ~= "HitArmor" then
+        u36.Adornee.Visible = true
+        u36.Adornee.ImageColor3 = v2
+        u36:Play()
+    end
 end
-return v2
+return v1

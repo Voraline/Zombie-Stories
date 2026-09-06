@@ -1,95 +1,129 @@
-local v_u_1 = {}
-local v_u_2 = {}
-for v3 = 65, 90 do
-	table.insert(v_u_1, v3)
+local u0 = {}
+local u1 = {}
+local v1 = 90
+local v2 = 1
+for i = 65, v1, v2 do
+    table.insert(u0, i)
 end
-for v4 = 97, 122 do
-	table.insert(v_u_1, v4)
+v1 = 122
+v2 = 1
+for j = 97, v1, v2 do
+    table.insert(u0, j)
 end
-table.insert(v_u_1, 48)
-table.insert(v_u_1, 49)
-table.insert(v_u_1, 50)
-table.insert(v_u_1, 51)
-table.insert(v_u_1, 52)
-table.insert(v_u_1, 53)
-table.insert(v_u_1, 54)
-table.insert(v_u_1, 55)
-table.insert(v_u_1, 56)
-table.insert(v_u_1, 57)
-table.insert(v_u_1, 43)
-table.insert(v_u_1, 47)
-for v5, v6 in ipairs(v_u_1) do
-	v_u_2[v6] = v5
+table.insert(u0, 48)
+table.insert(u0, 49)
+table.insert(u0, 50)
+table.insert(u0, 51)
+table.insert(u0, 52)
+table.insert(u0, 53)
+table.insert(u0, 54)
+table.insert(u0, 55)
+table.insert(u0, 56)
+table.insert(u0, 57)
+table.insert(u0, 43)
+table.insert(u0, 47)
+for i2, v in ipairs(u0) do
+    u1[v] = i2
 end
-local v7 = {}
-local v_u_8 = bit32.rshift
-local v_u_9 = bit32.lshift
-local v_u_10 = bit32.band
-function v7.Encode(p11) -- name: Encode
-	-- upvalues: (copy) v_u_8, (copy) v_u_10, (copy) v_u_9, (copy) v_u_1
-	local v12 = 0
-	local v13 = {}
-	for v14 = 1, #p11, 3 do
-		local v15 = v14 + 2
-		local v16, v17, v18 = string.byte(p11, v14, v15)
-		local v19 = v_u_8(v16, 2)
-		local v20 = v_u_9(v_u_10(v16, 3), 4) + v_u_8(v17 or 0, 4)
-		local v21 = v_u_9(v_u_10(v17 or 0, 15), 2) + v_u_8(v18 or 0, 6)
-		local v22 = v_u_10(v18 or 0, 63)
-		local v23 = v12 + 1
-		v13[v23] = v_u_1[v19 + 1]
-		local v24 = v23 + 1
-		v13[v24] = v_u_1[v20 + 1]
-		local v25 = v24 + 1
-		v13[v25] = v17 and v_u_1[v21 + 1] or 61
-		v12 = v25 + 1
-		v13[v12] = v18 and v_u_1[v22 + 1] or 61
-	end
-	local v26 = 0
-	local v27 = {}
-	for v28 = 1, v12, 4096 do
-		v26 = v26 + 1
-		local v29 = v28 + 4096 - 1
-		local v30 = v12 < v29 and v12 and v12 or v29
-		local v31 = table.unpack
-		v27[v26] = string.char(v31(v13, v28, v30))
-	end
-	return table.concat(v27)
+v1 = {}
+local rshift = bit32.rshift
+local lshift = bit32.lshift
+local band = bit32.band
+function v1.Encode(p1) -- Line: 38 -- upvalues: rshift (val), band (val), lshift (val), u0 (val)
+    local v1, v2, v3, v4, v5, v6, v7, v8, v9
+    local v10 = {}
+    local v11 = 0
+    local v12 = #p1
+    local v13 = 3
+    local v14 = p1
+    for i = 1, v12, v13 do
+        v6, v7, v8 = string.byte(v14, i, i + 2)
+        v9 = rshift(v6, 2)
+        v3 = band(v6, 3)
+        v2 = lshift(v3, 4)
+        v1 = v2 + rshift(v7 or 0, 4)
+        v4 = band(v7 or 0, 15)
+        v3 = lshift(v4, 2)
+        v2 = v3 + rshift(v8 or 0, 6)
+        v3 = band(v8 or 0, 63)
+        v11 = v11 + 1
+        v10[v11] = u0[v9 + 1]
+        v11 = v11 + 1
+        v10[v11] = u0[v1 + 1]
+        v11 = v11 + 1
+        if not v7 then
+            v4 = 61
+        else
+            v4 = u0[v2 + 1]
+        end
+        v10[v11] = v4
+        v11 = v11 + 1
+        if not v8 then
+            v4 = 61
+        else
+            v4 = u0[v3 + 1]
+        end
+        v10[v11] = v4
+    end
+    v12 = {}
+    v13 = 0
+    v6 = v11
+    v7 = 4096
+    for j = 1, v6, v7 do
+        v13 = v13 + 1
+        v5 = j + 4096 - 1
+        if v11 >= v5 then
+            v4 = v5
+        else
+            v4 = v11
+        end
+        v12[v13] = string.char(table.unpack(v10, j, v4))
+    end
+    return table.concat(v12)
 end
-function v7.Decode(p32) -- name: Decode
-	-- upvalues: (copy) v_u_2, (copy) v_u_9, (copy) v_u_8, (copy) v_u_10
-	local v33 = 0
-	local v34 = {}
-	for v35 = 1, #p32, 4 do
-		local v36 = v35 + 3
-		local v37, v38, v39, v40 = string.byte(p32, v35, v36)
-		local v41 = v_u_2[v37] - 1
-		local v42 = v_u_2[v38] - 1
-		local v43 = (v_u_2[v39] or 1) - 1
-		local v44 = (v_u_2[v40] or 1) - 1
-		local v45 = v_u_9(v41, 2) + v_u_8(v42, 4)
-		local v46 = v_u_9(v_u_10(v42, 15), 4) + v_u_8(v43, 2)
-		local v47 = v_u_9(v_u_10(v43, 3), 6) + v44
-		v33 = v33 + 1
-		v34[v33] = v45
-		if v39 ~= 61 then
-			v33 = v33 + 1
-			v34[v33] = v46
-		end
-		if v40 ~= 61 then
-			v33 = v33 + 1
-			v34[v33] = v47
-		end
-	end
-	local v48 = 0
-	local v49 = {}
-	for v50 = 1, v33, 4096 do
-		v48 = v48 + 1
-		local v51 = v50 + 4096 - 1
-		local v52 = v33 < v51 and v33 and v33 or v51
-		local v53 = table.unpack
-		v49[v48] = string.char(v53(v34, v50, v52))
-	end
-	return table.concat(v49)
+function v1.Decode(p1) -- Line: 86 -- upvalues: u1 (val), lshift (val), rshift (val), band (val)
+    local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13
+    local v14 = {}
+    local v15 = 0
+    local v16 = #p1
+    local v17 = 4
+    local v18 = p1
+    for i = 1, v16, v17 do
+        v10, v11, v12, v13 = string.byte(v18, i, i + 3)
+        v1 = u1[v11] - 1
+        v2 = (u1[v12] or 1) - 1
+        v3 = (u1[v13] or 1) - 1
+        v5 = lshift(u1[v10] - 1, 2)
+        v4 = v5 + rshift(v1, 4)
+        v7 = band(v1, 15)
+        v6 = lshift(v7, 4)
+        v5 = v6 + rshift(v2, 2)
+        v8 = band(v2, 3)
+        v15 = v15 + 1
+        v14[v15] = v4
+        if v12 ~= 61 then
+            v15 = v15 + 1
+            v14[v15] = v5
+        end
+        if v13 ~= 61 then
+            v15 = v15 + 1
+            v14[v15] = lshift(v8, 6) + v3
+        end
+    end
+    v16 = {}
+    v17 = 0
+    v10 = v15
+    v11 = 4096
+    for j = 1, v10, v11 do
+        v17 = v17 + 1
+        v9 = j + 4096 - 1
+        if v15 >= v9 then
+            v3 = v9
+        else
+            v3 = v15
+        end
+        v16[v17] = string.char(table.unpack(v14, j, v3))
+    end
+    return table.concat(v16)
 end
-return v7
+return v1

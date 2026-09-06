@@ -1,20 +1,16 @@
-local v_u_1 = typeof
-return function(p2) -- name: typeof
-	-- upvalues: (copy) v_u_1
-	local v3 = v_u_1(p2)
-	if v3 == "table" then
-		local v4 = getmetatable(p2)
-		if v_u_1(v4) == "table" then
-			local v5 = v4.__type
-			if v5 == nil then
-				return v3
-			else
-				return v5
-			end
-		else
-			return v3
-		end
-	else
-		return v3
-	end
+local u0 = typeof
+return function(p1) -- Line: 5 -- upvalues: u0 (val)
+    local v1 = u0(p1)
+    if v1 ~= "table" then
+        return v1
+    end
+    local v2 = getmetatable(p1)
+    if u0(v2) ~= "table" then
+        return v1
+    end
+    local __type = v2.__type
+    if __type == nil then
+        return v1
+    end
+    return __type
 end

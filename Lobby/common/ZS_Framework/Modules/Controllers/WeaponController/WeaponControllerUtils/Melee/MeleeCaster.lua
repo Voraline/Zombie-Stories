@@ -1,116 +1,145 @@
 local v1 = {}
-local v_u_2 = workspace.CurrentCamera
-local v_u_3 = require(script.Parent.Parent.Parent.Parent.Parent:WaitForChild("Utils"):WaitForChild("RaycastUtil"))
-local v_u_4 = require("../../../LocalPlayerController")
-function v1.StartCast(_, p5, p6, p7) -- name: StartCast
-	-- upvalues: (copy) v_u_4, (copy) v_u_2, (copy) v_u_3
-	local v8 = p5.raysbeforedelay or 4
-	local v9 = p5.num_rays or v8 * 5
-	local v10 = p5.delaytime or 0
-	local v11 = p5.max_dist or 9
-	local v12 = p5.min_dist or 7
-	local v13 = p5.direction or 1
-	local v14 = (p5.yaw or 70) * v13
-	local v15 = (p5.pitch or 0) * v13
-	local v16 = p5.num_times or 1
-	local v17 = p5.multi_data
-	local v18 = 0
-	p7.TimesHitEnemy.IgnoreTable = {}
-	local v19 = p7.TimesHitEnemy.IgnoreTable
-	local v20
-	if p7.DoingHeavy or not p7.SwingRPMScaling then
-		v20 = 1
-	else
-		local v21 = p7.Config
-		local v22 = p7.DoingHeavy and v21.HeavySwingStart or v21.SwingStart
-		local v23 = p7.DoingHeavy and v21.HeavySwingEnd or v21.SwingEnd
-		local v24 = p7.DoingHeavy and v21.HeavyDelayPerShot or v21.DelayPerShot
-		v20 = (v24 == 0 and 1 or v24) / (v22 + v23)
-	end
-	local v25 = game.Players.LocalPlayer.Character.Head
-	for v26 = 1, v16 do
-		if v17 then
-			local v27 = v17[v26]
-			local v28 = setmetatable(v27, p5)
-			v8 = v28.raysbeforedelay or 4
-			v9 = v28.num_rays or v8 * 5
-			v10 = v28.delaytime or 0
-			v11 = v28.max_dist or 9
-			v12 = v28.min_dist or 7
-			v13 = v28.direction or 1
-			v14 = (v28.yaw or 70) * v13
-			v15 = (v28.pitch or 0) * v13
-			local _ = v28.num_times or 1
-		end
-		for v29 = 1, v9 do
-			if not (p7 and p7.IsEquipped) then
-				break
-			end
-			local v30 = v29 * math.rad(v14) / v9
-			local v31 = v29 * math.rad(v15) / v9
-			local v32 = v14 / 2
-			local v33 = v30 - math.rad(v32)
-			local v34 = v15 / 2
-			local v35 = v31 - math.rad(v34)
-			local v36 = (v29 - 1) / (v9 / 2 - 1) * (v9 - v29) / (v9 - v9 / 2)
-			local v37 = v12 * (1 - v36) + v11 * v36
-			local v38
-			if v_u_4.ThirdPerson then
-				v38 = v25.CFrame
-			else
-				v38 = v_u_2.CFrame
-			end
-			local v39 = v38.Position
-			local v40 = (v38 * CFrame.Angles(v35, v33, 0)).LookVector.Unit * v37
-			while true do
-				if true then
-					local v41 = v_u_3.StandardCast
-					local v42
-					if #v19 > 0 then
-						v42 = v19
-					else
-						v42 = nil
-					end
-				end
-				local v43 = v41(v39, v40, v42)
-				if not (v43 and string.find(v43.Instance.Name, "HITBOX_ARMOR")) then
-					break
-				end
-				local v44 = v43.Instance.Parent
-				if p7.Config.Penetration < (v44:GetAttribute("ArmorLevel") or 1) then
-					break
-				end
-				table.insert(v19, v44)
-			end
-			local v45
-			if workspace:GetAttribute("DebugMelee") then
-				v45 = Instance.new("Part")
-				v45.Anchored = true
-				v45.CanCollide = false
-				v45.CanQuery = false
-				v45.CastShadow = false
-				v45.BrickColor = not v43 and BrickColor.new("New Yeller") or BrickColor.new("Really red")
-				v45.Material = Enum.Material.ForceField
-				v45.Size = Vector3.new(0.2, 0.2, v37)
-				v45.CFrame = CFrame.new(v39 - Vector3.new(0, 1, 0), v39 + v40) * CFrame.new(0, 0, -v37 / 2)
-				game.Debris:AddItem(v45, 3)
-				v45.Parent = workspace.Ignore
-			else
-				v45 = nil
-			end
-			if v43 then
-				p6:Fire(v39, v43, p7, v45)
-			end
-			v18 = v18 + 1
-			if v8 <= v18 then
-				task.wait(v10 * v20)
-				v18 = 0
-			end
-		end
-		p7.TimesHitEnemy = {}
-		v13 = v13 * -1
-		v14 = v14 * v13
-		v15 = v15 * v13
-	end
+local function lerp(p1, p2, p3) -- Line: 3
+    return p1 * (1 - p3) + p2 * p3
+end
+local CurrentCamera = workspace.CurrentCamera
+local Utils = script.Parent.Parent.Parent.Parent.Parent:WaitForChild("Utils")
+local RaycastUtil = require(Utils:WaitForChild("RaycastUtil"))
+local u22 = require("../../../LocalPlayerController")
+function v1.StartCast(p1, p2, p3, p4) -- Line: 10 -- upvalues: u22 (val), CurrentCamera (val), RaycastUtil (val)
+    local CFrame, Config, Parent, Position, num_rays_2, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15
+    local v16 = p2
+    local v17 = p2.raysbeforedelay or 4
+    local num_rays = p2.num_rays
+    if not num_rays then
+        num_rays = v17 * 5
+    end
+    local v18 = p2.delaytime or 0
+    local v19 = p2.max_dist or 9
+    local v20 = p2.min_dist or 7
+    local v21 = p2.direction or 1
+    local v22 = (p2.yaw or 70) * v21
+    local v23 = (p2.pitch or 0) * v21
+    local v24 = p2.num_times or 1
+    local multi_data = p2.multi_data
+    local v25 = 0
+    p4.TimesHitEnemy.IgnoreTable = {}
+    local IgnoreTable = p4.TimesHitEnemy.IgnoreTable
+    local v26 = {}
+    local v27 = 1
+    if not p4.DoingHeavy and p4.SwingRPMScaling then
+        local HeavyDelayPerShot, HeavySwingEnd, HeavySwingStart
+        Config = p4.Config
+        if not p4.DoingHeavy then
+            HeavySwingStart = Config.SwingStart
+        else
+            HeavySwingStart = Config.HeavySwingStart
+        end
+        if not p4.DoingHeavy then
+            HeavySwingEnd = Config.SwingEnd
+        else
+            HeavySwingEnd = Config.HeavySwingEnd
+        end
+        if not p4.DoingHeavy then
+            HeavyDelayPerShot = Config.DelayPerShot
+        else
+            HeavyDelayPerShot = Config.HeavyDelayPerShot
+        end
+        if HeavyDelayPerShot ~= 0 then
+            v3 = HeavyDelayPerShot
+        else
+            v3 = 1
+        end
+        v27 = v3 / (HeavySwingStart + HeavySwingEnd)
+    end
+    local Head = game.Players.LocalPlayer.Character.Head
+    local v28 = v24
+    local v29 = 1
+    v7, v2 = p4, p3
+    for i = 1, v28, v29 do
+        if multi_data then
+            v1 = setmetatable(multi_data[i], v16)
+            v17 = v1.raysbeforedelay or 4
+            num_rays_2 = v1.num_rays
+            if not num_rays_2 then
+                num_rays_2 = v17 * 5
+            end
+            num_rays = num_rays_2
+            v18 = v1.delaytime or 0
+            v19 = v1.max_dist or 9
+            v20 = v1.min_dist or 7
+            v21 = v1.direction or 1
+            v22 = (v1.yaw or 70) * v21
+            v23 = (v1.pitch or 0) * v21
+            v24 = v1.num_times or 1
+        end
+        v3 = num_rays
+        v4 = 1
+        for j = 1, v3, v4 do
+            if not v7 or not v7.IsEquipped then
+                break
+            end
+            v5 = j * math.rad(v22) / num_rays
+            v6 = j * math.rad(v23) / num_rays
+            v8 = (j - 1) / (num_rays / 2 - 1) * (num_rays - j) / (num_rays - num_rays / 2)
+            v9 = v20 * (1 - v8) + v19 * v8
+            if not u22.ThirdPerson then
+                CFrame = CurrentCamera.CFrame
+            else
+                CFrame = Head.CFrame
+            end
+            Position = CFrame.Position
+            v10 = (CFrame * CFrame.Angles(v6 - math.rad(v23 / 2), v5 - math.rad(v22 / 2), 0)).LookVector.Unit * v9
+            while true do
+                if 0 >= #IgnoreTable then
+                    v15 = nil
+                else
+                    v15 = IgnoreTable
+                end
+                v11 = RaycastUtil.StandardCast(Position, v10, v15)
+                if not v11 or not (string.find(v11.Instance.Name, "HITBOX_ARMOR")) then
+                    break
+                end
+                Parent = v11.Instance.Parent
+                if Parent:GetAttribute("ArmorLevel") or 1 > v7.Config.Penetration then
+                    break
+                end
+                table.insert(IgnoreTable, Parent)
+            end
+            v12 = nil
+            if workspace:GetAttribute("DebugMelee") then
+                v12 = Instance.new("Part")
+                v12.Anchored = true
+                v12.CanCollide = false
+                v12.CanQuery = false
+                v12.CastShadow = false
+                if v11 then
+                    v13 = BrickColor.new("Really red")
+                else
+                    v13 = BrickColor.new("New Yeller")
+                end
+                v12.BrickColor = v13
+                v12.Material = Enum.Material.ForceField
+                v12.Size = Vector3.new(0.2, 0.2, v9)
+                v15 = Position - Vector3.new(0, 1, 0)
+                v14 = CFrame.new(v15, Position + v10)
+                v12.CFrame = v14 * CFrame.new(0, 0, -v9 / 2)
+                game.Debris:AddItem(v12, 3)
+                v12.Parent = workspace.Ignore
+            end
+            if v11 then
+                v2:Fire(Position, v11, v7, v12)
+            end
+            v25 = v25 + 1
+            if v17 <= v25 then
+                v25 = 0
+                task.wait(v18 * v27)
+            end
+        end
+        v7.TimesHitEnemy = {}
+        v21 = v21 * -1
+        v22 = v22 * v21
+        v23 = v23 * v21
+    end
 end
 return v1

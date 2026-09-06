@@ -1,26 +1,22 @@
-local v1 = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 workspace:WaitForChild("Ignore")
-local v2 = v1.common:WaitForChild("NPCs_Shared")
-v2:WaitForChild("Resources")
-local v_u_3 = require(v2.AIClasses.BaseNPCv2_Client)
-local v_u_4 = {
-	["_ClassName"] = script.Name
-}
-v_u_4.__index = v_u_4
-setmetatable(v_u_4, v_u_3)
-v_u_4.GroundPositionCorrectionDisabled = true
-function v_u_4.new(p5) -- name: new
-	-- upvalues: (copy) v_u_3, (copy) v_u_4
-	local v6 = v_u_3.new(p5)
-	local v7 = v_u_4
-	setmetatable(v6, v7)
-	return v6
+local NPCs_Shared = ReplicatedStorage.common:WaitForChild("NPCs_Shared")
+NPCs_Shared:WaitForChild("Resources")
+local BaseNPCv2_Client = require(NPCs_Shared.AIClasses.BaseNPCv2_Client)
+local u23 = {_ClassName = script.Name}
+u23.__index = u23
+setmetatable(u23, BaseNPCv2_Client)
+u23.GroundPositionCorrectionDisabled = true
+function u23.new(p1) -- Line: 27 -- upvalues: BaseNPCv2_Client (val), u23 (val)
+    local v1 = BaseNPCv2_Client.new(p1)
+    setmetatable(v1, u23)
+    return v1
 end
-function v_u_4.GiveMoverData(p8, p9, p10) -- name: GiveMoverData
-	p8.LinearVelocityTarget = p9
-	p8.RotationalVelocityTarget = p10
+function u23.GiveMoverData(p1, p2, p3) -- Line: 34
+    p1.LinearVelocityTarget = p2
+    p1.RotationalVelocityTarget = p3
 end
-function v_u_4._GiveOrientation(p11, p12) -- name: _GiveOrientation
-	p11.AlignDirection = p12
+function u23._GiveOrientation(p1, p2) -- Line: 41
+    p1.AlignDirection = p2
 end
-return v_u_4
+return u23

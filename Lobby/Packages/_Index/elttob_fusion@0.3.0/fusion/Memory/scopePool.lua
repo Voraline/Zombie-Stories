@@ -1,32 +1,29 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Memory.poisonScope)
-local v_u_3 = require(v1.ExternalDebug)
-local v_u_4 = {}
-local v_u_5 = 0
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local poisonScope = require(Parent.Memory.poisonScope)
+local ExternalDebug = require(Parent.ExternalDebug)
+local u13 = {}
+local u14 = 0
 return {
-	["giveIfEmpty"] = function(p6) -- name: giveIfEmpty
-		-- upvalues: (copy) v_u_3, (copy) v_u_2
-		if next(p6) ~= nil then
-			return p6
-		end
-		v_u_3.untrackScope(p6)
-		v_u_2(p6, "previously passed to the internal scope pool, which indicates a Fusion bug.")
-		return nil
-	end,
-	["clearAndGive"] = function(p7) -- name: clearAndGive
-		-- upvalues: (copy) v_u_3, (copy) v_u_2
-		v_u_3.untrackScope(p7)
-		table.clear(p7)
-		v_u_2(p7, "previously passed to the internal scope pool, which indicates a Fusion bug.")
-	end,
-	["reuseAny"] = function() -- name: reuseAny
-		-- upvalues: (ref) v_u_5, (copy) v_u_4
-		if v_u_5 == 0 then
-			return nil
-		end
-		local v8 = v_u_4[v_u_5]
-		v_u_5 = v_u_5 - 1
-		return v8
-	end
+    giveIfEmpty = function(p1) -- Line: 18 -- upvalues: ExternalDebug (val), poisonScope (val)
+        if next(p1) ~= nil then
+            return p1
+        end
+        ExternalDebug.untrackScope(p1)
+        poisonScope(p1, "previously passed to the internal scope pool, which indicates a Fusion bug.")
+        return nil
+    end,
+    clearAndGive = function(p1) -- Line: 34 -- upvalues: ExternalDebug (val), poisonScope (val)
+        ExternalDebug.untrackScope(p1)
+        table.clear(p1)
+        poisonScope(p1, "previously passed to the internal scope pool, which indicates a Fusion bug.")
+    end,
+    reuseAny = function() -- Line: 46 -- upvalues: u14 (ref), u13 (val)
+        if u14 == 0 then
+            return nil
+        end
+        local v1 = u13[u14]
+        u14 = u14 - 1
+        return v1
+    end,
 }

@@ -1,55 +1,42 @@
-local v_u_1 = {
-	["DebugLogging"] = false,
-	["VisualizeCasts"] = false
-}
-v_u_1.__index = v_u_1
-v_u_1.__type = "FastCast"
-v_u_1.HighFidelityBehavior = {
-	["Default"] = 1,
-	["Always"] = 3
-}
-local v_u_2 = require("@self/ActiveCast")
-local v_u_3 = require("@self/Signal")
+local u0 = {DebugLogging = false, VisualizeCasts = false}
+u0.__index = u0
+u0.__type = "FastCast"
+local v1 = {Default = 1, Always = 3}
+u0.HighFidelityBehavior = v1
+local u7 = require("@self/ActiveCast")
+local u10 = require("@self/Signal")
 require("@self/Table")
 require("@self/TypeDefinitions")
-v_u_2.SetStaticFastCastReference(v_u_1)
-function v_u_1.new() -- name: new
-	-- upvalues: (copy) v_u_3, (copy) v_u_1
-	local v4 = {
-		["LengthChanged"] = v_u_3.new("LengthChanged"),
-		["RayHit"] = v_u_3.new("RayHit"),
-		["RayPierced"] = v_u_3.new("RayPierced"),
-		["CastTerminating"] = v_u_3.new("CastTerminating"),
-		["WorldRoot"] = workspace
-	}
-	local v5 = v_u_1
-	return setmetatable(v4, v5)
+u7.SetStaticFastCastReference(u0)
+function u0.new() -- Line: 107 -- upvalues: u10 (val), u0 (val)
+    local v1 = {
+        LengthChanged = u10.new("LengthChanged"),
+        RayHit = u10.new("RayHit"),
+        RayPierced = u10.new("RayPierced"),
+        CastTerminating = u10.new("CastTerminating"),
+        WorldRoot = workspace,
+    }
+    return (setmetatable(v1, u0))
 end
-function v_u_1.newBehavior() -- name: newBehavior
-	-- upvalues: (copy) v_u_1
-	return {
-		["RaycastParams"] = nil,
-		["Acceleration"] = nil,
-		["MaxDistance"] = 1000,
-		["CanPierceFunction"] = nil,
-		["HighFidelityBehavior"] = nil,
-		["HighFidelitySegmentSize"] = 0.5,
-		["CosmeticBulletTemplate"] = nil,
-		["CosmeticBulletProvider"] = nil,
-		["CosmeticBulletContainer"] = nil,
-		["AutoIgnoreContainer"] = true,
-		["Acceleration"] = Vector3.new(),
-		["HighFidelityBehavior"] = v_u_1.HighFidelityBehavior.Default
-	}
+function u0.newBehavior() -- Line: 119 -- upvalues: u0 (val)
+    return {
+        MaxDistance = 1000,
+        HighFidelitySegmentSize = 0.5,
+        AutoIgnoreContainer = true,
+        Acceleration = Vector3.new(),
+        HighFidelityBehavior = u0.HighFidelityBehavior.Default,
+    }
 end
-local v_u_6 = v_u_1.newBehavior()
-function v_u_1.Fire(p7, p8, p9, p10, p11) -- name: Fire
-	-- upvalues: (copy) v_u_6, (copy) v_u_2
-	if p11 == nil then
-		p11 = v_u_6
-	end
-	local v12 = v_u_2.new(p7, p8, p9, p10, p11)
-	v12.RayInfo.WorldRoot = p7.WorldRoot
-	return v12
+local u23 = u0.newBehavior()
+function u0.Fire(p1, p2, p3, p4, p5) -- Line: 136 -- upvalues: u23 (val), u7 (val)
+    local v1
+    if p5 ~= nil then
+        v1 = p5
+    else
+        v1 = u23
+    end
+    local v2 = u7.new(p1, p2, p3, p4, v1)
+    v2.RayInfo.WorldRoot = p1.WorldRoot
+    return v2
 end
-return v_u_1
+return u0

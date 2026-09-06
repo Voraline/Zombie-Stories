@@ -1,78 +1,43 @@
-local v1 = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
-local v2 = {
-	[1] = {
-		["Name"] = "Charm",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[2] = {
-		["Name"] = "Sticker",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[3] = {
-		["Name"] = "Sticker 2",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[4] = {
-		["Name"] = "Perk",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[5] = {
-		["Name"] = "Optic",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[6] = {
-		["Name"] = "Magazine",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[8] = {
-		["Name"] = "Misc Rail",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	[9] = {
-		["Name"] = "Top Rail",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	}
+local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
+local v1 = {
+    {Name = "Charm", PotentialAttachments = {}},
+    {Name = "Sticker", PotentialAttachments = {}},
+    {Name = "Sticker 2", PotentialAttachments = {}},
+    {Name = "Perk", PotentialAttachments = {}},
+    {Name = "Optic", PotentialAttachments = {}},
+    {Name = "Magazine", PotentialAttachments = {}},
 }
-local v3 = require("../Extensions/Charm")
-v2[1].PotentialAttachments = v3.PotentialAttachments
-local v4 = require("../Extensions/Sticker")
-v2[2].PotentialAttachments = v4.PotentialAttachments
-v2[3].PotentialAttachments = v4.PotentialAttachments
+v1[8] = {Name = "Misc Rail", PotentialAttachments = {}}
+v1[9] = {Name = "Top Rail", PotentialAttachments = {}}
+local v2 = require("../Extensions/Charm")
+v1[1].PotentialAttachments = v2.PotentialAttachments
+local v3 = require("../Extensions/Sticker")
+v1[2].PotentialAttachments = v3.PotentialAttachments
+v1[3].PotentialAttachments = v3.PotentialAttachments
 require("../Extensions/Perk")
-v2[4].PotentialAttachments = { v1.HP, v1.AP, v1["More Mags"] }
-local v5 = require("../Extensions/Optic")
-v2[5].PotentialAttachments = v5.PotentialAttachments
-local v6 = require("../Extensions/MiscRail")
-v2[8].PotentialAttachments = v6.PotentialAttachments
-v2[6].PotentialAttachments = { v1["Ext. Magazines"] }
-v2[7] = {
-	["Name"] = "Bottom Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = {
-		v1["Angled Grip"],
-		v1["Vertical Grip"],
-		v1["Stubby Grip"],
-		v1["Skeleton Grip"],
-		v1["Folding Grip"],
-		v1["RK-1 Grip"],
-		v1["Grip Bipod"]
-	}
+v1[4].PotentialAttachments = {AttachmentProperties.HP, AttachmentProperties.AP, AttachmentProperties["More Mags"]}
+local v4 = require("../Extensions/Optic")
+v1[5].PotentialAttachments = v4.PotentialAttachments
+local v5 = require("../Extensions/MiscRail")
+v1[8].PotentialAttachments = v5.PotentialAttachments
+v1[6].PotentialAttachments = {AttachmentProperties["Ext. Magazines"]}
+v1[7] = {
+    Name = "Bottom Rail",
+    PotentialAttachments = {
+        AttachmentProperties["Angled Grip"],
+        AttachmentProperties["Vertical Grip"],
+        AttachmentProperties["Stubby Grip"],
+        AttachmentProperties["Skeleton Grip"],
+        AttachmentProperties["Folding Grip"],
+        AttachmentProperties["RK-1 Grip"],
+        AttachmentProperties["Grip Bipod"],
+    },
 }
-v2[9] = {
-	["Name"] = "Top Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = v2[5].PotentialAttachments
-}
-for _, v7 in v2[8].PotentialAttachments do
-	local v8 = v2[7].PotentialAttachments
-	table.insert(v8, v7)
+v1[9] = {Name = "Top Rail", PotentialAttachments = v1[5].PotentialAttachments}
+local PotentialAttachments = v1[8].PotentialAttachments
+local v6 = nil
+local v7 = nil
+for i, j in PotentialAttachments, v6, v7 do
+    table.insert(v1[7].PotentialAttachments, j)
 end
-return v2
+return v1

@@ -1,24 +1,32 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-return function(p3, p_u_4) -- name: poisonScope
-	-- upvalues: (copy) v_u_2
-	local v5 = getmetatable(p3)
-	if typeof(v5) ~= "table" or not v5._FUSION_POISONED then
-		table.clear(p3)
-		local v6 = {
-			["_FUSION_POISONED"] = true,
-			["__index"] = nil,
-			["__newindex"] = nil,
-			["__index"] = function() -- name: __index
-				-- upvalues: (ref) v_u_2, (copy) p_u_4
-				v_u_2.logError("poisonedScope", nil, p_u_4)
-			end,
-			["__newindex"] = function() -- name: __newindex
-				-- upvalues: (ref) v_u_2, (copy) p_u_4
-				v_u_2.logError("poisonedScope", nil, p_u_4)
-			end
-		}
-		setmetatable(p3, v6)
-	end
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+return function(p1, p2) -- Line: 14 -- upvalues: External (val)
+    local v1 = getmetatable(p1)
+    if typeof(v1) ~= "table" then
+        table.clear(p1)
+        setmetatable(p1, {
+            _FUSION_POISONED = true,
+            __index = function() -- Line: 25 -- upvalues: External (upval), p2 (val)
+                External.logError("poisonedScope", nil, p2)
+            end,
+            __newindex = function() -- Line: 28 -- upvalues: External (upval), p2 (val)
+                External.logError("poisonedScope", nil, p2)
+            end,
+        })
+        return
+    end
+    if v1._FUSION_POISONED then
+        return
+    end
+    table.clear(p1)
+    setmetatable(p1, {
+        _FUSION_POISONED = true,
+        __index = function() -- Line: 25 -- upvalues: External (upval), p2 (val)
+            External.logError("poisonedScope", nil, p2)
+        end,
+        __newindex = function() -- Line: 28 -- upvalues: External (upval), p2 (val)
+            External.logError("poisonedScope", nil, p2)
+        end,
+    })
 end

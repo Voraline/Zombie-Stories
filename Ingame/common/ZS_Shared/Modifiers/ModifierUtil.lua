@@ -1,47 +1,64 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require(v1.common.ZS_Shared.Data.ModifierData)
-local v_u_3 = require(v1.common.ZS_Shared.Data.ModifierGroupData)
-local v_u_13 = {
-	["GetGroupingIcon"] = function(p4) -- name: GetGroupingIcon
-		-- upvalues: (copy) v_u_3
-		if p4 then
-			return v_u_3[p4]
-		else
-			return nil
-		end
-	end,
-	["GetModifierIcon"] = function(p5) -- name: GetModifierIcon
-		-- upvalues: (copy) v_u_2, (copy) v_u_13
-		local v6 = v_u_2[p5]
-		if v6 then
-			return v6.Icon or v_u_13.GetGroupingIcon(v6.Grouping or v6.Group)
-		else
-			return nil
-		end
-	end,
-	["GetModifierStatText"] = function(p7) -- name: GetModifierStatText
-		-- upvalues: (copy) v_u_2
-		local v8 = v_u_2[p7]
-		if not v8 then
-			return ""
-		end
-		if v8.StatText then
-			return v8.StatText
-		end
-		if v8.VariableAdditions then
-			for v9, v10 in pairs(v8.VariableAdditions) do
-				if v9:find("Rate") or (v9:find("Speed") or v9:find("Health")) then
-					if v10 > 0 then
-						local v11 = v10 * 100
-						return "+" .. math.floor(v11) .. "%"
-					else
-						local v12 = v10 * 100
-						return math.floor(v12) .. "%"
-					end
-				end
-			end
-		end
-		return v8.VariableSets and v8.VariableSets.HeadshotOnly and "HEAD" or ""
-	end
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ModifierData = require(ReplicatedStorage.common.ZS_Shared.Data.ModifierData)
+local ModifierGroupData = require(ReplicatedStorage.common.ZS_Shared.Data.ModifierGroupData)
+local u17 = {
+    GetGroupingIcon = function(p1) -- Line: 8 -- upvalues: ModifierGroupData (val)
+        if not p1 then
+            return nil
+        end
+        return ModifierGroupData[p1]
+    end,
 }
-return v_u_13
+function u17.GetModifierIcon(p1) -- Line: 14 -- upvalues: ModifierData (val), u17 (val)
+    local v1 = ModifierData[p1]
+    if not v1 then
+        return nil
+    end
+    local Icon = v1.Icon
+    if not Icon then
+        local Grouping = v1.Grouping
+        if not Grouping then
+            Grouping = v1.Group
+        end
+        Icon = u17.GetGroupingIcon(Grouping)
+    end
+    return Icon
+end
+function u17.GetModifierStatText(p1) -- Line: 21 -- upvalues: ModifierData (val)
+    local v1, v2
+    local v3 = ModifierData[p1]
+    if not v3 then
+        return ""
+    end
+    if v3.StatText then
+        return v3.StatText
+    end
+    if not v3.VariableAdditions then
+        if v3.VariableSets then
+            if v3.VariableSets.HeadshotOnly then
+                return "HEAD"
+            end
+            return ""
+        end
+        return ""
+    end
+    for k, v in pairs(v3.VariableAdditions) do
+        if not (k:find("Rate")) and not (k:find("Speed")) and not (k:find("Health")) then
+            continue
+        end
+        if 0 < v then
+            v2 = math.floor(v * 100)
+            return "+" .. v2 .. "%"
+        end
+        v1 = math.floor(v * 100)
+        return v1 .. "%"
+    end
+    if not v3.VariableSets then
+        return ""
+    end
+    if v3.VariableSets.HeadshotOnly then
+        return "HEAD"
+    end
+    return ""
+end
+return u17

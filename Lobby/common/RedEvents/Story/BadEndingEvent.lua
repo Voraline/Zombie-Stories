@@ -1,124 +1,125 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = {
-	["StartHallucination"] = true,
-	["ShowSequence"] = true,
-	["Clear"] = true
-}
-local function v_u_14(p3) -- name: sanitizeMessages
-	if typeof(p3) ~= "table" then
-		return {}
-	end
-	local v4 = {}
-	for v5, v9 in ipairs(p3) do
-		if v5 > 6 then
-			break
-		end
-		local v7 = nil
-		local v8 = nil
-		local v9
-		if typeof(v9) == "table" then
-			local v10 = v9.text
-			if typeof(v10) == "string" then
-				if #v10 > 120 then
-					v10 = string.sub(v10, 1, 120)
-				end
-			else
-				v10 = nil
-			end
-			local v11 = v9.duration
-			if typeof(v11) == "number" then
-				local v12 = v9.duration
-				local v13 = math.min(v12, 10)
-				v8 = math.max(0.5, v13)
-				v9 = v10
-			else
-				v9 = v10
-			end
-		elseif typeof(v9) == "string" then
-			if typeof(v9) == "string" then
-				if #v9 > 120 then
-					v9 = string.sub(v9, 1, 120)
-				end
-			else
-				v9 = nil
-			end
-		else
-			v9 = v7
-		end
-		if v9 then
-			table.insert(v4, {
-				["text"] = v9,
-				["duration"] = v8 or 3
-			})
-		end
-	end
-	return v4
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Red = require(ReplicatedStorage.Packages.Red)
+local u9 = {StartHallucination = true, ShowSequence = true, Clear = true}
+local function sanitizeBoolean(p1) -- Line: 14
+    if typeof(p1) == "boolean" then
+        return p1
+    end
+    return nil
 end
-return require(v1.Packages.Red).SharedEvent("BadEndingEvent", function(p15)
-	-- upvalues: (copy) v_u_2, (copy) v_u_14
-	if typeof(p15) ~= "table" then
-		return nil
-	end
-	local v16 = p15.action
-	if not v_u_2[v16] then
-		return nil
-	end
-	if v16 ~= "StartHallucination" then
-		if v16 ~= "ShowSequence" then
-			return {
-				["action"] = v16
-			}
-		end
-		local v17 = p15.fadeTime
-		local v18
-		if typeof(v17) == "number" then
-			local v19 = p15.fadeTime
-			v18 = math.clamp(v19, 0, 5)
-		else
-			v18 = 1.5
-		end
-		return {
-			["action"] = v16,
-			["fadeTime"] = v18,
-			["messages"] = v_u_14(p15.messages)
-		}
-	end
-	local v20 = p15.intensity
-	local v21
-	if typeof(v20) == "number" then
-		local v22 = p15.intensity
-		v21 = math.clamp(v22, 0, 5)
-	else
-		v21 = 1
-	end
-	local v23 = p15.profile
-	local v24
-	if typeof(v23) == "string" then
-		local v25 = string.sub(v23, 1, 32)
-		if v25 == "" then
-			v24 = nil
-		else
-			v24 = string.lower(v25)
-			if not string.match(v24, "^[%w_%-%?%.]+$") then
-				v24 = nil
-			end
-		end
-	else
-		v24 = nil
-	end
-	local v26 = p15.resume
-	if typeof(v26) ~= "boolean" then
-		v26 = nil
-	end
-	local v27 = {
-		["action"] = v16,
-		["intensity"] = v21
-	}
-	if v24 then
-		v27.profile = v24
-	end
-	if v26 ~= nil then
-		v27.resume = v26
-	end
-	return v27
+local function sanitizeString(p1) -- Line: 21
+    local v1
+    if typeof(p1) ~= "string" then
+        return nil
+    end
+    if 120 >= #p1 then
+        v1 = p1
+    else
+        v1 = string.sub(p1, 1, 120)
+    end
+    return v1
+end
+local function sanitizeMessages(p1) -- Line: 31
+    local text, v1, v2, v3
+    if typeof(p1) ~= "table" then
+        return {}
+    end
+    local v4 = {}
+    for i, v in ipairs(p1) do
+        if 6 < i then
+            break
+        end
+        v1 = nil
+        v2 = nil
+        if typeof(v) == "table" then
+            text = v.text
+            if typeof(text) == "string" then
+                if 120 < #text then
+                    text = string.sub(text, 1, 120)
+                end
+                v1 = text
+            else
+                v1 = nil
+            end
+            if typeof(v.duration) == "number" then
+                v2 = math.max(0.5, (math.min(v.duration, 10)))
+            end
+        elseif typeof(v) == "string" then
+            v3 = v
+            if typeof(v3) == "string" then
+                if 120 < #v3 then
+                    v3 = string.sub(v3, 1, 120)
+                end
+                v1 = v3
+            else
+                v1 = nil
+            end
+        end
+        if v1 then
+            table.insert(v4, {text = v1, duration = v2 or 3})
+        end
+    end
+    return v4
+end
+local function sanitizeProfile(p1) -- Line: 65
+    if typeof(p1) ~= "string" then
+        return nil
+    end
+    local v1 = string.sub(p1, 1, 32)
+    if v1 == "" then
+        return nil
+    end
+    local v2 = string.lower(v1)
+    if string.match(v2, "^[%w_%-%?%.]+$") then
+        return v2
+    end
+    return nil
+end
+return Red.SharedEvent("BadEndingEvent", function(p1) -- Line: 83 -- upvalues: u9 (val), sanitizeMessages (val)
+    local v1, v2, v3, v4
+    if typeof(p1) ~= "table" then
+        return nil
+    end
+    local action = p1.action
+    if not (u9[action]) then
+        return nil
+    end
+    if action ~= "StartHallucination" then
+        if action == "ShowSequence" then
+            v1 = if typeof(p1.fadeTime) == "number" then math.clamp(p1.fadeTime, 0, 5) else 1.5
+            return {action = action, fadeTime = v1, messages = sanitizeMessages(p1.messages)}
+        end
+        return {action = action}
+    end
+    v1 = if typeof(p1.intensity) == "number" then math.clamp(p1.intensity, 0, 5) else 1
+    local profile = p1.profile
+    if typeof(profile) == "string" then
+        v4 = string.sub(profile, 1, 32)
+        if v4 ~= "" then
+            local v5 = string.lower(v4)
+            if not (string.match(v5, "^[%w_%-%?%.]+$")) then
+                v2 = nil
+            else
+                v2 = v5
+            end
+        else
+            v2 = nil
+        end
+    else
+        v2 = nil
+    end
+    local resume = p1.resume
+    if typeof(resume) ~= "boolean" then
+        v3 = nil
+    else
+        v3 = resume
+    end
+    v4 = {action = action, intensity = v1}
+    if v2 then
+        v4.profile = v2
+    end
+    if v3 ~= nil then
+        v4.resume = v3
+    end
+    return v4
 end)

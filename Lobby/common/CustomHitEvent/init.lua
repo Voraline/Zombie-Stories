@@ -1,274 +1,261 @@
-local _ = game.ReplicatedStorage.common
-local v1 = game.ReplicatedStorage.common.RedEvents
-local v_u_2 = require(v1.Framework.FrameworkEvents).CustomHit
-local v_u_3 = game:GetService("RunService"):IsServer()
-local v_u_4 = game:GetService("RunService"):IsStudio()
-local v_u_5 = {}
-local v_u_6 = {}
-local v_u_7 = {}
-local function v_u_10(p8, ...) -- name: debugLog
-	-- upvalues: (copy) v_u_4
-	if v_u_4 then
-		local v9 = p8 or "General"
-		if p8 then
-			if p8 == "TurkeyTarget" then
-				print("[CustomHitDebug]", v9, ...)
-			end
-		else
-			return
-		end
-	else
-		return
-	end
+local CustomHitModules
+local CustomHit = require(game.ReplicatedStorage.common.RedEvents.Framework.FrameworkEvents).CustomHit
+local u19 = game:GetService("RunService"):IsServer()
+local u27 = game:GetService("RunService"):IsStudio()
+local u28 = {}
+local u29 = {}
+local u30 = {}
+local u47 = nil
+local v1 = nil
+local function debugLog(p1, ...) -- Line: 21 -- upvalues: u27 (val)
+    if not u27 or not p1 or p1 ~= "TurkeyTarget" then
+        return
+    end
+    print("[CustomHitDebug]", p1 or "General", ...)
 end
-local v_u_11, v12
-if v_u_3 then
-	v_u_11 = nil
-	v12 = nil
-else
-	local v13 = game:GetService("ReplicatedStorage").common.ZS_Framework
-	v_u_11 = require(v13.Modules.Classes.Weapon)
-	v12 = require(v13.Modules.Controllers.WeaponController.WeaponControllerUtils.Melee)
+local function resolveHitEvent(p1) -- Line: 38 -- upvalues: u29 (val)
+    local v1
+    local Parent = p1
+    while Parent do
+        v1 = u29[Parent]
+        if v1 then
+            return v1
+        end
+        Parent = Parent.Parent
+    end
 end
-function setupHitModule(p14) -- name: setupHitModule
-	-- upvalues: (copy) v_u_5, (copy) v_u_10
-	v_u_5[p14.Name] = require(p14)
-	local v15 = v_u_5[p14.Name]
-	v15.Model = p14:FindFirstChildWhichIsA("Model")
-	local v16 = v_u_10
-	local v17 = p14.Name
-	local v18 = "setupHitModule"
-	local v19 = p14:GetFullName()
-	local v20 = v15.Model
-	if v20 then
-		v20 = v15.Model:GetFullName()
-	end
-	v16(v17, v18, v19, v20)
+if not u19 then
+    local ZS_Framework = game:GetService("ReplicatedStorage").common.ZS_Framework
+    u47 = require(ZS_Framework.Modules.Classes.Weapon)
+    v1 = require(ZS_Framework.Modules.Controllers.WeaponController.WeaponControllerUtils.Melee)
 end
-local v_u_51 = {
-	["RegisterModel"] = function(_, p21, p22) -- name: RegisterModel
-		-- upvalues: (copy) v_u_5, (copy) v_u_10, (copy) v_u_3, (copy) v_u_6, (copy) v_u_7, (copy) v_u_2
-		local v23 = v_u_5[p21]
-		if v23 then
-			local v24
-			if v23.new then
-				v24 = v23.new()
-			else
-				v24 = setmetatable({}, v23)
-			end
-			local v25 = p22 or v24.Model
-			local v26 = v_u_10
-			local v27 = "RegisterModel"
-			local v28
-			if v25 then
-				v28 = v25:GetFullName()
-			else
-				v28 = v25
-			end
-			v26(p21, v27, v28, "override", p22 ~= nil, v_u_3 and "server" or "client")
-			if v25 then
-				v_u_6[v25] = {
-					["Event"] = v24,
-					["db"] = {},
-					["EventName"] = p21,
-					["Model"] = v25
-				}
-				v_u_10(p21, "RegisterModel:registered", v25:GetFullName())
-				return v25, v24
-			end
-			if v_u_3 then
-				local v29 = {
-					["Type"] = "RegisterModel",
-					["Model"] = nil,
-					["HitName"] = nil,
-					["Model"] = p22,
-					["HitName"] = p21
-				}
-				local v30 = v_u_7
-				table.insert(v30, v29)
-				local v31 = v_u_10
-				local v32 = "RegisterModel:queuedPacket"
-				if p22 then
-					p22 = p22:GetFullName()
-				end
-				v31(p21, v32, p22)
-				v_u_2:FireAllClients(v29)
-			end
-		else
-			local v33 = v_u_10
-			local v34 = "RegisterModel:missingEventModule"
-			if p22 then
-				p22 = p22:GetFullName()
-			end
-			v33(p21, v34, p22)
-		end
-	end,
-	["GetPool"] = function(_) -- name: GetPool
-		-- upvalues: (copy) v_u_6
-		return v_u_6
-	end,
-	["Verify"] = function(_, p35, p36, p37, p38) -- name: Verify
-		-- upvalues: (copy) v_u_10, (copy) v_u_6
-		if p37 then
-			local v39 = p37
-			while true do
-				local v40 = not p37 or v_u_6[p37]
-				if v40 then
-					break
-				end
-				p37 = p37.Parent
-			end
-			if v40 then
-				local v41 = v_u_10
-				local v42 = v40.EventName
-				local v43 = "Verify:resolved"
-				local v44
-				if p35 then
-					v44 = p35.Name
-				else
-					v44 = p35
-				end
-				v41(v42, v43, v44, v39:GetFullName(), p38)
-				return true, v40.Event:OnHit(p35, p36, v39, p38)
-			end
-			local v45 = v_u_10
-			local v46 = nil
-			local v47 = "Verify:noEvent"
-			if p35 then
-				p35 = p35.Name
-			end
-			v45(v46, v47, p35, v39:GetFullName())
-		else
-			local v48 = v_u_10
-			local v49 = nil
-			local v50 = "Verify:missingHitPart"
-			if p35 then
-				p35 = p35.Name
-			end
-			v48(v49, v50, p35)
-		end
-	end
+local u56 = {
+    RegisterModel = function(p1, p2, p3) -- Line: 59 -- upvalues: u28 (val), debugLog (val), u19 (val), u29 (val), u30 (val), CustomHit (val)
+        local Model, v1, v2
+        local v3 = u28[p2]
+        if not v3 then
+            local FullName = p3
+            if FullName then
+                FullName = p3:GetFullName()
+            end
+            debugLog(p2, "RegisterModel:missingEventModule", FullName)
+            return
+        end
+        if not v3.new then
+            v2 = setmetatable({}, v3)
+        else
+            v2 = v3.new()
+        end
+        if not p3 then
+            Model = v2.Model
+        else
+            Model = p3
+        end
+        local FullName_2 = Model
+        if FullName_2 then
+            FullName_2 = Model:GetFullName()
+        end
+        local v4 = p3 ~= nil
+        if not u19 then
+            v1 = "client"
+        else
+            v1 = "server"
+        end
+        debugLog(p2, "RegisterModel", FullName_2, "override", v4, v1)
+        if Model then
+            u29[Model] = {Event = v2, db = {}, EventName = p2, Model = Model}
+            debugLog(p2, "RegisterModel:registered", Model:GetFullName())
+            return Model, v2
+        end
+        if u19 then
+            local v5 = {Type = "RegisterModel", Model = p3, HitName = p2}
+            table.insert(u30, v5)
+            local FullName_3 = p3
+            if FullName_3 then
+                FullName_3 = p3:GetFullName()
+            end
+            debugLog(p2, "RegisterModel:queuedPacket", FullName_3)
+            CustomHit:FireAllClients(v5)
+        end
+    end,
+    GetPool = function(p1) -- Line: 90 -- upvalues: u29 (val)
+        return u29
+    end,
+    Verify = function(p1, p2, p3, p4, p5) -- Line: 95 -- upvalues: debugLog (val), u29 (val)
+        local FullName, Name_2, Name_3, v1, v2, v3
+        if not p4 then
+            local Name = p2
+            if Name then
+                Name = p2.Name
+            end
+            debugLog(nil, "Verify:missingHitPart", Name)
+            return
+        end
+        local Parent = p4
+        while Parent do
+            v3 = u29[Parent]
+            if not v3 then
+                Parent = Parent.Parent
+                continue
+            else
+                v1 = v3
+            end
+            if not v1 then
+                Name_3 = p2
+                if Name_3 then
+                    Name_3 = p2.Name
+                end
+                debugLog(nil, "Verify:noEvent", Name_3, p4:GetFullName())
+                return
+            end
+            Name_2 = p2
+            if Name_2 then
+                Name_2 = p2.Name
+            end
+            FullName = p4:GetFullName()
+            debugLog(v1.EventName, "Verify:resolved", Name_2, FullName, p5)
+            v2 = v1.Event:OnHit(p2, p3, p4, p5)
+            return true, v2
+        end
+        v1 = nil
+        if not v1 then
+            Name_3 = p2
+            if Name_3 then
+                Name_3 = p2.Name
+            end
+            debugLog(nil, "Verify:noEvent", Name_3, p4:GetFullName())
+            return
+        end
+        Name_2 = p2
+        if Name_2 then
+            Name_2 = p2.Name
+        end
+        FullName = p4:GetFullName()
+        debugLog(v1.EventName, "Verify:resolved", Name_2, FullName, p5)
+        v2 = v1.Event:OnHit(p2, p3, p4, p5)
+        return true, v2
+    end,
 }
-for _, v52 in script:GetChildren() do
-	if v52:IsA("ModuleScript") then
-		setupHitModule(v52)
-	end
+function setupHitModule(p1) -- Line: 112 -- upvalues: u28 (val), debugLog (val)
+    u28[p1.Name] = require(p1)
+    local v1 = u28[p1.Name]
+    v1.Model = p1:FindFirstChildWhichIsA("Model")
+    local FullName = p1:GetFullName()
+    local Model = v1.Model
+    if Model then
+        Model = v1.Model:GetFullName()
+    end
+    debugLog(p1.Name, "setupHitModule", FullName, Model)
 end
-function setupCustomModulesFolder(p53) -- name: setupCustomModulesFolder
-	for _, v54 in p53:GetChildren() do
-		setupHitModule(v54)
-	end
+for i, j in script:GetChildren() do
+    if j:IsA("ModuleScript") then
+        setupHitModule(j)
+    end
 end
-for _, v55 in game.ReplicatedStorage:GetChildren() do
-	if v55:IsA("Folder") then
-		local v56 = v55:FindFirstChild("CustomHitModules")
-		if v56 then
-			setupCustomModulesFolder(v56)
-		end
-	end
+function setupCustomModulesFolder(p1) -- Line: 123
+    for i, j in p1:GetChildren() do
+        setupHitModule(j)
+    end
 end
-game.ReplicatedStorage.ChildAdded:Connect(function(p57)
-	task.wait(1)
-	local v58 = p57:IsA("Folder") and p57:FindFirstChild("CustomHitModules")
-	if v58 then
-		setupCustomModulesFolder(v58)
-	end
+for k, n in game.ReplicatedStorage:GetChildren() do
+    if n:IsA("Folder") then
+        CustomHitModules = n:FindFirstChild("CustomHitModules")
+        if CustomHitModules then
+            setupCustomModulesFolder(CustomHitModules)
+        end
+    end
+end
+game.ReplicatedStorage.ChildAdded:Connect(function(p1) -- Line: 140
+    task.wait(1)
+    if p1:IsA("Folder") then
+        local CustomHitModules = p1:FindFirstChild("CustomHitModules")
+        if CustomHitModules then
+            setupCustomModulesFolder(CustomHitModules)
+        end
+    end
 end)
-if v_u_3 then
-	v_u_2:SetServerListener(function(p59, p60)
-		-- upvalues: (copy) v_u_10, (copy) v_u_51, (copy) v_u_7, (copy) v_u_2
-		if p60 then
-			if p60.Type == "Hit" then
-				local v61 = p60.HitResult
-				local v62 = v_u_10
-				local v63 = nil
-				local v64 = "ServerListener:HitPacket"
-				local v65
-				if p59 then
-					v65 = p59.Name
-				else
-					v65 = p59
-				end
-				local v66 = p60.WeaponID
-				local v67 = v61 and v61.Instance
-				if v67 then
-					v67 = v61.Instance:GetFullName()
-				end
-				v62(v63, v64, v65, v66, v67)
-				v_u_51:Verify(p59, v61.Position, v61.Instance, p60.WeaponID)
-				return
-			end
-		else
-			local v68 = v_u_10
-			local v69 = nil
-			local v70 = "ServerListener:syncRequest"
-			if p59 then
-				p59 = p59.Name
-			end
-			v68(v69, v70, p59, #v_u_7)
-			for _, v71 in v_u_7 do
-				v_u_2:FireAllClients(v71)
-			end
-		end
-	end)
+if not u19 then
+    CustomHit:SetClientListener(function(p1) -- Line: 166 -- upvalues: debugLog (val), u56 (val)
+        if p1 and p1.Type == "RegisterModel" then
+            local Model = p1.Model
+            if Model then
+                Model = p1.Model:GetFullName()
+            end
+            debugLog(nil, "ClientListener:RegisterPacket", p1.HitName, Model)
+            u56:RegisterModel(p1.HitName, p1.Model)
+        end
+    end)
+    function onHit(p1, p2) -- Line: 174 -- upvalues: u56 (val), debugLog (val), u47 (ref), CustomHit (val)
+        local v1, v2
+        v1, v2 = u56:Verify(game.Players.LocalPlayer, p1.Position, p1.Instance, p2)
+        if v1 then
+            local Instance = p1.Instance
+            if Instance then
+                Instance = p1.Instance:GetFullName()
+            end
+            debugLog(nil, "Client:onHitValid", p2, Instance)
+            if u47 and u47.HitEntity and v2 ~= false then
+                local v3 = "Flesh"
+                local v4 = nil
+                if typeof(v2) == "string" then
+                    v3 = v2
+                elseif typeof(v2) == "table" then
+                    v3 = v2.hitType or v3
+                    v4 = v2.data or v2
+                elseif v2 then
+                    v3 = tostring(v2)
+                end
+                u47.HitEntity:Fire(v3, v4)
+            end
+            CustomHit:FireServer({
+                Type = "Hit",
+                WeaponID = p2,
+                HitResult = {
+                    Distance = p1.Distance,
+                    Instance = p1.Instance,
+                    Material = p1.Material,
+                    Position = p1.Position,
+                    Normal = p1.Normal,
+                },
+            })
+        end
+    end
+    u47.Hit:Connect(onHit)
+    v1.Hit:Connect(onHit)
+    CustomHit:FireServer()
 else
-	v_u_2:SetClientListener(function(p72)
-		-- upvalues: (copy) v_u_10, (copy) v_u_51
-		if p72 and p72.Type == "RegisterModel" then
-			local v73 = v_u_10
-			local v74 = nil
-			local v75 = "ClientListener:RegisterPacket"
-			local v76 = p72.HitName
-			local v77 = p72.Model
-			if v77 then
-				v77 = p72.Model:GetFullName()
-			end
-			v73(v74, v75, v76, v77)
-			v_u_51:RegisterModel(p72.HitName, p72.Model)
-		end
-	end)
-	function onHit(p78, p79) -- name: onHit
-		-- upvalues: (copy) v_u_51, (copy) v_u_10, (ref) v_u_11, (copy) v_u_2
-		local v80, v81 = v_u_51:Verify(game.Players.LocalPlayer, p78.Position, p78.Instance, p79)
-		if v80 then
-			local v82 = v_u_10
-			local v83 = nil
-			local v84 = "Client:onHitValid"
-			local v85 = p78.Instance
-			if v85 then
-				v85 = p78.Instance:GetFullName()
-			end
-			v82(v83, v84, p79, v85)
-			if v_u_11 and (v_u_11.HitEntity and v81 ~= false) then
-				local v86 = "Flesh"
-				local v87 = nil
-				if typeof(v81) == "string" then
-					v86 = v81
-				elseif typeof(v81) == "table" then
-					v86 = v81.hitType or v86
-					v87 = v81.data or v81
-				elseif v81 then
-					v86 = tostring(v81)
-				end
-				v_u_11.HitEntity:Fire(v86, v87)
-			end
-			v_u_2:FireServer({
-				["Type"] = "Hit",
-				["WeaponID"] = nil,
-				["HitResult"] = nil,
-				["WeaponID"] = p79,
-				["HitResult"] = {
-					["Distance"] = p78.Distance,
-					["Instance"] = p78.Instance,
-					["Material"] = p78.Material,
-					["Position"] = p78.Position,
-					["Normal"] = p78.Normal
-				}
-			})
-		end
-	end
-	v_u_11.Hit:Connect(onHit)
-	v12.Hit:Connect(onHit)
-	v_u_2:FireServer()
+    CustomHit:SetServerListener(function(p1, p2) -- Line: 151 -- upvalues: debugLog (val), u56 (val), u30 (val), CustomHit (val)
+        if not p2 then
+            local Name_2 = p1
+            if Name_2 then
+                Name_2 = p1.Name
+            end
+            debugLog(nil, "ServerListener:syncRequest", Name_2, #u30)
+            local v1 = u30
+            local v2 = nil
+            local v3 = nil
+            for i, j in v1, v2, v3 do
+                CustomHit:FireAllClients(j)
+            end
+            return
+        end
+        if p2.Type ~= "Hit" then
+            return
+        end
+        local HitResult = p2.HitResult
+        local Name = p1
+        if Name then
+            Name = p1.Name
+        end
+        local Instance = HitResult
+        if Instance then
+            Instance = HitResult.Instance
+            if Instance then
+                Instance = HitResult.Instance:GetFullName()
+            end
+        end
+        debugLog(nil, "ServerListener:HitPacket", Name, p2.WeaponID, Instance)
+        u56:Verify(p1, HitResult.Position, HitResult.Instance, p2.WeaponID)
+    end)
 end
-return v_u_51
+return u56

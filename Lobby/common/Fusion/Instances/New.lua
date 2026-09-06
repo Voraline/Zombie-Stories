@@ -1,23 +1,22 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Instances.defaultProps)
-local v_u_3 = require(v1.Instances.applyInstanceProps)
-local v_u_4 = require(v1.Logging.logError)
-return function(p_u_5) -- name: New
-	-- upvalues: (copy) v_u_4, (copy) v_u_2, (copy) v_u_3
-	return function(p6)
-		-- upvalues: (copy) p_u_5, (ref) v_u_4, (ref) v_u_2, (ref) v_u_3
-		local v7, v8 = pcall(Instance.new, p_u_5)
-		if not v7 then
-			v_u_4("cannotCreateClass", nil, p_u_5)
-		end
-		local v9 = v_u_2[p_u_5]
-		if v9 ~= nil then
-			for v10, v11 in pairs(v9) do
-				v8[v10] = v11
-			end
-		end
-		v_u_3(p6, v8)
-		return v8
-	end
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local defaultProps = require(Parent.Instances.defaultProps)
+local applyInstanceProps = require(Parent.Instances.applyInstanceProps)
+local logError = require(Parent.Logging.logError)
+return function(p1) -- Line: 14 -- upvalues: logError (val), defaultProps (val), applyInstanceProps (val)
+    return function(a1) -- Line: 15 -- upvalues: p1 (val), logError (upval), defaultProps (upval), applyInstanceProps (upval)
+        local v1, v2
+        v1, v2 = pcall(Instance.new, p1)
+        if not v1 then
+            logError("cannotCreateClass", nil, p1)
+        end
+        local v3 = defaultProps[p1]
+        if v3 ~= nil then
+            for k, v in pairs(v3) do
+                v2[k] = v
+            end
+        end
+        applyInstanceProps(a1, v2)
+        return v2
+    end
 end

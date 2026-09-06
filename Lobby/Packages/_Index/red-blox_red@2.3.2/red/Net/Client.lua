@@ -1,78 +1,85 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("RunService")
-local v_u_3 = v1:WaitForChild("ReliableRedEvent")
-local v_u_4 = v1:WaitForChild("UnreliableRedEvent")
-local v_u_5 = {}
-local v_u_6 = {}
-local v_u_7 = {
-	["Reliable"] = {},
-	["Call"] = {}
-}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local ReliableRedEvent = ReplicatedStorage:WaitForChild("ReliableRedEvent")
+local UnreliableRedEvent = ReplicatedStorage:WaitForChild("UnreliableRedEvent")
+local u18 = {}
+local u19 = {}
+local u20 = {Reliable = {}}
+local v1 = {}
+u20.Call = v1
 return {
-	["SendReliableEvent"] = function(p8, p9) -- name: SendReliableEvent
-		-- upvalues: (copy) v_u_7
-		if not v_u_7.Reliable[p8] then
-			v_u_7.Reliable[p8] = {}
-		end
-		local v10 = v_u_7.Reliable[p8]
-		table.insert(v10, p9)
-	end,
-	["SendUnreliableEvent"] = function(p11, p12) -- name: SendUnreliableEvent
-		-- upvalues: (copy) v_u_4
-		v_u_4:FireServer(p11, p12)
-	end,
-	["SetListener"] = function(p13, p14) -- name: SetListener
-		-- upvalues: (copy) v_u_5
-		v_u_5[p13] = p14
-	end,
-	["CallAsync"] = function(p15, p16) -- name: CallAsync
-		-- upvalues: (copy) v_u_7, (copy) v_u_6
-		if not v_u_7.Call[p15] then
-			v_u_7.Call[p15] = {}
-		end
-		local v17 = v_u_7.Call[p15]
-		table.insert(v17, p16)
-		v_u_6[p16[1]] = coroutine.running()
-		return coroutine.yield()
-	end,
-	["Start"] = function() -- name: Start
-		-- upvalues: (copy) v_u_3, (copy) v_u_5, (copy) v_u_6, (copy) v_u_4, (copy) v_u_2, (copy) v_u_7
-		v_u_3.OnClientEvent:Connect(function(p18, p19)
-			-- upvalues: (ref) v_u_5, (ref) v_u_6
-			if p18 then
-				for v20, v21 in p18 do
-					local v22 = v_u_5[v20]
-					if v22 then
-						for _, v23 in v21 do
-							v22(v23)
-						end
-					end
-				end
-			end
-			if p19 then
-				for v24, v25 in p19 do
-					local v26 = v_u_6[v24]
-					if v26 then
-						v_u_6[v24] = nil
-						coroutine.resume(v26, v25)
-					end
-				end
-			end
-		end)
-		v_u_4.OnClientEvent:Connect(function(p27, p28)
-			-- upvalues: (ref) v_u_5
-			local v29 = v_u_5[p27]
-			if v29 then
-				v29(p28)
-			end
-		end)
-		v_u_2.Heartbeat:Connect(function()
-			-- upvalues: (ref) v_u_7, (ref) v_u_3
-			if next(v_u_7.Reliable) or next(v_u_7.Call) then
-				v_u_3:FireServer(v_u_7.Reliable, v_u_7.Call)
-				v_u_7.Reliable = {}
-				v_u_7.Call = {}
-			end
-		end)
-	end
+    SendReliableEvent = function(p1, p2) -- Line: 17 -- upvalues: u20 (val)
+        if not (u20.Reliable[p1]) then
+            u20.Reliable[p1] = {}
+        end
+        table.insert(u20.Reliable[p1], p2)
+    end,
+    SendUnreliableEvent = function(p1, p2) -- Line: 25 -- upvalues: UnreliableRedEvent (val)
+        UnreliableRedEvent:FireServer(p1, p2)
+    end,
+    SetListener = function(p1, p2) -- Line: 29 -- upvalues: u18 (val)
+        u18[p1] = p2
+    end,
+    CallAsync = function(p1, p2) -- Line: 33 -- upvalues: u20 (val), u19 (val)
+        if not (u20.Call[p1]) then
+            u20.Call[p1] = {}
+        end
+        table.insert(u20.Call[p1], p2)
+        u19[p2[1]] = coroutine.running()
+        return coroutine.yield()
+    end,
+    Start = function() -- Line: 44 -- upvalues: ReliableRedEvent (val), u18 (val), u19 (val), UnreliableRedEvent (val), RunService (val), u20 (val)
+        ReliableRedEvent.OnClientEvent:Connect(function(p1, p2) -- Line: 45 -- upvalues: u18 (upval), u19 (upval)
+            local v1, v2, v3, v4, v5
+            if not p1 then
+                v1 = p2
+            else
+                local v6, v7, v8
+                v2 = p1
+                v3 = nil
+                v4 = nil
+                v1 = p2
+                for i, j in v2, v3, v4 do
+                    v5 = u18[i]
+                    if v5 then
+                        v7 = j
+                        v8 = nil
+                        v6 = nil
+                        for k, n in v7, v8, v6 do
+                            v5(n)
+                        end
+                    end
+                end
+            end
+            if v1 then
+                v2 = v1
+                v3 = nil
+                v4 = nil
+                for m, i5 in v2, v3, v4 do
+                    v5 = u19[m]
+                    if v5 then
+                        u19[m] = nil
+                        coroutine.resume(v5, i5)
+                    end
+                end
+            end
+        end)
+        UnreliableRedEvent.OnClientEvent:Connect(function(p1, p2) -- Line: 70 -- upvalues: u18 (upval)
+            local v1 = u18[p1]
+            if v1 then
+                v1(p2)
+            end
+        end)
+        RunService.Heartbeat:Connect(function() -- Line: 78 -- upvalues: u20 (upval), ReliableRedEvent (upval)
+            if next(u20.Reliable) then
+                ReliableRedEvent:FireServer(u20.Reliable, u20.Call)
+                u20.Reliable = {}
+                u20.Call = {}
+            elseif next(u20.Call) then
+                ReliableRedEvent:FireServer(u20.Reliable, u20.Call)
+                u20.Reliable = {}
+                u20.Call = {}
+            end
+        end)
+    end,
 }

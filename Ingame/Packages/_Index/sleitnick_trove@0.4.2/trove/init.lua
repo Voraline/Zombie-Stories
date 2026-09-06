@@ -1,148 +1,148 @@
-local v_u_1 = newproxy()
-local v_u_2 = newproxy()
-local v_u_3 = game:GetService("RunService")
-local function v_u_9(p4, p5) -- name: GetObjectCleanupFunction
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	local v6 = typeof(p4)
-	if v6 == "function" then
-		return v_u_1
-	end
-	if v6 == "thread" then
-		return v_u_2
-	end
-	if p5 then
-		return p5
-	end
-	if v6 == "Instance" then
-		return "Destroy"
-	end
-	if v6 == "RBXScriptConnection" then
-		return "Disconnect"
-	end
-	if v6 == "table" then
-		local v7 = p4.Destroy
-		if typeof(v7) == "function" then
-			return "Destroy"
-		end
-		local v8 = p4.Disconnect
-		if typeof(v8) == "function" then
-			return "Disconnect"
-		end
-	end
-	error("Failed to get cleanup function for object " .. v6 .. ": " .. tostring(p4), 3)
+local u1 = newproxy()
+local u3 = newproxy()
+local RunService = game:GetService("RunService")
+local function GetObjectCleanupFunction(p1, p2) -- Line: 10 -- upvalues: u1 (val), u3 (val)
+    local v1
+    local v2 = typeof(p1)
+    if v2 == "function" then
+        return u1
+    end
+    if v2 == "thread" then
+        return u3
+    end
+    if p2 then
+        return p2
+    end
+    if v2 == "Instance" then
+        return "Destroy"
+    end
+    if v2 == "RBXScriptConnection" then
+        return "Disconnect"
+    end
+    if v2 ~= "table" then
+        v1 = "Failed to get cleanup function for object " .. v2 .. ": " .. tostring(p1)
+        error(v1, 3)
+        return
+    end
+    if typeof(p1.Destroy) == "function" then
+        return "Destroy"
+    end
+    if typeof(p1.Disconnect) == "function" then
+        return "Disconnect"
+    end
+    v1 = "Failed to get cleanup function for object " .. v2 .. ": " .. tostring(p1)
+    error(v1, 3)
 end
-local v_u_10 = {}
-v_u_10.__index = v_u_10
-function v_u_10.new() -- name: new
-	-- upvalues: (copy) v_u_10
-	local v11 = v_u_10
-	local v12 = setmetatable({}, v11)
-	v12._objects = {}
-	return v12
+local function AssertPromiseLike(p1) -- Line: 34
+    if type(p1) ~= "table" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p1.getStatus) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p1.finally) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p1.cancel) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    end
 end
-function v_u_10.Extend(p13) -- name: Extend
-	-- upvalues: (copy) v_u_10
-	return p13:Construct(v_u_10)
+local u11 = {}
+u11.__index = u11
+function u11.new() -- Line: 57 -- upvalues: u11 (val)
+    local v1 = setmetatable({}, u11)
+    v1._objects = {}
+    return v1
 end
-function v_u_10.Clone(p14, p15) -- name: Clone
-	return p14:Add(p15:Clone())
+function u11.Extend(p1) -- Line: 82 -- upvalues: u11 (val)
+    return p1:Construct(u11)
 end
-function v_u_10.Construct(p16, p17, ...) -- name: Construct
-	local v18 = nil
-	local v19 = type(p17)
-	if v19 == "table" then
-		v18 = p17.new(...)
-	elseif v19 == "function" then
-		v18 = p17(...)
-	end
-	return p16:Add(v18)
+function u11:Clone(p2) -- Line: 90
+    return self:Add(p2:Clone())
 end
-function v_u_10.Connect(p20, p21, p22) -- name: Connect
-	return p20:Add(p21:Connect(p22))
+function u11:Construct(p2, ...) -- Line: 127
+    local v1 = nil
+    local v2 = type(p2)
+    if v2 == "table" then
+        v1 = p2.new(...)
+    elseif v2 == "function" then
+        v1 = p2(...)
+    end
+    return self:Add(v1)
 end
-function v_u_10.BindToRenderStep(p23, p_u_24, p25, p26) -- name: BindToRenderStep
-	-- upvalues: (copy) v_u_3
-	v_u_3:BindToRenderStep(p_u_24, p25, p26)
-	p23:Add(function()
-		-- upvalues: (ref) v_u_3, (copy) p_u_24
-		v_u_3:UnbindFromRenderStep(p_u_24)
-	end)
+function u11:Connect(p2, p3) -- Line: 153
+    return self:Add(p2:Connect(p3))
 end
-function v_u_10.AddPromise(p_u_27, p_u_28) -- name: AddPromise
-	if type(p_u_28) == "table" then
-		local v29 = p_u_28.getStatus
-		if type(v29) == "function" then
-			local v30 = p_u_28.finally
-			if type(v30) == "function" then
-				local v31 = p_u_28.cancel
-				if type(v31) == "function" then
-					::l5::
-					if p_u_28:getStatus() == "Started" then
-						p_u_28:finally(function()
-							-- upvalues: (copy) p_u_27, (copy) p_u_28
-							return p_u_27:_findAndRemoveFromObjects(p_u_28, false)
-						end)
-						p_u_27:Add(p_u_28, "cancel")
-					end
-					return p_u_28
-				end
-			end
-		end
-	end
-	error("Did not receive a Promise as an argument", 3)
-	goto l5
+function u11:BindToRenderStep(p2, p3, p4) -- Line: 170 -- upvalues: RunService (val)
+    RunService:BindToRenderStep(p2, p3, p4)
+    self:Add(function() -- Line: 172 -- upvalues: RunService (upval), p2 (val)
+        RunService:UnbindFromRenderStep(p2)
+    end)
 end
-function v_u_10.Add(p32, p33, p34) -- name: Add
-	-- upvalues: (copy) v_u_9
-	local v35 = v_u_9(p33, p34)
-	local v36 = p32._objects
-	table.insert(v36, { p33, v35 })
-	return p33
+function u11.AddPromise(p1, p2) -- Line: 200
+    if type(p2) ~= "table" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p2.getStatus) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p2.finally) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    elseif type(p2.cancel) ~= "function" then
+        error("Did not receive a Promise as an argument", 3)
+    end
+    if p2:getStatus() == "Started" then
+        p2:finally(function() -- Line: 203 -- upvalues: p1 (val), p2 (val)
+            return p1:_findAndRemoveFromObjects(p2, false)
+        end)
+        p1:Add(p2, "cancel")
+    end
+    return p2
 end
-function v_u_10.Remove(p37, p38) -- name: Remove
-	return p37:_findAndRemoveFromObjects(p38, true)
+function u11:Add(p2, p3) -- Line: 259 -- upvalues: GetObjectCleanupFunction (val)
+    local v1 = GetObjectCleanupFunction(p2, p3)
+    table.insert(self._objects, {p2, v1})
+    return p2
 end
-function v_u_10.Clean(p39) -- name: Clean
-	for _, v40 in ipairs(p39._objects) do
-		p39:_cleanupObject(v40[1], v40[2])
-	end
-	table.clear(p39._objects)
+function u11.Remove(p1, p2) -- Line: 275
+    return p1:_findAndRemoveFromObjects(p2, true)
 end
-function v_u_10._findAndRemoveFromObjects(p41, p42, p43) -- name: _findAndRemoveFromObjects
-	local v44 = p41._objects
-	for v45, v46 in ipairs(v44) do
-		if v46[1] == p42 then
-			local v47 = #v44
-			v44[v45] = v44[v47]
-			v44[v47] = nil
-			if p43 then
-				p41:_cleanupObject(v46[1], v46[2])
-			end
-			return true
-		end
-	end
-	return false
+function u11:Clean() -- Line: 284
+    for i, v in ipairs(self._objects) do
+        self:_cleanupObject(v[1], v[2])
+    end
+    table.clear(self._objects)
 end
-function v_u_10._cleanupObject(_, p48, p49) -- name: _cleanupObject
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	if p49 == v_u_1 then
-		p48()
-		return
-	elseif p49 == v_u_2 then
-		coroutine.close(p48)
-	else
-		p48[p49](p48)
-	end
+function u11:_findAndRemoveFromObjects(p2, p3) -- Line: 291
+    local v1
+    local _objects = self._objects
+    for i, v in ipairs(_objects) do
+        if v[1] == p2 then
+            v1 = #_objects
+            _objects[i] = _objects[v1]
+            _objects[v1] = nil
+            if p3 then
+                self:_cleanupObject(v[1], v[2])
+            end
+            return true
+        end
+    end
+    return false
 end
-function v_u_10.AttachToInstance(p_u_50, p51) -- name: AttachToInstance
-	local v52 = p51:IsDescendantOf(game)
-	assert(v52, "Instance is not a descendant of the game hierarchy")
-	return p_u_50:Connect(p51.Destroying, function()
-		-- upvalues: (copy) p_u_50
-		p_u_50:Destroy()
-	end)
+function u11._cleanupObject(p1, p2, p3) -- Line: 307 -- upvalues: u1 (val), u3 (val)
+    if p3 == u1 then
+        p2()
+        return
+    end
+    if p3 == u3 then
+        coroutine.close(p2)
+        return
+    end
+    p2[p3](p2)
 end
-function v_u_10.Destroy(p53) -- name: Destroy
-	p53:Clean()
+function u11.AttachToInstance(p1, p2) -- Line: 330
+    local v1 = p2:IsDescendantOf(game)
+    assert(v1, "Instance is not a descendant of the game hierarchy")
+    return p1:Connect(p2.Destroying, function() -- Line: 332 -- upvalues: p1 (val)
+        p1:Destroy()
+    end)
 end
-return v_u_10
+function u11:Destroy() -- Line: 340
+    self:Clean()
+end
+return u11

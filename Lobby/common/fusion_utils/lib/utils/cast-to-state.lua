@@ -1,11 +1,11 @@
 require("../types/fusion")
-return function(p1) -- name: castToState
-	local v2 = getmetatable(p1)
-	if typeof(v2) == "table" and v2.type == "State" then
-		local v3 = v2.kind
-		if typeof(v3) == "string" then
-			return p1
-		end
-	end
-	return nil
+return function(p1) -- Line: 6
+    local v1 = getmetatable(p1)
+    if typeof(v1) ~= "table" or v1.type ~= "State" then
+        return nil
+    end
+    if typeof(v1.kind) == "string" then
+        return p1
+    end
+    return nil
 end

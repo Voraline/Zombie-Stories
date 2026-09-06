@@ -1,45 +1,53 @@
-local v_u_1 = game:GetService("UserInputService")
-local v2 = {}
-local v_u_3 = {
-	["__index"] = v2
-}
-function v2.new() -- name: new
-	-- upvalues: (copy) v_u_3
-	local v4 = v_u_3
-	return setmetatable({
-		["connections"] = {}
-	}, v4)
+local UserInputService = game:GetService("UserInputService")
+local v1 = {}
+local u6 = {__index = v1}
+function v1.new() -- Line: 8 -- upvalues: u6 (val)
+    local v1 = {connections = {}}
+    return (setmetatable(v1, u6))
 end
-function v2.BindToInput(p5, p_u_6, p_u_7, ...) -- name: BindToInput
-	-- upvalues: (copy) v_u_1
-	local v8 = { ... }
-	p5.connections[p_u_6] = {}
-	for v9 = 1, #v8 do
-		local v_u_10 = v8[v9]
-		p5.connections[p_u_6][v_u_10] = { v_u_1.InputBegan:Connect(function(p11, _)
-				-- upvalues: (copy) v_u_10, (copy) p_u_7, (copy) p_u_6
-				if p11.KeyCode == v_u_10 then
-					p_u_7(p_u_6, p11.UserInputState, p11)
-				end
-			end), v_u_1.InputChanged:Connect(function(p12, _)
-				-- upvalues: (copy) v_u_10, (copy) p_u_7, (copy) p_u_6
-				if p12.KeyCode == v_u_10 then
-					p_u_7(p_u_6, p12.UserInputState, p12)
-				end
-			end), v_u_1.InputEnded:Connect(function(p13, _)
-				-- upvalues: (copy) v_u_10, (copy) p_u_7, (copy) p_u_6
-				if p13.KeyCode == v_u_10 then
-					p_u_7(p_u_6, p13.UserInputState, p13)
-				end
-			end) }
-	end
+function v1.BindToInput(p1, p2, p3, ...) -- Line: 18 -- upvalues: UserInputService (val)
+    local v1, v2, v3, v4
+    local v5 = {...}
+    p1.connections[p2] = {}
+    local v6 = #v5
+    local v7 = 1
+    for i = 1, v6, v7 do
+        local u14 = v5[i]
+        v3 = p1.connections[p2]
+        v4 = {}
+        v1 = UserInputService.InputBegan:Connect(function(p1, a2) -- Line: 25 -- upvalues: u14 (val), p3 (val), p2 (val)
+            if p1.KeyCode == u14 then
+                p3(p2, p1.UserInputState, p1)
+            end
+        end)
+        v2 = UserInputService.InputChanged:Connect(function(p1, a2) -- Line: 31 -- upvalues: u14 (val), p3 (val), p2 (val)
+            if p1.KeyCode == u14 then
+                p3(p2, p1.UserInputState, p1)
+            end
+        end)
+        v4[1] = v1
+        v4[2] = v2
+        v4[3] = UserInputService.InputEnded:Connect(function(p1, a2) -- Line: 37 -- upvalues: u14 (val), p3 (val), p2 (val)
+            if p1.KeyCode == u14 then
+                p3(p2, p1.UserInputState, p1)
+            end
+        end)
+        v3[u14] = v4
+    end
 end
-function v2.UnbindAction(p14, p15) -- name: UnbindAction
-	for _, v16 in next, p14.connections[p15] do
-		for v17 = 1, #v16 do
-			v16[v17]:Disconnect()
-		end
-	end
-	p14.connections[p15] = nil
+function v1.UnbindAction(p1, p2) -- Line: 46
+    local v1, v2, v3, v4
+    local v5 = next
+    local v6 = p1.connections[p2]
+    local v7 = nil
+    v1, v2 = p1, p2
+    for k, v in v5, v6, v7 do
+        v3 = #v
+        v4 = 1
+        for i = 1, v3, v4 do
+            v[i]:Disconnect()
+        end
+    end
+    v1.connections[v2] = nil
 end
-return v2.new()
+return v1.new()

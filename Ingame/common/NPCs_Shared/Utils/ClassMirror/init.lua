@@ -1,392 +1,469 @@
-local v_u_1 = game:GetService("RunService"):IsServer()
-local v_u_2 = game:GetService("ReplicatedStorage")
-local v_u_3 = game.ReplicatedStorage.common:WaitForChild("NPCs_Shared"):WaitForChild("AIClasses")
-local v4 = game.ReplicatedStorage.common
-local v5 = game.ReplicatedStorage.common.RedEvents
-local v_u_6 = {}
-local function v_u_13(p7) -- name: findClientClass
-	-- upvalues: (copy) v_u_6, (copy) v_u_3, (copy) v_u_2
-	if v_u_6[p7] then
-		return v_u_6[p7]
-	end
-	local v8 = v_u_3:FindFirstChild(p7)
-	if not v8 then
-		for _, v9 in { "place", "arc", "chapter" } do
-			local v10 = v_u_2:FindFirstChild(v9)
-			if v10 then
-				local v11 = v10:FindFirstChild("NPCs_Shared")
-				if v11 then
-					local v12 = v11:FindFirstChild("AIClasses")
-					if v12 then
-						v8 = v12:FindFirstChild(p7)
-						if v8 then
-							break
-						end
-					end
-				end
-			end
-		end
-	end
-	if v8 then
-		v_u_6[p7] = v8
-	end
-	return v8
+local addToReflectionQueue, handleReflection
+local u7 = game:GetService("RunService"):IsServer()
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local NPCs_Shared = game.ReplicatedStorage.common:WaitForChild("NPCs_Shared")
+local AIClasses = NPCs_Shared:WaitForChild("AIClasses")
+local RedEvents = game.ReplicatedStorage.common.RedEvents
+local u31 = {}
+local function findClientClass(p1) -- Line: 12 -- upvalues: u31 (val), AIClasses (val), ReplicatedStorage (val)
+    if u31[p1] then
+        return u31[p1]
+    end
+    local v1 = AIClasses:FindFirstChild(p1)
+    if not v1 then
+        local AIClasses_2, NPCs_Shared, v2
+        local v3 = {"place", "arc", "chapter"}
+        local v4 = nil
+        local v5 = nil
+        for i, j in v3, v4, v5 do
+            v2 = ReplicatedStorage:FindFirstChild(j)
+            if v2 then
+                NPCs_Shared = v2:FindFirstChild("NPCs_Shared")
+                if NPCs_Shared then
+                    AIClasses_2 = NPCs_Shared:FindFirstChild("AIClasses")
+                    if AIClasses_2 then
+                        v1 = AIClasses_2:FindFirstChild(p1)
+                        if v1 then
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if v1 then
+        u31[p1] = v1
+    end
+    return v1
 end
-local v_u_14 = require(v4.NPCRegistry)
-local v_u_15 = require("@self/CompatibilityPatcher")
-local v_u_16 = require(v_u_2.common.ZS_Shared.Data.GameState)
-local v_u_17 = require(v5.NPC.CreateMirrorClassEvent)
-local v18 = require(v5.NPC.RequestExistingNPCs)
-local v_u_19 = require(v5.NPC.NPCReflectionEvent)
-local v_u_20 = {}
-local v_u_21 = {}
-local v_u_22 = {}
-local v_u_23 = {}
-local v_u_24 = {}
-local v_u_25 = {}
-local v_u_26 = {}
-if not v_u_1 then
-	local v_u_27 = false
-	local v_u_28 = 0
-	game:GetService("RunService").Heartbeat:Connect(function(p29)
-		-- upvalues: (copy) v_u_16, (copy) v_u_14, (ref) v_u_27, (ref) v_u_28
-		debug.profilebegin("Client NPC")
-		local v30 = v_u_16.LocalState.NPCRotation
-		local v31 = v_u_14:GetAllNPCs()
-		v_u_27 = not v_u_27
-		local v32 = {}
-		local v33 = {}
-		for _, v34 in v31 do
-			if v34.MoveTo and not v34.Ragdolling then
-				local v35 = nil
-				if v34.AlignDirection then
-					v35 = v34.AlignDirection.Rotation
-				elseif v34.RotateTowards then
-					local v36 = v34.RotateTowards.Position.X
-					local v37 = v34.HRP.Position.Y
-					local v38 = v34.RotateTowards.Position.Z
-					local v39 = Vector3.new(v36, v37, v38)
-					local v40 = CFrame.new(v34.HRP.Position, v39)
-					v35 = v40 - v40.Position
-				end
-				if v35 then
-					if v34.Rotation then
-						v34.Rotation = v34.Rotation:Lerp(v35, p29 * 5)
-					else
-						v34.Rotation = v35
-					end
-				end
-				local v41 = v34.HRP
-				table.insert(v32, v41)
-				local v42 = v34.HRP.CFrame
-				local v43 = CFrame.new(v34.MoveTo) * v30 * (v34.Rotation or CFrame.new())
-				local v44 = p29 * (v34.WalkSpeed / 2)
-				local v45 = math.clamp(v44, 0, 1)
-				table.insert(v33, v42:Lerp(v43, v45))
-			end
-		end
-		if #v32 > 0 then
-			workspace:BulkMoveTo(v32, v33, Enum.BulkMoveMode.FireCFrameChanged)
-		end
-		local v46 = p29 + v_u_28
-		for _, v47 in v31 do
-			if v47.FastThink then
-				v47:FastThink(p29)
-				local v48 = ((not v_u_27 or v47.UID % 2 ~= 1) and true or false) and not v_u_27
-				if v48 then
-					v48 = v47.UID % 2 == 0
-				end
-				if v48 then
-					v47:ClientThink(v46)
-				end
-			end
-		end
-		v_u_28 = p29
-		debug.profileend()
-	end)
+local NPCRegistry = require(game.ReplicatedStorage.common.NPCRegistry)
+local u38 = require("@self/CompatibilityPatcher")
+local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
+local CreateMirrorClassEvent = require(RedEvents.NPC.CreateMirrorClassEvent)
+local RequestExistingNPCs = require(RedEvents.NPC.RequestExistingNPCs)
+local NPCReflectionEvent = require(RedEvents.NPC.NPCReflectionEvent)
+local u57 = {}
+local u58 = {}
+local u59 = {}
+local u60 = {}
+local u61 = {}
+local u62 = {}
+local u63 = {}
+if not u7 then
+    handleReflection = false
+    addToReflectionQueue = 0
+    game:GetService("RunService").Heartbeat:Connect(function(p1) -- Line: 60 -- upvalues: GameState (val), NPCRegistry (val), handleReflection (ref), addToReflectionQueue (ref)
+        local Rotation, Rotation_2, v1, v2, v3, v4
+        debug.profilebegin("Client NPC")
+        local NPCRotation = GameState.LocalState.NPCRotation
+        local AllNPCs = NPCRegistry:GetAllNPCs()
+        handleReflection = not handleReflection
+        local v5 = {}
+        local v6 = {}
+        local v7 = AllNPCs
+        local v8 = nil
+        local v9 = nil
+        local v10 = p1
+        for i, j in v7, v8, v9 do
+            if j.MoveTo and not j.Ragdolling then
+                Rotation = nil
+                if j.AlignDirection then
+                    Rotation = j.AlignDirection.Rotation
+                elseif j.RotateTowards then
+                    v1 = Vector3.new(j.RotateTowards.Position.X, j.HRP.Position.Y, j.RotateTowards.Position.Z)
+                    v2 = CFrame.new(j.HRP.Position, v1)
+                    Rotation = v2 - v2.Position
+                end
+                if Rotation then
+                    if not j.Rotation then
+                        j.Rotation = Rotation
+                    else
+                        j.Rotation = j.Rotation:Lerp(Rotation, v10 * 5)
+                    end
+                end
+                table.insert(v5, j.HRP)
+                Rotation_2 = j.Rotation
+                if not Rotation_2 then
+                    Rotation_2 = CFrame.new()
+                end
+                v3 = CFrame.new(j.MoveTo) * NPCRotation * Rotation_2
+                v4 = v10 * (j.WalkSpeed / 2)
+                table.insert(v6, j.HRP.CFrame:Lerp(v3, (math.clamp(v4, 0, 1))))
+            end
+        end
+        if 0 < #v5 then
+            workspace:BulkMoveTo(v5, v6, Enum.BulkMoveMode.FireCFrameChanged)
+        end
+        v7 = v10 + addToReflectionQueue
+        v8 = AllNPCs
+        v9 = nil
+        local v11 = nil
+        for k, n in v8, v9, v11 do
+            if n.FastThink then
+                n:FastThink(v10)
+                if not handleReflection then
+                    v1 = not handleReflection
+                    if v1 then
+                        v1 = n.UID % 2 == 0
+                    end
+                else
+                    v1 = true
+                    if n.UID % 2 == 1 then end
+                end
+                if v1 then
+                    n:ClientThink(v7)
+                end
+            end
+        end
+        addToReflectionQueue = v10
+        debug.profileend()
+    end)
 end
-local function v_u_55(p49, p50, p51) -- name: handleReflection
-	-- upvalues: (copy) v_u_22, (copy) v_u_20
-	local v52 = p49 ~= nil
-	assert(v52, "Must pass NPC object")
-	local v53 = p49.UID
-	if p49[p50] then
-		local v54 = p49[p50]
-		if typeof(v54) == "function" then
-			if p51[1] == "_useself" then
-				p51[1] = p49
-			end
-			if not p49._Destroyed then
-				p49[p50](unpack(p51))
-			end
-		end
-	end
-	if p50 == "Destroy" or p49._Destroyed then
-		v_u_22[p49.Model] = nil
-		v_u_20[v53] = nil
-	end
+function handleReflection(p1, p2, p3) -- Line: 130 -- upvalues: u59 (val), u57 (val)
+    local v1 = p1 ~= nil
+    assert(v1, "Must pass NPC object")
+    local UID = p1.UID
+    if p1[p2] and typeof(p1[p2]) == "function" then
+        if p3[1] == "_useself" then
+            p3[1] = p1
+        end
+        if not p1._Destroyed then
+            p1[p2](unpack(p3))
+        end
+    end
+    if p2 == "Destroy" then
+        u59[p1.Model] = nil
+        u57[UID] = nil
+    elseif p1._Destroyed then
+        u59[p1.Model] = nil
+        u57[UID] = nil
+    end
 end
-local function v_u_62(p56, p57, p58) -- name: addToReflectionQueue
-	-- upvalues: (copy) v_u_23, (copy) v_u_24, (copy) v_u_14, (copy) v_u_55
-	if not v_u_23[p56] then
-		v_u_23[p56] = {}
-	end
-	local v59 = v_u_23[p56]
-	table.insert(v59, { p57, p58 })
-	if not v_u_24[p56] then
-		v_u_24[p56] = true
-		repeat
-			local v60 = v_u_14.NPCAdded:Wait()
-		until v60.UID == p56
-		while #v_u_23[p56] > 0 do
-			local v61 = table.remove(v_u_23[p56], 1)
-			v_u_55(v60, v61[1], v61[2])
-		end
-	end
+function addToReflectionQueue(p1, p2, p3) -- Line: 150 -- upvalues: u60 (val), u61 (val), NPCRegistry (val), handleReflection (val)
+    if not (u60[p1]) then
+        u60[p1] = {}
+    end
+    local v1 = u60[p1]
+    table.insert(v1, {p2, p3})
+    if not (u61[p1]) then
+        local v2
+        u61[p1] = true
+        while true do
+            v2 = NPCRegistry.NPCAdded:Wait()
+            if v2.UID == p1 then
+                break
+            end
+        end
+        while true do
+            v1 = #u60[p1]
+            if 0 >= v1 then
+                break
+            end
+            v1 = table.remove(u60[p1], 1)
+            handleReflection(v2, v1[1], v1[2])
+        end
+    end
 end
-if v_u_1 then
-	game:GetService("ServerScriptService")
-	local v_u_63 = require("@game/ServerScriptService/common/zap")
-	local v_u_64 = {}
-	game:GetService("Players").PlayerRemoving:Connect(function(p65)
-		-- upvalues: (copy) v_u_64
-		v_u_64[p65] = nil
-	end)
-	v18:SetServerListener(function(p66)
-		-- upvalues: (copy) v_u_64, (copy) v_u_20, (copy) v_u_17
-		if not v_u_64[p66] then
-			v_u_64[p66] = true
-			local v67 = 1
-			while v67 <= #v_u_20 do
-				local v68 = v_u_20[v67]
-				if v68._Destroyed then
-					table.remove(v_u_20, v67)
-				else
-					v_u_17:FireClient(p66, {
-						v68._ClassName,
-						v68.UID,
-						v68.NoReplicatedModel or v68.Model,
-						v68.InitData
-					})
-					v67 = v67 + 1
-				end
-			end
-		end
-	end)
-	task.defer(function()
-		-- upvalues: (copy) v_u_14, (copy) v_u_63
-		local v69 = 0
-		local v70 = 0
-		while task.wait(0.025) do
-			v69 = v69 + 1
-			v70 = (v70 + 1) % 4
-			local v71 = {}
-			for _, v72 in v_u_14:GetAllNPCs() do
-				if v72.UID % 4 == v70 and (v72.HRP and not v72.IsCompat) then
-					v71[v72.UID] = v72.HRP.Position
-				end
-			end
-			v_u_63.PositionChangedEvent.FireAll({
-				["NPCs"] = v71,
-				["ServerTick"] = v69,
-				["GroupIndex"] = v70
-			})
-		end
-	end)
+if not u7 then
+    local v1 = require("@game/ReplicatedStorage/common/zap")
+    CreateMirrorClassEvent:SetClientListener(function(p1) -- Line: 229 -- upvalues: u57 (val), findClientClass (val), NPCRegistry (val), u63 (val)
+        local v1, v2, v3, v4
+        v1, v2, v3, v4 = unpack(p1)
+        if u57[v2] then
+            return
+        end
+        debug.profilebegin("createMirroredClass")
+        local v5 = findClientClass(v1 .. "_Client")
+        if v5 and v2 and v3 then
+            local v6 = require(v5).new(v4)
+            v6.UID = v2
+            NPCRegistry:AddNPC(v6)
+            v6:Init(v3)
+            if not u63._Loaded then
+                while true do
+                    task.wait()
+                    if u63._Loaded then
+                        break
+                    end
+                end
+            end
+            u63.PrepareMirror(v6, v2)
+        end
+        debug.profileend()
+    end)
+    local u121 = {}
+    u121[0] = 0
+    u121[1] = 0
+    u121[2] = 0
+    u121[3] = 0
+    u121[4] = 0
+    u121[5] = 0
+    u121[6] = 0
+    u121[7] = 0
+    u121[8] = 0
+    u121[9] = 0
+    u121[10] = 0
+    u121[11] = 0
+    u121[12] = 0
+    u121[13] = 0
+    u121[14] = 0
+    u121[15] = 0
+    u121[16] = 0
+    u121[17] = 0
+    u121[18] = 0
+    u121[19] = 0
+    u121[20] = 0
+    v1.PositionChangedEvent.On(function(p1) -- Line: 259 -- upvalues: u121 (val), NPCRegistry (val)
+        local NPC
+        if p1.ServerTick < u121[p1.GroupIndex] then
+            return
+        end
+        u121[p1.GroupIndex] = p1.ServerTick
+        local NPCs = p1.NPCs
+        local v1 = nil
+        local v2 = nil
+        for i, j in NPCs, v1, v2 do
+            NPC = NPCRegistry:GetNPC(i)
+            if NPC and not NPC.IsCompat then
+                NPC:ServerUpdate(j)
+            end
+        end
+    end)
+    NPCReflectionEvent:SetClientListener(function(p1) -- Line: 273 -- upvalues: NPCRegistry (val), u62 (val), handleReflection (val), addToReflectionQueue (val)
+        local v1, v2, v3
+        v1, v2, v3 = unpack(p1)
+        local NPC = NPCRegistry:GetNPC(v1)
+        if not NPC then
+            NPC = u62[v1]
+        end
+        if NPC then
+            handleReflection(NPC, v2, v3)
+            return
+        end
+        addToReflectionQueue(v1, v2, v3)
+    end)
+    RequestExistingNPCs:FireServer()
+    NPCRegistry.NPCRemoved:Connect(function(p1) -- Line: 285 -- upvalues: u62 (val)
+        u62[p1.UID] = p1
+        task.delay(60, function() -- Line: 288 -- upvalues: u62 (upval), p1 (val)
+            u62[p1.UID] = nil
+        end)
+    end)
 else
-	local v73 = require("@game/ReplicatedStorage/common/zap")
-	v_u_17:SetClientListener(function(p74)
-		-- upvalues: (copy) v_u_20, (copy) v_u_13, (copy) v_u_14, (copy) v_u_26
-		local v75, v76, v77, v78 = unpack(p74)
-		if not v_u_20[v76] then
-			debug.profilebegin("createMirroredClass")
-			local v79 = v_u_13(v75 .. "_Client")
-			if v79 and (v76 and v77) then
-				local v80 = require(v79).new(v78)
-				v80.UID = v76
-				v_u_14:AddNPC(v80)
-				v80:Init(v77)
-				if not v_u_26._Loaded then
-					repeat
-						task.wait()
-					until v_u_26._Loaded
-				end
-				v_u_26.PrepareMirror(v80, v76)
-			end
-			debug.profileend()
-		end
-	end)
-	local v_u_81 = {
-		[0] = 0,
-		[1] = 0,
-		[2] = 0,
-		[3] = 0,
-		[4] = 0,
-		[5] = 0,
-		[6] = 0,
-		[7] = 0,
-		[8] = 0,
-		[9] = 0,
-		[10] = 0,
-		[11] = 0,
-		[12] = 0,
-		[13] = 0,
-		[14] = 0,
-		[15] = 0,
-		[16] = 0,
-		[17] = 0,
-		[18] = 0,
-		[19] = 0,
-		[20] = 0
-	}
-	v73.PositionChangedEvent.On(function(p82)
-		-- upvalues: (copy) v_u_81, (copy) v_u_14
-		if p82.ServerTick >= v_u_81[p82.GroupIndex] then
-			v_u_81[p82.ServerTick] = p82.GroupIndex
-			for v83, v84 in p82.NPCs do
-				local v85 = v_u_14:GetNPC(v83)
-				if v85 and not v85.IsCompat then
-					v85:ServerUpdate(v84)
-				end
-			end
-		end
-	end)
-	v_u_19:SetClientListener(function(p86)
-		-- upvalues: (copy) v_u_14, (copy) v_u_25, (copy) v_u_55, (copy) v_u_62
-		local v87, v88, v89 = unpack(p86)
-		local v90 = v_u_14:GetNPC(v87) or v_u_25[v87]
-		if v90 then
-			v_u_55(v90, v88, v89)
-		else
-			v_u_62(v87, v88, v89)
-		end
-	end)
-	v18:FireServer()
-	v_u_14.NPCRemoved:Connect(function(p_u_91)
-		-- upvalues: (copy) v_u_25
-		v_u_25[p_u_91.UID] = p_u_91
-		task.delay(60, function()
-			-- upvalues: (ref) v_u_25, (copy) p_u_91
-			v_u_25[p_u_91.UID] = nil
-		end)
-	end)
+    game:GetService("ServerScriptService")
+    local u91 = require("@game/ServerScriptService/common/zap")
+    local u92 = {}
+    game:GetService("Players").PlayerRemoving:Connect(function(p1) -- Line: 173 -- upvalues: u92 (val)
+        u92[p1] = nil
+    end)
+    RequestExistingNPCs:SetServerListener(function(p1) -- Line: 176 -- upvalues: u92 (val), u57 (val), CreateMirrorClassEvent (val)
+        if not (u92[p1]) then
+            local NoReplicatedModel, v1, v2
+            u92[p1] = true
+            local v3 = 1
+            local v4 = p1
+            while v3 <= #u57 do
+                v1 = u57[v3]
+                if not v1._Destroyed then
+                    v2 = {}
+                    NoReplicatedModel = v1.NoReplicatedModel
+                    if not NoReplicatedModel then
+                        NoReplicatedModel = v1.Model
+                    end
+                    v2[1] = v1._ClassName
+                    v2[2] = v1.UID
+                    v2[3] = NoReplicatedModel
+                    v2[4] = v1.InitData
+                    CreateMirrorClassEvent:FireClient(v4, v2)
+                    v3 = v3 + 1
+                else
+                    table.remove(u57, v3)
+                end
+            end
+        end
+    end)
+    task.defer(function() -- Line: 195 -- upvalues: NPCRegistry (val), u91 (val)
+        local v1, v2, v3, v4
+        local v5 = 0
+        local v6 = 0
+        while task.wait(0.025) do
+            v5 = v5 + 1
+            v6 = (v6 + 1) % 4
+            v1 = {}
+            v2 = NPCRegistry:GetAllNPCs()
+            v3 = nil
+            v4 = nil
+            for i, j in v2, v3, v4 do
+                if j.UID % 4 == v6 and j.HRP and not j.IsCompat then
+                    v1[j.UID] = j.HRP.Position
+                end
+            end
+            u91.PositionChangedEvent.FireAll({NPCs = v1, ServerTick = v5, GroupIndex = v6})
+        end
+    end)
 end
-function v_u_26.GetObjs(_) -- name: GetObjs
-	-- upvalues: (copy) v_u_21
-	local v92 = {}
-	for _, v93 in v_u_21 do
-		if not v93._Destroyed then
-			table.insert(v92, v93)
-		end
-	end
-	return v92
+function u63.GetObjs(p1) -- Line: 296 -- upvalues: u58 (val)
+    local v1 = {}
+    local v2 = u58
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        if not j._Destroyed then
+            table.insert(v1, j)
+        end
+    end
+    return v1
 end
-function v_u_26.CompatiblityPatchModel(_, p_u_94, p95, p96) -- name: CompatiblityPatchModel
-	-- upvalues: (copy) v_u_15, (copy) v_u_22
-	local v_u_97 = v_u_15:Create(p_u_94, p95, p96)
-	v_u_97.Died:Connect(function()
-		-- upvalues: (copy) v_u_97, (ref) v_u_22, (copy) p_u_94
-		task.delay(10, function()
-			-- upvalues: (ref) v_u_97, (ref) v_u_22, (ref) p_u_94
-			v_u_97.Died:DisconnectAll()
-			v_u_97.PlayerHurtNPC:DisconnectAll()
-			v_u_22[p_u_94] = nil
-		end)
-	end)
-	return v_u_97
+function u63.CompatiblityPatchModel(p1, p2, p3, p4) -- Line: 307 -- upvalues: u38 (val), u59 (val)
+    local u10 = u38:Create(p2, p3, p4)
+    u10.Died:Connect(function() -- Line: 309 -- upvalues: u10 (val), u59 (upval), p2 (val)
+        task.delay(10, function() -- Line: 310 -- upvalues: u10 (upval), u59 (upval), p2 (upval)
+            u10.Died:DisconnectAll()
+            u10.PlayerHurtNPC:DisconnectAll()
+            u59[p2] = nil
+        end)
+    end)
+    return u10
 end
-v_u_15.AddedNPC:Connect(function(p98)
-	-- upvalues: (copy) v_u_22, (copy) v_u_14
-	v_u_22[p98.Model] = p98
-	v_u_14:AddNPC(p98)
+u38.AddedNPC:Connect(function(p1) -- Line: 319 -- upvalues: u59 (val), NPCRegistry (val)
+    u59[p1.Model] = p1
+    NPCRegistry:AddNPC(p1)
 end)
-function v_u_26.GetObjFromModel(_, p99) -- name: GetObjFromModel
-	-- upvalues: (copy) v_u_22
-	return v_u_22[p99]
+function u63.GetObjFromModel(p1, p2) -- Line: 324 -- upvalues: u59 (val)
+    return u59[p2]
 end
-function v_u_26.GetObjFromId(_, p100) -- name: GetObjFromId
-	-- upvalues: (copy) v_u_14
-	return v_u_14:GetNPC(p100)
+function u63.GetObjFromId(p1, p2) -- Line: 328 -- upvalues: NPCRegistry (val)
+    return NPCRegistry:GetNPC(p2)
 end
-function v_u_26.PrepareMirror(p_u_101, p102) -- name: PrepareMirror
-	-- upvalues: (copy) v_u_1, (copy) v_u_21, (copy) v_u_19, (copy) v_u_22, (copy) v_u_20
-	if v_u_1 then
-		local v_u_103 = p_u_101.UID
-		if p_u_101.Model then
-			v_u_21[v_u_103] = p_u_101
-			function p_u_101.Rollback(p104)
-				-- upvalues: (ref) v_u_19, (ref) v_u_103, (copy) p_u_101
-				v_u_19:FireClient(p104, {
-					v_u_103,
-					"Rollback",
-					{ "_useself", p_u_101.HP }
-				})
-			end
-			function p_u_101.ReconcileDamage(p105, p106, p107)
-				-- upvalues: (ref) v_u_19, (ref) v_u_103
-				v_u_19:FireClient(p105, {
-					v_u_103,
-					"ReconcileDamage",
-					{ "_useself", p106, p107 }
-				})
-			end
-		end
-	else
-		v_u_22[p_u_101.Model] = p_u_101
-		v_u_20[p102] = p_u_101
-	end
+function u63.GetLiveDamagePos(p1, p2) -- Line: 349 -- upvalues: u63 (val)
+    if not p2 then
+        return nil, false
+    end
+    local damageUID = p2.damageUID
+    if not damageUID then
+        return p2.damagePos, false
+    end
+    local ObjFromId = u63:GetObjFromId(damageUID)
+    local HRP = ObjFromId
+    if HRP then
+        HRP = ObjFromId.HRP
+    end
+    if not HRP then
+        return p2.damagePos, false
+    end
+    if HRP.Parent then
+        return HRP.Position, true
+    end
+    return p2.damagePos, false
 end
-function v_u_26.CreateMirrorMetamethods(p_u_108) -- name: CreateMirrorMetamethods
-	-- upvalues: (copy) v_u_1, (copy) v_u_14, (copy) v_u_26, (copy) v_u_17, (copy) v_u_20, (copy) v_u_13, (copy) v_u_19
-	function p_u_108.__index(p_u_109, p_u_110)
-		-- upvalues: (ref) v_u_1, (copy) p_u_108, (ref) v_u_14, (ref) v_u_26, (ref) v_u_17, (ref) v_u_20, (ref) v_u_13, (ref) v_u_19
-		if p_u_110 == "Init" then
-			if v_u_1 then
-				return function(...)
-					-- upvalues: (ref) p_u_108, (copy) p_u_109, (ref) v_u_14, (ref) v_u_26, (ref) v_u_17, (ref) v_u_20
-					local v111 = { ... }
-					if v111[10] and v111[10] == "__ParentClass" then
-						return p_u_108.Init(...)
-					end
-					v111[10] = "__ParentClass"
-					local v112 = p_u_108.Init(unpack(v111, 1, 10))
-					if p_u_109._MirrorRegistered then
-						return v112
-					end
-					p_u_109._MirrorRegistered = true
-					v_u_14:AddNPC(p_u_109)
-					v_u_26.PrepareMirror(p_u_109)
-					v_u_17:FireAllClients({
-						p_u_109._ClassName,
-						p_u_109.UID,
-						p_u_109.NoReplicatedModel or p_u_109.Model,
-						p_u_109.InitData
-					})
-					local v113 = v_u_20
-					local v114 = p_u_109
-					table.insert(v113, v114)
-					return v112
-				end
-			end
-		elseif p_u_110 ~= "new" and rawget(p_u_109, "_Initialized") then
-			local v115 = p_u_108[p_u_110]
-			if typeof(v115) == "function" then
-				return function(...)
-					-- upvalues: (copy) p_u_109, (ref) v_u_13, (copy) p_u_110, (ref) v_u_1, (ref) v_u_19, (ref) p_u_108
-					local v116 = { ... }
-					if v116[1] and v116[1] == p_u_109 then
-						v116[1] = "_useself"
-					end
-					local v117 = v_u_13(p_u_109._ClassName .. "_Client")
-					if v117 and (require(v117)[p_u_110] and v_u_1) then
-						v_u_19:FireAllClients({ p_u_109.UID, p_u_110, v116 })
-					end
-					return p_u_108[p_u_110](...)
-				end
-			end
-		end
-		return p_u_108[p_u_110]
-	end
+function u63.PrepareMirror(p1, p2) -- Line: 366 -- upvalues: u7 (val), u58 (val), NPCReflectionEvent (val), u59 (val), u57 (val)
+    if not u7 then
+        u59[p1.Model] = p1
+        u57[p2] = p1
+    else
+        local UID = p1.UID
+        if p1.Model then
+            u58[UID] = p1
+            if p1.Destroyed then
+                p1.Destroyed:Connect(function() -- Line: 373 -- upvalues: u58 (upval), UID (ref), p1 (val)
+                    local v1 = u58[UID]
+                    if v1 == p1 then
+                        u58[UID] = nil
+                    end
+                end)
+            end
+            function p1.Rollback(a1) -- Line: 379 -- upvalues: NPCReflectionEvent (upval), UID (ref), p1 (val)
+                local v1 = {}
+                local v2 = {"_useself", p1.HP}
+                v1[1] = UID
+                v1[2] = "Rollback"
+                v1[3] = v2
+                NPCReflectionEvent:FireClient(a1, v1)
+            end
+            function p1.ReconcileDamage(p1, p2, p3) -- Line: 389 -- upvalues: NPCReflectionEvent (upval), UID (ref)
+                NPCReflectionEvent:FireClient(p1, {
+                    UID,
+                    "ReconcileDamage",
+                    {"_useself", p2, p3},
+                })
+            end
+        end
+    end
 end
-v_u_26._Loaded = true
-return v_u_26
+function u63.CreateMirrorMetamethods(p1) -- Line: 403 -- upvalues: u7 (val), NPCRegistry (val), u63 (val), CreateMirrorClassEvent (val), u57 (val), findClientClass (val), NPCReflectionEvent (val)
+    function p1.__index(a1, p2) -- Line: 404 -- upvalues: u7 (upval), p1 (val), NPCRegistry (upval), u63 (upval), CreateMirrorClassEvent (upval), u57 (upval), findClientClass (upval), NPCReflectionEvent (upval)
+        if p2 == "Init" then
+            if u7 then
+                return function(...) -- Line: 408 -- upvalues: p1 (upval), a1 (val), NPCRegistry (upval), u63 (upval), CreateMirrorClassEvent (upval), u57 (upval)
+                    local NoReplicatedModel, v1, v2
+                    local v3 = {...}
+                    if not (v3[10]) then
+                        v3[10] = "__ParentClass"
+                        v1 = p1.Init(unpack(v3, 1, 10))
+                        if a1._MirrorRegistered then
+                            return v1
+                        end
+                        a1._MirrorRegistered = true
+                        NPCRegistry:AddNPC(a1)
+                        u63.PrepareMirror(a1)
+                        v2 = {}
+                        NoReplicatedModel = a1.NoReplicatedModel
+                        if not NoReplicatedModel then
+                            NoReplicatedModel = a1.Model
+                        end
+                        v2[1] = a1._ClassName
+                        v2[2] = a1.UID
+                        v2[3] = NoReplicatedModel
+                        v2[4] = a1.InitData
+                        CreateMirrorClassEvent:FireAllClients(v2)
+                        table.insert(u57, a1)
+                        return v1
+                    end
+                    if v3[10] == "__ParentClass" then
+                        return p1.Init(...)
+                    end
+                    v3[10] = "__ParentClass"
+                    v1 = p1.Init(unpack(v3, 1, 10))
+                    if a1._MirrorRegistered then
+                        return v1
+                    end
+                    a1._MirrorRegistered = true
+                    NPCRegistry:AddNPC(a1)
+                    u63.PrepareMirror(a1)
+                    v2 = {}
+                    NoReplicatedModel = a1.NoReplicatedModel
+                    if not NoReplicatedModel then
+                        NoReplicatedModel = a1.Model
+                    end
+                    v2[1] = a1._ClassName
+                    v2[2] = a1.UID
+                    v2[3] = NoReplicatedModel
+                    v2[4] = a1.InitData
+                    CreateMirrorClassEvent:FireAllClients(v2)
+                    table.insert(u57, a1)
+                    return v1
+                end
+            end
+            return p1[p2]
+        end
+        if p2 == "new" or not (rawget(a1, "_Initialized")) then
+            return p1[p2]
+        end
+        if typeof(p1[p2]) == "function" then
+            return function(...) -- Line: 451 -- upvalues: a1 (val), findClientClass (upval), p2 (val), u7 (upval), NPCReflectionEvent (upval), p1 (upval)
+                local v1 = {...}
+                if v1[1] and v1[1] == a1 then
+                    v1[1] = "_useself"
+                end
+                local v2 = findClientClass(a1._ClassName .. "_Client")
+                if v2 and require(v2)[p2] and u7 then
+                    NPCReflectionEvent:FireAllClients({a1.UID, p2, v1})
+                end
+                return p1[p2](...)
+            end
+        end
+        return p1[p2]
+    end
+end
+u63._Loaded = true
+return u63

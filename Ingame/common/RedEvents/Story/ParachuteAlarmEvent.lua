@@ -1,32 +1,53 @@
-return require(game.ReplicatedStorage.Packages.Red).SharedEvent("ParachuteAlarm", function(p1)
-	if typeof(p1) == "table" then
-		local v2 = p1.action
-		local v3 = p1.session
-		if (v2 == "Start" or v2 == "Stop") and (typeof(v3) == "string" and v3 ~= "") then
-			if v2 == "Start" then
-				local v4 = p1.config
-				return (v4 == nil or typeof(v4) == "table") and {
-					["action"] = v2,
-					["session"] = v3,
-					["config"] = v4
-				} or nil
-			else
-				if p1.makeRed ~= nil then
-					local v5 = p1.makeRed
-					if typeof(v5) ~= "boolean" then
-						return nil
-					end
-				end
-				return {
-					["action"] = v2,
-					["session"] = v3,
-					["makeRed"] = p1.makeRed
-				}
-			end
-		else
-			return nil
-		end
-	else
-		return nil
-	end
+return require(game.ReplicatedStorage.Packages.Red).SharedEvent("ParachuteAlarm", function(p1) -- Line: 3
+    local config
+    if typeof(p1) ~= "table" then
+        return nil
+    end
+    local action = p1.action
+    local session = p1.session
+    if action == "Start" then
+        if typeof(session) == "string" then
+            if session == "" then
+                return nil
+            end
+            if action ~= "Start" then
+                if p1.makeRed ~= nil then
+                    if typeof(p1.makeRed) ~= "boolean" then
+                        return nil
+                    end
+                    return {action = action, session = session, makeRed = p1.makeRed}
+                end
+                return {action = action, session = session, makeRed = p1.makeRed}
+            end
+            config = p1.config
+            if config == nil then
+                return {action = action, session = session, config = config}
+            end
+            if typeof(config) ~= "table" then
+                return nil
+            end
+            return {action = action, session = session, config = config}
+        end
+        return nil
+    end
+    if action ~= "Stop" or typeof(session) ~= "string" or session == "" then
+        return nil
+    end
+    if action ~= "Start" then
+        if p1.makeRed ~= nil then
+            if typeof(p1.makeRed) ~= "boolean" then
+                return nil
+            end
+            return {action = action, session = session, makeRed = p1.makeRed}
+        end
+        return {action = action, session = session, makeRed = p1.makeRed}
+    end
+    config = p1.config
+    if config == nil then
+        return {action = action, session = session, config = config}
+    end
+    if typeof(config) ~= "table" then
+        return nil
+    end
+    return {action = action, session = session, config = config}
 end)

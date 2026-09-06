@@ -1,118 +1,135 @@
-local v1 = game.ReplicatedStorage.common
-local v_u_2 = game:GetService("RunService")
-local v3 = require(v1.NPCRegistry)
-local v_u_4 = false
-local v_u_5 = {}
-local v_u_6 = Instance.new("ScreenGui")
-v_u_6.Name = "NPCXray"
-v_u_6.IgnoreGuiInset = true
-v_u_6.ResetOnSpawn = false
-local v_u_7 = Instance.new("Frame")
-v_u_7.BackgroundTransparency = 1
-local v8 = Instance.new("UIStroke", v_u_7)
-v8.Color = Color3.new(0, 1, 0)
-v8.Thickness = 1
-v8.LineJoinMode = Enum.LineJoinMode.Round
-local v9 = Instance.new("TextLabel", v_u_7)
-v9.Name = "UIDLabel"
-v9.Position = UDim2.new(0.5, 0, 0.5, 0)
-v9.Size = UDim2.new(1, 0, 1, 0)
-v9.BackgroundTransparency = 1
-v9.Text = "123"
-v9.TextColor3 = Color3.new(0, 1, 0)
-v9.FontFace = Font.new("SourceSansPro", Enum.FontWeight.Bold)
-v9.AnchorPoint = Vector2.new(0.5, 0.5)
-local function v_u_31() -- name: updateXrays
-	-- upvalues: (copy) v_u_5
-	for v10, v11 in v_u_5 do
-		if v10.Model then
-			local v12 = v11[1]
-			local v13 = v11[2]
-			local v14, v15 = v10.Model:GetBoundingBox()
-			local v16 = nil
-			local v17 = nil
-			local v18 = nil
-			local v19 = nil
-			local v20 = false
-			local v21 = nil
-			for v22 = -1, 1, 2 do
-				for v23 = -1, 1, 2 do
-					for v24 = -1, 1, 2 do
-						local v25 = v14 * CFrame.new(v22 * 0.5 * v15.X, v23 * 0.5 * v15.Y, v24 * 0.5 * v15.Z)
-						local v26 = workspace.CurrentCamera:WorldToViewportPoint(v25.Position)
-						v20 = v26.Z < 0 and true or v20
-						if v19 then
-							local v27 = v26.X
-							v19 = math.max(v19, v27)
-							local v28 = v26.Y
-							v16 = math.max(v16, v28)
-							local v29 = v26.X
-							v17 = math.min(v17, v29)
-							local v30 = v26.Y
-							v18 = math.min(v18, v30)
-							v21 = v26.Z
-						else
-							v19 = v26.X
-							v16 = v26.Y
-							v17 = v26.X
-							v18 = v26.Y
-						end
-					end
-				end
-			end
-			v12.Visible = not v20
-			v12.Position = UDim2.new(0, v17, 0, v18)
-			v12.Size = UDim2.new(0, v19 - v17, 0, v16 - v18)
-			v13.TextSize = 700 / v21
-		end
-	end
+local UIDLabel, v1
+local RunService = game:GetService("RunService")
+local NPCRegistry = require(game.ReplicatedStorage.common.NPCRegistry)
+local u11 = false
+local u12 = {}
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NPCXray"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+local Frame = Instance.new("Frame")
+Frame.BackgroundTransparency = 1
+local v2 = Instance.new("UIStroke", Frame)
+v2.Color = Color3.new(0, 1, 0)
+v2.Thickness = 1
+v2.LineJoinMode = Enum.LineJoinMode.Round
+local v3 = Instance.new("TextLabel", Frame)
+v3.Name = "UIDLabel"
+v3.Position = UDim2.new(0.5, 0, 0.5, 0)
+v3.Size = UDim2.new(1, 0, 1, 0)
+v3.BackgroundTransparency = 1
+v3.Text = "123"
+v3.TextColor3 = Color3.new(0, 1, 0)
+v3.FontFace = Font.new("SourceSansPro", Enum.FontWeight.Bold)
+v3.AnchorPoint = Vector2.new(0.5, 0.5)
+local function setupXray(p1) -- Line: 31 -- upvalues: Frame (val), ScreenGui (val), u12 (val)
+    local v1 = Frame:Clone()
+    local UIDLabel = v1:WaitForChild("UIDLabel")
+    UIDLabel.Text = p1.UID
+    v1.Parent = ScreenGui
+    u12[p1] = {v1, UIDLabel}
 end
-if v_u_2:IsClient() then
-	v_u_6.Parent = game.Players.LocalPlayer.PlayerGui
-	for _, v32 in v3:GetAllNPCs() do
-		local v33 = v_u_7:Clone()
-		local v34 = v33:WaitForChild("UIDLabel")
-		v34.Text = v32.UID
-		v33.Parent = v_u_6
-		v_u_5[v32] = { v33, v34 }
-	end
-	v3.NPCAdded:Connect(function(p35)
-		-- upvalues: (copy) v_u_7, (copy) v_u_6, (copy) v_u_5
-		local v36 = v_u_7:Clone()
-		local v37 = v36:WaitForChild("UIDLabel")
-		v37.Text = p35.UID
-		v36.Parent = v_u_6
-		v_u_5[p35] = { v36, v37 }
-	end)
-	v3.NPCRemoved:Connect(function(p38)
-		-- upvalues: (copy) v_u_5
-		local v39 = v_u_5[p38][1]
-		if v39 then
-			v_u_5[p38] = nil
-			v39:Destroy()
-		end
-	end)
+local function updateXrays() -- Line: 39 -- upvalues: u12 (val)
+    local BoundingBox, BoundingBox_2, X, X_2, Y, Y_2, Z, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11
+    local v12 = u12
+    local v13 = nil
+    local v14 = nil
+    for i, j in v12, v13, v14 do
+        if i.Model then
+            v9 = j[1]
+            v10 = j[2]
+            BoundingBox, BoundingBox_2 = i.Model:GetBoundingBox()
+            v11 = false
+            X = nil
+            Y = nil
+            X_2 = nil
+            Y_2 = nil
+            Z = nil
+            v1 = 1
+            v2 = 2
+            for k = -1, v1, v2 do
+                v3 = 1
+                v4 = 2
+                for n = -1, v3, v4 do
+                    v5 = 1
+                    v6 = 2
+                    for m = -1, v5, v6 do
+                        v7 = BoundingBox * CFrame.new(k * 0.5 * BoundingBox_2.X, n * 0.5 * BoundingBox_2.Y, m * 0.5 * BoundingBox_2.Z)
+                        v8 = workspace.CurrentCamera:WorldToViewportPoint(v7.Position)
+                        if v8.Z < 0 then
+                            v11 = true
+                        end
+                        if not X then
+                            X = v8.X
+                            Y = v8.Y
+                            X_2 = v8.X
+                            Y_2 = v8.Y
+                        else
+                            X = math.max(X, v8.X)
+                            Y = math.max(Y, v8.Y)
+                            X_2 = math.min(X_2, v8.X)
+                            Y_2 = math.min(Y_2, v8.Y)
+                            Z = v8.Z
+                        end
+                    end
+                end
+            end
+            v9.Visible = not v11
+            v9.Position = UDim2.new(0, X_2, 0, Y_2)
+            v9.Size = UDim2.new(0, X - X_2, 0, Y - Y_2)
+            v10.TextSize = 700 / Z
+        end
+    end
+end
+if RunService:IsClient() then
+    ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
+    for i, j in NPCRegistry:GetAllNPCs() do
+        v1 = Frame:Clone()
+        UIDLabel = v1:WaitForChild("UIDLabel")
+        UIDLabel.Text = j.UID
+        v1.Parent = ScreenGui
+        u12[j] = {v1, UIDLabel}
+    end
+    NPCRegistry.NPCAdded:Connect(function(p1) -- Line: 91 -- upvalues: Frame (val), ScreenGui (val), u12 (val)
+        local v1 = Frame:Clone()
+        local UIDLabel = v1:WaitForChild("UIDLabel")
+        UIDLabel.Text = p1.UID
+        v1.Parent = ScreenGui
+        u12[p1] = {v1, UIDLabel}
+    end)
+    NPCRegistry.NPCRemoved:Connect(function(p1) -- Line: 95 -- upvalues: u12 (val)
+        local v1 = u12[p1][1]
+        if v1 then
+            u12[p1] = nil
+            v1:Destroy()
+        end
+    end)
 end
 return {
-	["Name"] = "npcxray",
-	["Aliases"] = nil,
-	["Description"] = "Highlights all NPCs and shows debug info.",
-	["Group"] = "Debug",
-	["Args"] = nil,
-	["ClientRun"] = nil,
-	["Aliases"] = { "nx" },
-	["Args"] = {},
-	["ClientRun"] = function(_) -- name: ClientRun
-		-- upvalues: (ref) v_u_4, (copy) v_u_2, (copy) v_u_31, (copy) v_u_5
-		v_u_4 = not v_u_4
-		if v_u_4 then
-			v_u_2:BindToRenderStep("NPCXray", Enum.RenderPriority.Input.Value - 1, v_u_31)
-		else
-			v_u_2:UnbindFromRenderStep("NPCXray")
-			for _, v40 in v_u_5 do
-				v40[1].Visible = false
-			end
-		end
-		return string.format("NPC Xray %s", v_u_4 and "enabled" or "disabled")
-	end
+    Name = "npcxray",
+    Description = "Highlights all NPCs and shows debug info.",
+    Group = "Debug",
+    Aliases = {"nx"},
+    Args = {},
+    ClientRun = function(p1) -- Line: 111 -- upvalues: u11 (ref), RunService (val), updateXrays (val), u12 (val)
+        local v1
+        u11 = not u11
+        if not u11 then
+            RunService:UnbindFromRenderStep("NPCXray")
+            local v2 = u12
+            local v3 = nil
+            v1 = nil
+            for i, j in v2, v3, v1 do
+                j[1].Visible = false
+            end
+        else
+            RunService:BindToRenderStep("NPCXray", Enum.RenderPriority.Input.Value - 1, updateXrays)
+        end
+        if not u11 then
+            v1 = "disabled"
+        else
+            v1 = "enabled"
+        end
+        return string.format("NPC Xray %s", v1)
+    end,
 }

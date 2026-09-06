@@ -1,942 +1,1042 @@
-local v_u_1 = game:GetService("Players")
-local v_u_2 = game:GetService("ReplicatedStorage")
-local v3 = v_u_2.Packages
-local v_u_4 = require(v3.Fusion)
-local v_u_5 = require(v_u_2.common.Assets.assets)
-local v_u_6 = require(v_u_2.common.skillTree.config.SkillConfig)
-local v_u_7 = v_u_6.layout
-local v_u_8 = require(v_u_2.common.skillTree.ui.SkillSquareGui.SkillSquareGui)
-local v_u_9 = require(v_u_2.common.skillTree.ui.BoundingBoxOverlay.BoundingBoxOverlay)
-local v_u_10 = require("./SkillTreeCamera").getTreeOrigin()
-local v_u_11 = Vector2.new(4, 1)
-local function v_u_19(p12) -- name: getSkillIcon
-	-- upvalues: (copy) v_u_5
-	local v13 = v_u_5.Images
-	if v13 then
-		v13 = v_u_5.Images.SkillTree
-	end
-	if not v13 then
-		return nil
-	end
-	local v14 = p12:lower()
-	for v15, v16 in v13 do
-		if type(v16) == "string" and v15:lower() == v14 then
-			return v16
-		end
-		if type(v16) == "table" then
-			for v17, v18 in v16 do
-				if v17:lower() == v14 then
-					return v18
-				end
-			end
-		end
-	end
-	return nil
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local assets = require(ReplicatedStorage.common.Assets.assets)
+local SkillConfig = require(ReplicatedStorage.common.skillTree.config.SkillConfig)
+local layout = SkillConfig.layout
+local SkillSquareGui = require(ReplicatedStorage.common.skillTree.ui.SkillSquareGui.SkillSquareGui)
+local BoundingBoxOverlay = require(ReplicatedStorage.common.skillTree.ui.BoundingBoxOverlay.BoundingBoxOverlay)
+local u44 = require("./SkillTreeCamera").getTreeOrigin()
+local u48 = Vector2.new(4, 1)
+local function getSkillIcon(p1) -- Line: 46 -- upvalues: assets (val)
+    local v1, v2, v3
+    local Images = assets.Images
+    if Images then
+        Images = assets.Images.SkillTree
+    end
+    if not Images then
+        return nil
+    end
+    local v4 = p1:lower()
+    local v5 = Images
+    local v6 = nil
+    local v7 = nil
+    for i, j in v5, v6, v7 do
+        if type(j) == "string" and i:lower() == v4 then
+            return j
+        end
+        if type(j) == "table" then
+            v2 = j
+            v3 = nil
+            v1 = nil
+            for k, n in v2, v3, v1 do
+                if k:lower() == v4 then
+                    return n
+                end
+            end
+        end
+    end
+    return nil
 end
-local v_u_20 = {}
-v_u_20.__index = v_u_20
-function v_u_20.new() -- name: new
-	-- upvalues: (copy) v_u_20, (copy) v_u_4
-	local v21 = v_u_20
-	local v22 = setmetatable({}, v21)
-	v22.scope = v_u_4.scoped(v_u_4)
-	v22.squares = {}
-	v22.skillStates = {}
-	v22.tierStates = {}
-	v22.branchStates = {}
-	v22.skillBoundingBoxes = {}
-	v22.tierBoundingBoxes = {}
-	v22.branchBoundingBoxes = {}
-	v22.connectionLines = {}
-	v22.skillConnectionLines = {}
-	v22.branchConnectionLines = {}
-	v22.tierConnectionLines = {}
-	v22.container = Instance.new("Model")
-	v22.container.Name = "SkillTreeSquares"
-	v22.guiContainer = nil
-	v22.onSkillClicked = nil
-	return v22
+local u50 = {}
+u50.__index = u50
+function u50.new() -- Line: 118 -- upvalues: u50 (val), Fusion (val)
+    local v1 = setmetatable({}, u50)
+    v1.scope = Fusion.scoped(Fusion)
+    v1.squares = {}
+    v1.skillStates = {}
+    v1.tierStates = {}
+    v1.branchStates = {}
+    v1.skillBoundingBoxes = {}
+    v1.tierBoundingBoxes = {}
+    v1.branchBoundingBoxes = {}
+    v1.connectionLines = {}
+    v1.skillConnectionLines = {}
+    v1.branchConnectionLines = {}
+    v1.tierConnectionLines = {}
+    v1.container = Instance.new("Model")
+    v1.container.Name = "SkillTreeSquares"
+    v1.guiContainer = nil
+    v1.onSkillClicked = nil
+    return v1
 end
-function v_u_20.gridToWorld(p23, p24) -- name: gridToWorld
-	-- upvalues: (copy) v_u_10
-	local v25 = -p23 * 65
-	local v26 = p24 * 65
-	return v_u_10 + Vector3.new(v25, 0, v26)
+function u50.gridToWorld(p1, p2) -- Line: 145 -- upvalues: u44 (val)
+    return u44 + Vector3.new(-p1 * 65, 0, p2 * 65)
 end
-function v_u_20.createSkillBoundingBox(p27, p28, p29) -- name: createSkillBoundingBox
-	local v30 = Instance.new("Part")
-	v30.Name = p28 .. "_BoundingBox"
-	v30.Size = Vector3.new(50, 1, 50)
-	v30.Position = p29 + Vector3.new(0, 6, 0)
-	v30.Anchored = true
-	v30.CanCollide = false
-	v30.Transparency = 1
-	v30.CastShadow = false
-	local v31 = Instance.new("SurfaceGui")
-	v31.Name = "LockOverlay"
-	v31.Face = Enum.NormalId.Top
-	v31.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	v31.Parent = v30
-	p27.skillBoundingBoxes[p28] = v30
-	return v30
+function u50.createSkillBoundingBox(p1, p2, p3) -- Line: 156
+    local Part = Instance.new("Part")
+    Part.Name = p2 .. "_BoundingBox"
+    Part.Size = Vector3.new(50, 1, 50)
+    Part.Position = p3 + Vector3.new(0, 6, 0)
+    Part.Anchored = true
+    Part.CanCollide = false
+    Part.Transparency = 1
+    Part.CastShadow = false
+    local SurfaceGui = Instance.new("SurfaceGui")
+    SurfaceGui.Name = "LockOverlay"
+    SurfaceGui.Face = Enum.NormalId.Top
+    SurfaceGui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+    SurfaceGui.Parent = Part
+    p1.skillBoundingBoxes[p2] = Part
+    return Part
 end
-function v_u_20.createTierBoundingBox(p32, p33, p34, p35) -- name: createTierBoundingBox
-	-- upvalues: (copy) v_u_7, (copy) v_u_20, (copy) v_u_10, (copy) v_u_6, (copy) v_u_9
-	if #p35 == 0 then
-		return nil
-	end
-	local v36 = (1 / 0)
-	local v37 = (-1 / 0)
-	local v38 = (1 / 0)
-	local v39 = (-1 / 0)
-	for _, v40 in p35 do
-		local v41 = v_u_7.getPosition(v40)
-		if v41 then
-			local v42 = v_u_20.gridToWorld(v41.row, v41.column)
-			local v43 = v42.X - 25
-			v36 = math.min(v36, v43)
-			local v44 = v42.X + 25
-			v37 = math.max(v37, v44)
-			local v45 = v42.Z - 25
-			v38 = math.min(v38, v45)
-			local v46 = v42.Z + 25
-			v39 = math.max(v39, v46)
-		end
-	end
-	local v47 = v36 - 1
-	local v48 = v37 + 1
-	local v49 = v38 - 1
-	local v50 = v39 + 1
-	local v51 = v48 - v47
-	local v52 = v50 - v49
-	local v53 = (v47 + v48) / 2
-	local v54 = (v49 + v50) / 2
-	local v55 = p33 == "Core"
-	local v56 = v55 and v_u_10.Y - 8 or v_u_10.Y - 5
-	local v57 = Instance.new("Part")
-	v57.Name = ("%*_Tier%*_BoundingBox"):format(p33, p34)
-	v57.Size = Vector3.new(v51, 1, v52)
-	v57.Position = Vector3.new(v53, v56, v54)
-	v57.Anchored = true
-	v57.CanCollide = false
-	v57.Transparency = 1
-	v57.CastShadow = false
-	v57.CFrame = v57.CFrame * CFrame.Angles(0, 3.141592653589793, 0)
-	local v58 = ("%*_Tier%*"):format(p33, p34)
-	local v59
-	if p34 >= 2 then
-		local v60 = v_u_6.getTierRequiredCount(p33, p34 - 1)
-		v59 = ("Upgrade %* Tier %* skill%*"):format(v60, p34 - 1, v60 > 1 and "s" or "")
-	else
-		v59 = ""
-	end
-	local v61
-	if v55 then
-		v61 = nil
-	else
-		v61 = p32.scope:Value(true)
-	end
-	local v62 = {
-		["locked"] = p32.scope:Value(true),
-		["requiresText"] = p32.scope:Value(v59),
-		["alwaysOnTop"] = v61
-	}
-	p32.tierStates[v58] = v62
-	local v63 = v_u_9
-	local v64 = {
-		["scope"] = nil,
-		["Locked"] = nil,
-		["CornerRadius"] = 128,
-		["StrokeThickness"] = 50,
-		["RequiresText"] = nil,
-		["ShowLockIcon"] = nil,
-		["AlwaysOnTop"] = nil,
-		["Adornee"] = nil,
-		["scope"] = p32.scope,
-		["Locked"] = v62.locked,
-		["RequiresText"] = v62.requiresText,
-		["ShowLockIcon"] = not v55
-	}
-	if v55 then
-		v61 = false
-	end
-	v64.AlwaysOnTop = v61
-	v64.Adornee = v57
-	v63(v64).Parent = p32.guiContainer
-	p32.tierBoundingBoxes[v58] = v57
-	return v57
+function u50:createTierBoundingBox(p2, p3, p4) -- Line: 181 -- upvalues: layout (val), u50 (val), u44 (val), SkillConfig (val), BoundingBoxOverlay (val)
+    local v1, v2, v3, v4
+    if #p4 == 0 then
+        return nil
+    end
+    local v5 = (1 / 0)
+    local v6 = (-1 / 0)
+    local v7 = (1 / 0)
+    local v8 = (-1 / 0)
+    local v9 = p4
+    local v10 = nil
+    local v11 = nil
+    for i, j in v9, v10, v11 do
+        v1 = layout.getPosition(j)
+        if v1 then
+            v2 = u50.gridToWorld(v1.row, v1.column)
+            v5 = math.min(v5, v2.X - 25)
+            v6 = math.max(v6, v2.X + 25)
+            v7 = math.min(v7, v2.Z - 25)
+            v8 = math.max(v8, v2.Z + 25)
+        end
+    end
+    v5 = v5 - 1
+    v6 = v6 + 1
+    v7 = v7 - 1
+    v8 = v8 + 1
+    local v12 = p2 == "Core"
+    if not v12 then
+        v1 = u44.Y - 5
+    else
+        v1 = u44.Y - 8
+    end
+    local Part = Instance.new("Part")
+    Part.Name = ("%*_Tier%*_BoundingBox"):format(p2, p3)
+    Part.Size = Vector3.new(v6 - v5, 1, v8 - v7)
+    Part.Position = Vector3.new((v5 + v6) / 2, v1, (v7 + v8) / 2)
+    Part.Anchored = true
+    Part.CanCollide = false
+    Part.Transparency = 1
+    Part.CastShadow = false
+    Part.CFrame = Part.CFrame * CFrame.Angles(0, 3.141592653589793, 0)
+    local v13 = ("%*_Tier%*"):format(p2, p3)
+    local v14 = ""
+    if 2 <= p3 then
+        local v15
+        v3 = SkillConfig.getTierRequiredCount(p2, p3 - 1)
+        if 1 >= v3 then
+            v15 = ""
+        else
+            v15 = "s"
+        end
+        v14 = ("Upgrade %* Tier %* skill%*"):format(v3, p3 - 1, v15)
+    end
+    if not v12 then
+        v3 = self.scope:Value(true)
+    else
+        v3 = nil
+    end
+    local v16 = {locked = self.scope:Value(true), requiresText = self.scope:Value(v14), alwaysOnTop = v3}
+    self.tierStates[v13] = v16
+    local v17 = {
+        CornerRadius = 128,
+        StrokeThickness = 50,
+        scope = self.scope,
+        Locked = v16.locked,
+        RequiresText = v16.requiresText,
+        ShowLockIcon = not v12,
+    }
+    if not v12 then
+        v4 = v3
+    else
+        v4 = false
+    end
+    v17.AlwaysOnTop = v4
+    v17.Adornee = Part
+    local v18 = BoundingBoxOverlay(v17)
+    v18.Parent = self.guiContainer
+    self.tierBoundingBoxes[v13] = Part
+    return Part
 end
-function v_u_20.createAllTierBoundingBoxes(p65) -- name: createAllTierBoundingBoxes
-	-- upvalues: (copy) v_u_7
-	for v66, v67 in v_u_7.combatTiers do
-		local v68 = p65:createTierBoundingBox("Combat", v66, v67)
-		if v68 then
-			v68.Parent = p65.container
-		end
-	end
-	for v69, v70 in v_u_7.survivalTiers do
-		local v71 = p65:createTierBoundingBox("Survival", v69, v70)
-		if v71 then
-			v71.Parent = p65.container
-		end
-	end
-	local v72 = p65:createTierBoundingBox("Core", 0, v_u_7.coreTiers[1])
-	if v72 then
-		v72.Parent = p65.container
-	end
+function u50:createAllTierBoundingBoxes() -- Line: 274 -- upvalues: layout (val)
+    local v1
+    local combatTiers = layout.combatTiers
+    local v2 = nil
+    local v3 = nil
+    for i, j in combatTiers, v2, v3 do
+        v1 = self:createTierBoundingBox("Combat", i, j)
+        if v1 then
+            v1.Parent = self.container
+        end
+    end
+    local survivalTiers = layout.survivalTiers
+    v2 = nil
+    v3 = nil
+    for k, n in survivalTiers, v2, v3 do
+        v1 = self:createTierBoundingBox("Survival", k, n)
+        if v1 then
+            v1.Parent = self.container
+        end
+    end
+    local v4 = self:createTierBoundingBox("Core", 0, layout.coreTiers[1])
+    if v4 then
+        v4.Parent = self.container
+    end
 end
-function v_u_20.createBranchBoundingBox(p73, p74, p75) -- name: createBranchBoundingBox
-	-- upvalues: (copy) v_u_7, (copy) v_u_20, (copy) v_u_10, (copy) v_u_6, (copy) v_u_9
-	local v76 = {}
-	for _, v77 in p75 do
-		for _, v78 in v77 do
-			table.insert(v76, v78)
-		end
-	end
-	if #v76 == 0 then
-		return nil
-	end
-	local v79 = (1 / 0)
-	local v80 = (-1 / 0)
-	local v81 = (1 / 0)
-	local v82 = (-1 / 0)
-	for _, v83 in v76 do
-		local v84 = v_u_7.getPosition(v83)
-		if v84 then
-			local v85 = v_u_20.gridToWorld(v84.row, v84.column)
-			local v86 = v85.X - 25
-			v79 = math.min(v79, v86)
-			local v87 = v85.X + 25
-			v80 = math.max(v80, v87)
-			local v88 = v85.Z - 25
-			v81 = math.min(v81, v88)
-			local v89 = v85.Z + 25
-			v82 = math.max(v82, v89)
-		end
-	end
-	local v90 = v79 - 6
-	local v91 = v80 + 6
-	local v92 = v81 - 6
-	local v93 = v82 + 6
-	local v94 = v91 - v90
-	local v95 = v93 - v92
-	local v96 = (v90 + v91) / 2
-	local v97 = (v92 + v93) / 2
-	local v98 = Instance.new("Part")
-	v98.Name = ("%*_BoundingBox"):format(p74)
-	v98.Size = Vector3.new(v94, 1, v95)
-	local v99 = v_u_10.Y - 8
-	v98.Position = Vector3.new(v96, v99, v97)
-	v98.Anchored = true
-	v98.CanCollide = false
-	v98.Transparency = 1
-	v98.CastShadow = false
-	v98.CFrame = v98.CFrame * CFrame.Angles(0, 3.141592653589793, 0)
-	local v100 = {
-		["locked"] = p73.scope:Value(true)
-	}
-	p73.branchStates[p74] = v100
-	local v101 = ""
-	local v102 = v_u_7.coreTiers[1]
-	if p74 == "Combat" then
-		local v103 = v_u_6.getSkill(v102[3])
-		v101 = ("Unlock %* to access the Combat tree"):format(v103 and v103.name or "Core 3")
-	elseif p74 == "Survival" then
-		local v104 = v_u_6.getSkill(v102[2])
-		v101 = ("Unlock %* to access the Survival tree"):format(v104 and v104.name or "Core 2")
-	end
-	v_u_9({
-		["scope"] = nil,
-		["Locked"] = nil,
-		["CornerRadius"] = 255,
-		["StrokeThickness"] = 100,
-		["RequiresText"] = nil,
-		["ZOffset"] = 25,
-		["TextMaxSize"] = nil,
-		["Adornee"] = nil,
-		["scope"] = p73.scope,
-		["Locked"] = v100.locked,
-		["RequiresText"] = v101,
-		["TextMaxSize"] = Vector2.new(5000, 1000),
-		["Adornee"] = v98
-	}).Parent = p73.guiContainer
-	p73.branchBoundingBoxes[p74] = v98
-	return v98
+function u50:createBranchBoundingBox(p2, p3) -- Line: 301 -- upvalues: layout (val), u50 (val), u44 (val), SkillConfig (val), BoundingBoxOverlay (val)
+    local v1, v2, v3, v4, v5, v6, v7, v8
+    local v9 = {}
+    local v10 = p3
+    local v11 = nil
+    local v12 = nil
+    for i, j in v10, v11, v12 do
+        v8 = j
+        v3 = nil
+        v4 = nil
+        for k, n in v8, v3, v4 do
+            table.insert(v9, n)
+        end
+    end
+    if #v9 == 0 then
+        return nil
+    end
+    v10 = (1 / 0)
+    v11 = (-1 / 0)
+    v12 = (1 / 0)
+    local v13 = (-1 / 0)
+    local v14 = v9
+    v8 = nil
+    v3 = nil
+    for m, i5 in v14, v8, v3 do
+        v5 = layout.getPosition(i5)
+        if v5 then
+            v6 = u50.gridToWorld(v5.row, v5.column)
+            v10 = math.min(v10, v6.X - 25)
+            v11 = math.max(v11, v6.X + 25)
+            v12 = math.min(v12, v6.Z - 25)
+            v13 = math.max(v13, v6.Z + 25)
+        end
+    end
+    v10 = v10 - 6
+    v11 = v11 + 6
+    v12 = v12 - 6
+    v13 = v13 + 6
+    local Part = Instance.new("Part")
+    Part.Name = ("%*_BoundingBox"):format(v2)
+    Part.Size = Vector3.new(v11 - v10, 1, v13 - v12)
+    Part.Position = Vector3.new((v10 + v11) / 2, u44.Y - 8, (v12 + v13) / 2)
+    Part.Anchored = true
+    Part.CanCollide = false
+    Part.Transparency = 1
+    Part.CastShadow = false
+    Part.CFrame = Part.CFrame * CFrame.Angles(0, 3.141592653589793, 0)
+    v5 = {locked = v1.scope:Value(true)}
+    v1.branchStates[v2] = v5
+    v6 = ""
+    local v15 = layout.coreTiers[1]
+    if v2 == "Combat" then
+        local name
+        v7 = SkillConfig.getSkill(v15[3])
+        if not v7 then
+            name = "Core 3"
+        else
+            name = v7.name
+            if not name then
+                name = "Core 3"
+            end
+        end
+        v6 = ("Unlock %* to access the Combat tree"):format(name)
+    elseif v2 == "Survival" then
+        local name_2
+        v7 = SkillConfig.getSkill(v15[2])
+        if not v7 then
+            name_2 = "Core 2"
+        else
+            name_2 = v7.name
+            if not name_2 then
+                name_2 = "Core 2"
+            end
+        end
+        v6 = ("Unlock %* to access the Survival tree"):format(name_2)
+    end
+    v7 = BoundingBoxOverlay({
+        CornerRadius = 255,
+        StrokeThickness = 100,
+        ZOffset = 25,
+        scope = v1.scope,
+        Locked = v5.locked,
+        RequiresText = v6,
+        TextMaxSize = Vector2.new(5000, 1000),
+        Adornee = Part,
+    })
+    v7.Parent = v1.guiContainer
+    v1.branchBoundingBoxes[v2] = Part
+    return Part
 end
-function v_u_20.createAllBranchBoundingBoxes(p105) -- name: createAllBranchBoundingBoxes
-	-- upvalues: (copy) v_u_7
-	local v106 = p105:createBranchBoundingBox("Combat", v_u_7.combatTiers)
-	if v106 then
-		v106.Parent = p105.container
-	end
-	local v107 = p105:createBranchBoundingBox("Survival", v_u_7.survivalTiers)
-	if v107 then
-		v107.Parent = p105.container
-	end
+function u50:createAllBranchBoundingBoxes() -- Line: 394 -- upvalues: layout (val)
+    local v1 = self:createBranchBoundingBox("Combat", layout.combatTiers)
+    if v1 then
+        v1.Parent = self.container
+    end
+    local v2 = self:createBranchBoundingBox("Survival", layout.survivalTiers)
+    if v2 then
+        v2.Parent = self.container
+    end
 end
-function v_u_20.createLine(p108, p109, p110, p111, p112, p113) -- name: createLine
-	-- upvalues: (copy) v_u_11
-	local v114 = Instance.new("Attachment")
-	v114.Name = "LineStart"
-	v114.Parent = p109
-	local v115 = Instance.new("Attachment")
-	v115.Name = "LineEnd"
-	v115.Parent = p111
-	local v116 = p110.X
-	local v117 = p109.Position.Y
-	local v118 = p110.Z
-	v114.WorldPosition = Vector3.new(v116, v117, v118)
-	local v119 = p112.X
-	local v120 = p111.Position.Y
-	local v121 = p112.Z
-	v115.WorldPosition = Vector3.new(v119, v120, v121)
-	local v122 = Instance.new("RopeConstraint")
-	v122.Name = "ConnectionLine"
-	v122.Attachment0 = v114
-	v122.Attachment1 = v115
-	v122.Visible = true
-	v122.Thickness = v_u_11.X
-	v122.Color = BrickColor.new(p113 or Color3.fromRGB(100, 100, 100))
-	v122.Parent = p109
-	local v123 = p108.connectionLines
-	table.insert(v123, v122)
-	return v122
+function u50:createLine(p2, p3, p4, p5, p6) -- Line: 412 -- upvalues: u48 (val)
+    local Attachment = Instance.new("Attachment")
+    Attachment.Name = "LineStart"
+    Attachment.Parent = p2
+    local Attachment_2 = Instance.new("Attachment")
+    Attachment_2.Name = "LineEnd"
+    Attachment_2.Parent = p4
+    Attachment.WorldPosition = Vector3.new(p3.X, p2.Position.Y, p3.Z)
+    Attachment_2.WorldPosition = Vector3.new(p5.X, p4.Position.Y, p5.Z)
+    local RopeConstraint = Instance.new("RopeConstraint")
+    RopeConstraint.Name = "ConnectionLine"
+    RopeConstraint.Attachment0 = Attachment
+    RopeConstraint.Attachment1 = Attachment_2
+    RopeConstraint.Visible = true
+    RopeConstraint.Thickness = u48.X
+    local v1 = p6
+    if not v1 then
+        v1 = Color3.fromRGB(100, 100, 100)
+    end
+    RopeConstraint.Color = BrickColor.new(v1)
+    RopeConstraint.Parent = p2
+    table.insert(self.connectionLines, RopeConstraint)
+    return RopeConstraint
 end
-function v_u_20.getTierCenter(p124, p125, p126) -- name: getTierCenter
-	local v127 = ("%*_Tier%*"):format(p125, p126)
-	local v128 = p124.tierBoundingBoxes[v127]
-	if v128 then
-		return v128.Position
-	else
-		return nil
-	end
+function u50.getTierCenter(p1, p2, p3) -- Line: 450
+    local v1 = ("%*_Tier%*"):format(p2, p3)
+    local v2 = p1.tierBoundingBoxes[v1]
+    if v2 then
+        return v2.Position
+    end
+    return nil
 end
-function v_u_20.getTierEdge(p129, p130, p131, p132) -- name: getTierEdge
-	local v133 = ("%*_Tier%*"):format(p130, p131)
-	local v134 = p129.tierBoundingBoxes[v133]
-	if not v134 then
-		return nil
-	end
-	local v135 = v134.Position
-	local v136 = v134.Size
-	if p132 == "left" then
-		local v137 = -v136.Z / 2
-		return v135 + Vector3.new(0, 0, v137)
-	end
-	if p132 == "right" then
-		local v138 = v136.Z / 2
-		return v135 + Vector3.new(0, 0, v138)
-	end
-	if p132 == "top" then
-		local v139 = v136.X / 2
-		return v135 + Vector3.new(v139, 0, 0)
-	end
-	if p132 ~= "bottom" then
-		return v135
-	end
-	local v140 = -v136.X / 2
-	return v135 + Vector3.new(v140, 0, 0)
+function u50:getTierEdge(p2, p3, p4) -- Line: 463
+    local v1 = ("%*_Tier%*"):format(p2, p3)
+    local v2 = self.tierBoundingBoxes[v1]
+    if not v2 then
+        return nil
+    end
+    local Position = v2.Position
+    local Size = v2.Size
+    if p4 == "left" then
+        return Position + Vector3.new(0, 0, -Size.Z / 2)
+    end
+    if p4 == "right" then
+        return Position + Vector3.new(0, 0, Size.Z / 2)
+    end
+    if p4 == "top" then
+        return Position + Vector3.new(Size.X / 2, 0, 0)
+    end
+    if p4 == "bottom" then
+        return Position + Vector3.new(-Size.X / 2, 0, 0)
+    end
+    return Position
 end
-function v_u_20.getBranchEdge(p141, p142, p143) -- name: getBranchEdge
-	local v144 = p141.branchBoundingBoxes[p142]
-	if not v144 then
-		return nil
-	end
-	local v145 = v144.Position
-	local v146 = v144.Size
-	if p143 == "left" then
-		local v147 = -v146.Z / 2
-		return v145 + Vector3.new(0, 0, v147)
-	end
-	if p143 == "right" then
-		local v148 = v146.Z / 2
-		return v145 + Vector3.new(0, 0, v148)
-	end
-	if p143 == "top" then
-		local v149 = v146.X / 2
-		return v145 + Vector3.new(v149, 0, 0)
-	end
-	if p143 ~= "bottom" then
-		return v145
-	end
-	local v150 = -v146.X / 2
-	return v145 + Vector3.new(v150, 0, 0)
+function u50:getBranchEdge(p2, p3) -- Line: 495
+    local v1 = self.branchBoundingBoxes[p2]
+    if not v1 then
+        return nil
+    end
+    local Position = v1.Position
+    local Size = v1.Size
+    if p3 == "left" then
+        return Position + Vector3.new(0, 0, -Size.Z / 2)
+    end
+    if p3 == "right" then
+        return Position + Vector3.new(0, 0, Size.Z / 2)
+    end
+    if p3 == "top" then
+        return Position + Vector3.new(Size.X / 2, 0, 0)
+    end
+    if p3 == "bottom" then
+        return Position + Vector3.new(-Size.X / 2, 0, 0)
+    end
+    return Position
 end
-function v_u_20.createAllConnectionLines(p151) -- name: createAllConnectionLines
-	-- upvalues: (copy) v_u_10, (copy) v_u_7, (copy) v_u_20
-	local v152 = v_u_10.Y + -4
-	local v153 = Color3.fromRGB(0, 0, 0)
-	local v154 = Color3.fromRGB(0, 0, 0)
-	local v155 = v_u_7.coreTiers[1]
-	local v156 = v_u_7.getPosition(v155[2])
-	local v157 = v_u_7.getPosition(v155[3])
-	local v158 = p151:getTierBoundingBox("Core", 0)
-	local v159 = p151:getBranchBoundingBox("Combat")
-	local v160 = p151:getBranchBoundingBox("Survival")
-	local v161 = p151:getTierEdge("Core", 0, "left")
-	local v162 = p151:getBranchEdge("Survival", "right")
-	if v161 and (v162 and (v156 and (v158 and v160))) then
-		local v163 = v_u_20.gridToWorld(v156.row, v156.column).X
-		local v164 = v161.Z
-		local v165 = Vector3.new(v163, v152, v164)
-		local v166 = v162.X
-		local v167 = v162.Z
-		local v168 = p151:createLine(v158, v165, v160, Vector3.new(v166, v152, v167), v154)
-		p151.branchConnectionLines.Survival = v168
-	end
-	local v169 = p151:getTierEdge("Core", 0, "right")
-	local v170 = p151:getBranchEdge("Combat", "left")
-	if v169 and (v170 and (v157 and (v158 and v159))) then
-		local v171 = v_u_20.gridToWorld(v157.row, v157.column).X
-		local v172 = v169.Z
-		local v173 = Vector3.new(v171, v152, v172)
-		local v174 = v170.X
-		local v175 = v170.Z
-		local v176 = p151:createLine(v158, v173, v159, Vector3.new(v174, v152, v175), v153)
-		p151.branchConnectionLines.Combat = v176
-	end
-	for v177 = 1, #v_u_7.survivalTiers - 1 do
-		local v178 = p151:getTierBoundingBox("Survival", v177)
-		local v179 = p151:getTierBoundingBox("Survival", v177 + 1)
-		local v180 = p151:getTierEdge("Survival", v177, "left")
-		local v181 = p151:getTierEdge("Survival", v177 + 1, "right")
-		if v180 and (v181 and (v178 and v179)) then
-			local v182 = v180.X
-			local v183 = v180.Z
-			local v184 = Vector3.new(v182, v152, v183)
-			local v185 = v181.X
-			local v186 = v181.Z
-			local v187 = p151:createLine(v178, v184, v179, Vector3.new(v185, v152, v186), v154)
-			p151.tierConnectionLines[("Survival_Tier%*_to_Tier%*"):format(v177, v177 + 1)] = v187
-		end
-	end
-	for v188 = 1, #v_u_7.combatTiers - 1 do
-		local v189 = p151:getTierBoundingBox("Combat", v188)
-		local v190 = p151:getTierBoundingBox("Combat", v188 + 1)
-		local v191 = p151:getTierEdge("Combat", v188, "right")
-		local v192 = p151:getTierEdge("Combat", v188 + 1, "left")
-		if v191 and (v192 and (v189 and v190)) then
-			local v193 = v191.X
-			local v194 = v191.Z
-			local v195 = Vector3.new(v193, v152, v194)
-			local v196 = v192.X
-			local v197 = v192.Z
-			local v198 = p151:createLine(v189, v195, v190, Vector3.new(v196, v152, v197), v153)
-			p151.tierConnectionLines[("Combat_Tier%*_to_Tier%*"):format(v188, v188 + 1)] = v198
-		end
-	end
+function u50:createAllConnectionLines() -- Line: 521 -- upvalues: u44 (val), layout (val), u50 (val)
+    local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10
+    local v11 = u44.Y + -4
+    local v12 = Color3.fromRGB(0, 0, 0)
+    local v13 = Color3.fromRGB(0, 0, 0)
+    local v14 = layout.coreTiers[1]
+    local v15 = layout.getPosition(v14[2])
+    local v16 = layout.getPosition(v14[3])
+    local v17 = self:getTierBoundingBox("Core", 0)
+    local v18 = self:getBranchBoundingBox("Combat")
+    local v19 = self:getBranchBoundingBox("Survival")
+    local v20 = self:getTierEdge("Core", 0, "left")
+    local v21 = self:getBranchEdge("Survival", "right")
+    if v20 and v21 and v15 and v17 and v19 then
+        v1 = Vector3.new(u50.gridToWorld(v15.row, v15.column).X, v11, v20.Z)
+        v2 = Vector3.new(v21.X, v11, v21.Z)
+        v3 = self:createLine(v17, v1, v19, v2, v13)
+        self.branchConnectionLines.Survival = v3
+    end
+    local v22 = self:getTierEdge("Core", 0, "right")
+    v1 = self:getBranchEdge("Combat", "left")
+    if v22 and v1 and v16 and v17 and v18 then
+        v3 = Vector3.new(u50.gridToWorld(v16.row, v16.column).X, v11, v22.Z)
+        local v23 = Vector3.new(v1.X, v11, v1.Z)
+        v4 = self:createLine(v17, v3, v18, v23, v12)
+        self.branchConnectionLines.Combat = v4
+    end
+    v2 = #layout.survivalTiers - 1
+    v3 = 1
+    local v24 = self
+    for i = 1, v2, v3 do
+        v4 = v24:getTierBoundingBox("Survival", i)
+        v5 = v24:getTierBoundingBox("Survival", i + 1)
+        v6 = v24:getTierEdge("Survival", i, "left")
+        v7 = v24:getTierEdge("Survival", i + 1, "right")
+        if v6 and v7 and v4 and v5 then
+            v8 = Vector3.new(v6.X, v11, v6.Z)
+            v9 = Vector3.new(v7.X, v11, v7.Z)
+            v10 = v24:createLine(v4, v8, v5, v9, v13)
+            v24.tierConnectionLines[("Survival_Tier%*_to_Tier%*"):format(i, i + 1)] = v10
+        end
+    end
+    v2 = #layout.combatTiers - 1
+    v3 = 1
+    for j = 1, v2, v3 do
+        v4 = v24:getTierBoundingBox("Combat", j)
+        v5 = v24:getTierBoundingBox("Combat", j + 1)
+        v6 = v24:getTierEdge("Combat", j, "right")
+        v7 = v24:getTierEdge("Combat", j + 1, "left")
+        if v6 and v7 and v4 and v5 then
+            v8 = Vector3.new(v6.X, v11, v6.Z)
+            v9 = Vector3.new(v7.X, v11, v7.Z)
+            v10 = v24:createLine(v4, v8, v5, v9, v12)
+            v24.tierConnectionLines[("Combat_Tier%*_to_Tier%*"):format(j, j + 1)] = v10
+        end
+    end
 end
-function v_u_20.createSkillConnectionLines(p199) -- name: createSkillConnectionLines
-	-- upvalues: (copy) v_u_7
-	local v200 = Color3.fromRGB(0, 0, 0)
-	local v201 = v_u_7.coreTiers[1]
-	for v202 = 1, #v201 - 1 do
-		local v203 = v201[v202]
-		local v204 = v201[v202 + 1]
-		local v205 = p199.squares[v203]
-		local v206 = p199.squares[v204]
-		if v205 then
-			v205 = v205:FindFirstChild("Top")
-		end
-		if v206 then
-			v206 = v206:FindFirstChild("Top")
-		end
-		if v205 and v206 then
-			local v207 = v205.Position
-			local v208 = v205.Size
-			local v209 = v206.Position
-			local v210 = v206.Size
-			local v211 = v207.X - v208.X / 2
-			local v212 = v207.Y
-			local v213 = v207.Z
-			local v214 = Vector3.new(v211, v212, v213)
-			local v215 = v209.X + v210.X / 2
-			local v216 = v209.Y
-			local v217 = v209.Z
-			local v218 = p199:createLine(v205, v214, v206, Vector3.new(v215, v216, v217), v200)
-			p199.skillConnectionLines[v203] = v218
-		end
-	end
+function u50:createSkillConnectionLines() -- Line: 604 -- upvalues: layout (val)
+    local Position, Position_2, Top, Top_2, v1, v2, v3, v4, v5, v6
+    local v7 = Color3.fromRGB(0, 0, 0)
+    local v8 = layout.coreTiers[1]
+    local v9 = #v8 - 1
+    local v10 = 1
+    local v11 = self
+    for i = 1, v9, v10 do
+        v4 = v8[i]
+        v5 = v11.squares[v4]
+        v6 = v11.squares[v8[i + 1]]
+        Top = v5
+        if Top then
+            Top = v5:FindFirstChild("Top")
+        end
+        Top_2 = v6
+        if Top_2 then
+            Top_2 = v6:FindFirstChild("Top")
+        end
+        if Top and Top_2 then
+            Position_2 = Top.Position
+            Position = Top_2.Position
+            v1 = Vector3.new(Position_2.X - Top.Size.X / 2, Position_2.Y, Position_2.Z)
+            v2 = Vector3.new(Position.X + Top_2.Size.X / 2, Position.Y, Position.Z)
+            v3 = v11:createLine(Top, v1, Top_2, v2, v7)
+            v11.skillConnectionLines[v4] = v3
+        end
+    end
 end
-function v_u_20.createSkillState(p219, p220) -- name: createSkillState
-	-- upvalues: (copy) v_u_6, (copy) v_u_7
-	local v221 = v_u_6.getSkill(p220)
-	local v222
-	if v221 then
-		v222 = v221.name or p220
-	else
-		v222 = p220
-	end
-	local v223 = v221 and (v221.maxRank or 5) or 5
-	local v224 = v221 and (v221.description or "") or ""
-	local v225 = (v221 and v221.branch == "Core" or not v221) and 0 or (v221.tier or 0)
-	local v226 = v221 and (v221.branch == "Core" and p220 == v_u_7.coreTiers[1][1]) and true or false
-	local v227 = {
-		["currentRank"] = p219.scope:Value(0),
-		["maxRank"] = v223,
-		["name"] = v222,
-		["description"] = v224,
-		["tier"] = v225,
-		["showDescription"] = p219.scope:Value(false),
-		["isPurchasable"] = p219.scope:Value(v226),
-		["isSelected"] = p219.scope:Value(false),
-		["isHovered"] = p219.scope:Value(false)
-	}
-	p219.skillStates[p220] = v227
-	return v227
+function u50:createSkillState(p2) -- Line: 637 -- upvalues: SkillConfig (val), layout (val)
+    local description, maxRank, name, tier
+    local v1 = SkillConfig.getSkill(p2)
+    if not v1 then
+        name = p2
+    else
+        name = v1.name
+    end
+    if not v1 then
+        maxRank = 5
+    else
+        maxRank = v1.maxRank
+    end
+    if not v1 then
+        description = ""
+    else
+        description = v1.description
+    end
+    if not v1 then
+        if not v1 then
+            tier = 0
+        else
+            tier = v1.tier
+            if not tier then
+                tier = 0
+            end
+        end
+    elseif v1.branch == "Core" then
+        tier = 0
+    end
+    local v2 = v1 and v1.branch == "Core" and p2 == layout.coreTiers[1][1]
+    local v3 = {
+        currentRank = self.scope:Value(0),
+        maxRank = maxRank,
+        name = name,
+        description = description,
+        tier = tier,
+        showDescription = self.scope:Value(false),
+        isPurchasable = self.scope:Value(v2),
+        isSelected = self.scope:Value(false),
+        isHovered = self.scope:Value(false),
+    }
+    self.skillStates[p2] = v3
+    return v3
 end
-function v_u_20.createSurfaceGui(p_u_228, p229, p_u_230) -- name: createSurfaceGui
-	-- upvalues: (copy) v_u_8, (copy) v_u_19
-	local v_u_231 = p_u_228.skillStates[p_u_230] or p_u_228:createSkillState(p_u_230)
-	v_u_8({
-		["scope"] = p_u_228.scope,
-		["SkillName"] = v_u_231.name,
-		["CurrentRank"] = v_u_231.currentRank,
-		["MaxRank"] = v_u_231.maxRank,
-		["Description"] = v_u_231.description,
-		["Icon"] = v_u_19(p_u_230),
-		["ShowDescription"] = v_u_231.showDescription,
-		["IsPurchasable"] = v_u_231.isPurchasable,
-		["IsSelected"] = v_u_231.isSelected,
-		["IsHovered"] = v_u_231.isHovered,
-		["Tier"] = v_u_231.tier,
-		["Adornee"] = p229,
-		["OnClick"] = function() -- name: OnClick
-			-- upvalues: (copy) p_u_228, (copy) p_u_230
-			if p_u_228.onSkillClicked then
-				p_u_228.onSkillClicked(p_u_230)
-			end
-		end,
-		["OnHoverEnter"] = function() -- name: OnHoverEnter
-			-- upvalues: (copy) v_u_231
-			v_u_231.isHovered:set(true)
-		end,
-		["OnHoverLeave"] = function() -- name: OnHoverLeave
-			-- upvalues: (copy) v_u_231
-			v_u_231.isHovered:set(false)
-		end
-	}).Parent = p_u_228.guiContainer
+function u50:createSurfaceGui(p2, p3) -- Line: 676 -- upvalues: SkillSquareGui (val), getSkillIcon (val)
+    local u8 = self.skillStates[p3]
+    if not u8 then
+        u8 = self:createSkillState(p3)
+    end
+    local v1 = SkillSquareGui({
+        scope = self.scope,
+        SkillName = u8.name,
+        CurrentRank = u8.currentRank,
+        MaxRank = u8.maxRank,
+        Description = u8.description,
+        Icon = getSkillIcon(p3),
+        ShowDescription = u8.showDescription,
+        IsPurchasable = u8.isPurchasable,
+        IsSelected = u8.isSelected,
+        IsHovered = u8.isHovered,
+        Tier = u8.tier,
+        Adornee = p2,
+        OnClick = function() -- Line: 692 -- upvalues: self (val), p3 (val)
+            if self.onSkillClicked then
+                self.onSkillClicked(p3)
+            end
+        end,
+        OnHoverEnter = function() -- Line: 697 -- upvalues: u8 (val)
+            u8.isHovered:set(true)
+        end,
+        OnHoverLeave = function() -- Line: 701 -- upvalues: u8 (val)
+            u8.isHovered:set(false)
+        end,
+    })
+    v1.Parent = self.guiContainer
 end
-function v_u_20.createSquare(p232, p233) -- name: createSquare
-	-- upvalues: (copy) v_u_2, (copy) v_u_7, (copy) v_u_20
-	local v234 = v_u_2.common:FindFirstChild("skillTree")
-	if not v234 then
-		warn("skillTree folder not found in ReplicatedStorage")
-		return nil
-	end
-	local v235 = v234:FindFirstChild("skillSquare")
-	if not v235 then
-		warn("skillSquare template not found")
-		return nil
-	end
-	local v236 = v_u_7.getPosition(p233)
-	if not v236 then
-		warn((("No position found for skill: %*"):format(p233)))
-		return nil
-	end
-	p232:createSkillState(p233)
-	local v237 = v235:Clone()
-	v237.Name = p233
-	local v238 = v_u_20.gridToWorld(v236.row, v236.column)
-	v237:PivotTo(CFrame.new(v238))
-	local v239 = v237:FindFirstChild("Top")
-	local v240 = v237:FindFirstChild("Bottom")
-	if v239 then
-		v239.CastShadow = false
-		v239.Material = Enum.Material.Metal
-		v239.Color = Color3.fromRGB(91, 93, 105)
-		p232:createSurfaceGui(v239, p233)
-	end
-	if v240 then
-		v240.CastShadow = false
-		v240.Material = Enum.Material.Metal
-		v240.Color = Color3.fromRGB(17, 17, 17)
-	end
-	return v237
+function u50:createSquare(p2) -- Line: 712 -- upvalues: ReplicatedStorage (val), layout (val), u50 (val)
+    local skillTree = ReplicatedStorage.common:FindFirstChild("skillTree")
+    if not skillTree then
+        warn("skillTree folder not found in ReplicatedStorage")
+        return nil
+    end
+    local skillSquare = skillTree:FindFirstChild("skillSquare")
+    if not skillSquare then
+        warn("skillSquare template not found")
+        return nil
+    end
+    local v1 = layout.getPosition(p2)
+    if not v1 then
+        warn((("No position found for skill: %*"):format(p2)))
+        return nil
+    end
+    self:createSkillState(p2)
+    local v2 = skillSquare:Clone()
+    v2.Name = p2
+    v2:PivotTo(CFrame.new((u50.gridToWorld(v1.row, v1.column))))
+    local Top = v2:FindFirstChild("Top")
+    local Bottom = v2:FindFirstChild("Bottom")
+    if Top then
+        Top.CastShadow = false
+        Top.Material = Enum.Material.Metal
+        Top.Color = Color3.fromRGB(91, 93, 105)
+        self:createSurfaceGui(Top, p2)
+    end
+    if Bottom then
+        Bottom.CastShadow = false
+        Bottom.Material = Enum.Material.Metal
+        Bottom.Color = Color3.fromRGB(17, 17, 17)
+    end
+    return v2
 end
-function v_u_20.render(p241, p242) -- name: render
-	-- upvalues: (copy) v_u_1, (copy) v_u_6
-	p241:clear()
-	local v243 = v_u_1.LocalPlayer
-	if v243 then
-		p241.guiContainer = v243:WaitForChild("PlayerGui")
-	end
-	p241:createAllBranchBoundingBoxes()
-	p241:createAllTierBoundingBoxes()
-	p241:createAllConnectionLines()
-	local v244 = v_u_6.getAllSkillIds()
-	for _, v245 in v244 do
-		local v246 = p241:createSquare(v245)
-		if v246 then
-			v246.Parent = p241.container
-			p241.squares[v245] = v246
-		end
-	end
-	p241:createSkillConnectionLines()
-	p241.container.Parent = p242 or workspace
-	print((("Rendered %* skill squares with bounding boxes"):format(#v244)))
+function u50.render(p1, p2) -- Line: 771 -- upvalues: Players (val), SkillConfig (val)
+    local v1
+    p1:clear()
+    local LocalPlayer = Players.LocalPlayer
+    if LocalPlayer then
+        p1.guiContainer = LocalPlayer:WaitForChild("PlayerGui")
+    end
+    p1:createAllBranchBoundingBoxes()
+    p1:createAllTierBoundingBoxes()
+    p1:createAllConnectionLines()
+    local v2 = SkillConfig.getAllSkillIds()
+    local v3 = v2
+    local v4 = nil
+    local v5 = nil
+    for i, j in v3, v4, v5 do
+        v1 = p1:createSquare(j)
+        if v1 then
+            v1.Parent = p1.container
+            p1.squares[j] = v1
+        end
+    end
+    p1:createSkillConnectionLines()
+    v4 = p2
+    if not v4 then
+        v4 = workspace
+    end
+    p1.container.Parent = v4
+    print((("Rendered %* skill squares with bounding boxes"):format(#v2)))
 end
-local v_u_247 = {}
-function v_u_20.clear(p248) -- name: clear
-	-- upvalues: (copy) v_u_247
-	for _, v249 in p248.squares do
-		v249:Destroy()
-	end
-	for _, v250 in p248.tierBoundingBoxes do
-		v250:Destroy()
-	end
-	for _, v251 in p248.branchBoundingBoxes do
-		v251:Destroy()
-	end
-	for _, v252 in p248.connectionLines do
-		v252:Destroy()
-	end
-	p248.guiContainer = nil
-	p248.squares = {}
-	p248.skillStates = {}
-	p248.tierStates = {}
-	p248.branchStates = {}
-	p248.skillBoundingBoxes = {}
-	p248.tierBoundingBoxes = {}
-	p248.branchBoundingBoxes = {}
-	p248.connectionLines = {}
-	p248.skillConnectionLines = {}
-	p248.branchConnectionLines = {}
-	p248.tierConnectionLines = {}
-	table.clear(v_u_247)
+local u68 = {}
+local function animateLinePulse(p1) -- Line: 817 -- upvalues: u48 (val)
+    local X = u48.X
+    local u3 = X * 3
+    local u4 = 0
+    task.spawn(function() -- Line: 822 -- upvalues: u4 (ref), X (val), u3 (val), p1 (val)
+        local v1
+        while u4 < 0.3 do
+            u4 = u4 + task.wait()
+            v1 = X + (u3 - X) * math.sin(math.min(u4 / 0.3, 1) * 3.141592653589793)
+            p1.Thickness = v1
+        end
+        p1.Thickness = X
+    end)
 end
-function v_u_20.getSquare(p253, p254) -- name: getSquare
-	return p253.squares[p254]
+function u50:clear() -- Line: 843 -- upvalues: u68 (val)
+    local squares = self.squares
+    local v1 = nil
+    local v2 = nil
+    for i, j in squares, v1, v2 do
+        j:Destroy()
+    end
+    local tierBoundingBoxes = self.tierBoundingBoxes
+    v1 = nil
+    v2 = nil
+    for k, n in tierBoundingBoxes, v1, v2 do
+        n:Destroy()
+    end
+    local branchBoundingBoxes = self.branchBoundingBoxes
+    v1 = nil
+    v2 = nil
+    for m, i5 in branchBoundingBoxes, v1, v2 do
+        i5:Destroy()
+    end
+    local connectionLines = self.connectionLines
+    v1 = nil
+    v2 = nil
+    for i6, i7 in connectionLines, v1, v2 do
+        i7:Destroy()
+    end
+    self.guiContainer = nil
+    self.squares = {}
+    self.skillStates = {}
+    self.tierStates = {}
+    self.branchStates = {}
+    self.skillBoundingBoxes = {}
+    self.tierBoundingBoxes = {}
+    self.branchBoundingBoxes = {}
+    self.connectionLines = {}
+    self.skillConnectionLines = {}
+    self.branchConnectionLines = {}
+    self.tierConnectionLines = {}
+    table.clear(u68)
 end
-local function v_u_271(p255, p256) -- name: updateSkillPurchasability
-	-- upvalues: (copy) v_u_7, (copy) v_u_247, (copy) v_u_6
-	local v257
-	if p256 == "Combat" then
-		v257 = v_u_7.combatTiers
-	else
-		v257 = v_u_7.survivalTiers
-	end
-	for v258, v259 in v257 do
-		local v260
-		if v258 == 1 then
-			local v261 = v_u_7.coreTiers[1]
-			local v262
-			if p256 == "Survival" then
-				v262 = v261[2]
-			else
-				v262 = v261[3]
-			end
-			v260 = (v_u_247[v262] or 0) >= 1
-		else
-			local v263 = v_u_6.getTierRequiredCount(p256, v258 - 1)
-			local v264 = v258 - 1
-			local v265
-			if p256 == "Combat" then
-				v265 = v_u_7.combatTiers
-			else
-				v265 = v_u_7.survivalTiers
-			end
-			local v266 = v265[v264]
-			local v267
-			if v266 then
-				v267 = 0
-				for _, v268 in v266 do
-					v267 = v267 + (v_u_247[v268] or 0)
-				end
-			else
-				v267 = 0
-			end
-			if v263 <= v267 then
-				v260 = true
-			else
-				v260 = false
-			end
-		end
-		for _, v269 in v259 do
-			local v270 = p255.skillStates[v269]
-			if v270 then
-				v270.isPurchasable:set(v260)
-			end
-		end
-	end
+function u50.getSquare(p1, p2) -- Line: 875
+    return p1.squares[p2]
 end
-local function v_u_278(p272) -- name: updateCorePurchasability
-	-- upvalues: (copy) v_u_7, (copy) v_u_247
-	local v273 = v_u_7.coreTiers[1]
-	for v274, v275 in v273 do
-		local v276 = p272.skillStates[v275]
-		if v276 then
-			if v274 == 1 then
-				v276.isPurchasable:set(true)
-			else
-				local v277 = v_u_247[v273[v274 - 1]] or 0
-				v276.isPurchasable:set(v277 >= 1)
-			end
-		end
-	end
+local function countTierUpgrades(p1, p2) -- Line: 883 -- upvalues: layout (val), u68 (val)
+    local combatTiers
+    if p1 ~= "Combat" then
+        combatTiers = layout.survivalTiers
+    else
+        combatTiers = layout.combatTiers
+    end
+    local v1 = combatTiers[p2]
+    if not v1 then
+        return 0
+    end
+    local v2 = 0
+    local v3 = v1
+    local v4 = nil
+    local v5 = nil
+    for i, j in v3, v4, v5 do
+        v2 = v2 + (u68[j] or 0)
+    end
+    return v2
 end
-local function v_u_304(p279, p280) -- name: updateTierStates
-	-- upvalues: (copy) v_u_7, (copy) v_u_4, (copy) v_u_6, (copy) v_u_247, (copy) v_u_11
-	local v281
-	if p280 == "Combat" then
-		v281 = v_u_7.combatTiers
-	else
-		v281 = v_u_7.survivalTiers
-	end
-	for v282 = 2, #v281 do
-		local v283 = ("%*_Tier%*"):format(p280, v282)
-		local v284 = p279.tierStates[v283]
-		if v284 then
-			local v285 = v_u_4.peek(v284.locked)
-			local v286 = v_u_6.getTierRequiredCount(p280, v282 - 1)
-			local v287 = v282 - 1
-			local v288
-			if p280 == "Combat" then
-				v288 = v_u_7.combatTiers
-			else
-				v288 = v_u_7.survivalTiers
-			end
-			local v289 = v288[v287]
-			local v290
-			if v289 then
-				v290 = 0
-				for _, v291 in v289 do
-					v290 = v290 + (v_u_247[v291] or 0)
-				end
-			else
-				v290 = 0
-			end
-			local v292 = v286 - v290
-			local v293 = math.max(0, v292)
-			local v294 = v293 == 0
-			local v295 = v285 and v294
-			if v294 then
-				v284.locked:set(false)
-				v284.requiresText:set("")
-				if v284.alwaysOnTop then
-					v284.alwaysOnTop:set(false)
-				end
-			else
-				v284.locked:set(true)
-				v284.requiresText:set((("Upgrade %* Tier %* skill%*"):format(v293, v282 - 1, v293 > 1 and "s" or "")))
-				if v284.alwaysOnTop then
-					v284.alwaysOnTop:set(true)
-				end
-			end
-			local v296 = ("%*_Tier%*_to_Tier%*"):format(p280, v282 - 1, v282)
-			local v_u_297 = p279.tierConnectionLines[v296]
-			if v_u_297 then
-				v_u_297.Color = BrickColor.new(v294 and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0))
-				if v295 then
-					local v_u_298 = v_u_11.X
-					local v_u_299 = v_u_298 * 3
-					local v_u_300 = 0
-					task.spawn(function()
-						-- upvalues: (ref) v_u_300, (copy) v_u_298, (copy) v_u_299, (copy) v_u_297
-						while v_u_300 < 0.3 do
-							v_u_300 = v_u_300 + task.wait()
-							local v301 = v_u_300 / 0.3
-							local v302 = math.min(v301, 1) * 3.141592653589793
-							local v303 = math.sin(v302)
-							v_u_297.Thickness = v_u_298 + (v_u_299 - v_u_298) * v303
-						end
-						v_u_297.Thickness = v_u_298
-					end)
-				end
-			end
-		end
-	end
+local function updateSkillPurchasability(p1, p2) -- Line: 901 -- upvalues: layout (val), u68 (val), SkillConfig (val)
+    local combatTiers, combatTiers_2, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10
+    if p2 ~= "Combat" then
+        combatTiers = layout.survivalTiers
+    else
+        combatTiers = layout.combatTiers
+    end
+    local v11 = combatTiers
+    local v12 = nil
+    local v13 = nil
+    local v14 = p2
+    for i, j in v11, v12, v13 do
+        if i ~= 1 then
+            v10 = SkillConfig.getTierRequiredCount(v14, i - 1)
+            if v14 ~= "Combat" then
+                combatTiers_2 = layout.survivalTiers
+            else
+                combatTiers_2 = layout.combatTiers
+            end
+            v4 = combatTiers_2[i - 1]
+            if v4 then
+                v5 = 0
+                v6 = v4
+                v7 = nil
+                v8 = nil
+                for k, n in v6, v7, v8 do
+                    v5 = v5 + (u68[n] or 0)
+                end
+                v2 = v5
+            else
+                v2 = 0
+            end
+            v9 = v10 <= v2
+        else
+            v10 = layout.coreTiers[1]
+            if v14 ~= "Survival" then
+                v2 = v10[3]
+            else
+                v2 = v10[2]
+            end
+            v3 = u68[v2] or 0
+            v9 = 1 <= v3
+        end
+        v10 = j
+        v2 = nil
+        v3 = nil
+        for m, i5 in v10, v2, v3 do
+            v5 = v1.skillStates[i5]
+            if v5 then
+                v5.isPurchasable:set(v9)
+            end
+        end
+    end
 end
-function v_u_20.setSkillRank(p305, p306, p307) -- name: setSkillRank
-	-- upvalues: (copy) v_u_247, (copy) v_u_11, (copy) v_u_7, (copy) v_u_6, (copy) v_u_304, (copy) v_u_271, (copy) v_u_278
-	local v308
-	if (v_u_247[p306] or 0) < 1 then
-		v308 = p307 >= 1
-	else
-		v308 = false
-	end
-	v_u_247[p306] = p307
-	local v309 = p305.skillStates[p306]
-	if v309 then
-		v309.currentRank:set(p307)
-	end
-	local v_u_310 = p305.skillConnectionLines[p306]
-	if v_u_310 then
-		if p307 >= 1 then
-			v_u_310.Color = BrickColor.new(Color3.fromRGB(255, 255, 255))
-			if v308 then
-				local v_u_311 = v_u_11.X
-				local v_u_312 = v_u_311 * 3
-				local v_u_313 = 0
-				task.spawn(function()
-					-- upvalues: (ref) v_u_313, (copy) v_u_311, (copy) v_u_312, (copy) v_u_310
-					while v_u_313 < 0.3 do
-						v_u_313 = v_u_313 + task.wait()
-						local v314 = v_u_313 / 0.3
-						local v315 = math.min(v314, 1) * 3.141592653589793
-						local v316 = math.sin(v315)
-						v_u_310.Thickness = v_u_311 + (v_u_312 - v_u_311) * v316
-					end
-					v_u_310.Thickness = v_u_311
-				end)
-			end
-		else
-			v_u_310.Color = BrickColor.new(Color3.fromRGB(0, 0, 0))
-		end
-	end
-	local v317 = v_u_7.coreTiers[1]
-	if p306 == v317[2] then
-		local v318 = p307 >= 1
-		local v319 = p305.branchStates.Survival
-		if v319 then
-			v319.locked:set(not v318)
-		end
-		local v320 = p305.tierStates.Survival_Tier1
-		if v320 then
-			v320.locked:set(not v318)
-			if v320.alwaysOnTop then
-				v320.alwaysOnTop:set(not v318)
-			end
-		end
-		local v_u_321 = p305.branchConnectionLines.Survival
-		if v_u_321 then
-			v_u_321.Color = BrickColor.new(v318 and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0))
-			if v308 and v318 then
-				local v_u_322 = v_u_11.X
-				local v_u_323 = v_u_322 * 3
-				local v_u_324 = 0
-				task.spawn(function()
-					-- upvalues: (ref) v_u_324, (copy) v_u_322, (copy) v_u_323, (copy) v_u_321
-					while v_u_324 < 0.3 do
-						v_u_324 = v_u_324 + task.wait()
-						local v325 = v_u_324 / 0.3
-						local v326 = math.min(v325, 1) * 3.141592653589793
-						local v327 = math.sin(v326)
-						v_u_321.Thickness = v_u_322 + (v_u_323 - v_u_322) * v327
-					end
-					v_u_321.Thickness = v_u_322
-				end)
-			end
-		end
-	elseif p306 == v317[3] then
-		local v328 = p307 >= 1
-		local v329 = p305.branchStates.Combat
-		if v329 then
-			v329.locked:set(not v328)
-		end
-		local v330 = p305.tierStates.Combat_Tier1
-		if v330 then
-			v330.locked:set(not v328)
-			if v330.alwaysOnTop then
-				v330.alwaysOnTop:set(not v328)
-			end
-		end
-		local v_u_331 = p305.branchConnectionLines.Combat
-		if v_u_331 then
-			v_u_331.Color = BrickColor.new(v328 and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0))
-			if v308 and v328 then
-				local v_u_332 = v_u_11.X
-				local v_u_333 = v_u_332 * 3
-				local v_u_334 = 0
-				task.spawn(function()
-					-- upvalues: (ref) v_u_334, (copy) v_u_332, (copy) v_u_333, (copy) v_u_331
-					while v_u_334 < 0.3 do
-						v_u_334 = v_u_334 + task.wait()
-						local v335 = v_u_334 / 0.3
-						local v336 = math.min(v335, 1) * 3.141592653589793
-						local v337 = math.sin(v336)
-						v_u_331.Thickness = v_u_332 + (v_u_333 - v_u_332) * v337
-					end
-					v_u_331.Thickness = v_u_332
-				end)
-			end
-		end
-	end
-	local v338 = v_u_6.getSkill(p306)
-	if v338 then
-		if v338.branch == "Combat" then
-			v_u_304(p305, "Combat")
-			v_u_271(p305, "Combat")
-			return
-		end
-		if v338.branch == "Survival" then
-			v_u_304(p305, "Survival")
-			v_u_271(p305, "Survival")
-			return
-		end
-		if v338.branch == "Core" then
-			v_u_278(p305)
-			v_u_271(p305, "Combat")
-			v_u_271(p305, "Survival")
-		end
-	end
+local function updateCorePurchasability(p1) -- Line: 932 -- upvalues: layout (val), u68 (val)
+    local v1, v2, v3
+    local v4 = layout.coreTiers[1]
+    local v5 = v4
+    local v6 = nil
+    local v7 = nil
+    local v8 = p1
+    for i, j in v5, v6, v7 do
+        v2 = v8.skillStates[j]
+        if v2 then
+            if i ~= 1 then
+                v3 = u68[v4[i - 1]] or 0
+                v1 = 1 <= v3
+                v2.isPurchasable:set(v1)
+            else
+                v2.isPurchasable:set(true)
+            end
+        end
+    end
 end
-function v_u_20.setSkillShowDescription(p339, p340, p341) -- name: setSkillShowDescription
-	local v342 = p339.skillStates[p340]
-	if v342 then
-		v342.showDescription:set(p341)
-	end
+local function updateTierStates(p1, p2) -- Line: 954 -- upvalues: layout (val), Fusion (val), SkillConfig (val), u68 (val), u48 (val)
+    local combatTiers, combatTiers_2, new, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15
+    if p2 ~= "Combat" then
+        combatTiers = layout.survivalTiers
+    else
+        combatTiers = layout.combatTiers
+    end
+    local v16 = #combatTiers
+    local v17 = 1
+    v2, v1 = p2, p1
+    for i = 2, v16, v17 do
+        v12 = ("%*_Tier%*"):format(v2, i)
+        v13 = v1.tierStates[v12]
+        if v13 then
+            v14 = Fusion.peek(v13.locked)
+            v15 = SkillConfig.getTierRequiredCount(v2, i - 1)
+            if v2 ~= "Combat" then
+                combatTiers_2 = layout.survivalTiers
+            else
+                combatTiers_2 = layout.combatTiers
+            end
+            v6 = combatTiers_2[i - 1]
+            if v6 then
+                v7 = 0
+                v8 = v6
+                v9 = nil
+                v10 = nil
+                for j, k in v8, v9, v10 do
+                    v7 = v7 + (u68[k] or 0)
+                end
+                v3 = v7
+            else
+                v3 = 0
+            end
+            v4 = math.max(0, v15 - v3)
+            v5 = v4 == 0
+            v6 = v14 and v5
+            if not v5 then
+                v13.locked:set(true)
+                if 1 >= v4 then
+                    v11 = ""
+                else
+                    v11 = "s"
+                end
+                v13.requiresText:set((("Upgrade %* Tier %* skill%*"):format(v4, i - 1, v11)))
+                if v13.alwaysOnTop then
+                    v13.alwaysOnTop:set(true)
+                end
+            else
+                v13.locked:set(false)
+                v13.requiresText:set("")
+                if v13.alwaysOnTop then
+                    v13.alwaysOnTop:set(false)
+                end
+            end
+            v7 = ("%*_Tier%*_to_Tier%*"):format(v2, i - 1, i)
+            local u147 = v1.tierConnectionLines[v7]
+            if u147 then
+                new = BrickColor.new
+                if not v5 then
+                    v10 = Color3.fromRGB(0, 0, 0)
+                else
+                    v10 = Color3.fromRGB(255, 255, 255)
+                end
+                u147.Color = new(v10)
+                if v6 then
+                    local X = u48.X
+                    local u173 = X * 3
+                    local u174 = 0
+                    task.spawn(function() -- Line: 822 -- upvalues: u174 (ref), X (val), u173 (val), u147 (val)
+                        local v1
+                        while u174 < 0.3 do
+                            u174 = u174 + task.wait()
+                            v1 = X + (u173 - X) * math.sin(math.min(u174 / 0.3, 1) * 3.141592653589793)
+                            u147.Thickness = v1
+                        end
+                        u147.Thickness = X
+                    end)
+                end
+            end
+        end
+    end
 end
-function v_u_20.setSkillSelected(p343, p344, p345) -- name: setSkillSelected
-	local v346 = p343.skillStates[p344]
-	if v346 then
-		v346.isSelected:set(p345)
-	end
+function u50.setSkillRank(p1, p2, p3) -- Line: 1012 -- upvalues: u68 (val), u48 (val), layout (val), SkillConfig (val), updateTierStates (val), updateSkillPurchasability (val), updateCorePurchasability (val)
+    local Combat, Survival, u117, v1, v2
+    local v3 = u68[p2] or 0
+    local v4 = if v3 < 1 then 1 <= p3 else false
+    u68[p2] = p3
+    local v5 = p1.skillStates[p2]
+    if v5 then
+        v5.currentRank:set(p3)
+    end
+    local u25 = p1.skillConnectionLines[p2]
+    if u25 then
+        if 1 > p3 then
+            u25.Color = BrickColor.new(Color3.fromRGB(0, 0, 0))
+        else
+            u25.Color = BrickColor.new(Color3.fromRGB(255, 255, 255))
+            if v4 then
+                local X = u48.X
+                local u39 = X * 3
+                Survival = 0
+                task.spawn(function() -- Line: 822 -- upvalues: Survival (ref), X (val), u39 (val), u25 (val)
+                    local v1
+                    while Survival < 0.3 do
+                        Survival = Survival + task.wait()
+                        v1 = X + (u39 - X) * math.sin(math.min(Survival / 0.3, 1) * 3.141592653589793)
+                        u25.Thickness = v1
+                    end
+                    u25.Thickness = X
+                end)
+            end
+        end
+    end
+    local v6 = layout.coreTiers[1]
+    if p2 == v6[2] then
+        Survival = 1
+        v2 = Survival <= p3
+        Survival = p1.branchStates.Survival
+        if Survival then
+            Survival.locked:set(not v2)
+        end
+        local Survival_Tier1 = p1.tierStates.Survival_Tier1
+        if Survival_Tier1 then
+            Survival_Tier1.locked:set(not v2)
+            if Survival_Tier1.alwaysOnTop then
+                Survival_Tier1.alwaysOnTop:set(not v2)
+            end
+        end
+        local Survival_2 = p1.branchConnectionLines.Survival
+        if Survival_2 then
+            local new = BrickColor.new
+            if not v2 then
+                v1 = Color3.fromRGB(0, 0, 0)
+            else
+                v1 = Color3.fromRGB(255, 255, 255)
+            end
+            Survival_2.Color = new(v1)
+            if v4 and v2 then
+                local X_2 = u48.X
+                local u116 = X_2 * 3
+                u117 = 0
+                task.spawn(function() -- Line: 822 -- upvalues: u117 (ref), X_2 (val), u116 (val), Survival_2 (val)
+                    local v1
+                    while u117 < 0.3 do
+                        u117 = u117 + task.wait()
+                        v1 = X_2 + (u116 - X_2) * math.sin(math.min(u117 / 0.3, 1) * 3.141592653589793)
+                        Survival_2.Thickness = v1
+                    end
+                    Survival_2.Thickness = X_2
+                end)
+            end
+        end
+    elseif p2 == v6[3] then
+        Survival = 1
+        v2 = Survival <= p3
+        Survival = p1.branchStates.Combat
+        if Survival then
+            Survival.locked:set(not v2)
+        end
+        local Combat_Tier1 = p1.tierStates.Combat_Tier1
+        if Combat_Tier1 then
+            Combat_Tier1.locked:set(not v2)
+            if Combat_Tier1.alwaysOnTop then
+                Combat_Tier1.alwaysOnTop:set(not v2)
+            end
+        end
+        Combat = p1.branchConnectionLines.Combat
+        if Combat then
+            local new_2 = BrickColor.new
+            if not v2 then
+                v1 = Color3.fromRGB(0, 0, 0)
+            else
+                v1 = Color3.fromRGB(255, 255, 255)
+            end
+            Combat.Color = new_2(v1)
+            if v4 and v2 then
+                local X_3 = u48.X
+                local u179 = X_3 * 3
+                u117 = 0
+                task.spawn(function() -- Line: 822 -- upvalues: u117 (ref), X_3 (val), u179 (val), Combat (val)
+                    local v1
+                    while u117 < 0.3 do
+                        u117 = u117 + task.wait()
+                        v1 = X_3 + (u179 - X_3) * math.sin(math.min(u117 / 0.3, 1) * 3.141592653589793)
+                        Combat.Thickness = v1
+                    end
+                    Combat.Thickness = X_3
+                end)
+            end
+        end
+    end
+    Survival = p2
+    v2 = SkillConfig.getSkill(Survival)
+    if not v2 then
+        return
+    end
+    Survival = v2.branch
+    if Survival == "Combat" then
+        updateTierStates(p1, "Combat")
+        updateSkillPurchasability(p1, "Combat")
+        return
+    end
+    Survival = v2.branch
+    if Survival == "Survival" then
+        updateTierStates(p1, "Survival")
+        updateSkillPurchasability(p1, "Survival")
+        return
+    end
+    Survival = v2.branch
+    if Survival == "Core" then
+        updateCorePurchasability(p1)
+        updateSkillPurchasability(p1, "Combat")
+        updateSkillPurchasability(p1, "Survival")
+    end
 end
-function v_u_20.getSkillState(p347, p348) -- name: getSkillState
-	return p347.skillStates[p348]
+function u50.setSkillShowDescription(p1, p2, p3) -- Line: 1112
+    local v1 = p1.skillStates[p2]
+    if v1 then
+        v1.showDescription:set(p3)
+    end
 end
-function v_u_20.getSkillBoundingBox(p349, p350) -- name: getSkillBoundingBox
-	return p349.skillBoundingBoxes[p350]
+function u50.setSkillSelected(p1, p2, p3) -- Line: 1122
+    local v1 = p1.skillStates[p2]
+    if v1 then
+        v1.isSelected:set(p3)
+    end
 end
-function v_u_20.getTierBoundingBox(p351, p352, p353) -- name: getTierBoundingBox
-	local v354 = ("%*_Tier%*"):format(p352, p353)
-	return p351.tierBoundingBoxes[v354]
+function u50.getSkillState(p1, p2) -- Line: 1132
+    return p1.skillStates[p2]
 end
-function v_u_20.getBranchBoundingBox(p355, p356) -- name: getBranchBoundingBox
-	return p355.branchBoundingBoxes[p356]
+function u50.getSkillBoundingBox(p1, p2) -- Line: 1139
+    return p1.skillBoundingBoxes[p2]
 end
-function v_u_20.setTierLocked(p357, p358, p359, p360) -- name: setTierLocked
-	local v361 = ("%*_Tier%*"):format(p358, p359)
-	local v362 = p357.tierStates[v361]
-	if v362 then
-		v362.locked:set(p360)
-	end
+function u50:getTierBoundingBox(p2, p3) -- Line: 1146
+    local v1 = ("%*_Tier%*"):format(p2, p3)
+    return self.tierBoundingBoxes[v1]
 end
-function v_u_20.setBranchLocked(p363, p364, p365) -- name: setBranchLocked
-	local v366 = p363.branchStates[p364]
-	if v366 then
-		v366.locked:set(p365)
-	end
+function u50:getBranchBoundingBox(p2) -- Line: 1154
+    return self.branchBoundingBoxes[p2]
 end
-function v_u_20.getTierState(p367, p368, p369) -- name: getTierState
-	local v370 = ("%*_Tier%*"):format(p368, p369)
-	return p367.tierStates[v370]
+function u50.setTierLocked(p1, p2, p3, p4) -- Line: 1161
+    local v1 = ("%*_Tier%*"):format(p2, p3)
+    local v2 = p1.tierStates[v1]
+    if v2 then
+        v2.locked:set(p4)
+    end
 end
-function v_u_20.setSkillTierAlwaysOnTop(p371, p372, p373) -- name: setSkillTierAlwaysOnTop
-	-- upvalues: (copy) v_u_6, (copy) v_u_4
-	local v374 = v_u_6.getSkill(p372)
-	if v374 then
-		if v374.branch ~= "Core" then
-			local v375 = ("%*_Tier%*"):format(v374.branch, v374.tier)
-			local v376 = p371.tierStates[v375]
-			if v376 and v376.alwaysOnTop then
-				if p373 and not v_u_4.peek(v376.locked) then
-					return
-				end
-				v376.alwaysOnTop:set(p373)
-			end
-		end
-	else
-		return
-	end
+function u50.setBranchLocked(p1, p2, p3) -- Line: 1172
+    local v1 = p1.branchStates[p2]
+    if v1 then
+        v1.locked:set(p3)
+    end
 end
-function v_u_20.getBranchState(p377, p378) -- name: getBranchState
-	return p377.branchStates[p378]
+function u50.getTierState(p1, p2, p3) -- Line: 1182
+    local v1 = ("%*_Tier%*"):format(p2, p3)
+    return p1.tierStates[v1]
 end
-function v_u_20.destroy(p379) -- name: destroy
-	p379:clear()
-	p379.scope:doCleanup()
-	p379.container:Destroy()
+function u50.setSkillTierAlwaysOnTop(p1, p2, p3) -- Line: 1192 -- upvalues: SkillConfig (val), Fusion (val)
+    local v1 = SkillConfig.getSkill(p2)
+    if not v1 or v1.branch == "Core" then
+        return
+    end
+    local v2 = ("%*_Tier%*"):format(v1.branch, v1.tier)
+    local v3 = p1.tierStates[v2]
+    if not v3 or not v3.alwaysOnTop then
+        return
+    end
+    if not p3 then
+        v3.alwaysOnTop:set(p3)
+        return
+    end
+    if not (Fusion.peek(v3.locked)) then
+        return
+    end
+    v3.alwaysOnTop:set(p3)
 end
-return v_u_20
+function u50.clearHoverStates(p1) -- Line: 1218 -- upvalues: Fusion (val)
+    local skillStates = p1.skillStates
+    local v1 = nil
+    local v2 = nil
+    for i, j in skillStates, v1, v2 do
+        j.isHovered:set(false)
+    end
+    local tierStates = p1.tierStates
+    v1 = nil
+    v2 = nil
+    for k, n in tierStates, v1, v2 do
+        if n.alwaysOnTop then
+            n.alwaysOnTop:set(Fusion.peek(n.locked))
+        end
+    end
+end
+function u50.getBranchState(p1, p2) -- Line: 1232
+    return p1.branchStates[p2]
+end
+function u50.destroy(p1) -- Line: 1239
+    p1:clear()
+    p1.scope:doCleanup()
+    p1.container:Destroy()
+end
+return u50

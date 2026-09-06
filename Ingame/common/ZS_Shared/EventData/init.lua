@@ -1,168 +1,200 @@
 game:GetService("ReplicatedStorage")
-local v_u_1 = {}
-local v_u_2 = {}
-local function v_u_8(p3) -- name: registerEventModule
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	if p3 and p3:IsA("ModuleScript") then
-		local v4, v5 = pcall(require, p3)
-		if v4 then
-			if type(v5) == "table" then
-				local v6 = v5.Id or (v5.id or p3.Name)
-				if v6 then
-					v5.Id = v6
-					v_u_1[v6] = v5
-					local v7 = v5.DataStoreKey or (v5.datastoreKey or v6)
-					v5.DataStoreKey = v7
-					v_u_2[v7] = v5
-				else
-					warn(string.format("[EventData] Event module %s is missing an Id field", p3:GetFullName()))
-				end
-			else
-				warn(string.format("[EventData] Event module %s did not return a table", p3:GetFullName()))
-				return
-			end
-		else
-			warn(string.format("[EventData] Failed to require event module %s: %s", p3:GetFullName(), (tostring(v5))))
-			return
-		end
-	else
-		return
-	end
+local u5 = {}
+local u6 = {}
+local u7 = {}
+local function shallowCopy(p1) -- Line: 8
+    local v1 = {}
+    for i, v in ipairs(p1) do
+        v1[i] = v
+    end
+    return v1
 end
-local v_u_9 = {}
-for _, v10 in ipairs(script:GetChildren()) do
-	v_u_8(v10)
+local function registerEventModule(p1) -- Line: 16 -- upvalues: u6 (val), u7 (val)
+    local v1, v2
+    if not p1 or not (p1:IsA("ModuleScript")) then
+        return
+    end
+    v1, v2 = pcall(require, p1)
+    if not v1 then
+        local FullName = p1:GetFullName()
+        warn(string.format("[EventData] Failed to require event module %s: %s", FullName, (tostring(v2))))
+        return
+    end
+    if type(v2) ~= "table" then
+        warn(string.format("[EventData] Event module %s did not return a table", p1:GetFullName()))
+        return
+    end
+    local Id = v2.Id
+    if not Id then
+        Id = v2.id
+        if not Id then
+            Id = p1.Name
+        end
+    end
+    if not Id then
+        warn(string.format("[EventData] Event module %s is missing an Id field", p1:GetFullName()))
+        return
+    end
+    v2.Id = Id
+    u6[Id] = v2
+    local DataStoreKey = v2.DataStoreKey
+    if not DataStoreKey then
+        DataStoreKey = v2.datastoreKey
+        if not DataStoreKey then
+            DataStoreKey = Id
+        end
+    end
+    v2.DataStoreKey = DataStoreKey
+    u7[DataStoreKey] = v2
 end
-local v_u_11 = {}
-function v_u_9.GetEvent(p12) -- name: GetEvent
-	-- upvalues: (copy) v_u_1
-	if p12 then
-		return v_u_1[p12]
-	else
-		return nil
-	end
+for i, v in ipairs(script:GetChildren()) do
+    registerEventModule(v)
 end
-function v_u_9.GetEventByDataStoreKey(p13) -- name: GetEventByDataStoreKey
-	-- upvalues: (copy) v_u_2
-	if p13 then
-		return v_u_2[p13]
-	else
-		return nil
-	end
+local u25 = {}
+function u5.GetEvent(p1) -- Line: 58 -- upvalues: u6 (val)
+    if not p1 then
+        return nil
+    end
+    return u6[p1]
 end
-function v_u_9.GetRegisteredEventIds() -- name: GetRegisteredEventIds
-	-- upvalues: (copy) v_u_1
-	local v14 = {}
-	for v15 in pairs(v_u_1) do
-		table.insert(v14, v15)
-	end
-	table.sort(v14)
-	return v14
+function u5.GetEventByDataStoreKey(p1) -- Line: 65 -- upvalues: u7 (val)
+    if not p1 then
+        return nil
+    end
+    return u7[p1]
 end
-function v_u_9.SetActiveEventIds(p16) -- name: SetActiveEventIds
-	-- upvalues: (ref) v_u_11
-	local v17 = {}
-	for v18, v19 in ipairs(p16 or {}) do
-		v17[v18] = v19
-	end
-	v_u_11 = v17
+function u5.GetRegisteredEventIds() -- Line: 72 -- upvalues: u6 (val)
+    local v1 = {}
+    for k in pairs(u6) do
+        table.insert(v1, k)
+    end
+    table.sort(v1)
+    return v1
 end
-function v_u_9.GetActiveEventIds() -- name: GetActiveEventIds
-	-- upvalues: (ref) v_u_11
-	local v20 = v_u_11
-	local v21 = {}
-	for v22, v23 in ipairs(v20) do
-		v21[v22] = v23
-	end
-	return v21
+function u5.SetActiveEventIds(p1) -- Line: 81 -- upvalues: u25 (ref)
+    local v1 = p1
+    if not v1 then
+        v1 = {}
+    end
+    local v2 = {}
+    for i, v in ipairs(v1) do
+        v2[i] = v
+    end
+    u25 = v2
 end
-function v_u_9.GetActiveEvents() -- name: GetActiveEvents
-	-- upvalues: (ref) v_u_11, (copy) v_u_9
-	local v24 = {}
-	for _, v25 in ipairs(v_u_11) do
-		local v26 = v_u_9.GetEvent(v25)
-		if v26 then
-			table.insert(v24, v26)
-		else
-			warn(string.format("[EventData] Active event %s has no registered configuration", (tostring(v25))))
-		end
-	end
-	return v24
+function u5.GetActiveEventIds() -- Line: 85 -- upvalues: u25 (ref)
+    local v1 = {}
+    for i, v in ipairs(u25) do
+        v1[i] = v
+    end
+    return v1
 end
-local function v_u_32(p27) -- name: createDefaultRewardState
-	local v28 = {}
-	if p27 then
-		local v29 = p27.Rewards
-		if type(v29) == "table" then
-			for _, v30 in ipairs(p27.Rewards) do
-				local v31 = v30.RewardId or v30.Id
-				if v31 then
-					v28[v31] = {
-						["rewarded"] = false,
-						["count"] = 0
-					}
-				end
-			end
-			return v28
-		end
-	end
-	return v28
+function u5.GetActiveEvents() -- Line: 89 -- upvalues: u25 (ref), u5 (val)
+    local v1
+    local v2 = {}
+    for i, v in ipairs(u25) do
+        v1 = u5.GetEvent(v)
+        if not v1 then
+            warn(string.format("[EventData] Active event %s has no registered configuration", (tostring(v))))
+        else
+            table.insert(v2, v1)
+        end
+    end
+    return v2
 end
-function v_u_9.BuildDefaultAwardsForEvent(p33) -- name: BuildDefaultAwardsForEvent
-	-- upvalues: (copy) v_u_9, (copy) v_u_32
-	local v34 = v_u_9.GetEvent(p33)
-	return not v34 and {} or v_u_32(v34)
+local function createDefaultRewardState(p1) -- Line: 102
+    local RewardId
+    local v1 = {}
+    if not p1 or type(p1.Rewards) ~= "table" then
+        return v1
+    end
+    for i, v in ipairs(p1.Rewards) do
+        RewardId = v.RewardId
+        if not RewardId then
+            RewardId = v.Id
+        end
+        if RewardId then
+            v1[RewardId] = {rewarded = false, count = 0}
+        end
+    end
+    return v1
 end
-function v_u_9.BuildDefaultAwardsForActiveEvents() -- name: BuildDefaultAwardsForActiveEvents
-	-- upvalues: (copy) v_u_9, (copy) v_u_32
-	local v35 = {}
-	for _, v36 in ipairs(v_u_9.GetActiveEvents()) do
-		v35[v36.DataStoreKey] = v_u_32(v36)
-	end
-	return v35
+function u5.BuildDefaultAwardsForEvent(p1) -- Line: 121 -- upvalues: u5 (val), createDefaultRewardState (val)
+    local v1 = u5.GetEvent(p1)
+    if not v1 then
+        return {}
+    end
+    return (createDefaultRewardState(v1))
 end
-function v_u_9.EnsureEventDataTables(p37) -- name: EnsureEventDataTables
-	-- upvalues: (copy) v_u_9, (copy) v_u_32
-	if type(p37) == "table" then
-		p37.Stats = p37.Stats or {}
-		p37.Stats.UniqueAwards = p37.Stats.UniqueAwards or {}
-		local v38 = p37.Stats.UniqueAwards
-		for _, v39 in ipairs(v_u_9.GetActiveEvents()) do
-			local v40 = v39.DataStoreKey
-			if v38[v40] == nil then
-				v38[v40] = v_u_32(v39)
-			else
-				local v41 = v38[v40]
-				if type(v41) ~= "table" then
-					v41 = {}
-					v38[v40] = v41
-				end
-				local v42 = v_u_32(v39)
-				for v43, v44 in pairs(v42) do
-					local v45 = v41[v43]
-					if type(v45) == "table" then
-						if v45.count == nil then
-							v45.count = v44.count
-						end
-						if v45.rewarded == nil then
-							v45.rewarded = v44.rewarded
-						end
-					else
-						v41[v43] = {
-							["rewarded"] = v44.rewarded,
-							["count"] = v44.count
-						}
-					end
-				end
-			end
-		end
-	end
+function u5.BuildDefaultAwardsForActiveEvents() -- Line: 129 -- upvalues: u5 (val), createDefaultRewardState (val)
+    local v1 = {}
+    for i, v in ipairs(u5.GetActiveEvents()) do
+        v1[v.DataStoreKey] = createDefaultRewardState(v)
+    end
+    return v1
 end
-function v_u_9.RegisterEventModule(p46) -- name: RegisterEventModule
-	-- upvalues: (copy) v_u_8
-	v_u_8(p46)
+function u5.EnsureEventDataForEvent(p1, p2) -- Line: 137 -- upvalues: u5 (val), createDefaultRewardState (val)
+    local v1
+    if type(p1) ~= "table" then
+        return nil
+    end
+    local v2 = u5.GetEvent(p2)
+    if not v2 then
+        return nil
+    end
+    local Stats = p1.Stats
+    if not Stats then
+        Stats = {}
+    end
+    p1.Stats = Stats
+    local UniqueAwards = p1.Stats.UniqueAwards
+    if not UniqueAwards then
+        UniqueAwards = {}
+    end
+    p1.Stats.UniqueAwards = UniqueAwards
+    local UniqueAwards_2 = p1.Stats.UniqueAwards
+    local DataStoreKey = v2.DataStoreKey
+    local v3 = UniqueAwards_2[DataStoreKey]
+    if type(v3) ~= "table" then
+        UniqueAwards_2[DataStoreKey] = {}
+    end
+    for k, v in pairs((createDefaultRewardState(v2))) do
+        v1 = v3[k]
+        if type(v1) == "table" then
+            if v1.count == nil then
+                v1.count = v.count
+            end
+            if v1.rewarded == nil then
+                v1.rewarded = v.rewarded
+            end
+        else
+            v3[k] = {rewarded = v.rewarded, count = v.count}
+        end
+    end
+    return v3
 end
-if #v_u_11 == 0 then
-	v_u_9.SetActiveEventIds({ "CHRISTMAS2025" })
+function u5.EnsureEventDataTables(p1) -- Line: 177 -- upvalues: u5 (val)
+    if type(p1) ~= "table" then
+        return
+    end
+    local Stats = p1.Stats
+    if not Stats then
+        Stats = {}
+    end
+    p1.Stats = Stats
+    local UniqueAwards = p1.Stats.UniqueAwards
+    if not UniqueAwards then
+        UniqueAwards = {}
+    end
+    p1.Stats.UniqueAwards = UniqueAwards
+    for i, v in ipairs(u5.GetActiveEvents()) do
+        u5.EnsureEventDataForEvent(p1, v.Id)
+    end
 end
-return v_u_9
+function u5.RegisterEventModule(p1) -- Line: 190 -- upvalues: registerEventModule (val)
+    registerEventModule(p1)
+end
+if #u25 == 0 then
+    u5.SetActiveEventIds({"CHRISTMAS2025"})
+end
+return u5

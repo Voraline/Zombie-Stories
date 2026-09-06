@@ -1,93 +1,89 @@
-local v1 = {
-	["ActivateType"] = "Use"
-}
-local v2 = game:GetService("RunService")
-local v_u_3 = game:GetService("ReplicatedStorage").common:WaitForChild("Remotes"):WaitForChild("Net")
-local v_u_4 = script.Parent:WaitForChild("Resources")
-if v2:IsClient() then
-	function v1.Init(p5, p_u_6, p_u_7) -- name: Init
-		-- upvalues: (copy) v_u_4, (copy) v_u_3
-		local v_u_8 = script.Parent:WaitForChild("DashGui"):Clone()
-		v_u_8.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-		local v_u_9 = game:GetService("SoundService")
-		local v_u_10 = v_u_4.ColorCorrection
-		local v_u_11 = v_u_9.AmbientReverb
-		v_u_10.Parent = game.Lighting
-		local v_u_12 = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		local v13 = p5:WaitForChild("Frame")
-		local v_u_14 = v13:WaitForChild("UseBar")
-		local v_u_15 = v13:waitForChild("Tactical")
-		game.Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("FrameworkEvent")
-		local v_u_16 = game.ReplicatedStorage.common:WaitForChild("Remotes"):WaitForChild("Focus")
-		local v_u_17 = workspace:WaitForChild("InitialFocus").Value
-		local v_u_18 = false
-		local v_u_19 = false
-		local function v_u_20() -- name: FocusUpdate
-			-- upvalues: (ref) v_u_18, (copy) v_u_14, (ref) v_u_17, (copy) p_u_7, (copy) v_u_15, (ref) v_u_19, (copy) v_u_9, (ref) v_u_4, (copy) p_u_6
-			if v_u_18 == false then
-				v_u_14:TweenSize(UDim2.new(v_u_17 / 1, 0, 0.75, 0), "Out", "Linear", 0.1, false)
-				if v_u_17 >= 1 then
-					p_u_7("white")
-					if v_u_15.Text ~= "FOCUS: READY [<FInstruction>]" and v_u_19 == false then
-						v_u_9:PlayLocalSound(v_u_4.Recharge)
-						v_u_19 = true
-					end
-					p_u_6("FOCUS: READY [<FInstruction>]")
-					return
-				end
-				p_u_7("red")
-				p_u_6("FOCUS: NOT READY")
-				v_u_19 = false
-			end
-		end
-		v_u_3.OnClientEvent:connect(function(p21, p22)
-			-- upvalues: (ref) v_u_17, (copy) v_u_20, (ref) v_u_18, (copy) v_u_8, (copy) v_u_14, (ref) v_u_4, (copy) v_u_9, (copy) v_u_10, (copy) v_u_12, (ref) v_u_11
-			if p21 == "f" then
-				v_u_17 = p22
-				v_u_20()
-			elseif p21 == "FocusEnded" then
-				v_u_18 = false
-				v_u_8.On.Value = false
-				v_u_14:TweenSize(UDim2.new(0, 0, 0.75, 0), "Out", "Linear", 0, true)
-				v_u_20()
-				v_u_4.Focus:Stop()
-				v_u_9:PlayLocalSound(v_u_4.FocusEnd)
-				game:GetService("TweenService"):Create(v_u_10, v_u_12, {
-					["TintColor"] = Color3.new(1, 1, 1)
-				}):Play()
-				v_u_9.AmbientReverb = v_u_11
-			end
-		end)
-		return function(_) -- name: udpText
-			-- upvalues: (copy) v_u_20
-			v_u_20()
-		end, function() -- name: activate
-			-- upvalues: (ref) v_u_17, (copy) v_u_16, (ref) v_u_18, (copy) v_u_8, (copy) v_u_14, (copy) p_u_6, (ref) v_u_4, (copy) v_u_9, (copy) v_u_10, (copy) v_u_12, (ref) v_u_11
-			if v_u_17 >= 1 then
-				local v23, v24 = v_u_16:InvokeServer()
-				if v23 then
-					v_u_18 = true
-					v_u_17 = 0
-					v_u_8.On.Value = true
-					v_u_14:TweenSize(UDim2.new(0, 0, 0.75, 0), "Out", "Linear", v24, true)
-					p_u_6("FOCUS: ACTIVE")
-					v_u_4.Focus:Play()
-					v_u_9:PlayLocalSound(v_u_4.FocusActive)
-					task.delay(0.7, function()
-						-- upvalues: (ref) v_u_9, (ref) v_u_4
-						v_u_9:PlayLocalSound(v_u_4.FocusActive2)
-					end)
-					game:GetService("TweenService"):Create(v_u_10, v_u_12, {
-						["TintColor"] = Color3.fromRGB(202, 197, 255)
-					}):Play()
-					v_u_11 = v_u_9.AmbientReverb
-					v_u_9.AmbientReverb = "Hangar"
-				end
-			end
-		end
-	end
-	return v1
-else
-	v2:IsServer()
-	return v1
+local v1 = {ActivateType = "Use"}
+local RunService = game:GetService("RunService")
+local Remotes = game:GetService("ReplicatedStorage").common:WaitForChild("Remotes")
+local Net = Remotes:WaitForChild("Net")
+local Resources = script.Parent:WaitForChild("Resources")
+if not (RunService:IsClient()) then
+    return v1
 end
+function v1.Init(p1, p2, p3) -- Line: 10 -- upvalues: Resources (val), Net (val)
+    local u11 = script.Parent:WaitForChild("DashGui"):Clone()
+    u11.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local SoundService = game:GetService("SoundService")
+    local ColorCorrection = Resources.ColorCorrection
+    local AmbientReverb = SoundService.AmbientReverb
+    ColorCorrection.Parent = game.Lighting
+    local u33 = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local Frame = p1:WaitForChild("Frame")
+    local UseBar = Frame:WaitForChild("UseBar")
+    local u45 = Frame:waitForChild("Tactical")
+    local PlayerScripts = game.Players.LocalPlayer:WaitForChild("PlayerScripts")
+    PlayerScripts:WaitForChild("FrameworkEvent")
+    local Remotes = game.ReplicatedStorage.common:WaitForChild("Remotes")
+    local Focus = Remotes:WaitForChild("Focus")
+    local Value = workspace:WaitForChild("InitialFocus").Value
+    local u74 = false
+    local u75 = false
+    local function FocusUpdate() -- Line: 39 -- upvalues: u74 (ref), UseBar (val), Value (ref), p3 (val), u45 (val), u75 (ref), SoundService (val), Resources (upval), p2 (val)
+        if u74 ~= false then
+            return
+        end
+        local v1 = UDim2.new(Value / 1, 0, 0.75, 0)
+        UseBar:TweenSize(v1, "Out", "Linear", 0.1, false)
+        if 1 > Value then
+            p3("red")
+            p2("FOCUS: NOT READY")
+            u75 = false
+            return
+        end
+        p3("white")
+        if u45.Text ~= "FOCUS: READY [<FInstruction>]" and u75 == false then
+            SoundService:PlayLocalSound(Resources.Recharge)
+            u75 = true
+        end
+        p2("FOCUS: READY [<FInstruction>]")
+    end
+    Net.OnClientEvent:connect(function(p1, p2) -- Line: 59 -- upvalues: Value (ref), FocusUpdate (val), u74 (ref), u11 (val), UseBar (val), Resources (upval), SoundService (val), ColorCorrection (val), u33 (val), AmbientReverb (ref)
+        if p1 == "f" then
+            Value = p2
+            FocusUpdate()
+            return
+        end
+        if p1 == "FocusEnded" then
+            u74 = false
+            u11.On.Value = false
+            local v1 = UDim2.new(0, 0, 0.75, 0)
+            UseBar:TweenSize(v1, "Out", "Linear", 0, true)
+            FocusUpdate()
+            Resources.Focus:Stop()
+            SoundService:PlayLocalSound(Resources.FocusEnd)
+            game:GetService("TweenService"):Create(ColorCorrection, u33, {TintColor = Color3.new(1, 1, 1)}):Play()
+            SoundService.AmbientReverb = AmbientReverb
+        end
+    end)
+    return function(p1) -- Line: 77 -- upvalues: FocusUpdate (val)
+        FocusUpdate()
+    end, function() -- Line: 80 -- upvalues: Value (ref), Focus (val), u74 (ref), u11 (val), UseBar (val), p2 (val), Resources (upval), SoundService (val), ColorCorrection (val), u33 (val), AmbientReverb (ref)
+        if 1 <= Value then
+            local v1, v2
+            v1, v2 = Focus:InvokeServer()
+            if v1 then
+                u74 = true
+                Value = 0
+                u11.On.Value = true
+                local v3 = UDim2.new(0, 0, 0.75, 0)
+                UseBar:TweenSize(v3, "Out", "Linear", v2, true)
+                p2("FOCUS: ACTIVE")
+                Resources.Focus:Play()
+                SoundService:PlayLocalSound(Resources.FocusActive)
+                task.delay(0.7, function() -- Line: 92 -- upvalues: SoundService (upval), Resources (upval)
+                    SoundService:PlayLocalSound(Resources.FocusActive2)
+                end)
+                game:GetService("TweenService"):Create(ColorCorrection, u33, {TintColor = Color3.fromRGB(202, 197, 255)}):Play()
+                AmbientReverb = SoundService.AmbientReverb
+                SoundService.AmbientReverb = "Hangar"
+            end
+        end
+    end
+end
+return v1

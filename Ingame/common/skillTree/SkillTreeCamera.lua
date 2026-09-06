@@ -1,325 +1,343 @@
-local v_u_1 = game:GetService("UserInputService")
-local v_u_2 = game:GetService("RunService")
-local v3 = game:GetService("ReplicatedStorage")
-local v_u_4 = require(v3.common.skillTree.config.SkillConfig).layout
-local v_u_5 = {}
-v_u_5.__index = v_u_5
-function v_u_5.new() -- name: new
-	-- upvalues: (copy) v_u_5
-	local v6 = v_u_5
-	local v7 = setmetatable({}, v6)
-	v7.camera = workspace.CurrentCamera
-	v7.enabled = false
-	v7.targetPosition = Vector3.new(2500, 500, 2500)
-	v7.currentZoom = 80
-	v7.isPanning = false
-	v7.lastMousePosition = Vector2.zero
-	v7.connections = {}
-	v7.gamepadInput = Vector2.zero
-	v7.gamepadZoomInput = 0
-	v7.gamepadPanTime = 0
-	v7.activeTouches = {}
-	v7.lastPinchDistance = nil
-	v7.pinchAccumulator = 0
-	v7.isTouchPanning = false
-	v7.lastTouchPosition = Vector2.zero
-	v7.touchVelocity = Vector3.new(0, 0, 0)
-	v7.inertiaVelocity = Vector3.new(0, 0, 0)
-	return v7
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local layout = require(ReplicatedStorage.common.skillTree.config.SkillConfig).layout
+local function thumbstickCurve(p1) -- Line: 61
+    local v1 = (math.abs(p1) - 0.1) / 0.9
+    if v1 <= 0 then
+        return 0
+    end
+    local v2 = math.sign(p1)
+    return v2 * math.clamp((math.exp(v1 * 2) - 1) / 6.38905609893065, 0, 1)
 end
-function v_u_5.getSkillWorldPosition(p8) -- name: getSkillWorldPosition
-	-- upvalues: (copy) v_u_4
-	local v9 = v_u_4.getPosition(p8)
-	if not v9 then
-		return nil
-	end
-	local v10 = -v9.row * 65
-	local v11 = v9.column * 65
-	return Vector3.new(2500, 500, 2500) + Vector3.new(v10, 0, v11)
+local u23 = {}
+u23.__index = u23
+function u23.new() -- Line: 110 -- upvalues: u23 (val)
+    local v1 = setmetatable({}, u23)
+    v1.camera = workspace.CurrentCamera
+    v1.enabled = false
+    v1.targetPosition = Vector3.new(2500, 500, 2500)
+    v1.currentZoom = 80
+    v1.isPanning = false
+    v1.lastMousePosition = Vector2.zero
+    v1.connections = {}
+    v1.fovTweenGeneration = 0
+    v1.gamepadInput = Vector2.zero
+    v1.gamepadZoomInput = 0
+    v1.gamepadPanTime = 0
+    v1.activeTouches = {}
+    v1.lastPinchDistance = nil
+    v1.pinchAccumulator = 0
+    v1.isTouchPanning = false
+    v1.lastTouchPosition = Vector2.zero
+    v1.touchVelocity = Vector3.new(0, 0, 0)
+    v1.inertiaVelocity = Vector3.new(0, 0, 0)
+    return v1
 end
-function v_u_5.enable(p_u_12, p13) -- name: enable
-	-- upvalues: (copy) v_u_5, (copy) v_u_2
-	if not p_u_12.enabled then
-		p_u_12.enabled = true
-		p_u_12.camera.CameraType = Enum.CameraType.Scriptable
-		local v14 = v_u_5.getSkillWorldPosition(p13 or "core1")
-		if v14 then
-			local v15 = v14.X
-			local v16 = v14.Z
-			p_u_12.targetPosition = Vector3.new(v15, 500, v16)
-		end
-		p_u_12:connectInputs()
-		local v18 = v_u_2.RenderStepped:Connect(function(p17)
-			-- upvalues: (copy) p_u_12
-			p_u_12:update(p17)
-		end)
-		local v19 = p_u_12.connections
-		table.insert(v19, v18)
-	end
+function u23.getSkillWorldPosition(p1) -- Line: 145 -- upvalues: layout (val)
+    local v1 = layout.getPosition(p1)
+    if not v1 then
+        return nil
+    end
+    return Vector3.new(2500, 500, 2500) + Vector3.new(-v1.row * 65, 0, v1.column * 65)
 end
-function v_u_5.disable(p20) -- name: disable
-	if p20.enabled then
-		p20.enabled = false
-		for _, v21 in p20.connections do
-			v21:Disconnect()
-		end
-		p20.connections = {}
-		p20.camera.CameraType = Enum.CameraType.Custom
-	end
+function u23.enable(p1, p2) -- Line: 160 -- upvalues: u23 (val), RunService (val)
+    if p1.enabled then
+        return
+    end
+    p1.camera = workspace.CurrentCamera
+    p1.enabled = true
+    p1.camera.CameraType = Enum.CameraType.Scriptable
+    local v1 = u23.getSkillWorldPosition(p2 or "core1")
+    if v1 then
+        p1.targetPosition = Vector3.new(v1.X, 500, v1.Z)
+    end
+    p1:connectInputs()
+    local v2 = RunService.RenderStepped:Connect(function(a1) -- Line: 183 -- upvalues: p1 (val)
+        p1:update(a1)
+    end)
+    table.insert(p1.connections, v2)
 end
-function v_u_5.connectInputs(p_u_22) -- name: connectInputs
-	-- upvalues: (copy) v_u_1
-	local v24 = v_u_1.InputBegan:Connect(function(p23, _)
-		-- upvalues: (copy) p_u_22, (ref) v_u_1
-		if p23.UserInputType == Enum.UserInputType.MouseButton2 then
-			p_u_22.isPanning = true
-			p_u_22.lastMousePosition = v_u_1:GetMouseLocation()
-		end
-	end)
-	local v25 = p_u_22.connections
-	table.insert(v25, v24)
-	local v27 = v_u_1.InputEnded:Connect(function(p26)
-		-- upvalues: (copy) p_u_22
-		if p26.UserInputType == Enum.UserInputType.MouseButton2 then
-			p_u_22.isPanning = false
-		end
-	end)
-	local v28 = p_u_22.connections
-	table.insert(v28, v27)
-	local v53 = v_u_1.InputChanged:Connect(function(p29)
-		-- upvalues: (copy) p_u_22, (ref) v_u_1
-		if p29.UserInputType == Enum.UserInputType.MouseMovement and p_u_22.isPanning then
-			local v30 = v_u_1:GetMouseLocation()
-			local v31 = v30 - p_u_22.lastMousePosition
-			p_u_22.lastMousePosition = v30
-			local v32 = 0.3 * (p_u_22.currentZoom / 400)
-			local v33 = p_u_22
-			local v34 = p_u_22.targetPosition
-			local v35 = v31.Y * v32
-			local v36 = -v31.X * v32
-			v33.targetPosition = v34 + Vector3.new(v35, 0, v36)
-		end
-		if p29.UserInputType == Enum.UserInputType.MouseWheel then
-			local v37 = p29.Position.Z
-			local v38 = p_u_22
-			local v39 = p_u_22.currentZoom - v37 * 10
-			v38.currentZoom = math.clamp(v39, 40, 400)
-		end
-		if p29.KeyCode == Enum.KeyCode.Thumbstick1 then
-			local v40 = p29.Position
-			local v41 = p_u_22
-			local v42 = Vector2.new
-			local v43 = v40.X
-			local v44 = (math.abs(v43) - 0.1) / 0.9
-			local v45
-			if v44 <= 0 then
-				v45 = 0
-			else
-				local v46 = v44 * 2
-				local v47 = (math.exp(v46) - 1) / 6.38905609893065
-				v45 = math.sign(v43) * math.clamp(v47, 0, 1)
-			end
-			local v48 = v40.Y
-			local v49 = (math.abs(v48) - 0.1) / 0.9
-			local v50
-			if v49 <= 0 then
-				v50 = 0
-			else
-				local v51 = v49 * 2
-				local v52 = (math.exp(v51) - 1) / 6.38905609893065
-				v50 = math.sign(v48) * math.clamp(v52, 0, 1)
-			end
-			v41.gamepadInput = v42(v45, v50)
-		end
-		if p29.KeyCode == Enum.KeyCode.ButtonR2 then
-			p_u_22.gamepadZoomInput = -p29.Position.Z
-		elseif p29.KeyCode == Enum.KeyCode.ButtonL2 then
-			p_u_22.gamepadZoomInput = p29.Position.Z
-		end
-	end)
-	local v54 = p_u_22.connections
-	table.insert(v54, v53)
-	local v57 = v_u_1.InputBegan:Connect(function(p55, _)
-		-- upvalues: (copy) p_u_22
-		if p55.UserInputType == Enum.UserInputType.Touch then
-			p_u_22.activeTouches[p55] = Vector2.new(p55.Position.X, p55.Position.Y)
-			p_u_22.inertiaVelocity = Vector3.new(0, 0, 0)
-			p_u_22.touchVelocity = Vector3.new(0, 0, 0)
-			local v56 = 0
-			for _ in p_u_22.activeTouches do
-				v56 = v56 + 1
-			end
-			if v56 == 1 then
-				p_u_22.isTouchPanning = true
-				p_u_22.lastTouchPosition = Vector2.new(p55.Position.X, p55.Position.Y)
-				return
-			end
-			p_u_22.isTouchPanning = false
-		end
-	end)
-	local v58 = p_u_22.connections
-	table.insert(v58, v57)
-	local v59 = v_u_1.InputEnded:Connect(function()
-		-- upvalues: (copy) p_u_22
-		-- -- failed to decompile
-	end)
-	local v60 = p_u_22.connections
-	table.insert(v60, v59)
-	local v79 = v_u_1.InputChanged:Connect(function(p61)
-		-- upvalues: (copy) p_u_22
-		if p61.UserInputType == Enum.UserInputType.Touch then
-			if p_u_22.activeTouches[p61] then
-				p_u_22.activeTouches[p61] = Vector2.new(p61.Position.X, p61.Position.Y)
-			end
-			local v62 = 0
-			local v63 = {}
-			for _, v64 in p_u_22.activeTouches do
-				v62 = v62 + 1
-				table.insert(v63, v64)
-			end
-			if v62 == 1 and p_u_22.isTouchPanning then
-				local v65 = Vector2.new(p61.Position.X, p61.Position.Y)
-				local v66 = v65 - p_u_22.lastTouchPosition
-				p_u_22.lastTouchPosition = v65
-				local v67 = 0.5 * (p_u_22.currentZoom / 400)
-				local v68 = v66.Y * v67
-				local v69 = -v66.X * v67
-				local v70 = Vector3.new(v68, 0, v69)
-				p_u_22.targetPosition = p_u_22.targetPosition + v70
-				local v71 = v70 * 60
-				p_u_22.touchVelocity = p_u_22.touchVelocity:Lerp(v71, 0.5)
-				return
-			end
-			if v62 == 2 then
-				local v72 = (v63[1] - v63[2]).Magnitude
-				if p_u_22.lastPinchDistance then
-					local v73 = p_u_22.lastPinchDistance - v72
-					p_u_22.pinchAccumulator = p_u_22.pinchAccumulator + v73
-					while true do
-						local v74 = p_u_22.pinchAccumulator
-						if math.abs(v74) < 50 then
-							break
-						end
-						if p_u_22.pinchAccumulator > 0 then
-							local v75 = p_u_22
-							local v76 = p_u_22.currentZoom + 20
-							v75.currentZoom = math.clamp(v76, 40, 400)
-							p_u_22.pinchAccumulator = p_u_22.pinchAccumulator - 50
-						else
-							local v77 = p_u_22
-							local v78 = p_u_22.currentZoom - 20
-							v77.currentZoom = math.clamp(v78, 40, 400)
-							p_u_22.pinchAccumulator = p_u_22.pinchAccumulator + 50
-						end
-					end
-				end
-				p_u_22.lastPinchDistance = v72
-			end
-		end
-	end)
-	local v80 = p_u_22.connections
-	table.insert(v80, v79)
+function u23.disable(p1) -- Line: 192
+    p1.fovTweenGeneration = p1.fovTweenGeneration + 1
+    if not p1.enabled then
+        return
+    end
+    p1.enabled = false
+    local connections = p1.connections
+    local v1 = nil
+    local v2 = nil
+    for i, j in connections, v1, v2 do
+        j:Disconnect()
+    end
+    p1.connections = {}
+    p1.camera.CameraType = Enum.CameraType.Custom
 end
-function v_u_5.clampToBounds(p81) -- name: clampToBounds
-	local v82 = p81.targetPosition.X
-	local v83 = math.clamp(v82, 2010, 2665)
-	local v84 = p81.targetPosition.Y
-	local v85 = p81.targetPosition.Z
-	local v86 = math.clamp(v85, 2140, 2860)
-	p81.targetPosition = Vector3.new(v83, v84, v86)
+function u23:connectInputs() -- Line: 213 -- upvalues: UserInputService (val)
+    local v1, v2, v3, v4
+    local v5 = UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 215 -- upvalues: self (val), UserInputService (upval)
+        if p1.UserInputType == Enum.UserInputType.MouseButton2 then
+            self.isPanning = true
+            self.lastMousePosition = UserInputService:GetMouseLocation()
+        end
+    end)
+    table.insert(self.connections, v5)
+    local v6 = UserInputService.InputEnded:Connect(function(p1) -- Line: 224 -- upvalues: self (val)
+        if p1.UserInputType == Enum.UserInputType.MouseButton2 then
+            self.isPanning = false
+        end
+    end)
+    table.insert(self.connections, v6)
+    v1 = UserInputService.InputChanged:Connect(function(p1, p2) -- Line: 232 -- upvalues: self (val), UserInputService (upval)
+        local v1
+        if p1.UserInputType == Enum.UserInputType.MouseMovement and self.isPanning then
+            local MouseLocation = UserInputService:GetMouseLocation()
+            local v2 = MouseLocation - self.lastMousePosition
+            self.lastMousePosition = MouseLocation
+            v1 = 0.3 * (self.currentZoom / 400)
+            self.targetPosition = self.targetPosition + Vector3.new(v2.Y * v1, 0, -v2.X * v1)
+        end
+        if p1.UserInputType == Enum.UserInputType.MouseWheel and not p2 and self.enabled then
+            self.currentZoom = math.clamp(self.currentZoom - p1.Position.Z * 10, 40, 400)
+        end
+        if p1.KeyCode == Enum.KeyCode.Thumbstick1 then
+            local v3, v4, v5
+            local Position = p1.Position
+            local X = Position.X
+            local v6 = (math.abs(X) - 0.1) / 0.9
+            if v6 > 0 then
+                v4 = (math.exp(v6 * 2) - 1) / 6.38905609893065
+                v5 = math.sign(X)
+                v1 = v5 * math.clamp(v4, 0, 1)
+            else
+                v1 = 0
+            end
+            local Y = Position.Y
+            v4 = (math.abs(Y) - 0.1) / 0.9
+            if v4 > 0 then
+                v5 = (math.exp(v4 * 2) - 1) / 6.38905609893065
+                local v7 = math.sign(Y)
+                v3 = v7 * math.clamp(v5, 0, 1)
+            else
+                v3 = 0
+            end
+            self.gamepadInput = Vector2.new(v1, v3)
+        end
+        if p1.KeyCode == Enum.KeyCode.ButtonR2 then
+            self.gamepadZoomInput = -p1.Position.Z
+            return
+        end
+        if p1.KeyCode == Enum.KeyCode.ButtonL2 then
+            self.gamepadZoomInput = p1.Position.Z
+        end
+    end)
+    table.insert(self.connections, v1)
+    v2 = UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 269 -- upvalues: self (val)
+        if p1.UserInputType ~= Enum.UserInputType.Touch then
+            return
+        end
+        self.activeTouches[p1] = Vector2.new(p1.Position.X, p1.Position.Y)
+        self.inertiaVelocity = Vector3.new(0, 0, 0)
+        self.touchVelocity = Vector3.new(0, 0, 0)
+        local v1 = 0
+        local activeTouches = self.activeTouches
+        local v2 = nil
+        local v3 = nil
+        for i in activeTouches, v2, v3 do
+            v1 = v1 + 1
+        end
+        if v1 ~= 1 then
+            self.isTouchPanning = false
+            return
+        end
+        self.isTouchPanning = true
+        self.lastTouchPosition = Vector2.new(p1.Position.X, p1.Position.Y)
+    end)
+    table.insert(self.connections, v2)
+    v3 = UserInputService.InputEnded:Connect(function(p1) -- Line: 295 -- upvalues: self (val)
+        if p1.UserInputType ~= Enum.UserInputType.Touch then
+            return
+        end
+        self.activeTouches[p1] = nil
+        self.lastPinchDistance = nil
+        self.pinchAccumulator = 0
+        local v1 = 0
+        local activeTouches = self.activeTouches
+        local v2 = nil
+        local v3 = nil
+        for i in activeTouches, v2, v3 do
+            v1 = v1 + 1
+        end
+        if v1 == 1 then
+            local activeTouches_2 = self.activeTouches
+            v2 = nil
+            v3 = nil
+            for j, k in activeTouches_2, v2, v3 do
+                self.isTouchPanning = true
+                self.lastTouchPosition = Vector2.new(j.Position.X, j.Position.Y)
+                return
+            end
+            return
+        end
+        if v1 == 0 then
+            self.isTouchPanning = false
+            local Magnitude = self.touchVelocity.Magnitude
+            if 0.5 < Magnitude then
+                if 800 >= Magnitude then
+                    self.inertiaVelocity = self.touchVelocity
+                else
+                    self.inertiaVelocity = self.touchVelocity.Unit * 800
+                end
+            end
+            self.touchVelocity = Vector3.new(0, 0, 0)
+        end
+    end)
+    table.insert(self.connections, v3)
+    v4 = UserInputService.InputChanged:Connect(function(p1) -- Line: 332 -- upvalues: self (val)
+        if p1.UserInputType ~= Enum.UserInputType.Touch then
+            return
+        else
+            local activeTouches
+            if self.activeTouches[p1] then
+                self.activeTouches[p1] = Vector2.new(p1.Position.X, p1.Position.Y)
+            end
+            local v1 = 0
+            local v2 = {}
+            activeTouches = self.activeTouches
+            local v3 = nil
+            local v4 = nil
+            for i, j in activeTouches, v3, v4 do
+                v1 = v1 + 1
+                table.insert(v2, j)
+            end
+            if v1 ~= 1 then
+                if v1 == 2 then
+                    local Magnitude = (v2[1] - v2[2]).Magnitude
+                    if self.lastPinchDistance then
+                        self.pinchAccumulator = self.pinchAccumulator + (self.lastPinchDistance - Magnitude)
+                        while true do
+                            v4 = math.abs(self.pinchAccumulator)
+                            if 50 > v4 then
+                                break
+                            end
+                            if 0 >= self.pinchAccumulator then
+                                self.currentZoom = math.clamp(self.currentZoom - 20, 40, 400)
+                                self.pinchAccumulator = self.pinchAccumulator + 50
+                            else
+                                self.currentZoom = math.clamp(self.currentZoom + 20, 40, 400)
+                                self.pinchAccumulator = self.pinchAccumulator - 50
+                            end
+                        end
+                    end
+                    self.lastPinchDistance = Magnitude
+                end
+                return
+            elseif self.isTouchPanning then
+                local v5 = Vector2.new(p1.Position.X, p1.Position.Y)
+                v3 = v5 - self.lastTouchPosition
+                self.lastTouchPosition = v5
+                local v6 = 0.5 * (self.currentZoom / 400)
+                local v7 = Vector3.new(v3.Y * v6, 0, -v3.X * v6)
+                self.targetPosition = self.targetPosition + v7
+                self.touchVelocity = self.touchVelocity:Lerp(v7 * 60, 0.5)
+                return
+            end
+        end
+    end)
+    table.insert(self.connections, v4)
 end
-function v_u_5.update(p87, p88) -- name: update
-	-- upvalues: (copy) v_u_1
-	if p87.enabled then
-		local v89 = Vector3.new(0, 0, 0)
-		if v_u_1:IsKeyDown(Enum.KeyCode.W) then
-			v89 = v89 + Vector3.new(1, 0, 0)
-		end
-		if v_u_1:IsKeyDown(Enum.KeyCode.S) then
-			v89 = v89 + Vector3.new(-1, 0, 0)
-		end
-		if v_u_1:IsKeyDown(Enum.KeyCode.A) then
-			v89 = v89 + Vector3.new(0, 0, -1)
-		end
-		if v_u_1:IsKeyDown(Enum.KeyCode.D) then
-			v89 = v89 + Vector3.new(0, 0, 1)
-		end
-		if v89.Magnitude > 0 then
-			local v90 = 200 * (p87.currentZoom / 400)
-			p87.targetPosition = p87.targetPosition + v89.Unit * v90 * p88
-		end
-		if p87.gamepadInput.Magnitude > 0 then
-			p87.gamepadPanTime = p87.gamepadPanTime + p88
-			local v91 = p87.gamepadPanTime / 1.5
-			local v92 = math.min(v91, 1)
-			local v93 = (v92 * v92 * 400 + 200) * (p87.currentZoom / 400)
-			local v94 = p87.targetPosition
-			local v95 = p87.gamepadInput.Y * v93 * p88
-			local v96 = p87.gamepadInput.X * v93 * p88
-			p87.targetPosition = v94 + Vector3.new(v95, 0, v96)
-		else
-			p87.gamepadPanTime = 0
-		end
-		if p87.gamepadZoomInput ~= 0 then
-			local v97 = p87.currentZoom + p87.gamepadZoomInput * 100 * p88
-			p87.currentZoom = math.clamp(v97, 40, 400)
-		end
-		if p87.inertiaVelocity.Magnitude > 0.5 then
-			p87.targetPosition = p87.targetPosition + p87.inertiaVelocity * p88
-			local v98 = p87.inertiaVelocity
-			local v99 = p88 * -5
-			p87.inertiaVelocity = v98 * math.exp(v99)
-		else
-			p87.inertiaVelocity = Vector3.new(0, 0, 0)
-		end
-		p87:clampToBounds()
-		local v100 = p87.targetPosition
-		local v101 = p87.currentZoom
-		local v102 = v100 + Vector3.new(0, v101, 0)
-		local v103 = p87.targetPosition
-		p87.camera.CFrame = CFrame.lookAt(v102, v103) * CFrame.Angles(0.017453292519943295, 0, 0)
-	end
+function u23:clampToBounds() -- Line: 398
+    local v1 = math.clamp(self.targetPosition.X, 2010, 2665)
+    self.targetPosition = Vector3.new(v1, self.targetPosition.Y, (math.clamp(self.targetPosition.Z, 2140, 2860)))
 end
-function v_u_5.focusSkill(p104, p105) -- name: focusSkill
-	-- upvalues: (copy) v_u_5
-	local v106 = v_u_5.getSkillWorldPosition(p105)
-	if v106 then
-		local v107 = v106.X
-		local v108 = v106.Z
-		p104.targetPosition = Vector3.new(v107, 500, v108)
-	end
+function u23:update(p2) -- Line: 409 -- upvalues: UserInputService (val)
+    local v1
+    if not self.enabled then
+        return
+    end
+    local v2 = Vector3.new(0, 0, 0)
+    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+        v2 = v2 + Vector3.new(1, 0, 0)
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+        v2 = v2 + Vector3.new(-1, 0, 0)
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+        v2 = v2 + Vector3.new(0, 0, -1)
+    end
+    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+        v2 = v2 + Vector3.new(0, 0, 1)
+    end
+    if 0 < v2.Magnitude then
+        self.targetPosition = self.targetPosition + v2.Unit * (200 * (self.currentZoom / 400)) * p2
+    end
+    if 0 >= self.gamepadInput.Magnitude then
+        self.gamepadPanTime = 0
+    else
+        self.gamepadPanTime = self.gamepadPanTime + p2
+        v1 = math.min(self.gamepadPanTime / 1.5, 1)
+        local v3 = (v1 * v1 * 400 + 200) * (self.currentZoom / 400)
+        self.targetPosition = self.targetPosition + Vector3.new(self.gamepadInput.Y * v3 * p2, 0, self.gamepadInput.X * v3 * p2)
+    end
+    if self.gamepadZoomInput ~= 0 then
+        self.currentZoom = math.clamp(self.currentZoom + self.gamepadZoomInput * 100 * p2, 40, 400)
+    end
+    if 0.5 >= self.inertiaVelocity.Magnitude then
+        self.inertiaVelocity = Vector3.new(0, 0, 0)
+    else
+        self.targetPosition = self.targetPosition + self.inertiaVelocity * p2
+        self.inertiaVelocity = self.inertiaVelocity * math.exp(p2 * -5)
+    end
+    self:clampToBounds()
+    v1 = self.targetPosition + Vector3.new(0, self.currentZoom, 0)
+    local v4 = CFrame.lookAt(v1, self.targetPosition)
+    self.camera.CFrame = v4 * CFrame.Angles(0.017453292519943295, 0, 0)
 end
-function v_u_5.setFieldOfView(p109, p110) -- name: setFieldOfView
-	p109.camera.FieldOfView = p110
+function u23.focusSkill(p1, p2) -- Line: 493 -- upvalues: u23 (val)
+    local v1 = u23.getSkillWorldPosition(p2)
+    if v1 then
+        p1.targetPosition = Vector3.new(v1.X, 500, v1.Z)
+    end
 end
-function v_u_5.tweenFieldOfView(p_u_111, p_u_112, p113, p_u_114) -- name: tweenFieldOfView
-	local v_u_115 = p113 or 0.5
-	local v_u_116 = p_u_111.camera.FieldOfView
-	local v_u_117 = 0
-	task.spawn(function()
-		-- upvalues: (ref) v_u_117, (copy) v_u_115, (copy) p_u_111, (copy) v_u_116, (copy) p_u_112, (copy) p_u_114
-		while v_u_117 < v_u_115 do
-			v_u_117 = v_u_117 + task.wait()
-			local v118 = v_u_117 / v_u_115
-			local v119 = 1 - (1 - math.min(v118, 1)) ^ 2
-			p_u_111.camera.FieldOfView = v_u_116 + (p_u_112 - v_u_116) * v119
-		end
-		p_u_111.camera.FieldOfView = p_u_112
-		if p_u_114 then
-			p_u_114()
-		end
-	end)
+function u23.setFieldOfView(p1, p2) -- Line: 503
+    p1.fovTweenGeneration = p1.fovTweenGeneration + 1
+    p1.camera.FieldOfView = p2
 end
-function v_u_5.getDefaultFOV() -- name: getDefaultFOV
-	return 70
+function u23.tweenFieldOfView(p1, p2, p3, p4) -- Line: 514
+    local u4 = p3 or 0.5
+    local FieldOfView = p1.camera.FieldOfView
+    local u7 = 0
+    p1.fovTweenGeneration = p1.fovTweenGeneration + 1
+    local fovTweenGeneration = p1.fovTweenGeneration
+    task.spawn(function() -- Line: 526 -- upvalues: u7 (ref), u4 (val), fovTweenGeneration (val), p1 (val), FieldOfView (val), p2 (val), p4 (val)
+        local v1
+        while u7 < u4 do
+            if fovTweenGeneration ~= p1.fovTweenGeneration then
+                return
+            end
+            u7 = u7 + task.wait()
+            v1 = 1 - (1 - math.min(u7 / u4, 1)) ^ 2
+            p1.camera.FieldOfView = FieldOfView + (p2 - FieldOfView) * v1
+        end
+        if fovTweenGeneration ~= p1.fovTweenGeneration then
+            return
+        end
+        p1.camera.FieldOfView = p2
+        if p4 then
+            p4()
+        end
+    end)
 end
-function v_u_5.getTransitionFOVStart() -- name: getTransitionFOVStart
-	return 1
+function u23.getDefaultFOV() -- Line: 552
+    return 70
 end
-function v_u_5.getBounds() -- name: getBounds
-	return 2010, 2665, 2140, 2860
+function u23.getTransitionFOVStart() -- Line: 559
+    return 1
 end
-function v_u_5.getTreeOrigin() -- name: getTreeOrigin
-	return Vector3.new(2500, 500, 2500)
+function u23.getBounds() -- Line: 567
+    return 2010, 2665, 2140, 2860
 end
-return v_u_5
+function u23.getTreeOrigin() -- Line: 574
+    return (Vector3.new(2500, 500, 2500))
+end
+return u23

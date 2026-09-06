@@ -1,202 +1,198 @@
-local v_u_1 = require("./ClientConnection")
-local v_u_2 = require("./ClientIdentifiers")
-local v_u_3 = require("./ClientProcess")
-local v_u_4 = require("../Constants")
-local v_u_5 = require("../Utilities/Output")
-local v_u_6 = require("../../TableKit")
-local v_u_7 = require("../../RemotePacketSizeCounter")
+local u2 = require("./ClientConnection")
+local u5 = require("./ClientIdentifiers")
+local u8 = require("./ClientProcess")
+local u11 = require("../Constants")
+local u14 = require("../Utilities/Output")
+local u17 = require("../../TableKit")
+local u20 = require("../../RemotePacketSizeCounter")
 require("../Types")
-local v_u_8 = require("../../../Promise")
-local v_u_9 = 0
-local v10 = {}
-local v_u_11 = {
-	["__index"] = v10,
-	["__tostring"] = function(_) -- name: __tostring
-		return "ClientBridge"
-	end
+local u26 = require("../../../Promise")
+local u27 = 0
+local function toStringData(p1) -- Line: 14 -- upvalues: u17 (val)
+    if typeof(p1) == "table" then
+        return u17.ToString(p1)
+    end
+    return (tostring(p1))
+end
+local v1 = {}
+local u30 = {
+    __index = v1,
+    __tostring = function(p1) -- Line: 26
+        return "ClientBridge"
+    end,
 }
-function v10.RateLimit(_) -- name: RateLimit
-	-- upvalues: (copy) v_u_5
-	v_u_5.warn("cannot call :RateLimit() from client")
+function v1.RateLimit(p1) -- Line: 30 -- upvalues: u14 (val)
+    u14.warn("cannot call :RateLimit() from client")
 end
-function v10.DisableRateLimit(_) -- name: DisableRateLimit
-	-- upvalues: (copy) v_u_5
-	v_u_5.warn("cannot call :DisableRateLimit() from client")
+function v1.DisableRateLimit(p1) -- Line: 34 -- upvalues: u14 (val)
+    u14.warn("cannot call :DisableRateLimit() from client")
 end
-function v10.InboundMiddleware(p12, p13) -- name: InboundMiddleware
-	-- upvalues: (copy) v_u_5, (copy) v_u_6
-	v_u_5.fatalAssert(tostring(p12) == "ClientBridge", "InboundMiddleware called with . instead of :")
-	v_u_5.fatalAssert(typeof(p13) == "table", string.format("InboundMiddleware takes table, got %*", (typeof(p13))))
-	v_u_5.warnAssert(v_u_6.IsArray(p13), "InboundMiddleware takes array, got dictionary.")
-	p12._inboundMiddleware = p13
+function v1.InboundMiddleware(p1, p2) -- Line: 38 -- upvalues: u14 (val), u17 (val)
+    local v1 = tostring(p1) == "ClientBridge"
+    u14.fatalAssert(v1, "InboundMiddleware called with . instead of :")
+    v1 = typeof(p2) == "table"
+    u14.fatalAssert(v1, string.format("InboundMiddleware takes table, got %*", (typeof(p2))))
+    v1 = u17.IsArray(p2)
+    u14.warnAssert(v1, "InboundMiddleware takes array, got dictionary.")
+    p1._inboundMiddleware = p2
 end
-function v10.OutboundMiddleware(p14, p15) -- name: OutboundMiddleware
-	-- upvalues: (copy) v_u_5, (copy) v_u_6
-	v_u_5.fatalAssert(tostring(p14) == "ClientBridge", "OutboundMiddleware called with . instead of :")
-	v_u_5.fatalAssert(typeof(p15) == "table", string.format("OutboundMiddleware takes table, got %*", (typeof(p15))))
-	v_u_5.warnAssert(v_u_6.IsArray(p15), "InboundMiddleware takes array, got dictionary.")
-	p14._outboundMiddleware = p15
+function v1.OutboundMiddleware(p1, p2) -- Line: 49 -- upvalues: u14 (val), u17 (val)
+    local v1 = tostring(p1) == "ClientBridge"
+    u14.fatalAssert(v1, "OutboundMiddleware called with . instead of :")
+    v1 = typeof(p2) == "table"
+    u14.fatalAssert(v1, string.format("OutboundMiddleware takes table, got %*", (typeof(p2))))
+    v1 = u17.IsArray(p2)
+    u14.warnAssert(v1, "InboundMiddleware takes array, got dictionary.")
+    p1._outboundMiddleware = p2
 end
-function v10.Fire(p16, p17) -- name: Fire
-	-- upvalues: (copy) v_u_5, (copy) v_u_4, (copy) v_u_6, (copy) v_u_7, (copy) v_u_3
-	v_u_5.fatalAssert(tostring(p16) == "ClientBridge", "Fire called with . instead of :")
-	if p16._outboundMiddleware == nil then
-		if p16.Logging then
-			local v18 = string.format
-			local v19 = v_u_4.CLIENT_FIRE_LOG
-			local v20 = p16._name
-			local v21
-			if typeof(p17) == "table" then
-				v21 = v_u_6.ToString(p17)
-			else
-				v21 = tostring(p17)
-			end
-			local v22 = v18(v19, v20, v21, v_u_7.GetDataByteSize(p17))
-			v_u_5.log(v22)
-		end
-		v_u_3.addToQueue(p16._identifier, p17)
-	else
-		for _, v23 in p16._outboundMiddleware do
-			local v24 = v23(p17)
-			if typeof(v24) == "table" then
-				p17 = v24
-			else
-				v_u_5.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", p16._name))
-			end
-		end
-		if p16.Logging then
-			local v25 = string.format
-			local v26 = v_u_4.CLIENT_FIRE_LOG
-			local v27 = p16._name
-			local v28
-			if typeof(p17) == "table" then
-				v28 = v_u_6.ToString(p17)
-			else
-				v28 = tostring(p17)
-			end
-			local v29 = v25(v26, v27, v28, v_u_7.GetDataByteSize(p17))
-			v_u_5.log(v29)
-		end
-		v_u_3.addToQueue(p16._identifier, p17)
-	end
+function v1:Fire(p2) -- Line: 60 -- upvalues: u14 (val), u11 (val), u17 (val), u20 (val), u8 (val)
+    local _outboundMiddleware, v1, v2, v3
+    local v4 = tostring(self) == "ClientBridge"
+    u14.fatalAssert(v4, "Fire called with . instead of :")
+    if self._outboundMiddleware == nil then
+        if self.Logging then
+            if typeof(p2) ~= "table" then
+                v2 = tostring(p2)
+            else
+                v2 = u17.ToString(p2)
+            end
+            v1 = string.format(u11.CLIENT_FIRE_LOG, self._name, v2, u20.GetDataByteSize(p2))
+            u14.log(v1)
+        end
+        u8.addToQueue(self._identifier, p2)
+        return
+    end
+    v1 = p2
+    _outboundMiddleware = self._outboundMiddleware
+    local v5 = nil
+    v2 = nil
+    for i, j in _outboundMiddleware, v5, v2 do
+        v3 = j(v1)
+        if typeof(v3) == "table" then
+            v1 = v3
+        else
+            u14.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", self._name))
+        end
+    end
+    if self.Logging then
+        local v6
+        local v7 = v1
+        if typeof(v7) ~= "table" then
+            v6 = tostring(v7)
+        else
+            v6 = u17.ToString(v7)
+        end
+        v4 = string.format(u11.CLIENT_FIRE_LOG, self._name, v6, u20.GetDataByteSize(v1))
+        u14.log(v4)
+    end
+    u8.addToQueue(self._identifier, v1)
 end
-function v10.Connect(p_u_30, p_u_31) -- name: Connect
-	-- upvalues: (copy) v_u_5, (copy) v_u_1, (copy) v_u_2, (copy) v_u_4, (copy) v_u_6, (copy) v_u_7
-	v_u_5.fatalAssert(tostring(p_u_30) == "ClientBridge", "connect called with . instead of :")
-	v_u_5.typecheck("function", "Connect", "callback", p_u_31)
-	return v_u_1(p_u_30._identifier, function(p32)
-		-- upvalues: (ref) v_u_2, (copy) p_u_30, (ref) v_u_5, (ref) v_u_4, (ref) v_u_6, (ref) v_u_7, (copy) p_u_31
-		if typeof(p32) == "table" and p32[1] == v_u_2.ref("REQUEST") then
-			return
-		elseif p_u_30._inboundMiddleware == nil then
-			if p_u_30.Logging then
-				local v33 = string.format
-				local v34 = v_u_4.CLIENT_CONNECT_LOG
-				local v35 = p_u_30._name
-				local v36
-				if typeof(p32) == "table" then
-					v36 = v_u_6.ToString(p32)
-				else
-					v36 = tostring(p32)
-				end
-				local v37 = v33(v34, v35, v36, v_u_7.GetDataByteSize(p32))
-				v_u_5.log(v37)
-			end
-			p_u_31(p32)
-		else
-			for _, v38 in p_u_30._inboundMiddleware do
-				local v39 = v38(p32)
-				if typeof(v39) == "table" then
-					p32 = v39
-				else
-					v_u_5.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", p_u_30._name))
-				end
-			end
-			if p_u_30.Logging then
-				local v40 = string.format
-				local v41 = v_u_4.CLIENT_CONNECT_LOG
-				local v42 = p_u_30._name
-				local v43
-				if typeof(p32) == "table" then
-					v43 = v_u_6.ToString(p32)
-				else
-					v43 = tostring(p32)
-				end
-				local v44 = v40(v41, v42, v43, v_u_7.GetDataByteSize(p32))
-				v_u_5.log(v44)
-			end
-			p_u_31(p32)
-		end
-	end)
+function v1:Connect(p2) -- Line: 107 -- upvalues: u14 (val), u2 (val), u5 (val), u11 (val), u17 (val), u20 (val)
+    local v1 = tostring(self) == "ClientBridge"
+    u14.fatalAssert(v1, "connect called with . instead of :")
+    u14.typecheck("function", "Connect", "callback", p2)
+    return u2(self._identifier, function(p1) -- Line: 111 -- upvalues: u5 (upval), self (val), u14 (upval), u11 (upval), u17 (upval), u20 (upval), p2 (val)
+        if typeof(p1) ~= "table" then
+            local _inboundMiddleware, v1, v2, v3
+            if self._inboundMiddleware == nil then
+                if self.Logging then
+                    if typeof(p1) ~= "table" then
+                        v2 = tostring(p1)
+                    else
+                        v2 = u17.ToString(p1)
+                    end
+                    v1 = string.format(u11.CLIENT_CONNECT_LOG, self._name, v2, u20.GetDataByteSize(p1))
+                    u14.log(v1)
+                end
+                p2(p1)
+                return
+            end
+            v1 = p1
+            _inboundMiddleware = self._inboundMiddleware
+            local v4 = nil
+            v2 = nil
+            for i, j in _inboundMiddleware, v4, v2 do
+                v3 = j(v1)
+                if typeof(v3) == "table" then
+                    v1 = v3
+                else
+                    u14.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", self._name))
+                end
+            end
+            if self.Logging then
+                local v5
+                local v6 = v1
+                if typeof(v6) ~= "table" then
+                    v5 = tostring(v6)
+                else
+                    v5 = u17.ToString(v6)
+                end
+                local v7 = string.format(u11.CLIENT_CONNECT_LOG, self._name, v5, u20.GetDataByteSize(v1))
+                u14.log(v7)
+            end
+            p2(v1)
+            return
+        elseif p1[1] == u5.ref("REQUEST") then
+            return
+        end
+    end)
 end
-function v10.Wait(p45) -- name: Wait
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p45) == "ClientBridge", "Wait called with . instead of :")
-	local v_u_46 = coroutine.running()
-	p45:Once(function(p47)
-		-- upvalues: (copy) v_u_46
-		coroutine.resume(v_u_46, p47)
-	end)
-	return coroutine.yield()
+function v1.Wait(p1) -- Line: 163 -- upvalues: u14 (val)
+    local v1 = tostring(p1) == "ClientBridge"
+    u14.fatalAssert(v1, "Wait called with . instead of :")
+    local u13 = coroutine.running()
+    p1:Once(function(p1) -- Line: 167 -- upvalues: u13 (val)
+        coroutine.resume(u13, p1)
+    end)
+    return coroutine.yield()
 end
-function v10.Invoke(p_u_48, p_u_49) -- name: Invoke
-	-- upvalues: (copy) v_u_8
-	return v_u_8.new(function(p50, _)
-		-- upvalues: (copy) p_u_48, (copy) p_u_49
-		p50((p_u_48:InvokeServerAsync(p_u_49)))
-	end)
+function v1.Invoke(p1, p2) -- Line: 173 -- upvalues: u26 (val)
+    return (u26.new(function(a1, a2) -- Line: 174 -- upvalues: p1 (val), p2 (val)
+    local v1, v2
+    v1 = p1:InvokeServerAsync(p2)
+    a1(v1)
+    return
+end))
 end
-function v10.InvokeServerAsync(p51, p52) -- name: InvokeServerAsync
-	-- upvalues: (copy) v_u_5, (ref) v_u_9, (copy) v_u_2, (copy) v_u_3
-	v_u_5.fatalAssert(tostring(p51) == "ClientBridge", "InvokeServerAsync called with . instead of :")
-	local v_u_53 = v_u_9
-	v_u_9 = v_u_9 + 1
-	p51:Fire({ v_u_2.ref("REQUEST"), v_u_53, p52 })
-	local v_u_54 = coroutine.running()
-	local v_u_55 = nil
-	v_u_55 = v_u_3.connect(p51._identifier, function(p56)
-		-- upvalues: (ref) v_u_2, (copy) v_u_53, (ref) v_u_55, (copy) v_u_54
-		if typeof(p56) == "table" then
-			if p56[1] == v_u_2.ref("REQUEST") and p56[2] == v_u_53 then
-				v_u_55()
-				coroutine.resume(v_u_54, p56[3])
-			end
-		end
-	end)
-	return coroutine.yield()
+function v1:InvokeServerAsync(p2) -- Line: 190 -- upvalues: u14 (val), u27 (ref), u5 (val), u8 (val)
+    local v1 = tostring(self) == "ClientBridge"
+    u14.fatalAssert(v1, "InvokeServerAsync called with . instead of :")
+    local u13 = u27
+    u27 = u27 + 1
+    local v2 = {}
+    local REQUEST = u5.ref("REQUEST")
+    v2[1] = REQUEST
+    v2[2] = u13
+    v2[3] = p2
+    self:Fire(v2)
+    local u29 = coroutine.running()
+    local u30 = nil
+    return coroutine.yield()
 end
-function v10.Once(p57, p_u_58) -- name: Once
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p57) == "ClientBridge", "Once called with . instead of :")
-	local v_u_59 = nil
-	v_u_59 = p57:Connect(function(p60)
-		-- upvalues: (ref) v_u_59, (copy) p_u_58
-		v_u_59:Disconnect()
-		p_u_58(p60)
-	end)
-	return v_u_59
+function v1:Once(p2) -- Line: 209 -- upvalues: u14 (val)
+    local v1 = tostring(self) == "ClientBridge"
+    u14.fatalAssert(v1, "Once called with . instead of :")
+    local u13 = nil
+    u13 = self:Connect(function(p1) -- Line: 213 -- upvalues: u13 (ref), p2 (val)
+        u13:Disconnect()
+        p2(p1)
+    end)
+    return u13
 end
-function v10.Destroy(p61) -- name: Destroy
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p61) == "ClientBridge", "Destroy called with . instead of :")
-	table.clear(p61)
-	setmetatable(p61, nil)
+function v1.Destroy(p1) -- Line: 221 -- upvalues: u14 (val)
+    local v1 = tostring(p1) == "ClientBridge"
+    u14.fatalAssert(v1, "Destroy called with . instead of :")
+    table.clear(p1)
+    setmetatable(p1, nil)
 end
-return function(p62)
-	-- upvalues: (copy) v_u_2, (copy) v_u_11, (copy) v_u_3
-	local v63 = {
-		["Logging"] = false,
-		["_identifier"] = nil,
-		["_name"] = nil,
-		["_inboundMiddleware"] = nil,
-		["_outboundMiddleware"] = nil,
-		["_identifier"] = v_u_2.ref(p62),
-		["_name"] = p62,
-		["_inboundMiddleware"] = {},
-		["_outboundMiddleware"] = {}
-	}
-	local v64 = v_u_11
-	local v65 = setmetatable(v63, v64)
-	v_u_3.registerBridge(v65._identifier)
-	return v65
+return function(p1) -- Line: 228 -- upvalues: u5 (val), u30 (val), u8 (val)
+    local v1 = setmetatable({
+        Logging = false,
+        _identifier = u5.ref(p1),
+        _name = p1,
+        _inboundMiddleware = {},
+        _outboundMiddleware = {},
+    }, u30)
+    u8.registerBridge(v1._identifier)
+    return v1
 end

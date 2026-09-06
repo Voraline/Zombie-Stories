@@ -1,333 +1,370 @@
+local skills
 game:GetService("Players")
-local v1 = game:GetService("ReplicatedStorage")
-local v2 = game:GetService("RunService")
-local v3 = game:GetService("SoundService")
-local v_u_4 = require("./config/SkillConfig")
-local v_u_5 = {}
-if v2:IsServer() then
-	game:GetService("ServerScriptService")
-	require("@game/ServerScriptService/common/zap")
-	local v_u_6 = {}
-	function v_u_5.initializePlayer(p7) -- name: initializePlayer
-		-- upvalues: (copy) v_u_6, (copy) v_u_4
-		v_u_6[p7] = {}
-		for v8 in v_u_4.skills do
-			v_u_6[p7][v8] = 0
-		end
-	end
-	function v_u_5.cleanupPlayer(p9) -- name: cleanupPlayer
-		-- upvalues: (copy) v_u_6
-		v_u_6[p9] = nil
-	end
-	function v_u_5.getSkillRank(p10, p11) -- name: getSkillRank
-		-- upvalues: (copy) v_u_6
-		local v12 = v_u_6[p10]
-		return v12 and (v12[p11] or 0) or 0
-	end
-	function v_u_5.setSkillRank(p13, p14, p15) -- name: setSkillRank
-		-- upvalues: (copy) v_u_6
-		local v16 = v_u_6[p13]
-		if v16 then
-			v16[p14] = p15
-		end
-	end
-	function v_u_5.getAllSkillRanks(p17) -- name: getAllSkillRanks
-		-- upvalues: (copy) v_u_6
-		return v_u_6[p17] or {}
-	end
-	function v_u_5.getReloadSpeedMult(p18) -- name: getReloadSpeedMult
-		-- upvalues: (copy) v_u_5
-		return 1 / (1 + 0.04 * v_u_5.getSkillRank(p18, "fastHands"))
-	end
-	function v_u_5.getRecoilMult(p19) -- name: getRecoilMult
-		-- upvalues: (copy) v_u_5
-		return 1 - 0.04 * v_u_5.getSkillRank(p19, "steadyAim")
-	end
-	function v_u_5.getSwapSpeedMult(p20) -- name: getSwapSpeedMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.1 * v_u_5.getSkillRank(p20, "sleightSwitch")
-	end
-	function v_u_5.getMaxHPMult(p21) -- name: getMaxHPMult
-		-- upvalues: (copy) v_u_5
-		local v22 = v_u_5.getSkillRank(p21, "thickSkin")
-		local v23 = v_u_5.getSkillRank(p21, "core2")
-		return 1 + 0.1 * v22 + 0.1 * v23
-	end
-	function v_u_5.getDamageReductionMult(p24) -- name: getDamageReductionMult
-		-- upvalues: (copy) v_u_5
-		return 1 - 0.03 * v_u_5.getSkillRank(p24, "grit")
-	end
-	function v_u_5.getAmmoCapacityMult(p25) -- name: getAmmoCapacityMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.08 * v_u_5.getSkillRank(p25, "deepPockets")
-	end
-	function v_u_5.getInteractSpeedMult(p26) -- name: getInteractSpeedMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.05 * v_u_5.getSkillRank(p26, "quickInteract")
-	end
-	function v_u_5.getMeleeSwingSpeedMult(p27) -- name: getMeleeSwingSpeedMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.1 * v_u_5.getSkillRank(p27, "meleeTempo")
-	end
-	function v_u_5.getDownedTimeMult(p28) -- name: getDownedTimeMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.15 * v_u_5.getSkillRank(p28, "ironWill")
-	end
-	function v_u_5.getHeadshotDamageMult(p29) -- name: getHeadshotDamageMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.05 * v_u_5.getSkillRank(p29, "core3")
-	end
-	function v_u_5.getXPBonusMult(p30) -- name: getXPBonusMult
-		-- upvalues: (copy) v_u_5
-		return 1 + 0.05 * v_u_5.getSkillRank(p30, "core1")
-	end
-	function v_u_5.getAdrenalineStamina(p31) -- name: getAdrenalineStamina
-		-- upvalues: (copy) v_u_5
-		return 5 * v_u_5.getSkillRank(p31, "adrenaline")
-	end
-	function v_u_5.getParryWindowBonus(p32) -- name: getParryWindowBonus
-		-- upvalues: (copy) v_u_5
-		return 0.1 * v_u_5.getSkillRank(p32, "parryMaster")
-	end
-	function v_u_5.getSpartanCooldownMult(p33) -- name: getSpartanCooldownMult
-		-- upvalues: (copy) v_u_5
-		return 1 - 0.1 * v_u_5.getSkillRank(p33, "theSpartan")
-	end
-	function v_u_5.hasFury(p34) -- name: hasFury
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p34, "fury") >= 1
-	end
-	function v_u_5.hasDeadEye(p35) -- name: hasDeadEye
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p35, "deadEye") >= 1
-	end
-	function v_u_5.hasQuickDraw(p36) -- name: hasQuickDraw
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p36, "quickDraw") >= 1
-	end
-	function v_u_5.hasSecondChance(p37) -- name: hasSecondChance
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p37, "secondChance") >= 1
-	end
-	function v_u_5.hasSwanSong(p38) -- name: hasSwanSong
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p38, "swanSong") >= 1
-	end
-	function v_u_5.hasSecondWind(p39) -- name: hasSecondWind
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p39, "secondWind") >= 1
-	end
-	function v_u_5.hasLastStand(p40) -- name: hasLastStand
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p40, "lastStand") >= 1
-	end
-	function v_u_5.hasTheSpartan(p41) -- name: hasTheSpartan
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p41, "theSpartan") >= 1
-	end
-	function v_u_5.getExtraDowns(p42) -- name: getExtraDowns
-		-- upvalues: (copy) v_u_5
-		return v_u_5.getSkillRank(p42, "core4") + v_u_5.getSkillRank(p42, "secondChance")
-	end
-	return v_u_5
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
+local u22 = require("./config/SkillConfig")
+local u23 = {}
+if RunService:IsServer() then
+    game:GetService("ServerScriptService")
+    require("@game/ServerScriptService/common/zap")
+    local u35 = {}
+    function u23.initializePlayer(p1) -- Line: 37 -- upvalues: u35 (val), u22 (val)
+        local v1
+        u35[p1] = {}
+        local skills = u22.skills
+        local v2 = nil
+        local v3 = nil
+        for i in skills, v2, v3 do
+            v1 = u35[p1]
+            v1[i] = 0
+        end
+    end
+    function u23.cleanupPlayer(p1) -- Line: 47 -- upvalues: u35 (val)
+        u35[p1] = nil
+    end
+    function u23.getSkillRank(p1, p2) -- Line: 54 -- upvalues: u35 (val)
+        local v1 = u35[p1]
+        if not v1 then
+            return 0
+        end
+        return v1[p2] or 0
+    end
+    function u23.setSkillRank(p1, p2, p3) -- Line: 63 -- upvalues: u35 (val)
+        local v1 = u35[p1]
+        if v1 then
+            v1[p2] = p3
+        end
+    end
+    function u23.getAllSkillRanks(p1) -- Line: 73 -- upvalues: u35 (val)
+        local v1 = u35[p1]
+        if not v1 then
+            v1 = {}
+        end
+        return v1
+    end
+    function u23.getReloadSpeedMult(p1) -- Line: 85 -- upvalues: u23 (val)
+        return 1 / (1 + 0.04 * u23.getSkillRank(p1, "fastHands"))
+    end
+    function u23.getRecoilMult(p1) -- Line: 93 -- upvalues: u23 (val)
+        return 1 - 0.04 * u23.getSkillRank(p1, "steadyAim")
+    end
+    function u23.getSwapSpeedMult(p1) -- Line: 101 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "sleightSwitch")
+        return 1 + 0.1 * v1
+    end
+    function u23.getMaxHPMult(p1) -- Line: 109 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "thickSkin")
+        local v2 = u23.getSkillRank(p1, "core2")
+        return 1 + 0.1 * v1 + 0.1 * v2
+    end
+    function u23.getDamageReductionMult(p1) -- Line: 118 -- upvalues: u23 (val)
+        return 1 - 0.03 * u23.getSkillRank(p1, "grit")
+    end
+    function u23.getAmmoCapacityMult(p1) -- Line: 126 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "deepPockets")
+        return 1 + 0.08 * v1
+    end
+    function u23.getInteractSpeedMult(p1) -- Line: 134 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "quickInteract")
+        return 1 + 0.05 * v1
+    end
+    function u23.getMeleeSwingSpeedMult(p1) -- Line: 142 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "meleeTempo")
+        return 1 + 0.1 * v1
+    end
+    function u23.getDownedTimeMult(p1) -- Line: 150 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "ironWill")
+        return 1 + 0.15 * v1
+    end
+    function u23.getHeadshotDamageMult(p1) -- Line: 158 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "core3")
+        return 1 + 0.05 * v1
+    end
+    function u23.getXPBonusMult(p1) -- Line: 166 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "core1")
+        return 1 + 0.05 * v1
+    end
+    function u23.getAdrenalineStamina(p1) -- Line: 174 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "adrenaline")
+        return 5 * v1
+    end
+    function u23.getParryWindowBonus(p1) -- Line: 182 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "parryMaster")
+        return 0.1 * v1
+    end
+    function u23.getSpartanCooldownMult(p1) -- Line: 190 -- upvalues: u23 (val)
+        return 1 - 0.1 * u23.getSkillRank(p1, "theSpartan")
+    end
+    function u23.hasFury(p1) -- Line: 199 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "fury")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasDeadEye(p1) -- Line: 203 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "deadEye")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasQuickDraw(p1) -- Line: 207 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "quickDraw")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasSecondChance(p1) -- Line: 211 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "secondChance")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasSwanSong(p1) -- Line: 215 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "swanSong")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasSecondWind(p1) -- Line: 219 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "secondWind")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasLastStand(p1) -- Line: 223 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "lastStand")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.hasTheSpartan(p1) -- Line: 227 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "theSpartan")
+        local v2 = 1 <= v1
+        return v2
+    end
+    function u23.getExtraDowns(p1) -- Line: 235 -- upvalues: u23 (val)
+        local v1 = u23.getSkillRank(p1, "core4")
+        return v1 + u23.getSkillRank(p1, "secondChance")
+    end
+    return u23
 end
-local v43 = v1:WaitForChild("Packages")
-local v_u_44 = require(v43:WaitForChild("Fusion"))
-local v45 = require("@game/ReplicatedStorage/common/zap")
-local v46 = require("@game/ReplicatedStorage/common/Signal")
-local v47 = v_u_44.scoped(v_u_44)
-v_u_5.Scope = v47
-local v_u_48 = {}
-for v49 in v_u_4.skills do
-	v_u_48[v49] = v47:Value(0)
+local Packages = ReplicatedStorage:WaitForChild("Packages")
+local Fusion = require(Packages:WaitForChild("Fusion"))
+local v1 = require("@game/ReplicatedStorage/common/zap")
+local v2 = require("@game/ReplicatedStorage/common/Signal")
+local v3 = Fusion.scoped(Fusion)
+u23.Scope = v3
+local u83 = {}
+skills = u22.skills
+local v4 = nil
+local v5 = nil
+for i in skills, v4, v5 do
+    u83[i] = v3:Value(0)
 end
-v_u_5.SkillRanks = v_u_48
-v_u_5.Loaded = v47:Value(false)
-function v_u_5.getSkillRankValue(p50) -- name: getSkillRankValue
-	-- upvalues: (copy) v_u_48
-	return v_u_48[p50]
+u23.SkillRanks = u83
+u23.Loaded = v3:Value(false)
+function u23.getSkillRankValue(p1) -- Line: 268 -- upvalues: u83 (val)
+    return u83[p1]
 end
-function v_u_5.getSkillRank(p51) -- name: getSkillRank
-	-- upvalues: (copy) v_u_48, (copy) v_u_44
-	local v52 = v_u_48[p51]
-	return v52 and v_u_44.peek(v52) or 0
+function u23.getSkillRank(p1) -- Line: 275 -- upvalues: u83 (val), Fusion (val)
+    local v1
+    local v2 = u83[p1]
+    if not v2 then
+        v1 = 0
+    else
+        v1 = Fusion.peek(v2)
+        if not v1 then
+            v1 = 0
+        end
+    end
+    return v1
 end
-v_u_5.ReloadSpeedMult = v47:Computed(function(p53)
-	-- upvalues: (copy) v_u_48
-	return 1 / (1 + 0.04 * (p53(v_u_48.fastHands) or 0))
+local function setSkillRank(p1, p2) -- Line: 283 -- upvalues: u83 (val)
+    local v1 = u83[p1]
+    if v1 then
+        v1:set(p2)
+    end
+end
+u23.ReloadSpeedMult = v3:Computed(function(p1) -- Line: 295 -- upvalues: u83 (val)
+    return 1 / (1 + 0.04 * (p1(u83.fastHands) or 0))
 end)
-v_u_5.RecoilMult = v47:Computed(function(p54)
-	-- upvalues: (copy) v_u_48
-	return 1 - 0.04 * (p54(v_u_48.steadyAim) or 0)
+u23.RecoilMult = v3:Computed(function(p1) -- Line: 301 -- upvalues: u83 (val)
+    return 1 - 0.04 * (p1(u83.steadyAim) or 0)
 end)
-v_u_5.SwapSpeedMult = v47:Computed(function(p55)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.1 * (p55(v_u_48.sleightSwitch) or 0)
+u23.SwapSpeedMult = v3:Computed(function(p1) -- Line: 307 -- upvalues: u83 (val)
+    return 1 + 0.1 * (p1(u83.sleightSwitch) or 0)
 end)
-v_u_5.MaxHPMult = v47:Computed(function(p56)
-	-- upvalues: (copy) v_u_48
-	local v57 = p56(v_u_48.thickSkin) or 0
-	local v58 = p56(v_u_48.core2) or 0
-	return 1 + 0.1 * v57 + 0.1 * v58
+u23.MaxHPMult = v3:Computed(function(p1) -- Line: 313 -- upvalues: u83 (val)
+    local v1 = p1(u83.thickSkin) or 0
+    return 1 + 0.1 * v1 + 0.1 * (p1(u83.core2) or 0)
 end)
-v_u_5.DamageReductionMult = v47:Computed(function(p59)
-	-- upvalues: (copy) v_u_48
-	return 1 - 0.03 * (p59(v_u_48.grit) or 0)
+u23.DamageReductionMult = v3:Computed(function(p1) -- Line: 320 -- upvalues: u83 (val)
+    return 1 - 0.03 * (p1(u83.grit) or 0)
 end)
-v_u_5.AmmoCapacityMult = v47:Computed(function(p60)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.08 * (p60(v_u_48.deepPockets) or 0)
+u23.AmmoCapacityMult = v3:Computed(function(p1) -- Line: 326 -- upvalues: u83 (val)
+    return 1 + 0.08 * (p1(u83.deepPockets) or 0)
 end)
-v_u_5.InteractSpeedMult = v47:Computed(function(p61)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.05 * (p61(v_u_48.quickInteract) or 0)
+u23.InteractSpeedMult = v3:Computed(function(p1) -- Line: 332 -- upvalues: u83 (val)
+    return 1 + 0.05 * (p1(u83.quickInteract) or 0)
 end)
-v_u_5.MeleeSwingSpeedMult = v47:Computed(function(p62)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.1 * (p62(v_u_48.meleeTempo) or 0)
+u23.MeleeSwingSpeedMult = v3:Computed(function(p1) -- Line: 338 -- upvalues: u83 (val)
+    return 1 + 0.1 * (p1(u83.meleeTempo) or 0)
 end)
-v_u_5.DownedTimeMult = v47:Computed(function(p63)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.15 * (p63(v_u_48.ironWill) or 0)
+u23.DownedTimeMult = v3:Computed(function(p1) -- Line: 344 -- upvalues: u83 (val)
+    return 1 + 0.15 * (p1(u83.ironWill) or 0)
 end)
-v_u_5.HeadshotDamageMult = v47:Computed(function(p64)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.05 * (p64(v_u_48.core3) or 0)
+u23.HeadshotDamageMult = v3:Computed(function(p1) -- Line: 350 -- upvalues: u83 (val)
+    return 1 + 0.05 * (p1(u83.core3) or 0)
 end)
-v_u_5.XPBonusMult = v47:Computed(function(p65)
-	-- upvalues: (copy) v_u_48
-	return 1 + 0.05 * (p65(v_u_48.core1) or 0)
+u23.XPBonusMult = v3:Computed(function(p1) -- Line: 356 -- upvalues: u83 (val)
+    return 1 + 0.05 * (p1(u83.core1) or 0)
 end)
-v_u_5.AdrenalineStamina = v47:Computed(function(p66)
-	-- upvalues: (copy) v_u_48
-	return 5 * (p66(v_u_48.adrenaline) or 0)
+u23.AdrenalineStamina = v3:Computed(function(p1) -- Line: 362 -- upvalues: u83 (val)
+    return 5 * (p1(u83.adrenaline) or 0)
 end)
-v_u_5.ParryWindowBonus = v47:Computed(function(p67)
-	-- upvalues: (copy) v_u_48
-	return 0.1 * (p67(v_u_48.parryMaster) or 0)
+u23.ParryWindowBonus = v3:Computed(function(p1) -- Line: 368 -- upvalues: u83 (val)
+    return 0.1 * (p1(u83.parryMaster) or 0)
 end)
-v_u_5.SpartanCooldownMult = v47:Computed(function(p68)
-	-- upvalues: (copy) v_u_48
-	return 1 - 0.1 * (p68(v_u_48.theSpartan) or 0)
+u23.SpartanCooldownMult = v3:Computed(function(p1) -- Line: 374 -- upvalues: u83 (val)
+    return 1 - 0.1 * (p1(u83.theSpartan) or 0)
 end)
-v_u_5.HasFury = v47:Computed(function(p69)
-	-- upvalues: (copy) v_u_48
-	return (p69(v_u_48.fury) or 0) >= 1
+u23.HasFury = v3:Computed(function(p1) -- Line: 383 -- upvalues: u83 (val)
+    local v1 = p1(u83.fury) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasDeadEye = v47:Computed(function(p70)
-	-- upvalues: (copy) v_u_48
-	return (p70(v_u_48.deadEye) or 0) >= 1
+u23.HasDeadEye = v3:Computed(function(p1) -- Line: 387 -- upvalues: u83 (val)
+    local v1 = p1(u83.deadEye) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasQuickDraw = v47:Computed(function(p71)
-	-- upvalues: (copy) v_u_48
-	return (p71(v_u_48.quickDraw) or 0) >= 1
+u23.HasQuickDraw = v3:Computed(function(p1) -- Line: 391 -- upvalues: u83 (val)
+    local v1 = p1(u83.quickDraw) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasSecondChance = v47:Computed(function(p72)
-	-- upvalues: (copy) v_u_48
-	return (p72(v_u_48.secondChance) or 0) >= 1
+u23.HasSecondChance = v3:Computed(function(p1) -- Line: 395 -- upvalues: u83 (val)
+    local v1 = p1(u83.secondChance) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasSwanSong = v47:Computed(function(p73)
-	-- upvalues: (copy) v_u_48
-	return (p73(v_u_48.swanSong) or 0) >= 1
+u23.HasSwanSong = v3:Computed(function(p1) -- Line: 399 -- upvalues: u83 (val)
+    local v1 = p1(u83.swanSong) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasSecondWind = v47:Computed(function(p74)
-	-- upvalues: (copy) v_u_48
-	return (p74(v_u_48.secondWind) or 0) >= 1
+u23.HasSecondWind = v3:Computed(function(p1) -- Line: 403 -- upvalues: u83 (val)
+    local v1 = p1(u83.secondWind) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasLastStand = v47:Computed(function(p75)
-	-- upvalues: (copy) v_u_48
-	return (p75(v_u_48.lastStand) or 0) >= 1
+u23.HasLastStand = v3:Computed(function(p1) -- Line: 407 -- upvalues: u83 (val)
+    local v1 = p1(u83.lastStand) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.HasTheSpartan = v47:Computed(function(p76)
-	-- upvalues: (copy) v_u_48
-	return (p76(v_u_48.theSpartan) or 0) >= 1
+u23.HasTheSpartan = v3:Computed(function(p1) -- Line: 411 -- upvalues: u83 (val)
+    local v1 = p1(u83.theSpartan) or 0
+    local v2 = 1 <= v1
+    return v2
 end)
-v_u_5.ExtraDowns = v47:Computed(function(p77)
-	-- upvalues: (copy) v_u_48
-	return (p77(v_u_48.core4) or 0) + (p77(v_u_48.secondChance) or 0)
+u23.ExtraDowns = v3:Computed(function(p1) -- Line: 416 -- upvalues: u83 (val)
+    local v1 = p1(u83.core4) or 0
+    return v1 + (p1(u83.secondChance) or 0)
 end)
-v_u_5.DesperateSprintThreshold = v47:Computed(function(p78)
-	-- upvalues: (copy) v_u_48
-	return 0.05 * (p78(v_u_48.desperateSprint) or 0)
+u23.DesperateSprintThreshold = v3:Computed(function(p1) -- Line: 423 -- upvalues: u83 (val)
+    return 0.05 * (p1(u83.desperateSprint) or 0)
 end)
-local v79 = require("./config/EconomyConfig")
-v_u_5.SP = v47:Value(0)
-v_u_5.SPCap = v47:Value(v79.BASE_SP_CAP)
-v_u_5.SPSpent = v47:Value(0)
-v_u_5.XPBar = v47:Value(0)
-v_u_5.DailyEarned = v47:Value(0)
-v_u_5.DailyEarnCap = v47:Value(v79.BASE_DAILY_EARN_CAP)
-v_u_5.PrestigeLevel = v47:Value(0)
-v_u_5.ZBucks = v47:Value(0)
-v_u_5.ZBucksInvested = v47:Value(0)
-v_u_5.XPPerSP = v79.SP_XP_PER_SP
-v_u_5.XPChanged = v46.new()
-v_u_5.AtSPCap = v47:Computed(function(p80)
-	-- upvalues: (copy) v_u_5
-	return p80(v_u_5.SP) + p80(v_u_5.SPSpent) >= p80(v_u_5.SPCap)
+v4 = require("./config/EconomyConfig")
+u23.SP = v3:Value(0)
+u23.SPCap = v3:Value(v4.BASE_SP_CAP)
+u23.SPSpent = v3:Value(0)
+u23.XPBar = v3:Value(0)
+u23.DailyEarned = v3:Value(0)
+u23.DailyEarnCap = v3:Value(v4.BASE_DAILY_EARN_CAP)
+u23.PrestigeLevel = v3:Value(0)
+u23.ZBucks = v3:Value(0)
+u23.ZBucksInvested = v3:Value(0)
+u23.XPPerSP = v4.SP_XP_PER_SP
+u23.XPChanged = v2.new()
+u23.AtSPCap = v3:Computed(function(p1) -- Line: 451 -- upvalues: u23 (val)
+    local v1 = p1(u23.SP)
+    local v2 = v1 + p1(u23.SPSpent)
+    local v3 = p1(u23.SPCap) <= v2
+    return v3
 end)
-v_u_5.AtDailyCap = v47:Computed(function(p81)
-	-- upvalues: (copy) v_u_5
-	return p81(v_u_5.DailyEarned) >= p81(v_u_5.DailyEarnCap)
+u23.AtDailyCap = v3:Computed(function(p1) -- Line: 456 -- upvalues: u23 (val)
+    local v1 = p1(u23.DailyEarned)
+    local v2 = p1(u23.DailyEarnCap) <= v1
+    return v2
 end)
-v_u_5.CanPrestige = v47:Computed(function(p82)
-	-- upvalues: (copy) v_u_5
-	local v83
-	if p82(v_u_5.SPSpent) >= p82(v_u_5.SPCap) then
-		v83 = p82(v_u_5.SP) == 0
-	else
-		v83 = false
-	end
-	return v83
+u23.CanPrestige = v3:Computed(function(p1) -- Line: 461 -- upvalues: u23 (val)
+    local v1 = false
+    local v2 = p1(u23.SPSpent)
+    if p1(u23.SPCap) <= v2 then
+        v1 = p1(u23.SP) == 0
+    end
+    return v1
 end)
-v45.InitSkillTree.On(function(p84)
-	-- upvalues: (copy) v_u_48, (copy) v_u_5
-	print("[SkillTreeData] Received initial skill data")
-	for v85, v86 in p84 do
-		local v87 = v_u_48[v85]
-		if v87 then
-			v87:set(v86)
-		end
-	end
-	v_u_5.Loaded:set(true)
+v1.InitSkillTree.On(function(p1) -- Line: 470 -- upvalues: u83 (val), u23 (val)
+    local v1
+    print("[SkillTreeData] Received initial skill data")
+    local v2 = p1
+    local v3 = nil
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        v1 = u83[i]
+        if v1 then
+            v1:set(j)
+        end
+    end
+    u23.Loaded:set(true)
 end)
-local v_u_88 = Instance.new("Sound")
-v_u_88.SoundId = "rbxassetid://9039999622"
-v_u_88.Parent = v3
-local v_u_89 = Instance.new("Sound")
-v_u_89.SoundId = "rbxassetid://118207534374651"
-v_u_89.Parent = v3
-v45.UpdateSkillRank.On(function(p90)
-	-- upvalues: (copy) v_u_48, (copy) v_u_88, (copy) v_u_89
-	print((("[SkillTreeData] Skill %* updated to rank %*"):format(p90.SkillId, p90.Rank)))
-	local v91 = p90.SkillId
-	local v92 = p90.Rank
-	local v93 = v_u_48[v91]
-	if v93 then
-		v93:set(v92)
-	end
-	v_u_88:Play()
-	v_u_89:Play()
+local Sound = Instance.new("Sound")
+Sound.SoundId = "rbxassetid://9039999622"
+Sound.Parent = SoundService
+local Sound_2 = Instance.new("Sound")
+Sound_2.SoundId = "rbxassetid://118207534374651"
+Sound_2.Parent = SoundService
+v1.UpdateSkillRank.On(function(p1) -- Line: 488 -- upvalues: u83 (val), Sound (val), Sound_2 (val)
+    print((("[SkillTreeData] Skill %* updated to rank %*"):format(p1.SkillId, p1.Rank)))
+    local v1 = u83[p1.SkillId]
+    if v1 then
+        v1:set(p1.Rank)
+    end
+    Sound:Play()
+    Sound_2:Play()
 end)
-local v_u_94 = nil
-local v_u_95 = nil
-v45.SyncSkillTreeEconomy.On(function(p96)
-	-- upvalues: (ref) v_u_94, (ref) v_u_95, (copy) v_u_5
-	local v97 = v_u_94
-	local v98 = v_u_95
-	v_u_5.SP:set(p96.SP)
-	v_u_5.SPCap:set(p96.SPCap)
-	v_u_5.SPSpent:set(p96.SPSpent)
-	v_u_5.XPBar:set(p96.XPBar)
-	v_u_5.DailyEarned:set(p96.DailyEarned)
-	v_u_5.DailyEarnCap:set(p96.DailyEarnCap)
-	v_u_5.PrestigeLevel:set(p96.PrestigeLevel)
-	v_u_5.ZBucks:set(p96.ZBucks)
-	v_u_5.ZBucksInvested:set(p96.ZBucksInvested)
-	if v97 ~= nil and p96.XPBar ~= v97 then
-		v_u_5.XPChanged:Fire(v97, p96.XPBar, v98, p96.SP)
-	end
-	v_u_94 = p96.XPBar
-	v_u_95 = p96.SP
+local u273 = nil
+local u274 = nil
+v1.SyncSkillTreeEconomy.On(function(p1) -- Line: 499 -- upvalues: u273 (ref), u274 (ref), u23 (val)
+    local v1 = u273
+    u23.SP:set(p1.SP)
+    u23.SPCap:set(p1.SPCap)
+    u23.SPSpent:set(p1.SPSpent)
+    u23.XPBar:set(p1.XPBar)
+    u23.DailyEarned:set(p1.DailyEarned)
+    u23.DailyEarnCap:set(p1.DailyEarnCap)
+    u23.PrestigeLevel:set(p1.PrestigeLevel)
+    u23.ZBucks:set(p1.ZBucks)
+    u23.ZBucksInvested:set(p1.ZBucksInvested)
+    if v1 ~= nil and p1.XPBar ~= v1 then
+        u23.XPChanged:Fire(v1, p1.XPBar, u274, p1.SP)
+    end
+    u273 = p1.XPBar
+    u274 = p1.SP
 end)
-return v_u_5
+task.spawn(function() -- Line: 524 -- upvalues: u23 (val)
+    local common = game:GetService("ReplicatedStorage"):WaitForChild("common", 10)
+    if not common then
+        return
+    end
+    local Remotes = common:WaitForChild("Remotes", 10)
+    if not Remotes then
+        return
+    end
+    local Net = Remotes:WaitForChild("Net", 10)
+    if not Net then
+        return
+    end
+    Net.OnClientEvent:Connect(function(p1, p2) -- Line: 541 -- upvalues: u23 (upval)
+        if p1 == "UpdateZBucks" then
+            u23.ZBucks:set(tonumber(p2) or 0)
+        end
+    end)
+end)
+return u23

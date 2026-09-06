@@ -1,24 +1,20 @@
-local v1 = script.Parent.Parent
-local v_u_2 = require(v1.Utility.nicknames)
-return function(p3, p4) -- name: nameOf
-	-- upvalues: (copy) v_u_2
-	local v5 = v_u_2[p3]
-	if typeof(v5) == "string" then
-		return v5
-	end
-	if typeof(p3) == "table" then
-		local v6 = p3.name
-		if typeof(v6) == "string" then
-			return p3.name
-		end
-		local v7 = p3.kind
-		if typeof(v7) == "string" then
-			return p3.kind
-		end
-		local v8 = p3.type
-		if typeof(v8) == "string" then
-			return p3.type
-		end
-	end
-	return p4
+local nicknames = require(script.Parent.Parent.Utility.nicknames)
+return function(p1, p2) -- Line: 14 -- upvalues: nicknames (val)
+    local v1 = nicknames[p1]
+    if typeof(v1) == "string" then
+        return v1
+    end
+    if typeof(p1) ~= "table" then
+        return p2
+    end
+    if typeof(p1.name) == "string" then
+        return p1.name
+    end
+    if typeof(p1.kind) == "string" then
+        return p1.kind
+    end
+    if typeof(p1.type) == "string" then
+        return p1.type
+    end
+    return p2
 end

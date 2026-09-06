@@ -1,68 +1,79 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Memory.whichLivesLonger)
-local v_u_4 = require(v1.Utility.nameOf)
-local v5 = {
-	["formatters"] = {}
-}
-function v5.formatters.useFunction(p6, p7) -- name: useFunction
-	-- upvalues: (copy) v_u_4
-	local v8 = v_u_4(p6, "object")
-	return ("The use()-d %*"):format((v_u_4(p7, "object"))), ("the %*"):format(v8)
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local whichLivesLonger = require(Parent.Memory.whichLivesLonger)
+local nameOf = require(Parent.Utility.nameOf)
+local v1 = {}
+local v2 = {}
+v1.formatters = v2
+function v1.formatters.useFunction(p1, p2) -- Line: 22 -- upvalues: nameOf (val)
+    local v1 = nameOf(p1, "object")
+    local v2 = nameOf(p2, "object")
+    local v3 = ("The use()-d %*"):format(v2)
+    return v3, (("the %*"):format(v1))
 end
-function v5.formatters.boundProperty(p9, p10, p11) -- name: boundProperty
-	-- upvalues: (copy) v_u_4
-	local v12 = p9.Name
-	return ("The %* (bound to the %* property)"):format(v_u_4(p10, "value"), p11), ("the %* instance"):format(v12)
+function v1.formatters.boundProperty(p1, p2, p3) -- Line: 31 -- upvalues: nameOf (val)
+    local v1 = nameOf(p2, "value")
+    local v2 = ("The %* (bound to the %* property)"):format(v1, p3)
+    return v2, (("the %* instance"):format(p1.Name))
 end
-function v5.formatters.boundAttribute(p13, p14, p15) -- name: boundAttribute
-	-- upvalues: (copy) v_u_4
-	local v16 = p13.Name
-	return ("The %* (bound to the %* attribute)"):format(v_u_4(p14, "value"), p15), ("the %* instance"):format(v16)
+function v1.formatters.boundAttribute(p1, p2, p3) -- Line: 41 -- upvalues: nameOf (val)
+    local v1 = nameOf(p2, "value")
+    local v2 = ("The %* (bound to the %* attribute)"):format(v1, p3)
+    return v2, (("the %* instance"):format(p1.Name))
 end
-function v5.formatters.propertyOutputsTo(p17, p18, p19) -- name: propertyOutputsTo
-	-- upvalues: (copy) v_u_4
-	local v20 = p17.Name
-	return ("The %* (which the %* property outputs to)"):format(v_u_4(p18, "object"), p19), ("the %* instance"):format(v20)
+function v1.formatters.propertyOutputsTo(p1, p2, p3) -- Line: 51 -- upvalues: nameOf (val)
+    local v1 = nameOf(p2, "object")
+    local v2 = ("The %* (which the %* property outputs to)"):format(v1, p3)
+    return v2, (("the %* instance"):format(p1.Name))
 end
-function v5.formatters.attributeOutputsTo(p21, p22, p23) -- name: attributeOutputsTo
-	-- upvalues: (copy) v_u_4
-	local v24 = p21.Name
-	return ("The %* (which the %* attribute outputs to)"):format(v_u_4(p22, "object"), p23), ("the %* instance"):format(v24)
+function v1.formatters.attributeOutputsTo(p1, p2, p3) -- Line: 61 -- upvalues: nameOf (val)
+    local v1 = nameOf(p2, "object")
+    local v2 = ("The %* (which the %* attribute outputs to)"):format(v1, p3)
+    return v2, (("the %* instance"):format(p1.Name))
 end
-function v5.formatters.refOutputsTo(p25, p26) -- name: refOutputsTo
-	-- upvalues: (copy) v_u_4
-	local v27 = p25.Name
-	return ("The %* (which the Ref key outputs to)"):format((v_u_4(p26, "object"))), ("the %* instance"):format(v27)
+function v1.formatters.refOutputsTo(p1, p2) -- Line: 71 -- upvalues: nameOf (val)
+    local v1 = nameOf(p2, "object")
+    local v2 = ("The %* (which the Ref key outputs to)"):format(v1)
+    return v2, (("the %* instance"):format(p1.Name))
 end
-function v5.formatters.animationGoal(p28, p29) -- name: animationGoal
-	-- upvalues: (copy) v_u_4
-	local v30 = v_u_4(p28, "object")
-	return ("The goal %*"):format((v_u_4(p29, "object"))), ("the %* that is following it"):format(v30)
+function v1.formatters.animationGoal(p1, p2) -- Line: 80 -- upvalues: nameOf (val)
+    local v1 = nameOf(p1, "object")
+    local v2 = nameOf(p2, "object")
+    local v3 = ("The goal %*"):format(v2)
+    return v3, (("the %* that is following it"):format(v1))
 end
-function v5.formatters.parameter(p31, p32, p33) -- name: parameter
-	-- upvalues: (copy) v_u_4
-	local v34 = v_u_4(p31, "object")
-	local v35 = v_u_4(p32, "object")
-	if p33 == false then
-		return ("The %* parameter"):format(v35), ("the %* that it was used for"):format(v34)
-	else
-		return ("The %* representing the %* parameter"):format(v35, p33), ("the %* that it was used for"):format(v34)
-	end
+function v1.formatters.parameter(p1, p2, p3) -- Line: 89 -- upvalues: nameOf (val)
+    local v1
+    local v2 = nameOf(p1, "object")
+    local v3 = nameOf(p2, "object")
+    if p3 == false then
+        v1 = ("The %* parameter"):format(v3)
+        return v1, (("the %* that it was used for"):format(v2))
+    end
+    v1 = ("The %* representing the %* parameter"):format(v3, p3)
+    return v1, (("the %* that it was used for"):format(v2))
 end
-function v5.formatters.observer(p36, p37) -- name: observer
-	-- upvalues: (copy) v_u_4
-	local v38 = v_u_4(p36, "object")
-	return ("The watched %*"):format((v_u_4(p37, "object"))), ("the %* that\'s observing it for changes"):format(v38)
+function v1.formatters.observer(p1, p2) -- Line: 103 -- upvalues: nameOf (val)
+    local v1 = nameOf(p1, "object")
+    local v2 = nameOf(p2, "object")
+    local v3 = ("The watched %*"):format(v2)
+    return v3, (("the %* that's observing it for changes"):format(v1))
 end
-function v5.bOutlivesA(p39, p40, p41, p42, p43, ...) -- name: bOutlivesA
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	if p41 == nil then
-		v_u_2.logError("useAfterDestroy", nil, p43(p40, p42, ...))
-	elseif v_u_3(p39, p40, p41, p42) == "definitely-a" then
-		local v44, v45 = p43(p40, p42, ...)
-		v_u_2.logWarn("possiblyOutlives", v44, v45, p39 == p41 and "they\'re in the same scope, but the latter is destroyed too quickly" or "the latter is in a different scope that gets destroyed too quickly")
-	end
+function v1.bOutlivesA(p1, p2, p3, p4, p5, ...) -- Line: 112 -- upvalues: External (val), whichLivesLonger (val)
+    if p3 == nil then
+        External.logError("useAfterDestroy", nil, p5(p2, p4, ...))
+        return
+    end
+    if whichLivesLonger(p1, p2, p3, p4) == "definitely-a" then
+        local v1, v2, v3
+        v2, v3 = p5(p2, p4, ...)
+        if p1 ~= p3 then
+            v1 = "the latter is in a different scope that gets destroyed too quickly"
+        else
+            v1 = "they're in the same scope, but the latter is destroyed too quickly"
+        end
+        External.logWarn("possiblyOutlives", v2, v3, v1)
+    end
 end
-return v5
+return v1

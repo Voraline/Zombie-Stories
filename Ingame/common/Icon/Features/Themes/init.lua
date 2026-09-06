@@ -1,309 +1,328 @@
-local v_u_1 = {}
-local v_u_2 = require("../Utility")
-local v_u_3 = require("@self/Default")
-function v_u_1.getThemeValue(p4, p5, p6, _) -- name: getThemeValue
-	if p4 then
-		for _, v7 in pairs(p4) do
-			local v8, v9, v10 = unpack(v7)
-			if p5 == v8 and p6 == v9 then
-				return v10
-			end
-		end
-	end
+local u0 = {}
+local u3 = require("../Utility")
+local u6 = require("@self/Default")
+function u0.getThemeValue(p1, p2, p3, p4) -- Line: 16
+    local v1, v2, v3
+    if not p1 then
+        return
+    end
+    for k, v in pairs(p1) do
+        v3, v1, v2 = unpack(v)
+        if p2 == v3 and p3 == v1 then
+            return v2
+        end
+    end
 end
-function v_u_1.getInstanceValue(p_u_11, p_u_12) -- name: getInstanceValue
-	local v13, v14 = pcall(function()
-		-- upvalues: (copy) p_u_11, (copy) p_u_12
-		return p_u_11[p_u_12]
-	end)
-	if not v13 then
-		v14 = p_u_11:GetAttribute(p_u_12)
-	end
-	return v14
+function u0.getInstanceValue(p1, p2) -- Line: 27
+    local v1, v2
+    v1, v2 = pcall(function() -- Line: 28 -- upvalues: p1 (val), p2 (val)
+        return p1[p2]
+    end)
+    if not v1 then
+        v2 = p1:GetAttribute(p2)
+    end
+    return v2
 end
-function v_u_1.getRealInstance(p15) -- name: getRealInstance
-	if p15:GetAttribute("IsAClippedClone") then
-		local v16 = p15:FindFirstChild("OriginalInstance")
-		if v16 then
-			return v16.Value
-		end
-	end
+function u0.getRealInstance(p1) -- Line: 37
+    if not (p1:GetAttribute("IsAClippedClone")) then
+        return
+    end
+    local OriginalInstance = p1:FindFirstChild("OriginalInstance")
+    if not OriginalInstance then
+        return
+    end
+    return OriginalInstance.Value
 end
-function v_u_1.getClippedClone(p17) -- name: getClippedClone
-	if p17:GetAttribute("HasAClippedClone") then
-		local v18 = p17:FindFirstChild("ClippedClone")
-		if v18 then
-			return v18.Value
-		end
-	end
+function u0.getClippedClone(p1) -- Line: 48
+    if not (p1:GetAttribute("HasAClippedClone")) then
+        return
+    end
+    local ClippedClone = p1:FindFirstChild("ClippedClone")
+    if not ClippedClone then
+        return
+    end
+    return ClippedClone.Value
 end
-function v_u_1.refresh(p19, p20, p21) -- name: refresh
-	-- upvalues: (copy) v_u_1
-	if p21 then
-		local v22 = p19:getStateGroup()
-		local v23 = v_u_1.getThemeValue(v22, p20.Name, p21) or v_u_1.getInstanceValue(p20, p21)
-		v_u_1.apply(p19, p20, p21, v23, true)
-		return
-	else
-		local v24 = p19:getStateGroup()
-		if v24 then
-			local v25 = {
-				[p20.Name] = p20
-			}
-			for _, v26 in pairs(p20:GetDescendants()) do
-				local v27 = v26:GetAttribute("Collective")
-				if v27 then
-					v25[v27] = v26
-				end
-				v25[v26.Name] = v26
-			end
-			for _, v28 in pairs(v24) do
-				local v29, v30, v31 = unpack(v28)
-				local v32 = v25[v29]
-				if v32 then
-					v_u_1.apply(p19, v32.Name, v30, v31, true)
-				end
-			end
-		end
-	end
+function u0.refresh(p1, p2, p3) -- Line: 59 -- upvalues: u0 (val)
+    local Attribute, v1, v2, v3, v4, v5, v6
+    if p3 then
+        v5 = p1:getStateGroup()
+        v6 = u0.getThemeValue(v5, p2.Name, p3)
+        if not v6 then
+            v6 = u0.getInstanceValue(p2, p3)
+        end
+        u0.apply(p1, p2, p3, v6, true)
+        return
+    end
+    v5 = p1:getStateGroup()
+    if not v5 then
+        return
+    end
+    v6 = {}
+    v6[p2.Name] = p2
+    for k, v in pairs(p2:GetDescendants()) do
+        Attribute = v:GetAttribute("Collective")
+        if Attribute then
+            v6[Attribute] = v
+        end
+        v6[v.Name] = v
+    end
+    for k2, i in pairs(v5) do
+        v1, v2, v3 = unpack(i)
+        v4 = v6[v1]
+        if v4 then
+            u0.apply(v7, v4.Name, v2, v3, true)
+        end
+    end
 end
-function v_u_1.apply(p33, p34, p_u_35, p36, p37) -- name: apply
-	-- upvalues: (copy) v_u_1
-	if not p33.isDestroyed then
-		local v38
-		if typeof(p34) == "Instance" then
-			local v39 = p34.Name
-			p34 = v39
-			v38 = { p34 }
-		else
-			v38 = p33:getInstanceOrCollective(p34)
-		end
-		local v40 = p34 .. "-" .. p_u_35
-		local v41 = p33.customBehaviours[v40]
-		for _, v42 in pairs(v38) do
-			local v43 = v_u_1.getClippedClone(v42)
-			if v43 then
-				table.insert(v38, v43)
-			end
-		end
-		for _, v_u_44 in pairs(v38) do
-			if p_u_35 ~= "Position" or not v_u_1.getClippedClone(v_u_44) then
-				if (p_u_35 ~= "Size" or not v_u_1.getRealInstance(v_u_44)) and (p37 or p36 ~= v_u_1.getInstanceValue(v_u_44, p_u_35)) then
-					local v_u_45
-					if v41 then
-						v_u_45 = v41(p36, v_u_44, p_u_35)
-						if v_u_45 == nil then
-							v_u_45 = p36
-						end
-					else
-						v_u_45 = p36
-					end
-					if not pcall(function()
-						-- upvalues: (copy) v_u_44, (copy) p_u_35, (ref) v_u_45
-						v_u_44[p_u_35] = v_u_45
-					end) then
-						v_u_44:SetAttribute(p_u_35, v_u_45)
-					end
-				end
-			end
-		end
-	end
+function u0.apply(p1, p2, p3, p4, p5) -- Line: 92 -- upvalues: u0 (val)
+    local u91, u95, v1, v2, v3, v4
+    if p1.isDestroyed then
+        return
+    end
+    local Name = p2
+    if typeof(p2) ~= "Instance" then
+        v4 = p1:getInstanceOrCollective(p2)
+    else
+        v4 = {p2}
+        Name = p2.Name
+    end
+    local v5 = p1.customBehaviours[Name .. "-" .. p3]
+    for k, v in pairs(v4) do
+        v1 = u0.getClippedClone(v)
+        if v1 then
+            table.insert(v4, v1)
+        end
+    end
+    u95, v3, u91 = p3, p5, p4
+    for k2, i in pairs(v4) do
+        if u95 ~= "Position" then
+            if u95 ~= "Size" then
+                if v3 then
+                    if v5 then
+                        v2 = v5(u91, i, u95)
+                        if v2 ~= nil then
+                            u91 = v2
+                        end
+                    end
+                    if not (pcall(function() -- Line: 138 -- upvalues: i (val), u95 (val), u91 (ref)
+    i[u95] = u91
+    return
+end)) then
+                        i:SetAttribute(u95, u91)
+                    end
+                elseif u91 == u0.getInstanceValue(i, u95) then
+                end
+            elseif u0.getRealInstance(i) then
+            end
+        elseif not (u0.getClippedClone(i)) then
+        end
+    end
 end
-function v_u_1.getModifications(p46) -- name: getModifications
-	local v47 = p46[1]
-	return typeof(v47) ~= "table" and { p46 } or p46
+function u0.getModifications(p1) -- Line: 152
+    local v1
+    if typeof(p1[1]) == "table" then
+        v1 = p1
+    else
+        v1 = {p1}
+    end
+    return v1
 end
-function v_u_1.merge(p48, p49, p50) -- name: merge
-	-- upvalues: (copy) v_u_1
-	local v51, v52, v53, v54 = table.unpack(p49)
-	local v55, v56, _, v57 = table.unpack(p48)
-	if v51 ~= v55 or (v52 ~= v56 or not v_u_1.statesMatch(v54, v57)) then
-		return false
-	end
-	p48[3] = v53
-	if p50 then
-		p50(p48)
-	end
-	return true
+function u0.merge(p1, p2, p3) -- Line: 161 -- upvalues: u0 (val)
+    local v1, v2, v3, v4, v5, v6, v7
+    v2, v3, v4, v5 = table.unpack(p2)
+    v6, v7, _, v1 = table.unpack(p1)
+    if v2 ~= v6 or v3 ~= v7 or not (u0.statesMatch(v5, v1)) then
+        return false
+    end
+    p1[3] = v4
+    if p3 then
+        p3(p1)
+    end
+    return true
 end
-function v_u_1.modify(p_u_58, p_u_59, p_u_60) -- name: modify
-	-- upvalues: (copy) v_u_2, (copy) v_u_1
-	task.spawn(function()
-		-- upvalues: (ref) p_u_60, (ref) v_u_2, (ref) p_u_59, (ref) v_u_1, (copy) p_u_58
-		p_u_60 = p_u_60 or v_u_2.generateUID()
-		p_u_59 = v_u_1.getModifications(p_u_59)
-		for _, v_u_61 in pairs(p_u_59) do
-			local v_u_62, v_u_63, v_u_64, v65 = table.unpack(v_u_61)
-			if v65 == nil then
-				v_u_1.modify(p_u_58, {
-					v_u_62,
-					v_u_63,
-					v_u_64,
-					"Selected"
-				}, p_u_60)
-				v_u_1.modify(p_u_58, {
-					v_u_62,
-					v_u_63,
-					v_u_64,
-					"Viewing"
-				}, p_u_60)
-			end
-			local v_u_66 = v_u_2.formatStateName(v65 or "Deselected")
-			local v_u_67 = p_u_58:getStateGroup(v_u_66);
-			(function() -- name: updateRecord
-				-- upvalues: (copy) v_u_67, (ref) v_u_1, (copy) v_u_61, (ref) p_u_60, (copy) v_u_66, (ref) p_u_58, (copy) v_u_62, (copy) v_u_63, (copy) v_u_64
-				for _, v68 in pairs(v_u_67) do
-					if v_u_1.merge(v68, v_u_61, function(p69)
-						-- upvalues: (ref) p_u_60, (ref) v_u_66, (ref) p_u_58, (ref) v_u_1, (ref) v_u_62, (ref) v_u_63, (ref) v_u_64
-						p69[5] = p_u_60
-						if v_u_66 == p_u_58.activeState then
-							v_u_1.apply(p_u_58, v_u_62, v_u_63, v_u_64)
-						end
-					end) then
-						return
-					end
-				end
-				local v70 = {
-					v_u_62,
-					v_u_63,
-					v_u_64,
-					v_u_66,
-					p_u_60
-				}
-				local v71 = v_u_67
-				table.insert(v71, v70)
-				if v_u_66 == p_u_58.activeState then
-					v_u_1.apply(p_u_58, v_u_62, v_u_63, v_u_64)
-				end
-			end)()
-		end
-	end)
-	return p_u_60
+function u0.modify(p1, p2, p3) -- Line: 174 -- upvalues: u3 (val), u0 (val)
+    task.spawn(function() -- Line: 182 -- upvalues: p3 (ref), u3 (upval), p2 (ref), u0 (upval), p1 (val)
+        local nowSetIt, v1
+        local v2 = p3
+        if not v2 then
+            v2 = u3.generateUID()
+        end
+        p3 = v2
+        p2 = u0.getModifications(p2)
+        for k, v in pairs(p2) do
+            u23, u24, u25, v1 = table.unpack(v)
+            if v1 == nil then
+                u0.modify(p1, {u23, u24, u25, "Selected"}, p3)
+                u0.modify(p1, {u23, u24, u25, "Viewing"}, p3)
+            end
+            local u51 = u3.formatStateName(v1 or "Deselected")
+            local u56 = p1:getStateGroup(u51)
+            function nowSetIt() -- Line: 194 -- upvalues: u51 (val), p1 (upval), u0 (upval), u23 (val), u24 (val), u25 (val)
+                if u51 == p1.activeState then
+                    u0.apply(p1, u23, u24, u25)
+                end
+            end
+            ;(function() -- Line: 199 -- upvalues: u56 (val), u0 (upval), v (val), p3 (upval), u51 (val), p1 (upval), u23 (val), u24 (val), u25 (val)
+                local v1
+                for k, i in pairs(u56) do
+                    if u0.merge(i, v, function(a1) -- Line: 201 -- upvalues: p3 (upval), u51 (upval), p1 (upval), u0 (upval), u23 (upval), u24 (upval), u25 (upval)
+    local v1
+    a1[5] = p3
+    if u51 == p1.activeState then
+        u0.apply(p1, u23, u24, u25)
+    end
+    return
+end) then
+                        return
+                    end
+                end
+                table.insert(u56, {
+                    u23,
+                    u24,
+                    u25,
+                    u51,
+                    p3,
+                })
+                if u51 == p1.activeState then
+                    u0.apply(p1, u23, u24, u25)
+                end
+            end)()
+        end
+    end)
+    return p3
 end
-function v_u_1.remove(p72, p73) -- name: remove
-	-- upvalues: (copy) v_u_1
-	for _, v74 in pairs(p72.appearance) do
-		for v75 = #v74, 1, -1 do
-			if v74[v75][5] == p73 then
-				table.remove(v74, v75)
-			end
-		end
-	end
-	v_u_1.rebuild(p72)
+function u0.remove(p1, p2) -- Line: 219 -- upvalues: u0 (val)
+    local v1, v2, v3, v4
+    v1, v2 = p1, p2
+    for k, v in pairs(p1.appearance) do
+        v3 = 1
+        v4 = -1
+        for i = #v, v3, v4 do
+            if v[i][5] == v2 then
+                table.remove(v, i)
+            end
+        end
+    end
+    u0.rebuild(v1)
 end
-function v_u_1.removeWith(p76, p77, p78, p79) -- name: removeWith
-	-- upvalues: (copy) v_u_1
-	for v80, v81 in pairs(p76.appearance) do
-		if p79 == v80 or not p79 then
-			for v82 = #v81, 1, -1 do
-				local v83 = v81[v82]
-				local v84 = v83[1]
-				local v85 = v83[2]
-				if v84 == p77 and v85 == p78 then
-					table.remove(v81, v82)
-				end
-			end
-		end
-	end
-	v_u_1.rebuild(p76)
+function u0.removeWith(p1, p2, p3, p4) -- Line: 232 -- upvalues: u0 (val)
+    local v1, v2, v3, v4, v5, v6, v7
+    v1, v6, v2, v5 = p1, p4, p2, p3
+    for k, v in pairs(p1.appearance) do
+        if v6 == k then
+            v7 = 1
+            v3 = -1
+            for i = #v, v7, v3 do
+                v4 = v[i]
+                if v4[1] == v2 and v4[2] == v5 then
+                    table.remove(v, i)
+                end
+            end
+        end
+    end
+    u0.rebuild(v1)
 end
-function v_u_1.change(p86) -- name: change
-	-- upvalues: (copy) v_u_1
-	local v87 = p86:getStateGroup()
-	for _, v88 in pairs(v87) do
-		local v89, v90, v91 = unpack(v88)
-		v_u_1.apply(p86, v89, v90, v91)
-	end
+function u0.change(p1) -- Line: 248 -- upvalues: u0 (val)
+    local v1, v2, v3
+    local v4 = p1:getStateGroup()
+    for k, v in pairs(v4) do
+        v1, v2, v3 = unpack(v)
+        u0.apply(p1, v1, v2, v3)
+    end
 end
-function v_u_1.set(p_u_92, p93) -- name: set
-	-- upvalues: (copy) v_u_1
-	local v94 = p_u_92.themesJanitor
-	v94:clean()
-	v94:add(p_u_92.stateChanged:Connect(function()
-		-- upvalues: (ref) v_u_1, (copy) p_u_92
-		v_u_1.change(p_u_92)
-	end))
-	if typeof(p93) == "Instance" and p93:IsA("ModuleScript") then
-		p93 = require(p93)
-	end
-	p_u_92.appliedTheme = p93
-	v_u_1.rebuild(p_u_92)
+function u0.set(p1, p2) -- Line: 258 -- upvalues: u0 (val)
+    local v1
+    local themesJanitor = p1.themesJanitor
+    themesJanitor:clean()
+    themesJanitor:add(p1.stateChanged:Connect(function() -- Line: 264 -- upvalues: u0 (upval), p1 (val)
+        u0.change(p1)
+    end))
+    if typeof(p2) ~= "Instance" then
+        v1 = p2
+    elseif not (p2:IsA("ModuleScript")) then
+        v1 = p2
+    else
+        v1 = require(p2)
+    end
+    p1.appliedTheme = v1
+    u0.rebuild(p1)
 end
-function v_u_1.statesMatch(p95, p96) -- name: statesMatch
-	local v97
-	if p95 then
-		v97 = string.lower(p95)
-	else
-		v97 = p95
-	end
-	local v98
-	if p96 then
-		v98 = string.lower(p96)
-	else
-		v98 = p96
-	end
-	return v97 == v98 or not p95 or not p96
+function u0.statesMatch(p1, p2) -- Line: 274
+    local v1 = p1
+    if v1 then
+        v1 = string.lower(p1)
+    end
+    local v2 = p2
+    if v2 then
+        v2 = string.lower(p2)
+    end
+    local v3 = true
+    if v1 ~= v2 then
+        v3 = not p1
+        if not v3 then
+            v3 = not p2
+        end
+    end
+    return v3
 end
-function v_u_1.rebuild(p_u_99) -- name: rebuild
-	-- upvalues: (copy) v_u_1, (copy) v_u_2, (copy) v_u_3
-	local v_u_100 = p_u_99.appliedTheme
-	local v_u_101 = { "Deselected", "Selected", "Viewing" }
-	(function() -- name: generateTheme
-		-- upvalues: (copy) v_u_101, (ref) v_u_1, (ref) v_u_2, (ref) v_u_3, (copy) v_u_100, (copy) p_u_99
-		for _, v102 in pairs(v_u_101) do
-			local v_u_103 = {}
-			local function v111(p104, p105) -- name: updateDetails
-				-- upvalues: (ref) v_u_1, (ref) v_u_2, (copy) v_u_103
-				if p104 then
-					for _, v106 in pairs(p104) do
-						local v107 = v106[5]
-						local v108 = v106[4]
-						if v_u_1.statesMatch(p105, v108) then
-							local v109 = v106[1] .. "-" .. v106[2]
-							local v110 = v_u_2.copyTable(v106)
-							v110[5] = v107
-							v_u_103[v109] = v110
-						end
-					end
-				end
-			end
-			if v102 == "Selected" then
-				v111(v_u_3, "Deselected")
-			end
-			v111(v_u_3, "Empty")
-			v111(v_u_3, v102)
-			if v_u_100 ~= v_u_3 then
-				if v102 == "Selected" then
-					v111(v_u_100, "Deselected")
-				end
-				v111(v_u_3, "Empty")
-				v111(v_u_100, v102)
-			end
-			local v112 = {}
-			local v113 = p_u_99.appearance[v102]
-			if v113 then
-				for _, v114 in pairs(v113) do
-					local v115 = v114[5]
-					if v115 ~= nil then
-						local v116 = {
-							v114[1],
-							v114[2],
-							v114[3],
-							v102,
-							v115
-						}
-						table.insert(v112, v116)
-					end
-				end
-			end
-			v111(v112, v102)
-			local v117 = {}
-			for _, v118 in pairs(v_u_103) do
-				table.insert(v117, v118)
-			end
-			p_u_99.appearance[v102] = v117
-		end
-		v_u_1.change(p_u_99)
-	end)()
+function u0.rebuild(p1) -- Line: 281 -- upvalues: u0 (val), u3 (val), u6 (val)
+    local appliedTheme = p1.appliedTheme
+    local u2 = {"Deselected", "Selected", "Viewing"}
+    ;(function() -- Line: 288 -- upvalues: u2 (val), u0 (upval), u3 (upval), u6 (upval), appliedTheme (val), p1 (val)
+        local updateDetails, v1, v2, v3, v4
+        for k, v in pairs(u2) do
+            local u16 = {}
+            function updateDetails(p1, p2) -- Line: 294 -- upvalues: u0 (upval), u3 (upval), u16 (val)
+                local v1, v2
+                if not p1 then
+                    return
+                end
+                for k, v in pairs(p1) do
+                    if u0.statesMatch(p2, v[4]) then
+                        v2 = v[1] .. "-" .. v[2]
+                        v1 = u3.copyTable(v)
+                        v1[5] = v[5]
+                        u16[v2] = v1
+                    end
+                end
+            end
+            if v == "Selected" then
+                updateDetails(u6, "Deselected")
+            end
+            updateDetails(u6, "Empty")
+            updateDetails(u6, v)
+            if appliedTheme ~= u6 then
+                if v == "Selected" then
+                    updateDetails(appliedTheme, "Deselected")
+                end
+                updateDetails(u6, "Empty")
+                updateDetails(appliedTheme, v)
+            end
+            v2 = {}
+            v3 = p1.appearance[v]
+            if v3 then
+                for k2, i in pairs(v3) do
+                    v1 = i[5]
+                    if v1 ~= nil then
+                        table.insert(v2, {
+                            i[1],
+                            i[2],
+                            i[3],
+                            v,
+                            v1,
+                        })
+                    end
+                end
+            end
+            updateDetails(v2, v)
+            v4 = {}
+            for k3, j in pairs(u16) do
+                table.insert(v4, j)
+            end
+            p1.appearance[v] = v4
+        end
+        u0.change(p1)
+    end)()
 end
-return v_u_1
+return u0

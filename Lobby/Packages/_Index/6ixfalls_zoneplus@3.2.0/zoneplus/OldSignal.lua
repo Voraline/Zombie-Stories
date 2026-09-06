@@ -1,96 +1,91 @@
-local v_u_1 = game:GetService("HttpService")
-local v_u_2 = game:GetService("RunService").Heartbeat
-local v_u_3 = {}
-v_u_3.__index = v_u_3
-v_u_3.ClassName = "Signal"
-v_u_3.totalConnections = 0
-function v_u_3.new(p4) -- name: new
-	-- upvalues: (copy) v_u_3
-	local v5 = v_u_3
-	local v6 = setmetatable({}, v5)
-	if p4 then
-		v6.connectionsChanged = v_u_3.new()
-	end
-	v6.connections = {}
-	v6.totalConnections = 0
-	v6.waiting = {}
-	v6.totalWaiting = 0
-	return v6
+local HttpService = game:GetService("HttpService")
+local Heartbeat = game:GetService("RunService").Heartbeat
+local u11 = {}
+u11.__index = u11
+u11.ClassName = "Signal"
+u11.totalConnections = 0
+function u11.new(p1) -- Line: 12 -- upvalues: u11 (val)
+    local v1 = setmetatable({}, u11)
+    if p1 then
+        v1.connectionsChanged = u11.new()
+    end
+    v1.connections = {}
+    v1.totalConnections = 0
+    v1.waiting = {}
+    v1.totalWaiting = 0
+    return v1
 end
-function v_u_3.Fire(p7, ...) -- name: Fire
-	for _, v8 in pairs(p7.connections) do
-		task.spawn(v8.Handler, ...)
-	end
-	if p7.totalWaiting > 0 then
-		local v9 = table.pack(...)
-		for v10, _ in pairs(p7.waiting) do
-			p7.waiting[v10] = v9
-		end
-	end
+function u11:Fire(, ...) -- Line: 30
+    for k, v in pairs(self.connections) do
+        task.spawn(v.Handler, ...)
+    end
+    if 0 < self.totalWaiting then
+        local v1 = table.pack(...)
+        for k2, i in pairs(self.waiting) do
+            self.waiting[k2] = v1
+        end
+    end
 end
-v_u_3.fire = v_u_3.Fire
-function v_u_3.Connect(p_u_11, p12) -- name: Connect
-	-- upvalues: (copy) v_u_1
-	if type(p12) ~= "function" then
-		error(("connect(%s)"):format((typeof(p12))), 2)
-	end
-	local v_u_13 = v_u_1:GenerateGUID(false)
-	local v_u_14 = {
-		["Connected"] = true,
-		["ConnectionId"] = v_u_13,
-		["Handler"] = p12
-	}
-	p_u_11.connections[v_u_13] = v_u_14
-	function v_u_14.Disconnect(_) -- name: Disconnect
-		-- upvalues: (copy) p_u_11, (copy) v_u_13, (copy) v_u_14
-		p_u_11.connections[v_u_13] = nil
-		v_u_14.Connected = false
-		local v15 = p_u_11
-		v15.totalConnections = v15.totalConnections - 1
-		if p_u_11.connectionsChanged then
-			p_u_11.connectionsChanged:Fire(-1)
-		end
-	end
-	v_u_14.Destroy = v_u_14.Disconnect
-	v_u_14.destroy = v_u_14.Disconnect
-	v_u_14.disconnect = v_u_14.Disconnect
-	p_u_11.totalConnections = p_u_11.totalConnections + 1
-	if p_u_11.connectionsChanged then
-		p_u_11.connectionsChanged:Fire(1)
-	end
-	return v_u_14
+u11.fire = u11.Fire
+function u11.Connect(p1, p2) -- Line: 44 -- upvalues: HttpService (val)
+    if type(p2) ~= "function" then
+        local v1 = ("connect(%s)"):format((typeof(p2)))
+        error(v1, 2)
+    end
+    local u19 = HttpService:GenerateGUID(false)
+    local u20 = {Connected = true, ConnectionId = u19, Handler = p2}
+    p1.connections[u19] = u20
+    function u20.Disconnect(a1) -- Line: 57 -- upvalues: p1 (val), u19 (val), u20 (val)
+        p1.connections[u19] = nil
+        u20.Connected = false
+        local v1 = p1
+        v1.totalConnections = v1.totalConnections - 1
+        if p1.connectionsChanged then
+            p1.connectionsChanged:Fire(-1)
+        end
+    end
+    u20.Destroy = u20.Disconnect
+    u20.destroy = u20.Disconnect
+    u20.disconnect = u20.Disconnect
+    p1.totalConnections = p1.totalConnections + 1
+    if p1.connectionsChanged then
+        p1.connectionsChanged:Fire(1)
+    end
+    return u20
 end
-v_u_3.connect = v_u_3.Connect
-function v_u_3.Wait(p16) -- name: Wait
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	local v17 = v_u_1:GenerateGUID(false)
-	p16.waiting[v17] = true
-	p16.totalWaiting = p16.totalWaiting + 1
-	repeat
-		v_u_2:Wait()
-	until p16.waiting[v17] ~= true
-	p16.totalWaiting = p16.totalWaiting - 1
-	local v18 = p16.waiting[v17]
-	p16.waiting[v17] = nil
-	return unpack(v18)
+u11.connect = u11.Connect
+function u11:Wait() -- Line: 77 -- upvalues: HttpService (val), Heartbeat (val)
+    local v1 = HttpService:GenerateGUID(false)
+    self.waiting[v1] = true
+    self.totalWaiting = self.totalWaiting + 1
+    while true do
+        Heartbeat:Wait()
+        if self.waiting[v1] ~= true then
+            break
+        end
+    end
+    self.totalWaiting = self.totalWaiting - 1
+    local v2 = self.waiting[v1]
+    self.waiting[v1] = nil
+    return unpack(v2)
 end
-v_u_3.wait = v_u_3.Wait
-function v_u_3.Destroy(p19) -- name: Destroy
-	if p19.bindableEvent then
-		p19.bindableEvent:Destroy()
-		p19.bindableEvent = nil
-	end
-	if p19.connectionsChanged then
-		p19.connectionsChanged:Fire(-p19.totalConnections)
-		p19.connectionsChanged:Destroy()
-		p19.connectionsChanged = nil
-	end
-	p19.totalConnections = 0
-	for v20, _ in pairs(p19.connections) do
-		p19.connections[v20] = nil
-	end
+u11.wait = u11.Wait
+function u11:Destroy() -- Line: 89
+    if self.bindableEvent then
+        self.bindableEvent:Destroy()
+        self.bindableEvent = nil
+    end
+    if self.connectionsChanged then
+        self.connectionsChanged:Fire(-self.totalConnections)
+        self.connectionsChanged:Destroy()
+        self.connectionsChanged = nil
+    end
+    self.totalConnections = 0
+    for k, v in pairs(self.connections) do
+        self.connections[k] = nil
+    end
 end
-v_u_3.destroy = v_u_3.Destroy
-v_u_3.Disconnect = v_u_3.Destroy
-v_u_3.disconnect = v_u_3.Destroy
-return v_u_3
+u11.destroy = u11.Destroy
+u11.Disconnect = u11.Destroy
+u11.disconnect = u11.Destroy
+return u11

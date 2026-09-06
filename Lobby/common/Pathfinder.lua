@@ -1,162 +1,192 @@
-local v_u_1 = game:GetService("PathfindingService")
-local v_u_2 = {
-	["NodesAreSetup"] = false
-}
-local v_u_3 = nil
-function BuildNodes(p4) -- name: BuildNodes
-	-- upvalues: (ref) v_u_3, (copy) v_u_2
-	local v5 = {}
-	local v6 = {}
-	for _, v7 in ipairs(p4:GetChildren()) do
-		if v7:IsA("Folder") then
-			local v8 = {
-				["Position"] = nil,
-				["Neighbors"] = nil,
-				["F"] = 0,
-				["G"] = 0,
-				["H"] = 0,
-				["Parent"] = nil,
-				["Position"] = v7:GetAttribute("NodePosition"),
-				["Neighbors"] = {}
-			}
-			table.insert(v5, v8)
-			v6[v7:GetAttribute("NodeId")] = v8
-		end
-	end
-	for _, v9 in ipairs(p4:GetChildren()) do
-		if v9:IsA("Folder") then
-			local v10 = v9:GetAttribute("NodeLinks"):split(",")
-			local v11 = v6[v9:GetAttribute("NodeId")]
-			for _, v12 in ipairs(v10) do
-				local v13 = v6[v12]
-				local v14 = v12 ~= ""
-				assert(v14, ("Node \'%s\' has no neighbors"):format(v9:GetAttribute("NodeId")))
-				local v15 = v11.Neighbors
-				table.insert(v15, v13)
-				local v16 = v13.Neighbors
-				table.insert(v16, v11)
-			end
-		end
-	end
-	v_u_3 = v5
-	v_u_2.NodesAreSetup = true
+local PathfindingService = game:GetService("PathfindingService")
+local u5 = {NodesAreSetup = false}
+local u6 = nil
+function BuildNodes(self) -- Line: 21 -- upvalues: u6 (ref), u5 (val)
+    local Attribute, v1, v2, v3, v4
+    local v5 = {}
+    local v6 = {}
+    for i, v in ipairs(self:GetChildren()) do
+        if v:IsA("Folder") then
+            v3 = {
+                F = 0,
+                G = 0,
+                H = 0,
+                Position = v:GetAttribute("NodePosition"),
+                Neighbors = {},
+            }
+            table.insert(v5, v3)
+            v6[v:GetAttribute("NodeId")] = v3
+        end
+    end
+    for i2, i3 in ipairs(self:GetChildren()) do
+        if i3:IsA("Folder") then
+            Attribute = i3:GetAttribute("NodeLinks")
+            v3 = Attribute:split(",")
+            v4 = v6[i3:GetAttribute("NodeId")]
+            for i4, j in ipairs(v3) do
+                v1 = v6[j]
+                v2 = j ~= ""
+                assert(v2, ("Node '%s' has no neighbors"):format(i3:GetAttribute("NodeId")))
+                table.insert(v4.Neighbors, v1)
+                table.insert(v1.Neighbors, v4)
+            end
+        end
+    end
+    u6 = v5
+    u5.NodesAreSetup = true
 end
-function v_u_2.FindNearestNode(_, p17, p18, p19) -- name: FindNearestNode
-	-- upvalues: (ref) v_u_3
-	local v20 = p19 or 1
-	local v21 = (1 / 0)
-	local v22 = nil
-	for _, v23 in ipairs(v_u_3) do
-		if p18 == nil or not p18[v23] then
-			local v24 = ((p17 - v23.Position) * Vector3.new(1, v20, 1)).Magnitude
-			if v24 < v21 then
-				v22 = v23
-				v21 = v24
-			end
-		end
-	end
-	return v22
+function u5.FindNearestNode(p1, p2, p3, p4) -- Line: 56 -- upvalues: u6 (ref)
+    local Magnitude, v1, v2
+    local v3 = p4 or 1
+    local v4 = (1 / 0)
+    local v5 = nil
+    v2, v1 = p3, p2
+    for i, v in ipairs(u6) do
+        if v2 == nil then
+            Magnitude = ((v1 - v.Position) * Vector3.new(1, v3, 1)).Magnitude
+            if Magnitude < v4 then
+                v4 = Magnitude
+                v5 = v
+            end
+        elseif v2[v] then
+        end
+    end
+    return v5
 end
-function v_u_2.UseRoblox(_, p_u_25, p_u_26) -- name: UseRoblox
-	-- upvalues: (copy) v_u_1
-	local v_u_27 = v_u_1:CreatePath({
-		["AgentRadius"] = 1,
-		["AgentHeight"] = 5,
-		["AgentCanJump"] = true,
-		["AgentCanClimb"] = true,
-		["WaypointSpacing"] = 4
-	})
-	local v28, _ = pcall(function()
-		-- upvalues: (copy) v_u_27, (copy) p_u_25, (copy) p_u_26
-		v_u_27:ComputeAsync(p_u_25, p_u_26)
-	end)
-	if not v28 or v_u_27.Status ~= Enum.PathStatus.Success then
-		return nil
-	end
-	local v29 = {}
-	for _, v30 in v_u_27:GetWaypoints() do
-		local v31 = v30.Position
-		table.insert(v29, v31)
-	end
-	return v29
+function u5.UseRoblox(p1, p2, p3) -- Line: 71 -- upvalues: PathfindingService (val)
+    local u8 = PathfindingService:CreatePath({
+        AgentRadius = 1,
+        AgentHeight = 5,
+        AgentCanJump = true,
+        AgentCanClimb = true,
+        WaypointSpacing = 4,
+    })
+    local v1 = pcall(function() -- Line: 82 -- upvalues: u8 (val), p2 (val), p3 (val)
+        u8:ComputeAsync(p2, p3)
+    end)
+    if not v1 or u8.Status ~= Enum.PathStatus.Success then
+        return nil
+    end
+    local Waypoints = u8:GetWaypoints()
+    local v2 = {}
+    local v3 = Waypoints
+    local v4 = nil
+    local v5 = nil
+    for i, j in v3, v4, v5 do
+        table.insert(v2, j.Position)
+    end
+    return v2
 end
-function v_u_2.FindPath(_, p32, p33, p34, p35) -- name: FindPath
-	-- upvalues: (copy) v_u_2
-	local v36 = p34 or v_u_2:FindNearestNode(p32, nil, 1.15)
-	local v37 = p35 or v_u_2:FindNearestNode(p33, nil, 1.25)
-	local v38 = {
-		[v36] = true
-	}
-	local v39 = {}
-	local v40 = false
-	local v41 = {}
-	while next(v38) do
-		local v42 = (1 / 0)
-		local v43 = nil
-		for v44 in pairs(v38) do
-			if v44.F < v42 then
-				v42 = v44.F
-				v43 = v44
-			end
-		end
-		v38[v43] = nil
-		v39[v43] = true
-		if v43 == v37 then
-			v40 = true
-			break
-		end
-		for _, v45 in ipairs(v43.Neighbors) do
-			if not v39[v45] then
-				if v38[v45] then
-					if v45.G < v43.G then
-						v45.Parent = v43
-						v45.G = v43.G + (v45.Position - v43.Position).Magnitude
-						v45.F = v45.G + v45.H
-					end
-				else
-					v38[v45] = true
-					v45.Parent = v43
-					v45.G = v43.G + (v45.Position - v43.Position).Magnitude
-					local v46 = v45.Position
-					local v47 = v37.Position
-					local v48 = (v46 - v47).Magnitude
-					if v48 < 5 then
-						v48 = ((v46 - v47) * Vector3.new(1, 1.25, 1)).Magnitude
-					end
-					v45.H = v48
-					v45.F = v45.G + v45.H
-				end
-			end
-		end
-	end
-	local v49 = {}
-	if v40 then
-		while v37 do
-			local v50 = v37.Position
-			table.insert(v41, 1, v50)
-			table.insert(v49, 1, v37)
-			v37 = v37.Parent
-		end
-	end
-	for v51 in pairs(v38) do
-		v51.F = 0
-		v51.G = 0
-		v51.H = 0
-		v51.Parent = nil
-	end
-	for v52 in pairs(v39) do
-		v52.F = 0
-		v52.G = 0
-		v52.H = 0
-		v52.Parent = nil
-	end
-	if v40 == nil then
-		return nil
-	else
-		return v41, v49
-	end
+function u5.FindPath(p1, p2, p3, p4, p5) -- Line: 100 -- upvalues: u5 (val)
+    local F, Magnitude, Position, Position_2, v1, v2, v3, v4
+    local v5 = {}
+    local v6 = false
+    if not p4 then
+        v3 = u5:FindNearestNode(p2, nil, 1.15)
+    else
+        v3 = p4
+    end
+    if not p5 then
+        v4 = u5:FindNearestNode(p3, nil, 1.25)
+    else
+        v4 = p5
+    end
+    local u110 = {}
+    u110[v3] = true
+    local v7 = {}
+    local function FindLowestFNode() -- Line: 111 -- upvalues: u110 (val)
+        local F = (1 / 0)
+        local v1 = nil
+        for k in pairs(u110) do
+            if k.F < F then
+                F = k.F
+                v1 = k
+            end
+        end
+        return v1
+    end
+    local function Heuristic(p1, p2) -- Line: 122
+        local Position = p1.Position
+        local Position_2 = p2.Position
+        local Magnitude = (Position - Position_2).Magnitude
+        if Magnitude < 5 then
+            Magnitude = ((Position - Position_2) * Vector3.new(1, 1.25, 1)).Magnitude
+        end
+        return Magnitude
+    end
+    while next(u110) do
+        F = (1 / 0)
+        v2 = nil
+        for k in pairs(u110) do
+            if k.F < F then
+                F = k.F
+                v2 = k
+            end
+        end
+        v1 = v2
+        u110[v1] = nil
+        v7[v1] = true
+        if v1 == v4 then
+            v6 = true
+            break
+        end
+        for i, v in ipairs(v1.Neighbors) do
+            if not (v7[v]) then
+                if not (u110[v]) then
+                    u110[v] = true
+                    v.Parent = v1
+                    v.G = v1.G + (v.Position - v1.Position).Magnitude
+                    Position = v.Position
+                    Position_2 = v4.Position
+                    Magnitude = (Position - Position_2).Magnitude
+                    if Magnitude < 5 then
+                        Magnitude = ((Position - Position_2) * Vector3.new(1, 1.25, 1)).Magnitude
+                    end
+                    v.H = Magnitude
+                    v.F = v.G + v.H
+                elseif v.G < v1.G then
+                    v.Parent = v1
+                    v.G = v1.G + (v.Position - v1.Position).Magnitude
+                    v.F = v.G + v.H
+                end
+            end
+        end
+    end
+    v1 = {}
+    if v6 then
+        local Parent = v4
+        while Parent do
+            table.insert(v5, 1, Parent.Position)
+            table.insert(v1, 1, Parent)
+            Parent = Parent.Parent
+        end
+    end
+    local function ResetNodeDictionary(p1) -- Line: 182
+        for k in pairs(p1) do
+            k.F = 0
+            k.G = 0
+            k.H = 0
+            k.Parent = nil
+        end
+    end
+    for k2 in pairs(u110) do
+        k2.F = 0
+        k2.G = 0
+        k2.H = 0
+        k2.Parent = nil
+    end
+    for k3 in pairs(v7) do
+        k3.F = 0
+        k3.G = 0
+        k3.H = 0
+        k3.Parent = nil
+    end
+    if v6 ~= nil then
+        return v5, v1
+    end
+    return nil
 end
-function v_u_2.Init(_, p53) -- name: Init
-	BuildNodes(p53)
+function u5.Init(p1, p2) -- Line: 199
+    BuildNodes(p2)
 end
-return v_u_2
+return u5

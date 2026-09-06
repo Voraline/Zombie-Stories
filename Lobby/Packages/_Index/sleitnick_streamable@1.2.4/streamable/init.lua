@@ -1,4 +1,1 @@
-return {
-	["Streamable"] = require(script.Streamable),
-	["StreamableUtil"] = require(script.StreamableUtil)
-}
+return {Streamable = require(script.Streamable), StreamableUtil = require(script.StreamableUtil)}

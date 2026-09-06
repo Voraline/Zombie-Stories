@@ -1,60 +1,63 @@
-local v_u_1 = Random.new()
-local v_u_2 = {}
-for v3, v4 in pairs(table) do
-	v_u_2[v3] = v4
+local u1 = Random.new()
+local u2 = {}
+for k, v in pairs(table) do
+    u2[k] = v
 end
-function v_u_2.contains(p5, p6)
-	-- upvalues: (copy) v_u_2
-	return v_u_2.indexOf(p5, p6) ~= nil
+function u2.contains(p1, p2) -- Line: 30 -- upvalues: u2 (val)
+    local v1 = u2.indexOf(p1, p2) ~= nil
+    return v1
 end
-function v_u_2.indexOf(p7, p8)
-	-- upvalues: (copy) v_u_2
-	return table.find(p7, p8) or v_u_2.keyOf(p7, p8)
+function u2.indexOf(p1, p2) -- Line: 35 -- upvalues: u2 (val)
+    local v1 = table.find(p1, p2)
+    if v1 then
+        return v1
+    end
+    return u2.keyOf(p1, p2)
 end
-function v_u_2.keyOf(p9, p10)
-	for v11, v12 in pairs(p9) do
-		if v12 == p10 then
-			return v11
-		end
-	end
-	return nil
+function u2.keyOf(p1, p2) -- Line: 44
+    for k, v in pairs(p1) do
+        if v == p2 then
+            return k
+        end
+    end
+    return nil
 end
-function v_u_2.skip(p13, p14)
-	return table.move(p13, p14 + 1, #p13, 1, table.create(#p13 - p14))
+function u2.skip(p1, p2) -- Line: 54
+    return table.move(p1, p2 + 1, #p1, 1, table.create(#p1 - p2))
 end
-function v_u_2.take(p15, p16)
-	return table.move(p15, 1, p16, 1, table.create(p16))
+function u2.take(p1, p2) -- Line: 59
+    return table.move(p1, 1, p2, 1, table.create(p2))
 end
-function v_u_2.range(p17, p18, p19)
-	return table.move(p17, p18, p19, 1, table.create(p19 - p18 + 1))
+function u2.range(p1, p2, p3) -- Line: 64
+    return table.move(p1, p2, p3, 1, table.create(p3 - p2 + 1))
 end
-function v_u_2.skipAndTake(p20, p21, p22)
-	return table.move(p20, p21 + 1, p21 + p22, 1, table.create(p22))
+function u2.skipAndTake(p1, p2, p3) -- Line: 69
+    return table.move(p1, p2 + 1, p2 + p3, 1, table.create(p3))
 end
-function v_u_2.random(p23)
-	-- upvalues: (copy) v_u_1
-	return p23[v_u_1:NextInteger(1, #p23)]
+function u2.random(p1) -- Line: 74 -- upvalues: u1 (val)
+    return p1[u1:NextInteger(1, #p1)]
 end
-function v_u_2.join(p24, p25)
-	local v26 = table.create(#p24 + #p25)
-	table.move(p24, 1, #p24, 1, v26)
-	return table.move(p25, 1, #p25, #p24 + 1, v26)
+function u2.join(p1, p2) -- Line: 79
+    local v1 = table.create(#p1 + #p2)
+    table.move(p1, 1, #p1, 1, v1)
+    return table.move(p2, 1, #p2, #p1 + 1, v1)
 end
-function v_u_2.removeObject(p27, p28)
-	-- upvalues: (copy) v_u_2
-	local v29 = v_u_2.indexOf(p27, p28)
-	if v29 then
-		table.remove(p27, v29)
-	end
+function u2.removeObject(p1, p2) -- Line: 86 -- upvalues: u2 (val)
+    local v1 = u2.indexOf(p1, p2)
+    if v1 then
+        table.remove(p1, v1)
+    end
 end
-function v_u_2.expand(p30, p31)
-	if p31 < 0 then
-		error("Cannot expand a table by a negative amount of objects.")
-	end
-	local v32 = table.create(#p30 + p31)
-	for v33 = 1, #p30 do
-		v32[v33] = p30[v33]
-	end
-	return v32
+function u2.expand(p1, p2) -- Line: 95
+    if p2 < 0 then
+        error("Cannot expand a table by a negative amount of objects.")
+    end
+    local v1 = table.create(#p1 + p2)
+    local v2 = #p1
+    local v3 = 1
+    for i = 1, v2, v3 do
+        v1[i] = p1[i]
+    end
+    return v1
 end
-return v_u_2
+return u2

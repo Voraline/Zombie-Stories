@@ -1,53 +1,45 @@
-local v_u_1 = game:GetService("RunService")
-local v_u_2 = game:GetService("HttpService")
-local v3 = script.Parent
-local v_u_4 = require(v3.External)
-local v8 = {
-	["policies"] = {
-		["allowWebLinks"] = v_u_1:IsStudio()
-	},
-	["doTaskImmediate"] = function(p5) -- name: doTaskImmediate
-		task.spawn(p5)
-	end,
-	["doTaskDeferred"] = function(p6) -- name: doTaskDeferred
-		task.defer(p6)
-	end,
-	["logErrorNonFatal"] = function(p7) -- name: logErrorNonFatal
-		task.spawn(error, p7, 0)
-	end,
-	["logWarn"] = warn
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local External = require(script.Parent.External)
+local v1 = {
+    policies = {allowWebLinks = RunService:IsStudio()},
+    doTaskImmediate = function(p1) -- Line: 24
+        task.spawn(p1)
+    end,
+    doTaskDeferred = function(p1) -- Line: 33
+        task.defer(p1)
+    end,
+    logErrorNonFatal = function(p1) -- Line: 42
+        task.spawn(error, p1, 0)
+    end,
+    logWarn = warn,
 }
-local function v_u_9() -- name: performUpdateStep
-	-- upvalues: (copy) v_u_4
-	v_u_4.performUpdateStep(os.clock())
+local function performUpdateStep() -- Line: 56 -- upvalues: External (val)
+    External.performUpdateStep(os.clock())
 end
-local v_u_10 = nil
-function v8.startScheduler() -- name: startScheduler
-	-- upvalues: (ref) v_u_10, (copy) v_u_1, (copy) v_u_2, (copy) v_u_9
-	if v_u_10 == nil then
-		if v_u_1:IsClient() then
-			local v_u_11 = "FusionUpdateStep_" .. v_u_2:GenerateGUID()
-			v_u_1:BindToRenderStep(v_u_11, Enum.RenderPriority.First.Value, v_u_9)
-			v_u_10 = function()
-				-- upvalues: (ref) v_u_1, (copy) v_u_11
-				v_u_1:UnbindFromRenderStep(v_u_11)
-			end
-		else
-			local v_u_12 = v_u_1.Heartbeat:Connect(v_u_9)
-			v_u_10 = function()
-				-- upvalues: (copy) v_u_12
-				v_u_12:Disconnect()
-			end
-		end
-	else
-		return
-	end
+local u25 = nil
+function v1.startScheduler() -- Line: 64 -- upvalues: u25 (ref), RunService (val), HttpService (val), performUpdateStep (val)
+    local u25
+    if u25 ~= nil then
+        return
+    end
+    if not (RunService:IsClient()) then
+        u25 = RunService.Heartbeat:Connect(performUpdateStep)
+        function u25() -- Line: 82 -- upvalues: u25 (val)
+            u25:Disconnect()
+        end
+        return
+    end
+    local u10 = "FusionUpdateStep_" .. HttpService:GenerateGUID()
+    RunService:BindToRenderStep(u10, Enum.RenderPriority.First.Value, performUpdateStep)
+    function u25() -- Line: 77 -- upvalues: RunService (upval), u10 (val)
+        RunService:UnbindFromRenderStep(u10)
+    end
 end
-function v8.stopScheduler() -- name: stopScheduler
-	-- upvalues: (ref) v_u_10
-	if v_u_10 ~= nil then
-		v_u_10()
-		v_u_10 = nil
-	end
+function v1.stopScheduler() -- Line: 91 -- upvalues: u25 (ref)
+    if u25 ~= nil then
+        u25()
+        u25 = nil
+    end
 end
-return v8
+return v1

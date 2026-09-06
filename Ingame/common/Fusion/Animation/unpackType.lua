@@ -1,72 +1,94 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Colour.Oklab)
-return function(p3, p4) -- name: unpackType
-	-- upvalues: (copy) v_u_2
-	if p4 == "number" then
-		return { p3 }
-	end
-	if p4 == "CFrame" then
-		local v5, v6 = p3:ToAxisAngle()
-		return {
-			p3.X,
-			p3.Y,
-			p3.Z,
-			v5.X,
-			v5.Y,
-			v5.Z,
-			v6
-		}
-	end
-	if p4 == "Color3" then
-		local v7 = v_u_2.to(p3)
-		return { v7.X, v7.Y, v7.Z }
-	end
-	if p4 ~= "ColorSequenceKeypoint" then
-		return p4 == "DateTime" and { p3.UnixTimestampMillis } or (p4 == "NumberRange" and { p3.Min, p3.Max } or (p4 == "NumberSequenceKeypoint" and { p3.Value, p3.Time, p3.Envelope } or (p4 == "PhysicalProperties" and {
-			p3.Density,
-			p3.Friction,
-			p3.Elasticity,
-			p3.FrictionWeight,
-			p3.ElasticityWeight
-		} or (p4 == "Ray" and {
-			p3.Origin.X,
-			p3.Origin.Y,
-			p3.Origin.Z,
-			p3.Direction.X,
-			p3.Direction.Y,
-			p3.Direction.Z
-		} or (p4 == "Rect" and {
-			p3.Min.X,
-			p3.Min.Y,
-			p3.Max.X,
-			p3.Max.Y
-		} or (p4 == "Region3" and {
-			p3.CFrame.X,
-			p3.CFrame.Y,
-			p3.CFrame.Z,
-			p3.Size.X,
-			p3.Size.Y,
-			p3.Size.Z
-		} or (p4 == "Region3int16" and {
-			p3.Min.X,
-			p3.Min.Y,
-			p3.Min.Z,
-			p3.Max.X,
-			p3.Max.Y,
-			p3.Max.Z
-		} or (p4 == "UDim" and { p3.Scale, p3.Offset } or (p4 == "UDim2" and {
-			p3.X.Scale,
-			p3.X.Offset,
-			p3.Y.Scale,
-			p3.Y.Offset
-		} or (p4 == "Vector2" and { p3.X, p3.Y } or (p4 == "Vector2int16" and { p3.X, p3.Y } or (p4 == "Vector3" and { p3.X, p3.Y, p3.Z } or (p4 == "Vector3int16" and { p3.X, p3.Y, p3.Z } or {})))))))))))))
-	end
-	local v8 = v_u_2.to(p3.Value)
-	return {
-		v8.X,
-		v8.Y,
-		v8.Z,
-		p3.Time
-	}
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local Oklab = require(Parent.Colour.Oklab)
+return function(p1, p2) -- Line: 19 -- upvalues: Oklab (val)
+    local v1
+    if p2 == "number" then
+        return {p1}
+    end
+    if p2 == "CFrame" then
+        local v2
+        v1, v2 = p1:ToAxisAngle()
+        return {
+            p1.X,
+            p1.Y,
+            p1.Z,
+            v1.X,
+            v1.Y,
+            v1.Z,
+            v2,
+        }
+    end
+    if p2 == "Color3" then
+        v1 = Oklab.to(p1)
+        return {v1.X, v1.Y, v1.Z}
+    end
+    if p2 == "ColorSequenceKeypoint" then
+        v1 = Oklab.to(p1.Value)
+        return {v1.X, v1.Y, v1.Z, p1.Time}
+    end
+    if p2 == "DateTime" then
+        return {p1.UnixTimestampMillis}
+    end
+    if p2 == "NumberRange" then
+        return {p1.Min, p1.Max}
+    end
+    if p2 == "NumberSequenceKeypoint" then
+        return {p1.Value, p1.Time, p1.Envelope}
+    end
+    if p2 == "PhysicalProperties" then
+        return {
+            p1.Density,
+            p1.Friction,
+            p1.Elasticity,
+            p1.FrictionWeight,
+            p1.ElasticityWeight,
+        }
+    end
+    if p2 == "Ray" then
+        return {
+            p1.Origin.X,
+            p1.Origin.Y,
+            p1.Origin.Z,
+            p1.Direction.X,
+            p1.Direction.Y,
+            p1.Direction.Z,
+        }
+    end
+    if p2 == "Rect" then
+        return {p1.Min.X, p1.Min.Y, p1.Max.X, p1.Max.Y}
+    end
+    if p2 == "Region3" then
+        return {
+            p1.CFrame.X,
+            p1.CFrame.Y,
+            p1.CFrame.Z,
+            p1.Size.X,
+            p1.Size.Y,
+            p1.Size.Z,
+        }
+    end
+    if p2 == "Region3int16" then
+        return {
+            p1.Min.X,
+            p1.Min.Y,
+            p1.Min.Z,
+            p1.Max.X,
+            p1.Max.Y,
+            p1.Max.Z,
+        }
+    end
+    if p2 == "UDim" then
+        return {p1.Scale, p1.Offset}
+    end
+    if p2 == "UDim2" then
+        return {p1.X.Scale, p1.X.Offset, p1.Y.Scale, p1.Y.Offset}
+    end
+    if p2 == "Vector2" or p2 == "Vector2int16" then
+        return {p1.X, p1.Y}
+    end
+    if p2 == "Vector3" or p2 == "Vector3int16" then
+        return {p1.X, p1.Y, p1.Z}
+    end
+    return {}
 end

@@ -1,78 +1,87 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v2 = require(v1.Packages.Fusion)
-local _ = v2.Children
-local _ = v2.OnEvent
-local _ = v2.peek
-local v_u_3 = require("./GenericButton")
-return function(p4)
-	-- upvalues: (copy) v_u_3
-	local v5 = p4.scope
-	local v6 = p4.Text or "X"
-	local v7 = p4.Font or Enum.Font.GothamBold
-	local v8 = p4.TextScaled or true
-	local v9 = p4.TextSize or 14
-	local v10 = p4.Position or UDim2.new(0.5, 0, 0.5, 0)
-	local v11 = p4.Size or UDim2.new(1, 0, 1, 0)
-	local v12 = p4.AnchorPoint or Vector2.new(0.5, 0.5)
-	local v13 = p4.TextColor3 or Color3.fromRGB(255, 255, 255)
-	local v14 = p4.TextTransparency or 0
-	local v15 = p4.TextWrapped or false
-	local v16 = p4.TextXAlignment or Enum.TextXAlignment.Center
-	local v17 = p4.TextYAlignment or Enum.TextYAlignment.Center
-	local v18 = p4.TextTruncate or Enum.TextTruncate.None
-	local v19 = p4.TextStrokeTransparency or 1
-	local v20 = p4.TextStrokeColor3 or Color3.fromRGB(0, 0, 0)
-	local v21 = p4.BackgroundTransparency or 1
-	local v22 = p4.BackgroundColor3 or Color3.fromRGB(0, 0, 0)
-	return v_u_3({
-		["scope"] = nil,
-		["isHovering"] = nil,
-		["isHeldDown"] = nil,
-		["Disabled"] = nil,
-		["OnClick"] = nil,
-		["Text"] = nil,
-		["Font"] = nil,
-		["TextScaled"] = nil,
-		["TextSize"] = nil,
-		["Position"] = nil,
-		["Size"] = nil,
-		["AnchorPoint"] = nil,
-		["TextColor3"] = nil,
-		["TextTransparency"] = nil,
-		["TextWrapped"] = nil,
-		["TextXAlignment"] = nil,
-		["TextYAlignment"] = nil,
-		["TextTruncate"] = nil,
-		["TextStrokeTransparency"] = nil,
-		["TextStrokeColor3"] = nil,
-		["BackgroundTransparency"] = nil,
-		["BackgroundColor3"] = nil,
-		["UIAspectRatio"] = 1,
-		["ZIndex"] = nil,
-		["Children"] = nil,
-		["scope"] = v5,
-		["isHovering"] = p4.isHovering,
-		["isHeldDown"] = p4.isHeldDown,
-		["Disabled"] = p4.Disabled,
-		["OnClick"] = p4.OnClick,
-		["Text"] = v6,
-		["Font"] = v7,
-		["TextScaled"] = v8,
-		["TextSize"] = v9,
-		["Position"] = v10,
-		["Size"] = v11,
-		["AnchorPoint"] = v12,
-		["TextColor3"] = v13,
-		["TextTransparency"] = v14,
-		["TextWrapped"] = v15,
-		["TextXAlignment"] = v16,
-		["TextYAlignment"] = v17,
-		["TextTruncate"] = v18,
-		["TextStrokeTransparency"] = v19,
-		["TextStrokeColor3"] = v20,
-		["BackgroundTransparency"] = v21,
-		["BackgroundColor3"] = v22,
-		["ZIndex"] = p4.ZIndex or 1,
-		["Children"] = { p4.Children }
-	})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local u14 = require("./GenericButton")
+return function(p1) -- Line: 47 -- upvalues: u14 (val)
+    local TextScaled
+    local Font = p1.Font
+    if not Font then
+        Font = Enum.Font.GothamBold
+    end
+    if p1.TextScaled ~= nil then
+        TextScaled = p1.TextScaled
+    else
+        TextScaled = true
+    end
+    local Position = p1.Position
+    if not Position then
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    end
+    local Size = p1.Size
+    if not Size then
+        Size = UDim2.new(1, 0, 1, 0)
+    end
+    local AnchorPoint = p1.AnchorPoint
+    if not AnchorPoint then
+        AnchorPoint = Vector2.new(0.5, 0.5)
+    end
+    local TextColor3 = p1.TextColor3
+    if not TextColor3 then
+        TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+    local TextXAlignment = p1.TextXAlignment
+    if not TextXAlignment then
+        TextXAlignment = Enum.TextXAlignment.Center
+    end
+    local TextYAlignment = p1.TextYAlignment
+    if not TextYAlignment then
+        TextYAlignment = Enum.TextYAlignment.Center
+    end
+    local TextTruncate = p1.TextTruncate
+    if not TextTruncate then
+        TextTruncate = Enum.TextTruncate.None
+    end
+    local TextStrokeColor3 = p1.TextStrokeColor3
+    if not TextStrokeColor3 then
+        TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    end
+    local BackgroundColor3 = p1.BackgroundColor3
+    if not BackgroundColor3 then
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    end
+    return u14({
+        scope = p1.scope,
+        isHovering = p1.isHovering,
+        isHeldDown = p1.isHeldDown,
+        Disabled = p1.Disabled,
+        OnClick = p1.OnClick,
+        ButtonSound = p1.ButtonSound,
+        HoverSound = p1.HoverSound,
+        OutlineColor3 = p1.OutlineColor3,
+        OutlineHoverColor3 = p1.OutlineHoverColor3,
+        OutlineThickness = p1.OutlineThickness,
+        OutlineEnabled = p1.OutlineEnabled,
+        RippleColor3 = p1.RippleColor3,
+        RippleDuration = p1.RippleDuration,
+        Text = p1.Text or "X",
+        Font = Font,
+        TextScaled = TextScaled,
+        TextSize = p1.TextSize or 14,
+        Position = Position,
+        Size = Size,
+        AnchorPoint = AnchorPoint,
+        TextColor3 = TextColor3,
+        TextTransparency = p1.TextTransparency or 0,
+        TextWrapped = p1.TextWrapped or false,
+        TextXAlignment = TextXAlignment,
+        TextYAlignment = TextYAlignment,
+        TextTruncate = TextTruncate,
+        TextStrokeTransparency = p1.TextStrokeTransparency or 1,
+        TextStrokeColor3 = TextStrokeColor3,
+        BackgroundTransparency = p1.BackgroundTransparency or 1,
+        BackgroundColor3 = BackgroundColor3,
+        Visible = p1.Visible,
+        UIAspectRatio = 1,
+        ZIndex = p1.ZIndex or 1,
+        Children = {p1.Children},
+    })
 end

@@ -1,1 +1,1 @@
-return function(...) -- name: doNothing end
+return function(...) end

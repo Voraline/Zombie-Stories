@@ -1,9 +1,7 @@
 return {
-	["Name"] = "killallnpc",
-	["Aliases"] = nil,
-	["Description"] = "Kills All NPCs",
-	["Group"] = "Debug",
-	["Args"] = nil,
-	["Aliases"] = { "kanpc" },
-	["Args"] = {}
+    Name = "killallnpc",
+    Description = "Kills All NPCs",
+    Group = "Debug",
+    Aliases = {"kanpc"},
+    Args = {},
 }

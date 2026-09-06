@@ -1,266 +1,262 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v2 = game:GetService("Players")
-local v3 = game:GetService("TweenService")
-local v4 = require(v1.Packages.Fusion)
-local v5 = v4.scoped
-local v_u_6 = v4.peek
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local peek = Fusion.peek
 require("@game/ReplicatedStorage/common/HUDService")
-local v7 = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.LocalPlayerController)
-local v_u_8 = require("@game/ReplicatedStorage/common/BindUtil")
-local v9 = require("./Objectives")
-local v10 = require("@game/ReplicatedStorage/common/Signal")
-local v11 = require("@self/Components/StaminaUI")
-local v12 = v5(v4)
-local v_u_13 = v12:Value(1)
-local v_u_14 = v12:Value("side")
-local v_u_15 = v12:Value(false)
-local v_u_16 = v12:Value(false)
-local v_u_17 = v12:Value(0)
-local v_u_18 = v12:Value(false)
-local v_u_19 = v12:Value(false)
-local v_u_20 = v12:Value(0)
-local v_u_21 = v12:Value("100")
-local v_u_22 = v12:Value(0)
-local v_u_23 = v12:Value(0)
-local v_u_24 = v12:Value(1)
-local v_u_25 = v12:Value(1)
-local v_u_26 = v12:Value(1)
-local v_u_27 = v12:Value(1)
-local v_u_28 = v12:Value(true)
-local v_u_29 = v12:Value(nil)
-local v_u_30 = v12:Value(true)
-local v_u_31 = v12:Value(1)
-local v_u_32 = v2.LocalPlayer
-local v_u_33 = 100
-local v_u_34 = os.clock()
-local v_u_35 = nil
-local v36 = v11({
-	["scope"] = v12,
-	["percentage"] = v_u_13,
-	["placement"] = v_u_14,
-	["isMobile"] = v_u_15,
-	["isDecreasing"] = v_u_16,
-	["decreaseStartTheta"] = v_u_17,
-	["showChargeReady"] = v_u_18,
-	["requiredFlashActive"] = v_u_19,
-	["requiredAmount"] = v_u_20,
-	["staminaText"] = v_u_21,
-	["objectiveListSizeY"] = v_u_22,
-	["decreaseLeftTransparency"] = v_u_24,
-	["decreaseRightTransparency"] = v_u_25,
-	["requiredLeftTransparency"] = v_u_26,
-	["requiredRightTransparency"] = v_u_27,
-	["ammoHudWidth"] = v_u_23,
-	["customPosition"] = v_u_29,
-	["dynamicStaminaEnabled"] = v_u_30,
-	["uiScale"] = v_u_31
+local LocalPlayerController = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.LocalPlayerController)
+local u38 = require("@game/ReplicatedStorage/common/BindUtil")
+local v1 = require("./Objectives")
+local v2 = require("@game/ReplicatedStorage/common/Signal")
+local v3 = require("@self/Components/StaminaUI")
+local v4 = Fusion.scoped(Fusion)
+local u54 = v4:Value(1)
+local u58 = v4:Value("side")
+local u62 = v4:Value(false)
+local u66 = v4:Value(false)
+local u70 = v4:Value(0)
+local u74 = v4:Value(false)
+local u78 = v4:Value(false)
+local u82 = v4:Value(0)
+local u86 = v4:Value("100")
+local u90 = v4:Value(0)
+local u94 = v4:Value(0)
+local u98 = v4:Value(1)
+local u102 = v4:Value(1)
+local u106 = v4:Value(1)
+local u110 = v4:Value(1)
+local u114 = v4:Value(true)
+local u118 = v4:Value(nil)
+local u122 = v4:Value(true)
+local u126 = v4:Value(1)
+local LocalPlayer = Players.LocalPlayer
+local u128 = 100
+local u130 = os.clock()
+local u131 = nil
+local v5 = v3({
+    scope = v4,
+    percentage = u54,
+    placement = u58,
+    isMobile = u62,
+    isDecreasing = u66,
+    decreaseStartTheta = u70,
+    showChargeReady = u74,
+    requiredFlashActive = u78,
+    requiredAmount = u82,
+    staminaText = u86,
+    objectiveListSizeY = u90,
+    decreaseLeftTransparency = u98,
+    decreaseRightTransparency = u102,
+    requiredLeftTransparency = u106,
+    requiredRightTransparency = u110,
+    ammoHudWidth = u94,
+    customPosition = u118,
+    dynamicStaminaEnabled = u122,
+    uiScale = u126,
 })
-local v_u_37 = v36.screenGui
-local v38 = v36.blueGlowImage
-local v_u_39 = v36.mainFrame
-v12:Observer(v_u_28):onChange(function()
-	-- upvalues: (copy) v_u_37, (copy) v_u_6, (copy) v_u_28
-	v_u_37.Enabled = v_u_6(v_u_28)
+local screenGui = v5.screenGui
+local blueGlowImage = v5.blueGlowImage
+local mainFrame = v5.mainFrame
+local v6 = v4:Observer(u114)
+v6:onChange(function() -- Line: 78 -- upvalues: screenGui (val), peek (val), u114 (val)
+    screenGui.Enabled = peek(u114)
 end)
-local v_u_40 = Instance.new("Sound")
-v_u_40.Name = "readyCharge"
-v_u_40.SoundId = "rbxassetid://9039999622"
-v_u_40.Parent = v_u_37
-local v41 = TweenInfo.new(0.01, Enum.EasingStyle.Linear)
-local v42 = TweenInfo.new(0.4, Enum.EasingStyle.Linear)
-local v_u_43 = v3:Create(v38, v41, {
-	["ImageTransparency"] = 0
-})
-local v_u_44 = v3:Create(v38, v42, {
-	["ImageTransparency"] = 1
-})
-v_u_43.Completed:Connect(function()
-	-- upvalues: (copy) v_u_44
-	v_u_44:Play()
-end)
-local function v_u_48(p45) -- name: setPercentage
-	-- upvalues: (copy) v_u_6, (copy) v_u_13, (copy) v_u_16, (copy) v_u_17, (copy) v_u_24, (copy) v_u_25, (copy) v_u_43
-	local v46 = math.clamp(p45, 0, 1)
-	local v47 = v_u_6(v_u_13)
-	if v46 < v47 and not v_u_6(v_u_16) then
-		v_u_16:set(true)
-		v_u_17:set((1 - v47) * 360)
-		v_u_24:set(0)
-		v_u_25:set(0)
-	elseif v47 < v46 then
-		if v46 == 1 then
-			v_u_43:Play()
-		end
-		if v_u_6(v_u_16) then
-			v_u_16:set(false)
-			v_u_24:set(1)
-			v_u_25:set(1)
-		end
-	end
-	v_u_13:set(v46)
+local Sound = Instance.new("Sound")
+Sound.Name = "readyCharge"
+Sound.SoundId = "rbxassetid://9039999622"
+Sound.Parent = screenGui
+local function getMaxStamina() -- Line: 89 -- upvalues: LocalPlayer (val)
+    return 100 * (LocalPlayer:GetAttribute("Skill_StaminaMaxMult") or 1)
 end
-local function v_u_51() -- name: updateMobilePlacement
-	-- upvalues: (copy) v_u_8, (copy) v_u_15, (ref) v_u_35, (copy) v_u_32, (copy) v_u_23
-	if v_u_8.getInputMethod() == "Touch" then
-		v_u_15:set(true)
-		local v49 = not v_u_35 and v_u_32:FindFirstChild("PlayerGui")
-		if v49 then
-			v_u_35 = v49:FindFirstChild("AmmoUI")
-		end
-		local v50 = v_u_35 and v_u_35:FindFirstChild("Ammo")
-		if v50 then
-			v_u_23:set(v50.AbsoluteSize.X)
-			return
-		end
-	else
-		v_u_15:set(false)
-	end
+local function updateStaminaLabel(p1) -- Line: 93 -- upvalues: u128 (ref), u86 (val)
+    local v1 = p1
+    if not v1 then
+        v1 = u128
+    end
+    u128 = v1
+    u86:set(string.format("%d", (math.ceil(u128))))
 end
-local v_u_60 = {
-	["IsShowing"] = true,
-	["PlacementChanged"] = v10.new(),
-	["Show"] = function(_) -- name: Show
-		-- upvalues: (copy) v_u_28, (copy) v_u_60
-		v_u_28:set(true)
-		v_u_60.IsShowing = true
-	end,
-	["Hide"] = function(_) -- name: Hide
-		-- upvalues: (copy) v_u_28, (copy) v_u_60
-		v_u_28:set(false)
-		v_u_60.IsShowing = false
-	end,
-	["SetPercentage"] = function(_, p52) -- name: SetPercentage
-		-- upvalues: (copy) v_u_48
-		v_u_48(p52)
-	end,
-	["SetPlacement"] = function(_, p53) -- name: SetPlacement
-		-- upvalues: (copy) v_u_6, (copy) v_u_14, (copy) v_u_60
-		local v54 = p53 and "center" or "side"
-		local v55 = v_u_6(v_u_14)
-		v_u_14:set(v54)
-		if v54 ~= v55 then
-			v_u_60.PlacementChanged:Fire(v54)
-		end
-	end,
-	["GetPlacement"] = function(_) -- name: GetPlacement
-		-- upvalues: (copy) v_u_6, (copy) v_u_14
-		return v_u_6(v_u_14)
-	end,
-	["GetMainFrame"] = function(_) -- name: GetMainFrame
-		-- upvalues: (copy) v_u_39
-		return v_u_39
-	end,
-	["SetCustomPosition"] = function(_, p56) -- name: SetCustomPosition
-		-- upvalues: (copy) v_u_29
-		v_u_29:set(p56)
-	end,
-	["SetDynamicStaminaEnabled"] = function(_, p57) -- name: SetDynamicStaminaEnabled
-		-- upvalues: (copy) v_u_30
-		v_u_30:set(p57)
-	end,
-	["SetUIScale"] = function(_, p58) -- name: SetUIScale
-		-- upvalues: (copy) v_u_31
-		v_u_31:set(p58)
-	end,
-	["MobileActivated"] = function(_) -- name: MobileActivated
-		-- upvalues: (copy) v_u_15, (copy) v_u_60, (copy) v_u_6, (copy) v_u_14
-		v_u_15:set(true)
-		v_u_60:SetPlacement(v_u_6(v_u_14) == "center")
-	end,
-	["MobileDeactivated"] = function(_) -- name: MobileDeactivated
-		-- upvalues: (copy) v_u_15
-		v_u_15:set(false)
-	end,
-	["ChargeReady"] = function(_) -- name: ChargeReady
-		-- upvalues: (copy) v_u_40, (copy) v_u_18
-		v_u_40:Play()
-		v_u_18:set(true)
-	end,
-	["ChargeNotReady"] = function(_) -- name: ChargeNotReady
-		-- upvalues: (copy) v_u_18
-		v_u_18:set(false)
-	end,
-	["FlashRequired"] = function(_, p59) -- name: FlashRequired
-		-- upvalues: (ref) v_u_34, (copy) v_u_20, (copy) v_u_19, (copy) v_u_26, (copy) v_u_27
-		if v_u_34 < os.clock() then
-			v_u_34 = os.clock() + 3
-			v_u_20:set(p59)
-			v_u_19:set(true)
-			v_u_26:set(1)
-			v_u_27:set(1)
-			task.delay(0.01, function()
-				-- upvalues: (ref) v_u_26, (ref) v_u_27
-				v_u_26:set(0)
-				v_u_27:set(0)
-			end)
-			task.delay(0.5, function()
-				-- upvalues: (ref) v_u_26, (ref) v_u_27, (ref) v_u_19
-				v_u_26:set(1)
-				v_u_27:set(1)
-				task.delay(0.25, function()
-					-- upvalues: (ref) v_u_26, (ref) v_u_27, (ref) v_u_19
-					v_u_26:set(0)
-					v_u_27:set(0)
-					task.delay(0.5, function()
-						-- upvalues: (ref) v_u_26, (ref) v_u_27, (ref) v_u_19
-						v_u_26:set(1)
-						v_u_27:set(1)
-						task.delay(0.25, function()
-							-- upvalues: (ref) v_u_19
-							v_u_19:set(false)
-						end)
-					end)
-				end)
-			end)
-		end
-	end
-}
-v7.StaminaChanged:Connect(function(p61)
-	-- upvalues: (copy) v_u_32, (copy) v_u_60, (ref) v_u_33, (copy) v_u_21
-	v_u_60:SetPercentage(p61 / (100 * (v_u_32:GetAttribute("Skill_StaminaMaxMult") or 1)))
-	v_u_33 = p61 or v_u_33
-	local v62 = v_u_33
-	v_u_21:set(string.format("%d", (math.ceil(v62))))
+local v7 = TweenInfo.new(0.01, Enum.EasingStyle.Linear)
+local v8 = TweenInfo.new(0.4, Enum.EasingStyle.Linear)
+local u166 = TweenService:Create(blueGlowImage, v7, {ImageTransparency = 0})
+local u172 = TweenService:Create(blueGlowImage, v8, {ImageTransparency = 1})
+u166.Completed:Connect(function() -- Line: 104 -- upvalues: u172 (val)
+    u172:Play()
 end)
-v_u_32:GetAttributeChangedSignal("Skill_StaminaMaxMult"):Connect(function()
-	-- upvalues: (ref) v_u_33, (copy) v_u_21, (copy) v_u_60, (copy) v_u_32
-	v_u_33 = v_u_33
-	local v63 = v_u_33
-	v_u_21:set(string.format("%d", (math.ceil(v63))))
-	v_u_60:SetPercentage(v_u_33 / (100 * (v_u_32:GetAttribute("Skill_StaminaMaxMult") or 1)))
+local function flashWheel() -- Line: 108 -- upvalues: u166 (val)
+    u166:Play()
+end
+local function setPercentage(p1) -- Line: 112 -- upvalues: peek (val), u54 (val), u66 (val), u70 (val), u98 (val), u102 (val), u166 (val)
+    local v1 = math.clamp(p1, 0, 1)
+    local v2 = peek(u54)
+    if v1 >= v2 then
+        if v2 < v1 then
+            if v1 == 1 then
+                u166:Play()
+            end
+            if peek(u66) then
+                u66:set(false)
+                u98:set(1)
+                u102:set(1)
+            end
+        end
+    elseif not (peek(u66)) then
+        u66:set(true)
+        u70:set((1 - v2) * 360)
+        u98:set(0)
+        u102:set(0)
+    end
+    u54:set(v1)
+end
+local function updateMobilePlacement() -- Line: 138 -- upvalues: u38 (val), u62 (val), u131 (ref), LocalPlayer (val), u94 (val)
+    if u38.getInputMethod() ~= "Touch" then
+        u62:set(false)
+        return
+    end
+    u62:set(true)
+    if not u131 then
+        local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+        if PlayerGui then
+            u131 = PlayerGui:FindFirstChild("AmmoUI")
+        end
+    end
+    if not u131 then
+        return
+    end
+    local Ammo = u131:FindFirstChild("Ammo")
+    if not Ammo then
+        return
+    end
+    u94:set(Ammo.AbsoluteSize.X)
+end
+local u181 = {IsShowing = true, PlacementChanged = v2.new()}
+function u181.Show(p1) -- Line: 165 -- upvalues: u114 (val), u181 (val)
+    u114:set(true)
+    u181.IsShowing = true
+end
+function u181.Hide(p1) -- Line: 170 -- upvalues: u114 (val), u181 (val)
+    u114:set(false)
+    u181.IsShowing = false
+end
+function u181.SetPercentage(p1, p2) -- Line: 175 -- upvalues: setPercentage (val)
+    setPercentage(p2)
+end
+function u181.SetPlacement(p1, p2) -- Line: 179 -- upvalues: peek (val), u58 (val), u181 (val)
+    local v1
+    if not p2 then
+        v1 = "side"
+    else
+        v1 = "center"
+    end
+    local v2 = peek(u58)
+    u58:set(v1)
+    if v1 ~= v2 then
+        u181.PlacementChanged:Fire(v1)
+    end
+end
+function u181.GetPlacement(p1) -- Line: 188 -- upvalues: peek (val), u58 (val)
+    return peek(u58)
+end
+function u181.GetMainFrame(p1) -- Line: 192 -- upvalues: mainFrame (val)
+    return mainFrame
+end
+function u181.SetCustomPosition(p1, p2) -- Line: 196 -- upvalues: u118 (val)
+    u118:set(p2)
+end
+function u181.SetDynamicStaminaEnabled(p1, p2) -- Line: 200 -- upvalues: u122 (val)
+    u122:set(p2)
+end
+function u181.SetUIScale(p1, p2) -- Line: 204 -- upvalues: u126 (val)
+    u126:set(p2)
+end
+function u181.MobileActivated(p1) -- Line: 208 -- upvalues: u62 (val), u181 (val), peek (val), u58 (val)
+    u62:set(true)
+    local v1 = peek(u58) == "center"
+    u181:SetPlacement(v1)
+end
+function u181.MobileDeactivated(p1) -- Line: 213 -- upvalues: u62 (val)
+    u62:set(false)
+end
+function u181.ChargeReady(p1) -- Line: 217 -- upvalues: Sound (val), u74 (val)
+    Sound:Play()
+    u74:set(true)
+end
+function u181.ChargeNotReady(p1) -- Line: 222 -- upvalues: u74 (val)
+    u74:set(false)
+end
+function u181.FlashRequired(p1, p2) -- Line: 226 -- upvalues: u130 (ref), u82 (val), u78 (val), u106 (val), u110 (val)
+    if u130 < os.clock() then
+        u130 = os.clock() + 3
+        u82:set(p2)
+        u78:set(true)
+        u106:set(1)
+        u110:set(1)
+        task.delay(0.01, function() -- Line: 236 -- upvalues: u106 (upval), u110 (upval)
+            u106:set(0)
+            u110:set(0)
+        end)
+        task.delay(0.5, function() -- Line: 242 -- upvalues: u106 (upval), u110 (upval), u78 (upval)
+            u106:set(1)
+            u110:set(1)
+            task.delay(0.25, function() -- Line: 245 -- upvalues: u106 (upval), u110 (upval), u78 (upval)
+                u106:set(0)
+                u110:set(0)
+                task.delay(0.5, function() -- Line: 248 -- upvalues: u106 (upval), u110 (upval), u78 (upval)
+                    u106:set(1)
+                    u110:set(1)
+                    task.delay(0.25, function() -- Line: 251 -- upvalues: u78 (upval)
+                        u78:set(false)
+                    end)
+                end)
+            end)
+        end)
+    end
+end
+LocalPlayerController.StaminaChanged:Connect(function(p1) -- Line: 261 -- upvalues: LocalPlayer (val), u181 (val), u128 (ref), u86 (val)
+    local v1 = 100 * (LocalPlayer:GetAttribute("Skill_StaminaMaxMult") or 1)
+    u181:SetPercentage(p1 / v1)
+    local v2 = p1
+    if not v2 then
+        v2 = u128
+    end
+    u128 = v2
+    u86:set(string.format("%d", (math.ceil(u128))))
 end)
-v_u_8.InputMethodChanged:Connect(function(_)
-	-- upvalues: (copy) v_u_51
-	v_u_51()
+local AttributeChangedSignal = LocalPlayer:GetAttributeChangedSignal("Skill_StaminaMaxMult")
+AttributeChangedSignal:Connect(function() -- Line: 267 -- upvalues: u128 (ref), u86 (val), u181 (val), LocalPlayer (val)
+    u128 = u128
+    u86:set(string.format("%d", (math.ceil(u128))))
+    u181:SetPercentage(u128 / (100 * (LocalPlayer:GetAttribute("Skill_StaminaMaxMult") or 1)))
 end)
-local v_u_64 = v9:GetGuiList()
-v_u_64:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-	-- upvalues: (copy) v_u_6, (copy) v_u_15, (copy) v_u_22, (copy) v_u_64
-	if v_u_6(v_u_15) then
-		v_u_22:set(v_u_64.AbsoluteSize.Y)
-	end
+u38.InputMethodChanged:Connect(function(p1) -- Line: 272 -- upvalues: updateMobilePlacement (val)
+    updateMobilePlacement()
 end)
-v_u_33 = v_u_33
-local v65 = v_u_33
-v_u_21:set(string.format("%d", (math.ceil(v65))))
-v_u_51()
-task.spawn(function()
-	-- upvalues: (copy) v_u_32, (ref) v_u_35, (copy) v_u_6, (copy) v_u_15, (copy) v_u_23
-	local v66 = v_u_32:WaitForChild("PlayerGui"):WaitForChild("AmmoUI", 10)
-	if v66 then
-		v_u_35 = v66
-		local v_u_67 = v66:FindFirstChild("Ammo")
-		if v_u_67 then
-			if v_u_6(v_u_15) then
-				v_u_23:set(v_u_67.AbsoluteSize.X)
-			end
-			v_u_67:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-				-- upvalues: (ref) v_u_6, (ref) v_u_15, (ref) v_u_23, (copy) v_u_67
-				if v_u_6(v_u_15) then
-					v_u_23:set(v_u_67.AbsoluteSize.X)
-				end
-			end)
-		end
-	end
+local GuiList = v1:GetGuiList()
+local PropertyChangedSignal = GuiList:GetPropertyChangedSignal("AbsoluteSize")
+PropertyChangedSignal:Connect(function() -- Line: 278 -- upvalues: peek (val), u62 (val), u90 (val), GuiList (val)
+    if peek(u62) then
+        u90:set(GuiList.AbsoluteSize.Y)
+    end
 end)
-return v_u_60
+u128 = u128 or u128
+u86:set(string.format("%d", (math.ceil(u128))))
+updateMobilePlacement()
+task.spawn(function() -- Line: 289 -- upvalues: LocalPlayer (val), u131 (ref), peek (val), u62 (val), u94 (val)
+    local AmmoUI = LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("AmmoUI", 10)
+    if AmmoUI then
+        u131 = AmmoUI
+        local Ammo = AmmoUI:FindFirstChild("Ammo")
+        if Ammo then
+            if peek(u62) then
+                u94:set(Ammo.AbsoluteSize.X)
+            end
+            local PropertyChangedSignal = Ammo:GetPropertyChangedSignal("AbsoluteSize")
+            PropertyChangedSignal:Connect(function() -- Line: 301 -- upvalues: peek (upval), u62 (upval), u94 (upval), Ammo (val)
+                if peek(u62) then
+                    u94:set(Ammo.AbsoluteSize.X)
+                end
+            end)
+        end
+    end
+end)
+return u181

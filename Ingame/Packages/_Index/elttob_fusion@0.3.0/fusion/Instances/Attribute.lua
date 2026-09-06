@@ -1,33 +1,29 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Memory.checkLifetime)
-local v_u_3 = require(v1.Graph.Observer)
-local v_u_4 = require(v1.State.castToState)
-local v_u_5 = require(v1.State.peek)
-local v_u_6 = {}
-return function(p_u_7) -- name: Attribute
-	-- upvalues: (copy) v_u_6, (copy) v_u_4, (copy) v_u_2, (copy) v_u_3, (copy) v_u_5
-	local v8 = v_u_6[p_u_7]
-	if v8 == nil then
-		v8 = {
-			["type"] = "SpecialKey",
-			["kind"] = "Attribute",
-			["stage"] = "self",
-			["apply"] = nil,
-			["apply"] = function(_, p9, p_u_10, p_u_11) -- name: apply
-				-- upvalues: (ref) v_u_4, (ref) v_u_2, (copy) p_u_7, (ref) v_u_3, (ref) v_u_5
-				if v_u_4(p_u_10) then
-					v_u_2.bOutlivesA(p9, p_u_11, p_u_10.scope, p_u_10.oldestTask, v_u_2.formatters.boundAttribute, p_u_7)
-					v_u_3(p9, p_u_10):onBind(function()
-						-- upvalues: (copy) p_u_11, (ref) p_u_7, (ref) v_u_5, (copy) p_u_10
-						p_u_11:SetAttribute(p_u_7, v_u_5(p_u_10))
-					end)
-				else
-					p_u_11:SetAttribute(p_u_7, p_u_10)
-				end
-			end
-		}
-		v_u_6[p_u_7] = v8
-	end
-	return v8
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local checkLifetime = require(Parent.Memory.checkLifetime)
+local Observer = require(Parent.Graph.Observer)
+local castToState = require(Parent.State.castToState)
+local peek = require(Parent.State.peek)
+local u22 = {}
+return function(p1) -- Line: 23 -- upvalues: u22 (val), castToState (val), checkLifetime (val), Observer (val), peek (val)
+    local v1 = u22[p1]
+    if v1 == nil then
+        u22[p1] = {
+            type = "SpecialKey",
+            kind = "Attribute",
+            stage = "self",
+            apply = function(a1, p2, p3, p4) -- Line: 32 -- upvalues: castToState (upval), checkLifetime (upval), p1 (val), Observer (upval), peek (upval)
+                if not (castToState(p3)) then
+                    p4:SetAttribute(p1, p3)
+                    return
+                end
+                checkLifetime.bOutlivesA(p2, p4, p3.scope, p3.oldestTask, checkLifetime.formatters.boundAttribute, p1)
+                local v1 = Observer(p2, p3)
+                v1:onBind(function() -- Line: 45 -- upvalues: p4 (val), p1 (upval), peek (upval), p3 (val)
+                    p4:SetAttribute(p1, peek(p3))
+                end)
+            end,
+        }
+    end
+    return v1
 end

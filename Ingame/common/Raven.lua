@@ -1,275 +1,302 @@
-local v_u_1 = game:GetService("HttpService")
-local v_u_2 = {
-	0,
-	1,
-	2,
-	3,
-	4,
-	5,
-	6,
-	7,
-	8,
-	9,
-	"a",
-	"b",
-	"c",
-	"d",
-	"e",
-	"f"
+local v1
+local HttpService = game:GetService("HttpService")
+local u6 = {
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
 }
-local v_u_3 = Random.new()
-local function v_u_6(p4) -- name: RandomHex
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	local v5 = ""
-	for _ = 1, p4 do
-		v5 = v5 .. v_u_2[v_u_3:NextInteger(1, 16)]
-	end
-	return v5
+local u24 = Random.new()
+local function RandomHex(p1) -- Line: 150 -- upvalues: u6 (val), u24 (val)
+    local v1 = ""
+    local v2 = p1
+    local v3 = 1
+    for i = 1, v2, v3 do
+        v1 = v1 .. u6[u24:NextInteger(1, 16)]
+    end
+    return v1
 end
-local function v_u_7()
-	-- upvalues: (copy) v_u_6, (copy) v_u_2, (copy) v_u_3
-	return string.format("%s4%s8%s%s", v_u_6(12), (("" .. v_u_2[v_u_3:NextInteger(1, 16)]) .. v_u_2[v_u_3:NextInteger(1, 16)]) .. v_u_2[v_u_3:NextInteger(1, 16)], (("" .. v_u_2[v_u_3:NextInteger(1, 16)]) .. v_u_2[v_u_3:NextInteger(1, 16)]) .. v_u_2[v_u_3:NextInteger(1, 16)], (v_u_6(12)))
+local function u26() -- Line: 158 -- upvalues: RandomHex (val), u6 (val), u24 (val)
+    local v1 = RandomHex(12)
+    local v2 = (("" .. u6[u24:NextInteger(1, 16)]) .. u6[u24:NextInteger(1, 16)]) .. u6[u24:NextInteger(1, 16)]
+    local v3 = (("" .. u6[u24:NextInteger(1, 16)]) .. u6[u24:NextInteger(1, 16)]) .. u6[u24:NextInteger(1, 16)]
+    return string.format("%s4%s8%s%s", v1, v2, v3, (RandomHex(12)))
 end
-local function v_u_20(p8, p9, p10) -- name: TrySend
-	-- upvalues: (copy) v_u_1
-	if p8.enabled then
-		local v11, v12 = pcall(v_u_1.JSONEncode, v_u_1, p9)
-		if v11 then
-			local v13, v14 = pcall(v_u_1.PostAsync, v_u_1, p8.requestUrl, v12, Enum.HttpContentType.ApplicationJson, true, p10)
-			if v13 then
-				local v15, v16 = pcall(v_u_1.JSONDecode, v_u_1, v14)
-				if v15 then
-					return true, v16
-				else
-					return false, v16
-				end
-			else
-				local v17 = tonumber(v14:match("^HTTP (%d+)"))
-				if v17 then
-					if v17 >= 400 and v17 < 500 then
-						warn(("Raven: HTTP %d in TrySend, JSON packet:"):format(v17))
-						warn(v12)
-						warn("Headers:")
-						for v18, v19 in pairs(p10) do
-							warn(v18 .. " " .. v19)
-						end
-						warn("Response:")
-						warn(v14)
-						if v17 == 401 then
-							warn("Please check the validity of your DSN.")
-						end
-					elseif v17 == 429 then
-						warn("Raven: HTTP 429 Retry-After in TrySend, disabling SDK for this server.")
-						p8.enabled = false
-					end
-				end
-				return false, v14
-			end
-		else
-			return false, v12
-		end
-	else
-		return false, "SDK disabled."
-	end
+local function GetTimestamp() -- Line: 163
+    local v1 = os.date("!*t")
+    return ("%04d-%02d-%02dT%02d:%02d:%02d"):format(v1.year, v1.month, v1.day, v1.hour, v1.min, v1.sec)
 end
-local function v_u_36(p21, p22, p23) -- name: SendEvent
-	-- upvalues: (ref) v_u_7, (copy) v_u_20
-	local v24 = type(p22) == "table"
-	assert(v24)
-	local v25 = os.date("!*t")
-	local v26 = ("%04d-%02d-%02dT%02d:%02d:%02d"):format(v25.year, v25.month, v25.day, v25.hour, v25.min, v25.sec)
-	p22.event_id = v_u_7()
-	p22.timestamp = v26
-	p22.logger = "server"
-	p22.platform = "other"
-	p22.sdk = {
-		["name"] = "raven-rbxlua",
-		["version"] = "1.0"
-	}
-	for v27, v28 in pairs(p21.config) do
-		p22[v27] = v28
-	end
-	for v29, v30 in pairs(p23) do
-		if v29 == "tags" then
-			local v31 = p22[v29]
-			if type(v31) ~= "table" then
-				goto l10
-			end
-			for v32, v33 in pairs(v30) do
-				p22[v29][v32] = v33
-			end
-		else
-			::l10::
-			p22[v29] = v30
-		end
-	end
-	local v34, v35 = v_u_20(p21, p22, {
-		["Authorization"] = p21.authHeader:format(v26)
-	})
-	return v34, v35
+local function TrySend(p1, p2, p3) -- Line: 168 -- upvalues: HttpService (val)
+    local v1, v2, v3, v4, v5
+    if not p1.enabled then
+        return false, "SDK disabled."
+    end
+    v1, v2 = pcall(HttpService.JSONEncode, HttpService, p2)
+    if not v1 then
+        return false, v2
+    end
+    v3, v4 = pcall(HttpService.PostAsync, HttpService, p1.requestUrl, v2, Enum.HttpContentType.ApplicationJson, true, p3)
+    if v3 then
+        local v6
+        v5, v6 = pcall(HttpService.JSONDecode, HttpService, v4)
+        if v5 then
+            return true, v6
+        end
+        return false, v6
+    end
+    v5 = tonumber(v4:match("^HTTP (%d+)"))
+    if v5 then
+        if 400 > v5 then
+            if v5 == 429 then
+                warn("Raven: HTTP 429 Retry-After in TrySend, disabling SDK for this server.")
+                p1.enabled = false
+            end
+        elseif v5 < 500 then
+            warn(("Raven: HTTP %d in TrySend, JSON packet:"):format(v5))
+            warn(v2)
+            warn("Headers:")
+            for k, v in pairs(p3) do
+                warn(k .. " " .. v)
+            end
+            warn("Response:")
+            warn(v4)
+            if v5 == 401 then
+                warn("Please check the validity of your DSN.")
+            end
+        elseif v5 == 429 then
+            warn("Raven: HTTP 429 Retry-After in TrySend, disabling SDK for this server.")
+            p1.enabled = false
+        end
+    end
+    return false, v4
 end
-local function v_u_45(p37) -- name: StringTraceToTable
-	local v38 = {}
-	for v39 in p37:gmatch("[^\n\r]+") do
-		if not (v39:match("^Stack Begin$") or v39:match("^Stack End$")) then
-			local v40, v41, v42 = v39:match("^Script \'(.-)\', Line (%d+)%s?%-?%s?(.*)$")
-			if not (v40 and (v41 and v42)) then
-				return false, "invalid traceback"
-			end
-			v38[#v38 + 1] = {
-				["filename"] = v40,
-				["function"] = v42 or "nil",
-				["lineno"] = v41
-			}
-		end
-	end
-	if #v38 == 0 then
-		return false, "invalid traceback"
-	end
-	local v43 = {}
-	for v44 = #v38, 1, -1 do
-		v43[v44] = v38[v44]
-	end
-	return true, v43
+local function SendEvent(p1, p2, p3) -- Line: 220 -- upvalues: u26 (ref), TrySend (val)
+    local v1, v2, v3, v4
+    local v5 = type(p2) == "table"
+    assert(v5)
+    v5 = os.date("!*t")
+    local v6 = ("%04d-%02d-%02dT%02d:%02d:%02d"):format(v5.year, v5.month, v5.day, v5.hour, v5.min, v5.sec)
+    p2.event_id = u26()
+    p2.timestamp = v6
+    p2.logger = "server"
+    p2.platform = "other"
+    p2.sdk = {name = "raven-rbxlua", version = "1.0"}
+    for k, v in pairs(p1.config) do
+        p2[k] = v
+    end
+    v1, v2 = p1, p2
+    for k2, i in pairs(p3) do
+        if k2 ~= "tags" then
+            v2[k2] = i
+        elseif type(v2[k2]) == "table" then
+            for k3, j in pairs(i) do
+                v2[k2][k3] = j
+            end
+        end
+    end
+    v3, v4 = TrySend(v1, v2, {Authorization = v1.authHeader:format(v6)})
+    return v3, v4
 end
-local v_u_72 = {
-	["EventLevel"] = {
-		["Fatal"] = "fatal",
-		["Error"] = "error",
-		["Warning"] = "warning",
-		["Info"] = "info",
-		["Debug"] = "debug"
-	},
-	["ExceptionType"] = {
-		["Server"] = "ServerError",
-		["Client"] = "ClientError"
-	},
-	["Client"] = function(p46, p47, p48) -- name: Client
-		local v49 = {
-			["DSN"] = p47
-		}
-		local v50, v51, v52, v53, v54, v55 = p47:match("^([^:]+)://([^:]+):([^@]+)@([^/]+)(.*/)(.+)$")
-		local v56
-		if v50 then
-			v56 = v50:lower():match("^https?$")
-		else
-			v56 = v50
-		end
-		assert(v56, "invalid DSN: protocol not valid")
-		assert(v51, "invalid DSN: public key not valid")
-		assert(v52, "invalid DSN: secret key not valid")
-		assert(v53, "invalid DSN: host not valid")
-		assert(v54, "invalid DSN: path not valid")
-		assert(v55, "invalid DSN: project ID not valid")
-		v49.requestUrl = ("%s://%s%sapi/%d/store/"):format(v50, v53, v54, v55)
-		v49.authHeader = ("Sentry sentry_version=%d,sentry_timestamp=%s,sentry_key=%s,sentry_secret=%s,sentry_client=%s"):format("7", "%s", v51, v52, ("%s/%s"):format("raven-rbxlua", "1.0"))
-		v49.config = p48 or {}
-		v49.enabled = true
-		return setmetatable(v49, {
-			["__index"] = p46
-		})
-	end,
-	["SendMessage"] = function(p57, p58, p59, p60) -- name: SendMessage
-		-- upvalues: (copy) v_u_36
-		return v_u_36(p57, {
-			["level"] = p59 or p57.EventLevel.Info,
-			["message"] = p58
-		}, p60 or {})
-	end,
-	["SendException"] = function(p61, p62, p63, p64, p65) -- name: SendException
-		-- upvalues: (copy) v_u_45, (copy) v_u_72, (copy) v_u_36
-		local v66 = type(p62) == "string"
-		assert(v66, "invalid exception type")
-		local v67 = p65 or {}
-		local v68 = {
-			["type"] = p62,
-			["value"] = p63
-		}
-		local v69 = nil
-		if type(p64) == "string" then
-			local v70, v71 = v_u_45(p64)
-			if v70 then
-				v68.stacktrace = {
-					["frames"] = v71
-				}
-				v69 = v71[#v71].filename
-			else
-				warn(("Raven: Failed to convert string traceback to stacktrace: %s"):format(v71))
-				warn(p64)
-			end
-		elseif type(p64) == "table" then
-			v68.stacktrace = {
-				["frames"] = p64
-			}
-			v69 = p64[#p64].filename
-		end
-		return v_u_36(p61, {
-			["level"] = v_u_72.EventLevel.Error,
-			["exception"] = { v68 },
-			["culprit"] = v69
-		}, v67)
-	end
+local function StringTraceToTable(p1) -- Line: 256
+    local v1, v2, v3, v4, v5
+    local v6 = {}
+    for i in p1:gmatch("[^\n\r]+") do
+        if not (i:match("^Stack Begin$")) and not (i:match("^Stack End$")) then
+            v3, v4, v5 = i:match("^Script '(.-)', Line (%d+)%s?%-?%s?(.*)$")
+            if v3 and v4 and v5 then
+                v1 = #v6 + 1
+                v2 = {filename = v3}
+                v2["function"] = v5 or "nil"
+                v2.lineno = v4
+                v6[v1] = v2
+                continue
+            end
+            return false, "invalid traceback"
+        end
+    end
+    if #v6 == 0 then
+        return false, "invalid traceback"
+    end
+    local v7 = {}
+    local v8 = 1
+    local v9 = -1
+    for j = #v6, v8, v9 do
+        v7[j] = v6[j]
+    end
+    return true, v7
+end
+local u31 = {
+    EventLevel = {
+        Fatal = "fatal",
+        Error = "error",
+        Warning = "warning",
+        Info = "info",
+        Debug = "debug",
+    },
 }
-local function v_u_80(p73, p74, p75) -- name: ScrubData
-	-- upvalues: (copy) v_u_45
-	local v76 = p74:gsub(p73, "<Player>")
-	local v77, v78
-	if p75 == nil then
-		v77 = true
-		v78 = nil
-	else
-		v77, v78 = v_u_45(p75)
-		if v77 then
-			for _, v79 in pairs(v78) do
-				v79.filename = v79.filename:gsub(p73, "<Player>")
-			end
-		end
-	end
-	if v77 and v76 ~= "" then
-		return true, v76, v78
-	else
-		return false, "invalid exception"
-	end
+v1 = {Server = "ServerError", Client = "ClientError"}
+u31.ExceptionType = v1
+function u31.Client(p1, p2, p3) -- Line: 301
+    local v1, v2, v3, v4, v5, v6
+    local v7 = {DSN = p2}
+    v1, v2, v3, v4, v5, v6 = p2:match("^([^:]+)://([^:]+):([^@]+)@([^/]+)(.*/)(.+)$")
+    local v8 = v1
+    if v8 then
+        v8 = v1:lower():match("^https?$")
+    end
+    assert(v8, "invalid DSN: protocol not valid")
+    assert(v2, "invalid DSN: public key not valid")
+    assert(v3, "invalid DSN: secret key not valid")
+    assert(v4, "invalid DSN: host not valid")
+    assert(v5, "invalid DSN: path not valid")
+    assert(v6, "invalid DSN: project ID not valid")
+    v7.requestUrl = ("%s://%s%sapi/%d/store/"):format(v1, v4, v5, v6)
+    v7.authHeader = ("Sentry sentry_version=%d,sentry_timestamp=%s,sentry_key=%s,sentry_secret=%s,sentry_client=%s"):format("7", "%s", v2, v3, ("%s/%s"):format("raven-rbxlua", "1.0"))
+    local v9 = p3
+    if not v9 then
+        v9 = {}
+    end
+    v7.config = v9
+    v7.enabled = true
+    local v10 = {__index = p1}
+    return (setmetatable(v7, v10))
 end
-local v_u_81 = setmetatable({}, {
-	["__mode"] = "k"
-})
-function v_u_72.ConnectRemoteEvent(p_u_82, p83) -- name: ConnectRemoteEvent
-	-- upvalues: (copy) v_u_81, (copy) v_u_80, (copy) v_u_72
-	local v84
-	if typeof(p83) == "Instance" then
-		v84 = p83.ClassName == "RemoteEvent"
-	else
-		v84 = false
-	end
-	assert(v84, "ConnectRemoteEvent did not receive RemoteEvent instance")
-	p83.OnServerEvent:Connect(function(p85, p86, p87)
-		-- upvalues: (ref) v_u_81, (ref) v_u_80, (copy) p_u_82, (ref) v_u_72
-		local v88 = v_u_81[p85] or 5
-		if v88 > 0 then
-			if type(p86) == "string" and (type(p87) == "string" or p87 == nil) then
-				local v89, v90, v91 = v_u_80(p85.Name, p86, p87)
-				if v89 then
-					v88 = v88 - 1
-					p_u_82:SendException(v_u_72.ExceptionType.Client, v90, v91)
-				else
-					warn(("Raven: Player \'%s\' tried to send spoofed data, their ability to report errors has been disabled."):format(p85.Name))
-					warn("errorMessage:")
-					warn(p86)
-					warn("traceback:")
-					warn(p87)
-					v88 = 0
-				end
-			else
-				warn(("Raven: Player \'%s\' tried to send spoofed data, their ability to report errors has been disabled."):format(p85.Name))
-				warn("errorMessage:")
-				warn(p86)
-				warn("traceback:")
-				warn(p87)
-				v88 = 0
-			end
-		end
-		v_u_81[p85] = v88
-	end)
+function u31.SendMessage(p1, p2, p3, p4) -- Line: 335 -- upvalues: SendEvent (val)
+    local v1 = p4
+    if not v1 then
+        v1 = {}
+    end
+    v1 = {}
+    local Info = p3
+    if not Info then
+        Info = p1.EventLevel.Info
+    end
+    v1.level = Info
+    v1.message = p2
+    return SendEvent(p1, v1, v1)
 end
-return v_u_72
+function u31.SendException(p1, p2, p3, p4, p5) -- Line: 346 -- upvalues: StringTraceToTable (val), u31 (val), SendEvent (val)
+    local v1 = type(p2) == "string"
+    assert(v1, "invalid exception type")
+    local v2 = p5
+    if not v2 then
+        v2 = {}
+    end
+    v2 = {type = p2, value = p3}
+    local filename = nil
+    if type(p4) == "string" then
+        local v3, v4
+        v3, v4 = StringTraceToTable(p4)
+        if not v3 then
+            warn(("Raven: Failed to convert string traceback to stacktrace: %s"):format(v4))
+            warn(p4)
+        else
+            v2.stacktrace = {frames = v4}
+            filename = v4[#v4].filename
+        end
+    elseif type(p4) == "table" then
+        v2.stacktrace = {frames = p4}
+        filename = p4[#p4].filename
+    end
+    return SendEvent(p1, {
+        level = u31.EventLevel.Error,
+        exception = {v2},
+        culprit = filename,
+    }, v2)
+end
+local function ScrubData(p1, p2, p3) -- Line: 382 -- upvalues: StringTraceToTable (val)
+    local v1
+    local v2 = p2:gsub(p1, "<Player>")
+    local v3 = nil
+    if p3 == nil then
+        v1 = true
+    else
+        local v4, v5
+        v4, v5 = StringTraceToTable(p3)
+        v1 = v4
+        v3 = v5
+        if v1 then
+            for k, v in pairs(v3) do
+                v.filename = v.filename:gsub(p1, "<Player>")
+            end
+        end
+    end
+    if not v1 then
+        return false, "invalid exception"
+    end
+    if v2 ~= "" then
+        return true, v2, v3
+    end
+    return false, "invalid exception"
+end
+local u41 = setmetatable({}, {__mode = "k"})
+function u31.ConnectRemoteEvent(p1, p2) -- Line: 405 -- upvalues: u41 (val), ScrubData (val), u31 (val)
+    local v1 = if typeof(p2) == "Instance" then p2.ClassName == "RemoteEvent" else false
+    assert(v1, "ConnectRemoteEvent did not receive RemoteEvent instance")
+    p2.OnServerEvent:Connect(function(a1, p2, p3) -- Line: 408 -- upvalues: u41 (upval), ScrubData (upval), p1 (val), u31 (upval)
+        local v1 = u41[a1]
+        if not v1 then
+            v1 = 5
+        end
+        if 0 < v1 then
+            if type(p2) ~= "string" then
+                warn(("Raven: Player '%s' tried to send spoofed data, their ability to report errors has been disabled."):format(a1.Name))
+                warn("errorMessage:")
+                warn(p2)
+                warn("traceback:")
+                warn(p3)
+                v1 = 0
+            else
+                local v2, v3, v4
+                if type(p3) == "string" then
+                    v2, v3, v4 = ScrubData(a1.Name, p2, p3)
+                    if not v2 then
+                        warn(("Raven: Player '%s' tried to send spoofed data, their ability to report errors has been disabled."):format(a1.Name))
+                        warn("errorMessage:")
+                        warn(p2)
+                        warn("traceback:")
+                        warn(p3)
+                        v1 = 0
+                    else
+                        v1 = v1 - 1
+                        p1:SendException(u31.ExceptionType.Client, v3, v4)
+                    end
+                elseif p3 ~= nil then
+                    warn(("Raven: Player '%s' tried to send spoofed data, their ability to report errors has been disabled."):format(a1.Name))
+                    warn("errorMessage:")
+                    warn(p2)
+                    warn("traceback:")
+                    warn(p3)
+                    v1 = 0
+                else
+                    v2, v3, v4 = ScrubData(a1.Name, p2, p3)
+                    if not v2 then
+                        warn(("Raven: Player '%s' tried to send spoofed data, their ability to report errors has been disabled."):format(a1.Name))
+                        warn("errorMessage:")
+                        warn(p2)
+                        warn("traceback:")
+                        warn(p3)
+                        v1 = 0
+                    else
+                        v1 = v1 - 1
+                        p1:SendException(u31.ExceptionType.Client, v3, v4)
+                    end
+                end
+            end
+        end
+        u41[a1] = v1
+    end)
+end
+return u31

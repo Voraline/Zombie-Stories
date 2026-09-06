@@ -1,354 +1,391 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("TweenService")
-local v_u_3 = game:GetService("Debris")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
 game:GetService("CollectionService")
-local v4 = v1.common
-local v5 = workspace:WaitForChild("Ignore")
-local v_u_6 = workspace:WaitForChild("Terrain")
-local v7 = script:WaitForChild("Resources")
-local v_u_8 = v7:WaitForChild("Beam")
-local v9 = v7:WaitForChild("ImpactPart")
-local v_u_10 = require("@self/BloodVFX")
-local v_u_11 = workspace.CurrentCamera
-local v_u_12 = {
-	[Enum.Material.Asphalt] = true,
-	[Enum.Material.Basalt] = true,
-	[Enum.Material.Brick] = true,
-	[Enum.Material.Cobblestone] = true,
-	[Enum.Material.CrackedLava] = true,
-	[Enum.Material.Glacier] = true,
-	[Enum.Material.Grass] = true,
-	[Enum.Material.Ground] = true,
-	[Enum.Material.Ice] = true,
-	[Enum.Material.LeafyGrass] = true,
-	[Enum.Material.Limestone] = true,
-	[Enum.Material.Mud] = true,
-	[Enum.Material.Pavement] = true,
-	[Enum.Material.Rock] = true,
-	[Enum.Material.Salt] = true,
-	[Enum.Material.Sand] = true,
-	[Enum.Material.Sandstone] = true,
-	[Enum.Material.Slate] = true,
-	[Enum.Material.Snow] = true,
-	[Enum.Material.WoodPlanks] = true
-}
-local v13 = require(v4:WaitForChild("PartCache"))
-local v_u_14 = require(v4.Settings)
-local v_u_15 = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
-local v_u_16 = require(game.ReplicatedStorage.common:WaitForChild("NPCs_Shared"):WaitForChild("Utils"):WaitForChild("ClassMirror"))
-local v_u_17 = require("@game/ReplicatedStorage/common/NPCs_Shared/Utils/Encoder_Util")
-local v_u_18 = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-local v_u_19 = v13.new(v9, 50, v5)
-local v_u_20 = v_u_15(v_u_14.Graphics.ParticleQuality)
-local v_u_21 = {}
-local function v_u_31(p22, p23) -- name: isInView
-	-- upvalues: (copy) v_u_11
-	local v24 = v_u_11.CFrame.LookVector
-	local v25 = p22 - v_u_11.CFrame.Position
-	local v26 = v_u_11.FieldOfView + 2
-	local v27 = v25.Unit:Angle(v24)
-	local v28 = math.deg(v27)
-	if math.floor(v28) > v26 then
-		return false
-	end
-	if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart then
-		v25 = p22 - game.Players.LocalPlayer.Character.PrimaryPart.Position or v25
-	end
-	local v29 = v25.X
-	local v30 = v25.Z
-	return Vector3.new(v29, 0, v30).Magnitude <= p23
+local common = ReplicatedStorage.common
+local Ignore = workspace:WaitForChild("Ignore")
+local Terrain = workspace:WaitForChild("Terrain")
+local Resources = script:WaitForChild("Resources")
+local Beam = Resources:WaitForChild("Beam")
+local ImpactPart = Resources:WaitForChild("ImpactPart")
+local u46 = require("@self/BloodVFX")
+local CurrentCamera = workspace.CurrentCamera
+local u49 = {}
+u49[Enum.Material.Asphalt] = true
+u49[Enum.Material.Basalt] = true
+u49[Enum.Material.Brick] = true
+u49[Enum.Material.Cobblestone] = true
+u49[Enum.Material.CrackedLava] = true
+u49[Enum.Material.Glacier] = true
+u49[Enum.Material.Grass] = true
+u49[Enum.Material.Ground] = true
+u49[Enum.Material.Ice] = true
+u49[Enum.Material.LeafyGrass] = true
+u49[Enum.Material.Limestone] = true
+u49[Enum.Material.Mud] = true
+u49[Enum.Material.Pavement] = true
+u49[Enum.Material.Rock] = true
+u49[Enum.Material.Salt] = true
+u49[Enum.Material.Sand] = true
+u49[Enum.Material.Sandstone] = true
+u49[Enum.Material.Slate] = true
+u49[Enum.Material.Snow] = true
+u49[Enum.Material.WoodPlanks] = true
+local PartCache = require(common:WaitForChild("PartCache"))
+local Settings = require(common.Settings)
+local peek = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
+local NPCs_Shared = game.ReplicatedStorage.common:WaitForChild("NPCs_Shared")
+local Utils = NPCs_Shared:WaitForChild("Utils")
+local ClassMirror = require(Utils:WaitForChild("ClassMirror"))
+local u128 = require("@game/ReplicatedStorage/common/NPCs_Shared/Utils/Encoder_Util")
+local u133 = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+local u138 = PartCache.new(ImpactPart, 50, Ignore)
+local u142 = peek(Settings.Graphics.ParticleQuality)
+local u143 = {}
+local function isInView(p1, p2) -- Line: 58 -- upvalues: CurrentCamera (val)
+    local v1
+    local v2 = p1 - CurrentCamera.CFrame.Position
+    local v3 = CurrentCamera.FieldOfView + 2
+    if math.floor((math.deg((v2.Unit:Angle(CurrentCamera.CFrame.LookVector))))) > v3 then
+        return false
+    end
+    if not game.Players.LocalPlayer.Character then
+        v1 = v2
+    elseif not game.Players.LocalPlayer.Character.PrimaryPart then
+        v1 = v2
+    else
+        v1 = p1 - game.Players.LocalPlayer.Character.PrimaryPart.Position
+        if not v1 then
+            v1 = v2
+        end
+    end
+    v2 = v1
+    if Vector3.new(v2.X, 0, v2.Z).Magnitude <= p2 then
+        return true
+    end
+    return false
 end
-v_u_14.SettingsChanged:Connect(function()
-	-- upvalues: (ref) v_u_20, (copy) v_u_15, (copy) v_u_14
-	v_u_20 = v_u_15(v_u_14.Graphics.ParticleQuality)
+Settings.SettingsChanged:Connect(function() -- Line: 79 -- upvalues: u142 (ref), peek (val), Settings (val)
+    u142 = peek(Settings.Graphics.ParticleQuality)
 end)
-local v_u_86 = {
-	["BloodQueue"] = {},
-	["BulletTrail"] = function(_, p32, p33, p34) -- name: BulletTrail
-		-- upvalues: (copy) v_u_15, (copy) v_u_14, (copy) v_u_8, (copy) v_u_6
-		if v_u_15(v_u_14.Graphics.BulletTracers) then
-			local v35 = p32 or game.Players.LocalPlayer.Character.Head.FaceFrontAttachment
-			local v_u_36
-			if p34 then
-				if p34.CustomTrailVFX then
-					p34.CustomTrailVFX(v35, p33)
-					return
-				end
-				v_u_36 = v_u_8:Clone()
-				if p34.Properties then
-					for v37, v38 in p34.Properties do
-						v_u_36[v37] = v38
-					end
-				end
-			else
-				v_u_36 = v_u_8:Clone()
-			end
-			local v_u_39 = Instance.new("Attachment")
-			v_u_39.Parent = v_u_6
-			v_u_39.WorldPosition = p33
-			v_u_36.Attachment0 = v_u_39
-			v_u_36.Attachment1 = v35
-			v_u_36.Parent = v_u_6
-			task.delay(0.07, function()
-				-- upvalues: (ref) v_u_36, (copy) v_u_39
-				v_u_36:Destroy()
-				v_u_39:Destroy()
-			end)
-		end
-	end,
-	["BloodNPC"] = function(_, p40, p41, p42, p43) -- name: BloodNPC
-		-- upvalues: (copy) v_u_16, (ref) v_u_20, (copy) v_u_17, (copy) v_u_86
-		if not game:GetService("GuiService"):IsTenFootInterface() then
-			local v44 = v_u_16:GetObjFromId(p41)
-			if v44 then
-				if not (v44.UIDTable and v44.UIDTable[p42]) then
-					return
-				end
-				local v45 = v44.UIDTable[p42]
-				local v46 = Instance.new("Sound")
-				v46.SoundId = "rbxassetid://" .. (p40.HitSFX and (p40.HitSFX.ID or "358942915") or "358942915")
-				v46.PlaybackSpeed = (p40.HitSFX and (p40.HitSFX.PlaybackSpeed or 1) or 1) + math.random(-100, 100) * 0.002
-				if p40.HitSFX and p40.HitSFX.Volume then
-					v46.Volume = p40.HitSFX.Volume
-				elseif p40.IsShotgun then
-					v46.Volume = 1.5
-				else
-					v46.Volume = 1.5
-				end
-				if v45.Parent then
-					local v47
-					if v45.Name == "Head" then
-						v47 = v45.Parent.HumanoidRootPart or v45
-					else
-						v47 = v45
-					end
-					v46.Parent = v47
-					v46:Play()
-				end
-				if v_u_20 == 1 then
-					return
-				end
-				if p40.CustomHitVFX then
-					local v48
-					if p43 then
-						local v49, v50, v51 = v_u_17.DecodePositioningData(p43)
-						v48 = Vector3.new(v49, v50, v51)
-					else
-						v48 = nil
-					end
-					p40.CustomHitVFX(v45, v48)
-					return
-				end
-				local v52
-				if p43 then
-					local v53, v54, v55 = v_u_17.DecodePositioningData(p43)
-					v52 = Vector3.new(v53, v54, v55)
-				else
-					v52 = nil
-				end
-				local v56 = v_u_86.BloodQueue
-				table.insert(v56, { v45, v52 })
-			end
-		end
-	end,
-	["MakeImpact"] = function(_, p57, p58, p59, p60) -- name: MakeImpact
-		-- upvalues: (copy) v_u_15, (copy) v_u_14, (copy) v_u_19, (copy) v_u_12, (ref) v_u_20, (copy) v_u_31, (copy) v_u_21, (copy) v_u_2, (copy) v_u_18
-		if not p58 or (p58.Instance or p59) then
-			local v61 = nil
-			local v62, v63
-			if p58 then
-				v62 = p58.Instance
-				if not v62 then
-					return
-				end
-				v61 = p58.Instance.Material
-				local v64 = p58.Position
-				local v65 = p58.Normal
-				v63 = v62.CFrame:ToObjectSpace(CFrame.new(v64, v64 + v65))
-			else
-				v62 = p59.h
-				local v66 = p59.r
-				local v67 = p59.p
-				local v68 = p59.s
-				if not v62 then
-					return
-				end
-				local v69 = RaycastParams.new()
-				v69.FilterType = Enum.RaycastFilterType.Whitelist
-				v69.FilterDescendantsInstances = { v62 }
-				v69.IgnoreWater = true
-				if not (v66 or v67) then
-					v66 = Vector3.new()
-				end
-				if v66 then
-					v67 = v62.CFrame:ToWorldSpace(CFrame.new(v66)).Position
-				end
-				local v70 = workspace:Raycast(v68, (v67 - v68).Unit * 1000, v69)
-				if not (v70 and v70.Position) then
-					return
-				end
-				local v71 = v70.Position
-				local v72 = v70.Normal
-				v63 = v62.CFrame:ToObjectSpace(CFrame.new(v71, v71 + v72))
-			end
-			if not v_u_15(v_u_14.Graphics.BulletHoles) then
-				return v63
-			end
-			local v_u_73 = v_u_19:GetPart()
-			v_u_73.Size = Vector3.new(0.05, 0.05, 0.05)
-			v_u_73.Decal.Texture = "rbxassetid://64291961"
-			v_u_73.Decal.Transparency = 0
-			local v_u_74 = nil
-			if p60 then
-				v_u_73.Anchored = true
-				v_u_73.Decal.Transparency = 1
-				v_u_73.CFrame = v62.CFrame * v63
-			else
-				v_u_74 = Instance.new("Weld")
-				v_u_74.Part0 = v62
-				v_u_74.Part1 = v_u_73
-				v_u_74.C0 = v63
-				v_u_74.Parent = v_u_73
-				v_u_73.Anchored = false
-			end
-			local v75
-			if v62 == workspace.Terrain and (v61 and v_u_12[v61]) then
-				v75 = workspace.Terrain:GetMaterialColor(v61):Lerp(Color3.new(1, 1, 1), 0.5)
-			else
-				v75 = v62.Color:lerp(Color3.new(1, 1, 1), 0.5)
-			end
-			local v76 = v_u_73.Sound
-			if v62 and v62 ~= workspace.Terrain then
-				local v77 = v62.Material
-				if v77 == Enum.Material.Metal or (v77 == Enum.Material.Neon or (v77 == Enum.Material.CorrodedMetal or v77 == Enum.Material.DiamondPlate)) then
-					v76.SoundId = "rbxassetid://142082170"
-				elseif v77 == Enum.Material.Wood or v77 == Enum.Material.WoodPlanks then
-					v76.SoundId = "rbxassetid://142082171"
-				elseif v77 == Enum.Material.Grass or (v77 == Enum.Material.Sand or (v77 == Enum.Material.Pebble or (v77 == Enum.Material.Snow or v77 == Enum.Material.Ground))) then
-					v76.SoundId = "rbxassetid://4427231299"
-				else
-					v76.SoundId = "rbxassetid://142082166"
-				end
-			else
-				v76.SoundId = "rbxassetid://142082166"
-			end
-			local v78 = v62.Parent
-			local v79
-			if v78 then
-				v79 = v78.Parent
-			else
-				v79 = nil
-			end
-			local v80 = nil
-			local v81
-			if v78 then
-				v81 = v78:GetAttribute("ImpactSFX")
-				if not v81 and v79 then
-					v81 = v79:GetAttribute("ImpactSFX")
-				end
-				if not p57.isMelee then
-					v80 = v78:GetAttribute("ImpactTextureGun")
-					if not v80 and v79 then
-						v80 = v79:GetAttribute("ImpactTextureGun")
-					end
-				end
-			else
-				v81 = nil
-			end
-			if v81 then
-				v76.SoundId = v81
-			end
-			if v80 then
-				v_u_73.Decal.Texture = v80
-			end
-			if p57.IsMelee then
-				v_u_73.Decal.Transparency = 1
-			end
-			v76:Stop()
-			v76:Play()
-			v_u_73.Emitter1.Color = ColorSequence.new(v75:lerp(Color3.new(1, 1, 1), 0.5))
-			v_u_73.Emitter2.Color = ColorSequence.new(v75)
-			local v82 = v_u_20
-			local v83 = (game.Players.LocalPlayer:GetAttribute("ClientCPULoad") or 0) >= 25 and 1 or v82
-			if v_u_31(v_u_73.Position, 150) then
-				local v84 = 0
-				if v83 == 4 then
-					v84 = math.random(10, 20)
-					v_u_73.Emitter2:Emit(v84)
-				elseif v83 == 3 then
-					v84 = 3
-					v_u_73.Emitter2:Emit(v84)
-				elseif v83 == 2 then
-					v_u_73.Emitter2:Emit(1)
-					v84 = 3
-				end
-				v_u_73.Emitter1:Emit(v84)
-			end
-			if v83 >= 3 and v_u_74 then
-				if not v_u_21[v_u_73] then
-					v_u_21[v_u_73] = v_u_2:Create(v_u_73.Decal, v_u_18, {
-						["Transparency"] = 1
-					})
-				end
-				v_u_21[v_u_73]:Play()
-				local v_u_85 = nil
-				v_u_85 = v_u_21[v_u_73].Completed:Connect(function(_)
-					-- upvalues: (ref) v_u_74, (copy) v_u_73, (ref) v_u_19, (ref) v_u_85
-					v_u_74:Destroy()
-					v_u_73.Anchored = true
-					v_u_19:ReturnPart(v_u_73)
-					v_u_85:Disconnect()
-					v_u_85 = nil
-				end)
-			else
-				task.delay(3, function()
-					-- upvalues: (ref) v_u_74, (copy) v_u_73, (ref) v_u_19
-					if v_u_74 then
-						v_u_74:Destroy()
-					end
-					v_u_73.Anchored = true
-					v_u_19:ReturnPart(v_u_73)
-				end)
-			end
-			return v63
-		end
-	end
+local u150 = {
+    BloodQueue = {},
+    BulletTrail = function(p1, p2, p3, p4) -- Line: 88 -- upvalues: peek (val), Settings (val), Beam (val), Terrain (val)
+        local Attachment, Properties, u47
+        if not (peek(Settings.Graphics.BulletTracers)) then
+            return
+        end
+        local FaceFrontAttachment = p2
+        if not FaceFrontAttachment then
+            FaceFrontAttachment = game.Players.LocalPlayer.Character.Head.FaceFrontAttachment
+        end
+        local v1 = FaceFrontAttachment
+        if not p4 then
+            u47 = Beam:Clone()
+            Attachment = Instance.new("Attachment")
+            Attachment.Parent = Terrain
+            Attachment.WorldPosition = p3
+            u47.Attachment0 = Attachment
+            u47.Attachment1 = v1
+            u47.Parent = Terrain
+            task.delay(0.07, function() -- Line: 121 -- upvalues: u47 (ref), Attachment (val)
+                u47:Destroy()
+                Attachment:Destroy()
+            end)
+            return
+        end
+        if p4.CustomTrailVFX then
+            p4.CustomTrailVFX(v1, p3)
+            return
+        end
+        u47 = Beam:Clone()
+        if p4.Properties then
+            Properties = p4.Properties
+            local v2 = nil
+            local v3 = nil
+            for i, j in Properties, v2, v3 do
+                u47[i] = j
+            end
+        end
+        Attachment = Instance.new("Attachment")
+        Attachment.Parent = Terrain
+        Attachment.WorldPosition = p3
+        u47.Attachment0 = Attachment
+        u47.Attachment1 = v1
+        u47.Parent = Terrain
+        task.delay(0.07, function() -- Line: 121 -- upvalues: u47 (ref), Attachment (val)
+            u47:Destroy()
+            Attachment:Destroy()
+        end)
+    end,
 }
-local v_u_87 = 0
-game:GetService("RunService").Heartbeat:Connect(function(_)
-	-- upvalues: (copy) v_u_86, (copy) v_u_10, (ref) v_u_87, (ref) v_u_20, (copy) v_u_3
-	local v88 = #v_u_86.BloodQueue
-	if v88 > 0 then
-		local v89 = 0
-		for _, v90 in v_u_86.BloodQueue do
-			v89 = v89 + 1
-			if v89 > 24 then
-				break
-			end
-			table.remove(v_u_86.BloodQueue, 1)
-			local v91, v92 = table.unpack(v90)
-			local v93 = v_u_10()
-			v93.Parent = v91
-			v93.Position = v92 or Vector3.new(0, 0, 0)
-			v_u_87 = v_u_87 + 1
-			v93.Destroying:Once(function()
-				-- upvalues: (ref) v_u_87
-				v_u_87 = v_u_87 - 1
-			end)
-			local v94 = v88 + v_u_87
-			local v95 = (v94 > 50 and 0.1 or (v94 > 10 and 0.25 or 1)) * (0.25 * v_u_20)
-			local v96 = math.random(10, 15) * v95
-			local v97 = math.ceil(v96)
-			local v98 = math.random(5, 8) * v95
-			local v99 = math.ceil(v98)
-			v_u_3:AddItem(v93, 2)
-			local v100 = v93.Smoke
-			local v101 = v93.Dots
-			if v_u_20 > 2 then
-				v101:Emit(v97)
-			end
-			v100:Emit(v99)
-		end
-	end
+function u150.BloodNPC(p1, p2, p3, p4, p5) -- Line: 127 -- upvalues: ClassMirror (val), u142 (ref), u128 (val), u150 (val)
+    local ID, PlaybackSpeed, v1, v2, v3
+    if game:GetService("GuiService"):IsTenFootInterface() then
+        return
+    end
+    local ObjFromId = ClassMirror:GetObjFromId(p3)
+    if not ObjFromId or not ObjFromId.UIDTable or not (ObjFromId.UIDTable[p4]) then
+        return
+    end
+    local v4 = ObjFromId.UIDTable[p4]
+    local Sound = Instance.new("Sound")
+    local v5 = "rbxassetid://"
+    if not p2.HitSFX then
+        ID = "358942915"
+    else
+        ID = p2.HitSFX.ID
+    end
+    Sound.SoundId = v5 .. ID
+    if not p2.HitSFX then
+        PlaybackSpeed = 1
+    else
+        PlaybackSpeed = p2.HitSFX.PlaybackSpeed
+    end
+    Sound.PlaybackSpeed = PlaybackSpeed + math.random(-100, 100) * 0.002
+    if not p2.HitSFX then
+        if not p2.IsShotgun then
+            Sound.Volume = 1.5
+        else
+            Sound.Volume = 1.5
+        end
+    elseif p2.HitSFX.Volume then
+        Sound.Volume = p2.HitSFX.Volume
+    end
+    if v4.Parent then
+        local HumanoidRootPart
+        if v4.Name ~= "Head" then
+            HumanoidRootPart = v4
+        else
+            HumanoidRootPart = v4.Parent.HumanoidRootPart
+        end
+        Sound.Parent = HumanoidRootPart
+        Sound:Play()
+    end
+    if u142 == 1 then
+        return
+    end
+    if p2.CustomHitVFX then
+        v3 = nil
+        if p5 then
+            v5, v1, v2 = u128.DecodePositioningData(p5)
+            v3 = Vector3.new(v5, v1, v2)
+        end
+        p2.CustomHitVFX(v4, v3)
+        return
+    end
+    v3 = nil
+    if p5 then
+        v5, v1, v2 = u128.DecodePositioningData(p5)
+        v3 = Vector3.new(v5, v1, v2)
+    end
+    table.insert(u150.BloodQueue, {v4, v3})
+end
+function u150.MakeImpact(p1, p2, p3, p4, p5) -- Line: 177 -- upvalues: peek (val), Settings (val), u138 (val), u49 (val), u142 (ref), isInView (val), u143 (val), TweenService (val), u133 (val)
+    local Instance
+    if not p3 then
+        local Position, v1
+        local Material = nil
+        if not p3 then
+            local v2, v3
+            Instance = p4.h
+            local r = p4.r
+            local p = p4.p
+            local s = p4.s
+            if not Instance then
+                return
+            end
+            local v4 = RaycastParams.new()
+            v4.FilterType = Enum.RaycastFilterType.Whitelist
+            v4.FilterDescendantsInstances = {Instance}
+            v4.IgnoreWater = true
+            if not r and not p then
+                r = Vector3.new()
+            end
+            if r then
+                p = Instance.CFrame:ToWorldSpace(CFrame.new(r)).Position
+            end
+            local v5 = (p - s).Unit * 1000
+            local v6 = workspace:Raycast(s, v5, v4)
+            if not v6 or not v6.Position then
+                return
+            end
+            local Position_2 = v6.Position
+            v1 = Instance.CFrame:ToObjectSpace(CFrame.new(Position_2, Position_2 + v6.Normal))
+            if not (peek(Settings.Graphics.BulletHoles)) then
+                return v1
+            end
+            local Part = u138:GetPart()
+            Part.Size = Vector3.new(0.05000000074505806, 0.05000000074505806, 0.05000000074505806)
+            Part.Decal.Texture = "rbxassetid://64291961"
+            Part.Decal.Transparency = 0
+            local u108 = nil
+            if not p5 then
+                u108 = Instance.new("Weld")
+                u108.Part0 = Instance
+                u108.Part1 = Part
+                u108.C0 = v1
+                u108.Parent = Part
+                Part.Anchored = false
+            else
+                Part.Anchored = true
+                Part.Decal.Transparency = 1
+                Part.CFrame = Instance.CFrame * v1
+            end
+            if Instance ~= workspace.Terrain then
+                v3 = Color3.new(1, 1, 1)
+                v2 = Instance.Color:lerp(v3, 0.5)
+            elseif Material and u49[Material] then
+                local MaterialColor = workspace.Terrain:GetMaterialColor(Material)
+                v3 = Color3.new(1, 1, 1)
+                v2 = MaterialColor:Lerp(v3, 0.5)
+            end
+            local Sound = Part.Sound
+            if not Instance then
+                Sound.SoundId = "rbxassetid://142082166"
+            elseif Instance ~= workspace.Terrain then
+                local Material_2 = Instance.Material
+                if Material_2 == Enum.Material.Metal then
+                    Sound.SoundId = "rbxassetid://142082170"
+                elseif Material_2 ~= Enum.Material.Neon and Material_2 ~= Enum.Material.CorrodedMetal and Material_2 ~= Enum.Material.DiamondPlate then
+                    if Material_2 == Enum.Material.Wood then
+                        Sound.SoundId = "rbxassetid://142082171"
+                    elseif Material_2 ~= Enum.Material.WoodPlanks then
+                        if Material_2 == Enum.Material.Grass then
+                            Sound.SoundId = "rbxassetid://4427231299"
+                        elseif Material_2 ~= Enum.Material.Sand and Material_2 ~= Enum.Material.Pebble and Material_2 ~= Enum.Material.Snow and Material_2 ~= Enum.Material.Ground then
+                            Sound.SoundId = "rbxassetid://142082166"
+                        end
+                    end
+                end
+            end
+            local Parent = Instance.Parent
+            local Parent_2 = if Parent then Parent.Parent else nil
+            local v7 = nil
+            v5 = nil
+            if Parent then
+                v7 = Parent:GetAttribute("ImpactSFX")
+                if not v7 and Parent_2 then
+                    v7 = Parent_2:GetAttribute("ImpactSFX")
+                end
+                if not p2.isMelee then
+                    v5 = Parent:GetAttribute("ImpactTextureGun")
+                    if not v5 and Parent_2 then
+                        v5 = Parent_2:GetAttribute("ImpactTextureGun")
+                    end
+                end
+            end
+            if v7 then
+                Sound.SoundId = v7
+            end
+            if v5 then
+                Part.Decal.Texture = v5
+            end
+            if p2.IsMelee then
+                Part.Decal.Transparency = 1
+            end
+            Sound:Stop()
+            Sound:Play()
+            local Emitter1 = Part.Emitter1
+            local v8 = Color3.new(1, 1, 1)
+            Emitter1.Color = ColorSequence.new(v2:lerp(v8, 0.5))
+            local Emitter2 = Part.Emitter2
+            Emitter2.Color = ColorSequence.new(v2)
+            v6 = u142
+            v3 = game.Players.LocalPlayer:GetAttribute("ClientCPULoad") or 0
+            if 25 <= v3 then
+                v6 = 1
+            end
+            if isInView(Part.Position, 150) then
+                v7 = 0
+                if v6 == 4 then
+                    v7 = math.random(10, 20)
+                    Part.Emitter2:Emit(v7)
+                elseif v6 == 3 then
+                    Part.Emitter2:Emit(3)
+                elseif v6 == 2 then
+                    v7 = 3
+                    Part.Emitter2:Emit(1)
+                end
+                Part.Emitter1:Emit(v7)
+            end
+            if 3 > v6 then
+                task.delay(3, function() -- Line: 351 -- upvalues: u108 (ref), Part (val), u138 (upval)
+                    if u108 then
+                        u108:Destroy()
+                    end
+                    Part.Anchored = true
+                    u138:ReturnPart(Part)
+                end)
+            elseif not u108 then
+                task.delay(3, function() -- Line: 351 -- upvalues: u108 (ref), Part (val), u138 (upval)
+                    if u108 then
+                        u108:Destroy()
+                    end
+                    Part.Anchored = true
+                    u138:ReturnPart(Part)
+                end)
+            else
+                if not (u143[Part]) then
+                    u143[Part] = TweenService:Create(Part.Decal, u133, {Transparency = 1})
+                end
+                u143[Part]:Play()
+                local delay = nil
+            end
+            return v1
+        else
+            Instance = p3.Instance
+            if not Instance then
+                return
+            end
+            Material = p3.Instance.Material
+            Position = p3.Position
+            v1 = Instance.CFrame:ToObjectSpace(CFrame.new(Position, Position + p3.Normal))
+        end
+    elseif not p3.Instance and not p4 then
+        return
+    end
+end
+local u155 = 0
+game:GetService("RunService").Heartbeat:Connect(function(p1) -- Line: 367 -- upvalues: u150 (val), u46 (val), u155 (ref), u142 (ref), Debris (val)
+    local v1 = #u150.BloodQueue
+    if 0 < v1 then
+        local v2, v3, v4, v5, v6, v7, v8, v9
+        local v10 = 0
+        local BloodQueue = u150.BloodQueue
+        local v11 = nil
+        local v12 = nil
+        for i, j in BloodQueue, v11, v12 do
+            v10 = v10 + 1
+            if 24 < v10 then
+                break
+            end
+            table.remove(u150.BloodQueue, 1)
+            v8, v9 = table.unpack(j)
+            v2 = u46()
+            v2.Parent = v8
+            v2.Position = v9 or Vector3.new(0, 0, 0)
+            u155 = u155 + 1
+            v2.Destroying:Once(function() -- Line: 390 -- upvalues: u155 (upval)
+                u155 = u155 - 1
+            end)
+            v3 = v1 + u155
+            if 50 < v3 then
+                v4 = 0.1
+            elseif 10 >= v3 then
+                v4 = 1
+            else
+                v4 = 0.25
+            end
+            v5 = v4 * (0.25 * u142)
+            v6 = math.ceil(math.random(10, 15) * v5)
+            v7 = math.ceil(math.random(5, 8) * v5)
+            Debris:AddItem(v2, 2)
+            if 2 < u142 then
+                v2.Dots:Emit(v6)
+            end
+            v2.Smoke:Emit(v7)
+        end
+    end
 end)
-return v_u_86
+return u150

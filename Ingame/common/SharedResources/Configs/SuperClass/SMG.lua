@@ -1,4 +1,1 @@
-return {
-	["MuzzleModule"] = "Smg",
-	["LODModel"] = "DefaultSMG"
-}
+return {MuzzleModule = "Smg", LODModel = "DefaultSMG"}

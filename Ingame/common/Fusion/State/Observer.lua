@@ -1,56 +1,44 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-require(v1.Types)
-local v_u_2 = require(v1.Dependencies.initDependency)
-local v3 = {}
-local v_u_4 = {
-	["__index"] = v3
-}
-local v_u_5 = {}
-function v3.update(p6) -- name: update
-	for _, v7 in pairs(p6._changeListeners) do
-		task.spawn(v7)
-	end
-	return false
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+require(Parent.Types)
+local initDependency = require(Parent.Dependencies.initDependency)
+local v1 = {}
+local u14 = {__index = v1}
+local u15 = {}
+function v1.update(p1) -- Line: 26
+    for k, v in pairs(p1._changeListeners) do
+        task.spawn(v)
+    end
+    return false
 end
-function v3.onChange(p_u_8, p9) -- name: onChange
-	-- upvalues: (copy) v_u_5
-	local v_u_10 = {}
-	p_u_8._numChangeListeners = p_u_8._numChangeListeners + 1
-	p_u_8._changeListeners[v_u_10] = p9
-	v_u_5[p_u_8] = true
-	local v_u_11 = false
-	return function()
-		-- upvalues: (ref) v_u_11, (copy) p_u_8, (copy) v_u_10, (ref) v_u_5
-		if not v_u_11 then
-			v_u_11 = true
-			p_u_8._changeListeners[v_u_10] = nil
-			local v12 = p_u_8
-			v12._numChangeListeners = v12._numChangeListeners - 1
-			if p_u_8._numChangeListeners == 0 then
-				v_u_5[p_u_8] = nil
-			end
-		end
-	end
+function v1.onChange(p1, p2) -- Line: 41 -- upvalues: u15 (val)
+    local u2 = {}
+    p1._numChangeListeners = p1._numChangeListeners + 1
+    p1._changeListeners[u2] = p2
+    u15[p1] = true
+    local u8 = false
+    return function() -- Line: 51 -- upvalues: u8 (ref), p1 (val), u2 (val), u15 (upval)
+        if u8 then
+            return
+        end
+        u8 = true
+        p1._changeListeners[u2] = nil
+        local v1 = p1
+        v1._numChangeListeners = v1._numChangeListeners - 1
+        if p1._numChangeListeners == 0 then
+            u15[p1] = nil
+        end
+    end
 end
-return function(p13) -- name: Observer
-	-- upvalues: (copy) v_u_4, (copy) v_u_2
-	local v14 = {
-		["type"] = "State",
-		["kind"] = "Observer",
-		["dependencySet"] = nil,
-		["dependentSet"] = nil,
-		["_changeListeners"] = nil,
-		["_numChangeListeners"] = 0,
-		["dependencySet"] = {
-			[p13] = true
-		},
-		["dependentSet"] = {},
-		["_changeListeners"] = {}
-	}
-	local v15 = v_u_4
-	local v16 = setmetatable(v14, v15)
-	v_u_2(v16)
-	p13.dependentSet[v16] = true
-	return v16
+return function(p1) -- Line: 66 -- upvalues: u14 (val), initDependency (val)
+    local v1 = {type = "State", kind = "Observer", _numChangeListeners = 0}
+    local v2 = {}
+    v2[p1] = true
+    v1.dependencySet = v2
+    v1.dependentSet = {}
+    v1._changeListeners = {}
+    local v3 = setmetatable(v1, u14)
+    initDependency(v3)
+    p1.dependentSet[v3] = true
+    return v3
 end

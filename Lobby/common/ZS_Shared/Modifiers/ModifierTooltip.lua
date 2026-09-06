@@ -1,301 +1,268 @@
-local v_u_1 = game:GetService("Players")
-local v_u_2 = game:GetService("UserInputService")
-local v_u_3 = game:GetService("RunService")
-local v_u_4 = require(game.ReplicatedStorage.Packages.Fusion)
-local v_u_5 = v_u_4.Children
-local v_u_6 = v_u_4.scoped
-local v_u_8 = v_u_4.peek or function(p7)
-	return p7:get()
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Fusion = require(game.ReplicatedStorage.Packages.Fusion)
+local Children = Fusion.Children
+local scoped = Fusion.scoped
+local peek = Fusion.peek
+if not peek then
+    function peek(p1) -- Line: 7
+        return p1:get()
+    end
 end
-local v_u_9 = {}
-local v_u_10 = false
-local v_u_11 = nil
-local v_u_12 = nil
-local v_u_13 = nil
-local v_u_14 = nil
-local v_u_15 = nil
-local v_u_16 = nil
-local v_u_17 = nil
-local v_u_18 = nil
-local function v_u_39() -- name: ensureGui
-	-- upvalues: (ref) v_u_10, (ref) v_u_11, (copy) v_u_6, (copy) v_u_4, (ref) v_u_12, (ref) v_u_13, (ref) v_u_14, (ref) v_u_15, (ref) v_u_16, (ref) v_u_17, (ref) v_u_18, (copy) v_u_1, (copy) v_u_5
-	if not v_u_10 then
-		v_u_10 = true
-		v_u_11 = v_u_6(v_u_4)
-		v_u_12 = v_u_11:Value(false)
-		v_u_13 = v_u_11:Value("")
-		v_u_14 = v_u_11:Value("")
-		v_u_15 = v_u_11:Value("")
-		v_u_16 = v_u_11:Value("")
-		v_u_17 = v_u_11:Value("")
-		v_u_18 = v_u_11:Value(Vector2.new(0, 0))
-		local v19 = v_u_1.LocalPlayer:WaitForChild("PlayerGui")
-		local v20 = v_u_11:New("ScreenGui")
-		local v21 = {
-			["Name"] = "ModifierTooltipGui",
-			["ResetOnSpawn"] = false,
-			["IgnoreGuiInset"] = true,
-			["Parent"] = v19,
-			["DisplayOrder"] = 1
-		}
-		local v22 = v_u_5
-		local v23 = {}
-		local v24 = v_u_11:New("Frame")
-		local v38 = {
-			["Name"] = "Tooltip",
-			["Visible"] = v_u_12,
-			["BackgroundColor3"] = Color3.fromRGB(22, 22, 22),
-			["BackgroundTransparency"] = 0.05,
-			["BorderSizePixel"] = 0,
-			["ZIndex"] = 1000,
-			["Position"] = v_u_11:Computed(function(p25)
-				-- upvalues: (ref) v_u_18
-				local v26 = p25(v_u_18)
-				local v27 = workspace.CurrentCamera.ViewportSize
-				local v28 = v26.X + 16
-				local v29 = v26.Y + 16
-				if v28 + 260 > v27.X then
-					v28 = v26.X - 260 - 16
-				end
-				if v29 + 100 > v27.Y then
-					v29 = v26.Y - 100 - 8
-				end
-				local v30 = math.max(8, v28)
-				local v31 = math.max(8, v29)
-				return UDim2.fromOffset(v30, v31)
-			end),
-			["Size"] = UDim2.fromOffset(260, 0),
-			["AutomaticSize"] = Enum.AutomaticSize.Y,
-			["ClipsDescendants"] = true,
-			[v_u_5] = {
-				v_u_11:New("UICorner")({
-					["CornerRadius"] = UDim.new(0, 6)
-				}),
-				v_u_11:New("UIStroke")({
-					["Thickness"] = 1,
-					["Color"] = nil,
-					["Color"] = Color3.fromRGB(60, 60, 60)
-				}),
-				v_u_11:New("UIPadding")({
-					["PaddingTop"] = UDim.new(0, 8),
-					["PaddingBottom"] = UDim.new(0, 8),
-					["PaddingLeft"] = UDim.new(0, 8),
-					["PaddingRight"] = UDim.new(0, 8)
-				}),
-				v_u_11:New("UIListLayout")({
-					["SortOrder"] = Enum.SortOrder.LayoutOrder,
-					["Padding"] = UDim.new(0, 4)
-				}),
-				v_u_11:New("TextLabel")({
-					["Name"] = "Name",
-					["LayoutOrder"] = 1,
-					["BackgroundTransparency"] = 1,
-					["Font"] = nil,
-					["TextSize"] = 16,
-					["TextXAlignment"] = nil,
-					["TextWrapped"] = true,
-					["RichText"] = true,
-					["Size"] = nil,
-					["AutomaticSize"] = nil,
-					["Text"] = nil,
-					["TextColor3"] = nil,
-					["ZIndex"] = 1001,
-					["Font"] = Enum.Font.GothamBold,
-					["TextXAlignment"] = Enum.TextXAlignment.Left,
-					["Size"] = UDim2.fromScale(1, 0),
-					["AutomaticSize"] = Enum.AutomaticSize.Y,
-					["Text"] = v_u_11:Computed(function(p32)
-						-- upvalues: (ref) v_u_13
-						return p32(v_u_13)
-					end),
-					["TextColor3"] = Color3.fromRGB(255, 255, 255)
-				}),
-				v_u_11:New("TextLabel")({
-					["Name"] = "Desc",
-					["LayoutOrder"] = 2,
-					["BackgroundTransparency"] = 1,
-					["Font"] = nil,
-					["TextSize"] = 14,
-					["TextXAlignment"] = nil,
-					["TextWrapped"] = true,
-					["Size"] = nil,
-					["AutomaticSize"] = nil,
-					["Text"] = nil,
-					["TextColor3"] = nil,
-					["ZIndex"] = 1001,
-					["Font"] = Enum.Font.Gotham,
-					["TextXAlignment"] = Enum.TextXAlignment.Left,
-					["Size"] = UDim2.fromScale(1, 0),
-					["AutomaticSize"] = Enum.AutomaticSize.Y,
-					["Text"] = v_u_11:Computed(function(p33)
-						-- upvalues: (ref) v_u_14
-						return p33(v_u_14)
-					end),
-					["TextColor3"] = Color3.fromRGB(210, 210, 210)
-				}),
-				v_u_11:New("TextLabel")({
-					["Name"] = "Stats",
-					["LayoutOrder"] = 3,
-					["BackgroundTransparency"] = 1,
-					["Font"] = nil,
-					["TextSize"] = 13,
-					["TextXAlignment"] = nil,
-					["TextWrapped"] = true,
-					["Size"] = nil,
-					["AutomaticSize"] = nil,
-					["Text"] = nil,
-					["RichText"] = true,
-					["TextColor3"] = nil,
-					["ZIndex"] = 1001,
-					["Font"] = Enum.Font.GothamSemibold,
-					["TextXAlignment"] = Enum.TextXAlignment.Left,
-					["Size"] = UDim2.fromScale(1, 0),
-					["AutomaticSize"] = Enum.AutomaticSize.Y,
-					["Text"] = v_u_11:Computed(function(p34)
-						-- upvalues: (ref) v_u_17, (ref) v_u_15, (ref) v_u_16
-						local v35 = p34(v_u_17)
-						local v36 = p34(v_u_15)
-						local v37 = p34(v_u_16)
-						if v35 and (v35 ~= "" and v35 ~= "+0%") then
-							return string.format("<b>Stats:</b> %s  %s Z$  %s XP", v35, v36, v37)
-						else
-							return v36 == "+0%" and v37 == "+0%" and "" or string.format("<b>Stats:</b> %s Z$  %s XP", v36, v37)
-						end
-					end),
-					["TextColor3"] = Color3.fromRGB(170, 200, 255)
-				})
-			}
-		}
-		__set_list(v23, 1, {v24(v38)})
-		v21[v22] = v23
-		v20(v21)
-	end
+local u20 = {}
+local u21 = false
+local u22 = nil
+local u23 = nil
+local u24 = nil
+local u25 = nil
+local u26 = nil
+local u27 = nil
+local u28 = nil
+local u29 = nil
+local u30 = nil
+local function ensureGui() -- Line: 31 -- upvalues: u21 (ref), u22 (ref), scoped (val), Fusion (val), u23 (ref), u24 (ref), u25 (ref), u26 (ref), u27 (ref), u28 (ref), u29 (ref), u30 (ref), Players (val), Children (val)
+    if u21 then
+        return
+    end
+    u21 = true
+    u22 = scoped(Fusion)
+    u23 = u22:Value(false)
+    u24 = u22:Value("")
+    u25 = u22:Value(Color3.fromRGB(255, 255, 255))
+    u26 = u22:Value("")
+    u27 = u22:Value("")
+    u28 = u22:Value("")
+    u29 = u22:Value("")
+    u30 = u22:Value(Vector2.new(0, 0))
+    local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+    local v1 = u22:New("ScreenGui")
+    local v2 = {
+        Name = "ModifierTooltipGui",
+        ResetOnSpawn = false,
+        IgnoreGuiInset = true,
+        Parent = PlayerGui,
+        DisplayOrder = 50,
+    }
+    local v3 = {}
+    local v4 = u22:New("Frame")
+    local v5 = {
+        Name = "Tooltip",
+        Visible = u23,
+        BackgroundColor3 = Color3.fromRGB(22, 22, 22),
+        BackgroundTransparency = 0.05,
+        BorderSizePixel = 0,
+        ZIndex = 1000,
+        Position = u22:Computed(function(p1) -- Line: 63 -- upvalues: u30 (upval)
+            local v1 = p1(u30)
+            local ViewportSize = workspace.CurrentCamera.ViewportSize
+            local v2 = v1.X + 16
+            local v3 = v1.Y + 16
+            if ViewportSize.X < v2 + 260 then
+                v2 = v1.X - 260 - 16
+            end
+            if ViewportSize.Y < v3 + 100 then
+                v3 = v1.Y - 100 - 8
+            end
+            v2 = math.max(8, v2)
+            v3 = math.max(8, v3)
+            return UDim2.fromOffset(v2, v3)
+        end),
+        Size = UDim2.fromOffset(260, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        ClipsDescendants = true,
+    }
+    local v6 = {}
+    local v7 = u22:New("UICorner")
+    v7 = v7({CornerRadius = UDim.new(0, 6)})
+    local v8 = u22:New("UIStroke")
+    v8 = v8({Thickness = 1, Color = Color3.fromRGB(60, 60, 60)})
+    local v9 = u22:New("UIPadding")
+    v9 = v9({PaddingTop = UDim.new(0, 8), PaddingBottom = UDim.new(0, 8), PaddingLeft = UDim.new(0, 8), PaddingRight = UDim.new(0, 8)})
+    local v10 = u22:New("UIListLayout")
+    v10 = v10({SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 4)})
+    local v11 = u22:New("TextLabel")
+    v11 = v11({
+        Name = "Name",
+        LayoutOrder = 1,
+        BackgroundTransparency = 1,
+        TextSize = 16,
+        TextWrapped = true,
+        RichText = true,
+        ZIndex = 1001,
+        Font = Enum.Font.GothamBold,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Size = UDim2.fromScale(1, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        Text = u22:Computed(function(p1) -- Line: 126 -- upvalues: u24 (upval)
+            return p1(u24)
+        end),
+        TextColor3 = u22:Computed(function(p1) -- Line: 127 -- upvalues: u25 (upval)
+            return p1(u25)
+        end),
+    })
+    local v12 = u22:New("TextLabel")
+    v12 = v12({
+        Name = "Desc",
+        LayoutOrder = 2,
+        BackgroundTransparency = 1,
+        TextSize = 14,
+        TextWrapped = true,
+        ZIndex = 1001,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Size = UDim2.fromScale(1, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        Text = u22:Computed(function(p1) -- Line: 141 -- upvalues: u26 (upval)
+            return p1(u26)
+        end),
+        TextColor3 = Color3.fromRGB(210, 210, 210),
+    })
+    local v13 = u22:New("TextLabel")
+    local v14 = {
+        Name = "Stats",
+        LayoutOrder = 3,
+        BackgroundTransparency = 1,
+        TextSize = 13,
+        TextWrapped = true,
+        RichText = true,
+        ZIndex = 1001,
+        Font = Enum.Font.GothamSemibold,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Size = UDim2.fromScale(1, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        Text = u22:Computed(function(p1) -- Line: 156 -- upvalues: u29 (upval), u27 (upval), u28 (upval)
+            local v1 = p1(u29)
+            local v2 = p1(u27)
+            local v3 = p1(u28)
+            if not v1 or v1 == "" then
+                if v2 == "+0%" then
+                    if v3 ~= "+0%" then
+                        return string.format("<b>Stats:</b> %s Z$  %s XP", v2, v3)
+                    end
+                    return ""
+                end
+                return string.format("<b>Stats:</b> %s Z$  %s XP", v2, v3)
+            end
+            if v1 ~= "+0%" then
+                return string.format("<b>Stats:</b> %s  %s Z$  %s XP", v1, v2, v3)
+            end
+            if v2 ~= "+0%" or v3 ~= "+0%" then
+                return string.format("<b>Stats:</b> %s Z$  %s XP", v2, v3)
+            end
+            return ""
+        end),
+        TextColor3 = Color3.fromRGB(170, 200, 255),
+    }
+    v6[1] = v7
+    v6[2] = v8
+    v6[3] = v9
+    v6[4] = v10
+    v6[5] = v11
+    v6[6] = v12
+    v6[7] = v13(v14)
+    v5[Children] = v6
+    v3[1] = v4(v5)
+    v2[Children] = v3
+    v1(v2)
 end
-function v_u_9.init() -- name: init
-	-- upvalues: (copy) v_u_39
-	v_u_39()
+function u20.init() -- Line: 180 -- upvalues: ensureGui (val)
+    ensureGui()
 end
-function v_u_9.show(p40, p41) -- name: show
-	-- upvalues: (copy) v_u_39, (ref) v_u_13, (ref) v_u_14, (ref) v_u_17, (ref) v_u_15, (ref) v_u_16, (ref) v_u_18, (ref) v_u_12
-	v_u_39()
-	local v42 = ""
-	if p40 and type(p40) == "table" then
-		if p40.StatText then
-			v42 = p40.StatText
-		elseif p40.GetModifierStatText then
-			v42 = p40.GetModifierStatText()
-		end
-	end
-	v_u_13:set(p40 and p40.Name or (p40 and (p40.id or "Modifier") or "Modifier"))
-	v_u_14:set(p40 and (p40.Description or "") or "")
-	v_u_17:set(v42)
-	local v43
-	if p40 and p40.ZBucksMultiplier then
-		local v44 = p40.ZBucksMultiplier * 100
-		local v45 = math.floor(v44)
-		if v45 >= 0 then
-			v43 = "+" .. tostring(v45) .. "%"
-		else
-			v43 = tostring(v45) .. "%"
-		end
-	else
-		v43 = "+0%"
-	end
-	local v46
-	if p40 and p40.XPMultiplier then
-		local v47 = p40.XPMultiplier * 100
-		local v48 = math.floor(v47)
-		if v48 >= 0 then
-			v46 = "+" .. tostring(v48) .. "%"
-		else
-			v46 = tostring(v48) .. "%"
-		end
-	else
-		v46 = "+0%"
-	end
-	v_u_15:set(v43)
-	v_u_16:set(v46)
-	v_u_18:set(p41)
-	v_u_12:set(true)
+function u20.show(p1, p2) -- Line: 184 -- upvalues: ensureGui (val), u24 (ref), u25 (ref), u26 (ref), u29 (ref), u27 (ref), u28 (ref), u30 (ref), u23 (ref)
+    local Description, Name, NameColor, v1, v2, v3
+    ensureGui()
+    local StatText = ""
+    if p1 and type(p1) == "table" then
+        if p1.StatText then
+            StatText = p1.StatText
+        elseif p1.GetModifierStatText then
+            StatText = p1.GetModifierStatText()
+        end
+    end
+    if p1 then
+        Name = p1.Name
+    elseif not p1 then
+        Name = "Modifier"
+    else
+        Name = p1.id
+    end
+    u24:set(Name)
+    if not p1 then
+        NameColor = Color3.fromRGB(255, 255, 255)
+    else
+        NameColor = p1.NameColor
+    end
+    u25:set(NameColor)
+    if not p1 then
+        Description = ""
+    else
+        Description = p1.Description
+    end
+    u26:set(Description)
+    u29:set(StatText)
+    local v4 = "+0%"
+    if p1 and p1.ZBucksMultiplier then
+        v1 = math.floor(p1.ZBucksMultiplier * 100)
+        if 0 > v1 then
+            v2 = tostring(v1)
+            v4 = v2 .. "%"
+        else
+            v3 = tostring(v1)
+            v4 = "+" .. v3 .. "%"
+        end
+    end
+    v1 = "+0%"
+    if p1 and p1.XPMultiplier then
+        v2 = math.floor(p1.XPMultiplier * 100)
+        if 0 > v2 then
+            v3 = tostring(v2)
+            v1 = v3 .. "%"
+        else
+            local v5 = tostring(v2)
+            v1 = "+" .. v5 .. "%"
+        end
+    end
+    u27:set(v4)
+    u28:set(v1)
+    u30:set(p2)
+    u23:set(true)
 end
-function v_u_9.hide() -- name: hide
-	-- upvalues: (ref) v_u_10, (ref) v_u_12
-	if v_u_10 then
-		v_u_12:set(false)
-	end
+function u20.hide() -- Line: 227 -- upvalues: u21 (ref), u23 (ref)
+    if not u21 then
+        return
+    end
+    u23:set(false)
 end
-function v_u_9.bindHover(p_u_49, p_u_50) -- name: bindHover
-	-- upvalues: (copy) v_u_3, (copy) v_u_2, (ref) v_u_12, (copy) v_u_8, (copy) v_u_9, (ref) v_u_18
-	local v_u_51 = false
-	local v_u_52 = nil
-	local v_u_53 = nil
-	p_u_49.MouseEnter:Connect(function()
-		-- upvalues: (ref) v_u_51, (ref) v_u_53, (ref) v_u_3, (ref) v_u_2, (copy) p_u_49, (ref) v_u_12, (ref) v_u_8, (copy) p_u_50, (ref) v_u_9, (ref) v_u_52
-		v_u_51 = true
-		if not v_u_53 then
-			v_u_53 = v_u_3.Heartbeat:Connect(function()
-				-- upvalues: (ref) v_u_51, (ref) v_u_2, (ref) p_u_49, (ref) v_u_12, (ref) v_u_8, (ref) p_u_50, (ref) v_u_9
-				if v_u_51 then
-					local v54 = v_u_2:GetMouseLocation()
-					local v55 = game:GetService("GuiService"):GetGuiInset()
-					local v56 = Vector2.new(v54.X - v55.X, v54.Y - v55.Y)
-					local v57 = p_u_49.AbsolutePosition
-					local v58 = p_u_49.AbsoluteSize
-					local v59
-					if v56.X >= v57.X and (v56.X <= v57.X + v58.X and v56.Y >= v57.Y) then
-						v59 = v56.Y <= v57.Y + v58.Y
-					else
-						v59 = false
-					end
-					if v59 and not (v_u_12 and v_u_8(v_u_12)) then
-						local v60 = p_u_50()
-						if v60 then
-							v_u_9.show(v60, v54)
-							return
-						end
-					elseif not v59 and (v_u_12 and v_u_8(v_u_12)) then
-						v_u_51 = false
-						v_u_9.hide()
-					end
-				end
-			end)
-		end
-		if v_u_52 then
-			local v61 = v_u_52
-			if typeof(v61) == "thread" then
-				task.cancel(v_u_52)
-			else
-				v_u_52:Disconnect()
-			end
-			v_u_52 = nil
-		end
-		local v62 = p_u_50()
-		if v62 then
-			local v63 = v_u_2:GetMouseLocation()
-			v_u_9.show(v62, v63)
-		end
-	end)
-	p_u_49.MouseLeave:Connect(function()
-		-- upvalues: (ref) v_u_51, (ref) v_u_53, (ref) v_u_52, (ref) v_u_9
-		v_u_51 = false
-		if v_u_53 then
-			v_u_53:Disconnect()
-			v_u_53 = nil
-		end
-		v_u_52 = task.spawn(function()
-			-- upvalues: (ref) v_u_51, (ref) v_u_9, (ref) v_u_52
-			task.wait(0.1)
-			if not v_u_51 then
-				v_u_9.hide()
-			end
-			v_u_52 = nil
-		end)
-	end)
-	p_u_49.MouseMoved:Connect(function(p64, p65)
-		-- upvalues: (ref) v_u_51, (ref) v_u_12, (ref) v_u_8, (ref) v_u_18
-		if v_u_51 and (v_u_12 and v_u_8(v_u_12)) then
-			v_u_18:set(Vector2.new(p64, p65))
-		end
-	end)
+function u20.bindHover(p1, p2) -- Line: 232 -- upvalues: UserInputService (val), u20 (val), u23 (ref), peek (val), u30 (ref)
+    local u2 = false
+    local u3 = nil
+    p1.MouseEnter:Connect(function() -- Line: 236 -- upvalues: u2 (ref), u3 (ref), p2 (val), UserInputService (upval), u20 (upval)
+        u2 = true
+        if u3 then
+            task.cancel(u3)
+            u3 = nil
+        end
+        local v1 = p2()
+        if not v1 then
+            return
+        end
+        local MouseLocation = UserInputService:GetMouseLocation()
+        u20.show(v1, MouseLocation)
+    end)
+    p1.MouseLeave:Connect(function() -- Line: 250 -- upvalues: u2 (ref), u3 (ref), u20 (upval)
+        u2 = false
+        u3 = task.spawn(function() -- Line: 253 -- upvalues: u2 (upval), u20 (upval), u3 (upval)
+            task.wait(0.1)
+            if not u2 then
+                u20.hide()
+            end
+            u3 = nil
+        end)
+    end)
+    p1.MouseMoved:Connect(function() -- Line: 262 -- upvalues: u2 (ref), u23 (upval), peek (upval), u30 (upval), UserInputService (upval)
+        if u2 and u23 and peek(u23) then
+            u30:set(UserInputService:GetMouseLocation())
+        end
+    end)
 end
-return v_u_9
+return u20

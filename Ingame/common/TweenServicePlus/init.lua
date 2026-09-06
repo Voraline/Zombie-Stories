@@ -1,323 +1,429 @@
 local v1 = {}
-local v_u_2 = require("@self/SyncedTime")
-local v3 = game:GetService("RunService")
-local v_u_4 = game:GetService("TweenService")
-local v_u_5 = game:GetService("HttpService")
-local v_u_6 = coroutine.wrap
-local v_u_7 = script:WaitForChild("TweenCommunication")
-if v3:IsServer() and not v_u_2:IsSynced() then
-	repeat
-		v_u_2:Sync()
-		task.wait(0.5)
-	until v_u_2:IsSynced()
+local u3 = require("@self/SyncedTime")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local wrap = coroutine.wrap
+local TweenCommunication = script:WaitForChild("TweenCommunication")
+if RunService:IsServer() and not (u3:IsSynced()) then
+    while true do
+        u3:Sync()
+        task.wait(0.5)
+        if u3:IsSynced() then
+            break
+        end
+    end
 end
-local function v_u_9(p8) -- name: infoToTable
-	return {
-		["Time"] = p8.Time or 1,
-		["EasingStyle"] = p8.EasingStyle or Enum.EasingStyle.Quad,
-		["EasingDirection"] = p8.EasingDirection or Enum.EasingDirection.Out,
-		["RepeatCount"] = p8.RepeatCount or 0,
-		["Reverses"] = p8.Reverses or false,
-		["DelayTime"] = p8.DelayTime or 0
-	}
+local function infoToTable(p1) -- Line: 111
+    local v1 = {Time = p1.Time or 1}
+    local EasingStyle = p1.EasingStyle
+    if not EasingStyle then
+        EasingStyle = Enum.EasingStyle.Quad
+    end
+    v1.EasingStyle = EasingStyle
+    local EasingDirection = p1.EasingDirection
+    if not EasingDirection then
+        EasingDirection = Enum.EasingDirection.Out
+    end
+    v1.EasingDirection = EasingDirection
+    v1.RepeatCount = p1.RepeatCount or 0
+    v1.Reverses = p1.Reverses or false
+    v1.DelayTime = p1.DelayTime or 0
+    return v1
 end
-local function v_u_15(p10, p11, p12) -- name: assign
-	if p10 and p11 then
-		for v13, v14 in pairs(p11) do
-			p10[v13] = v14
-			if p12 then
-				print("Set " .. p10.Name .. "\'s " .. v13 .. " to " .. tostring(v14) .. ".")
-			end
-		end
-	end
+local function assign(p1, p2, p3) -- Line: 122
+    local v1
+    if not p1 or not p2 then
+        return
+    end
+    for k, v in pairs(p2) do
+        p1[k] = v
+        if p3 then
+            v1 = tostring(v)
+            print("Set " .. p1.Name .. "'s " .. k .. " to " .. v1 .. ".")
+        end
+    end
 end
-function v1.Construct(_, p_u_16, p_u_17, p_u_18, p_u_19, p20, p21) -- name: Construct
-	-- upvalues: (copy) v_u_5, (copy) v_u_2, (copy) v_u_6, (copy) v_u_15, (copy) v_u_7, (copy) v_u_9
-	if p_u_16 then
-		if p_u_17 then
-			if p_u_18 then
-				if p_u_19 and not type(p_u_19) == "number" then
-					warn("Latency threshold must be a number!")
-					return
-				elseif p20 and not type(p20) == "boolean" then
-					warn("The debugMode parameter must be true or false!")
-				else
-					if not p21 or not type(p21) ~= "boolean" then
-						if p_u_17.Reverses then
-							for v22, _ in pairs(p_u_18) do
-								(nil)[v22] = p_u_16[v22]
-							end
-						end
-						local v23 = p20 or false
-						local v_u_24 = {
-							["Cancelled"] = true,
-							["Completed"] = true,
-							["Paused"] = true,
-							["Resumed"] = true
-						}
-						local v_u_25 = {
-							["PlaybackState"] = Enum.PlaybackState.Begin,
-							["TweenId"] = v_u_5:GenerateGUID(false),
-							["IsPaused"] = false,
-							["IsCancelled"] = false,
-							["LastPlay"] = v_u_2:GetTime(),
-							["TimeElapsed"] = 0
-						}
-						local v_u_26 = v23
-						local v_u_27 = p21 or true
-						for v28, _ in pairs(v_u_24) do
-							v_u_24[v28] = Instance.new("BindableEvent")
-							v_u_25[v28] = v_u_24[v28].Event
-						end
-						local function v_u_32(p29)
-							-- upvalues: (copy) v_u_25, (ref) v_u_26
-							local v30 = tick()
-							local v31 = p29 or 0.0333
-							while true do
-								task.wait()
-								if v_u_25.IsPaused == true or v_u_25.IsCancelled == true then
-									break
-								end
-								if v31 <= tick() - v30 then
-									return
-								end
-							end
-							if v_u_26 then
-								print("Tween cancelled/paused server-side.")
-							end
-							return true
-						end
-						function v_u_25.Play(_, p33, p_u_34, p35, p36) -- name: Play
-							-- upvalues: (copy) p_u_16, (ref) v_u_26, (ref) v_u_6, (ref) v_u_7, (ref) v_u_9, (copy) p_u_17, (copy) p_u_18, (ref) v_u_2, (copy) v_u_25, (copy) p_u_19, (ref) v_u_27, (copy) v_u_24, (copy) v_u_32, (ref) v_u_15
-							local v_u_37 = p35 or "HumanoidRootPart"
-							if p36 and not (p36:IsA("BasePart") and p36:IsDescendantOf(workspace)) then
-								warn("The mainObject must be a BasePart in the workspace.")
-							else
-								local v_u_38 = p36 or p_u_16
-								if v_u_38 ~= p_u_16 and v_u_26 then
-									print("Set the main object to", v_u_38.Name)
-								end
-								if p33 then
-									local v39 = type(p33) == "table" and (p33 or { p33 }) or { p33 }
-									if p_u_34 then
-										for _, v_u_40 in ipairs(v39) do
-											if v_u_40 and (v_u_40:IsA("Player") and v_u_40.Character) then
-												v_u_6(function()
-													-- upvalues: (copy) v_u_40, (ref) v_u_37, (ref) v_u_26, (ref) v_u_38, (copy) p_u_34, (ref) v_u_7, (ref) p_u_16, (ref) v_u_9, (ref) p_u_17, (ref) p_u_18, (ref) v_u_2, (ref) v_u_25, (ref) p_u_19, (ref) v_u_27
-													local v41 = v_u_40.Character:FindFirstChild(v_u_37, true)
-													if v41 then
-														if v_u_26 then
-															print("Found root part of " .. v_u_40.Name .. ":", v_u_37)
-														end
-														local v42 = (v_u_38.Position - v41.Position).magnitude
-														if v42 <= p_u_34 then
-															v_u_7:FireClient(v_u_40, p_u_16, v_u_9(p_u_17), p_u_18, v_u_2:GetTime(), v_u_25.TweenId, p_u_19, v_u_26, nil, v_u_27)
-															if v_u_26 then
-																print("Sent tween data to " .. v_u_40.Name .. ". Distance from object:", v42)
-															end
-														end
-													end
-												end)()
-											end
-										end
-									else
-										for _, v_u_43 in ipairs(v39) do
-											if v_u_43 and (v_u_43:IsA("Player") and v_u_43.Character) then
-												v_u_6(function()
-													-- upvalues: (ref) v_u_7, (copy) v_u_43, (ref) p_u_16, (ref) v_u_9, (ref) p_u_17, (ref) p_u_18, (ref) v_u_2, (ref) v_u_25, (ref) p_u_19, (ref) v_u_26, (ref) v_u_27
-													v_u_7:FireClient(v_u_43, p_u_16, v_u_9(p_u_17), p_u_18, v_u_2:GetTime(), v_u_25.TweenId, p_u_19, v_u_26, nil, v_u_27)
-												end)()
-											end
-										end
-									end
-								elseif p_u_34 then
-									for _, v_u_44 in ipairs(game.Players:GetPlayers()) do
-										if v_u_44 and (v_u_44:IsA("Player") and v_u_44.Character) then
-											v_u_6(function()
-												-- upvalues: (copy) v_u_44, (ref) v_u_37, (ref) v_u_26, (ref) v_u_38, (copy) p_u_34, (ref) v_u_7, (ref) p_u_16, (ref) v_u_9, (ref) p_u_17, (ref) p_u_18, (ref) v_u_2, (ref) v_u_25, (ref) p_u_19, (ref) v_u_27
-												local v45 = v_u_44.Character:FindFirstChild(v_u_37, true)
-												if v45 then
-													if v_u_26 then
-														print("Found root part of " .. v_u_44.Name .. ":", v_u_37)
-													end
-													local v46 = (v_u_38.Position - v45.Position).magnitude
-													if v46 <= p_u_34 then
-														v_u_7:FireClient(v_u_44, p_u_16, v_u_9(p_u_17), p_u_18, v_u_2:GetTime(), v_u_25.TweenId, p_u_19, v_u_26, nil, v_u_27)
-														if v_u_26 then
-															print("Sent tween data to " .. v_u_44.Name .. ". Distance from object:", v46)
-														end
-													end
-												end
-											end)()
-										end
-									end
-								else
-									v_u_7:FireAllClients(p_u_16, v_u_9(p_u_17), p_u_18, v_u_2:GetTime(), v_u_25.TweenId, p_u_19, v_u_26, nil, v_u_27)
-								end
-								local v_u_47 = p_u_17.Time
-								v_u_6(function()
-									-- upvalues: (ref) v_u_25, (ref) v_u_47, (ref) v_u_26, (ref) v_u_24, (ref) p_u_17, (ref) v_u_2, (ref) v_u_32, (ref) v_u_15, (ref) p_u_16, (ref) p_u_18
-									if v_u_25.IsPaused then
-										v_u_47 = v_u_47 - v_u_25.TimeElapsed
-										if v_u_26 then
-											print("Tween is resuming from a pause. Length:", v_u_47)
-										end
-										v_u_24.Resumed:Fire()
-										v_u_25.IsPaused = false
-									end
-									if v_u_25.IsCancelled then
-										v_u_25.IsCancelled = false
-									end
-									if p_u_17.DelayTime > 0 then
-										local v48 = Enum.PlaybackState.Delayed
-										v_u_25.PlaybackState = v48
-										if v_u_26 then
-											print("Playback state changed. New playback state:", (tostring(v48)))
-										end
-										task.wait(p_u_17.DelayTime)
-									end
-									v_u_25.LastPlay = v_u_2:GetTime()
-									local v49 = Enum.PlaybackState.Playing
-									v_u_25.PlaybackState = v49
-									if v_u_26 then
-										print("Playback state changed. New playback state:", (tostring(v49)))
-									end
-									if not v_u_32(v_u_47) then
-										v_u_15(p_u_16, p_u_18, v_u_26)
-										if not p_u_17.Reverses then
-											local v50 = Enum.PlaybackState.Completed
-											v_u_25.PlaybackState = v50
-											if v_u_26 then
-												print("Playback state changed. New playback state:", (tostring(v50)))
-											end
-											v_u_24.Completed:Fire()
-											return
-										end
-										if p_u_17.Reverses then
-											task.wait(v_u_47)
-											if not v_u_25.IsPaused then
-												v_u_15(p_u_16, nil, v_u_26)
-												local v51 = Enum.PlaybackState.Completed
-												v_u_25.PlaybackState = v51
-												if v_u_26 then
-													print("Playback state changed. New playback state:", (tostring(v51)))
-												end
-												v_u_24.Completed:Fire()
-											end
-										end
-									end
-								end)()
-							end
-						end
-						function v_u_25.Cancel(_, p52) -- name: Cancel
-							-- upvalues: (ref) v_u_7, (ref) v_u_2, (copy) v_u_25, (ref) v_u_26, (copy) v_u_24
-							if p52 then
-								local v53 = type(p52) == "table" and p52 and p52 or { p52 }
-								for _, v54 in ipairs(v53) do
-									v_u_7:FireClient(v54, nil, nil, nil, v_u_2:GetTime(), v_u_25.TweenId, nil, v_u_26, "Cancel")
-								end
-							else
-								v_u_7:FireAllClients(nil, nil, nil, v_u_2:GetTime(), v_u_25.TweenId, nil, v_u_26, "Cancel")
-							end
-							v_u_24.Cancelled:Fire()
-							v_u_25.IsCancelled = true
-							local v55 = Enum.PlaybackState.Cancelled
-							v_u_25.PlaybackState = v55
-							if v_u_26 then
-								print("Playback state changed. New playback state:", (tostring(v55)))
-							end
-						end
-						function v_u_25.Pause(_, p56) -- name: Pause
-							-- upvalues: (ref) v_u_7, (ref) v_u_2, (copy) v_u_25, (ref) v_u_26, (copy) v_u_24
-							if p56 then
-								local v57 = type(p56) == "table" and p56 and p56 or { p56 }
-								for _, v58 in ipairs(v57) do
-									v_u_7:FireClient(v58, nil, nil, nil, v_u_2:GetTime(), v_u_25.TweenId, nil, v_u_26, "Pause")
-								end
-							else
-								v_u_7:FireAllClients(nil, nil, nil, v_u_2:GetTime(), v_u_25.TweenId, nil, v_u_26, "Pause")
-							end
-							v_u_25.TimeElapsed = v_u_2:GetTime() - v_u_25.LastPlay
-							v_u_25.LastPlay = v_u_2:GetTime()
-							v_u_24.Paused:Fire()
-							v_u_25.IsPaused = true
-							local v59 = Enum.PlaybackState.Paused
-							v_u_25.PlaybackState = v59
-							if v_u_26 then
-								print("Playback state changed. New playback state:", (tostring(v59)))
-							end
-						end
-						return v_u_25
-					end
-					warn("The parameter clientSync must be true or false!")
-				end
-			else
-				warn("Please provide some properties to tween to!")
-				return
-			end
-		else
-			warn("Please provide some TweenInfo!")
-			return
-		end
-	else
-		warn("This object doesn\'t exist.")
-		return
-	end
+function v1.Construct(p1, p2, p3, p4, p5, p6, p7) -- Line: 135 -- upvalues: HttpService (val), u3 (val), wrap (val), assign (val), TweenCommunication (val), infoToTable (val)
+    if not p2 then
+        warn("This object doesn't exist.")
+        return
+    end
+    if not p3 then
+        warn("Please provide some TweenInfo!")
+        return
+    end
+    if not p4 then
+        warn("Please provide some properties to tween to!")
+        return
+    end
+    if not p5 then
+        if not p6 then
+            if not p7 then
+                if p3.Reverses then
+                    for k, v in pairs(p4) do
+                        (nil)[k] = p2[k]
+                    end
+                end
+                local u69 = p6 or false
+                local u73 = p7 or true
+                local u74 = {Cancelled = true, Completed = true, Paused = true, Resumed = true}
+                local u79 = {
+                    PlaybackState = Enum.PlaybackState.Begin,
+                    TweenId = HttpService:GenerateGUID(false),
+                    IsPaused = false,
+                    IsCancelled = false,
+                    LastPlay = u3:GetTime(),
+                    TimeElapsed = 0,
+                }
+                local function changeState(p1) -- Line: 172 -- upvalues: u79 (val), u69 (ref)
+                    u79.PlaybackState = p1
+                    if u69 then
+                        print("Playback state changed. New playback state:", (tostring(p1)))
+                    end
+                end
+                for k2, i in pairs(u74) do
+                    u74[k2] = Instance.new("BindableEvent")
+                    u79[k2] = u74[k2].Event
+                end
+                local function u106(p1) -- Line: 185 -- upvalues: u79 (val), u69 (ref)
+                    local v1 = tick()
+                    while true do
+                        task.wait()
+                        if u79.IsPaused == true or u79.IsCancelled == true then
+                            break
+                        end
+                        if p1 or 0.0333 <= tick() - v1 then
+                            return
+                        end
+                    end
+                    if u69 then
+                        print("Tween cancelled/paused server-side.")
+                    end
+                    return true
+                end
+                local function completionWait(p1) -- Line: 199 -- upvalues: wrap (upval), u79 (val), u69 (ref), u74 (val), p3 (val), u3 (upval), u106 (val), assign (upval), p2 (val), p4 (val)
+                    wrap(function() -- Line: 200 -- upvalues: u79 (upval), p1 (ref), u69 (upval), u74 (upval), p3 (upval), u3 (upval), u106 (upval), assign (upval), p2 (upval), p4 (upval)
+                        if u79.IsPaused then
+                            p1 = p1 - u79.TimeElapsed
+                            if u69 then
+                                print("Tween is resuming from a pause. Length:", p1)
+                            end
+                            u74.Resumed:Fire()
+                            u79.IsPaused = false
+                        end
+                        if u79.IsCancelled then
+                            u79.IsCancelled = false
+                        end
+                        if 0 < p3.DelayTime then
+                            local Delayed = Enum.PlaybackState.Delayed
+                            u79.PlaybackState = Delayed
+                            if u69 then
+                                print("Playback state changed. New playback state:", (tostring(Delayed)))
+                            end
+                            task.wait(p3.DelayTime)
+                        end
+                        u79.LastPlay = u3:GetTime()
+                        local Playing = Enum.PlaybackState.Playing
+                        u79.PlaybackState = Playing
+                        if u69 then
+                            print("Playback state changed. New playback state:", (tostring(Playing)))
+                        end
+                        if u106(p1) then
+                            return
+                        end
+                        assign(p2, p4, u69)
+                        if not p3.Reverses then
+                            local Completed = Enum.PlaybackState.Completed
+                            u79.PlaybackState = Completed
+                            if u69 then
+                                print("Playback state changed. New playback state:", (tostring(Completed)))
+                            end
+                            u74.Completed:Fire()
+                            return
+                        end
+                        if p3.Reverses then
+                            task.wait(p1)
+                            if not u79.IsPaused then
+                                assign(p2, nil, u69)
+                                local Completed_2 = Enum.PlaybackState.Completed
+                                u79.PlaybackState = Completed_2
+                                if u69 then
+                                    print("Playback state changed. New playback state:", (tostring(Completed_2)))
+                                end
+                                u74.Completed:Fire()
+                            end
+                        end
+                    end)()
+                end
+                function u79.Play(p1, a2, a3, a4, a5) -- Line: 251 -- upvalues: p2 (val), u69 (ref), wrap (upval), TweenCommunication (upval), infoToTable (upval), p3 (val), p4 (val), u3 (upval), u79 (val), p5 (val), u73 (ref), u74 (val), u106 (val), assign (upval)
+                    local u5 = a4 or "HumanoidRootPart"
+                    if not a5 then
+                        local Time
+                        local v1 = a5
+                        if not v1 then
+                            v1 = p2
+                        end
+                        local u21 = v1
+                        if u21 ~= p2 and u69 then
+                            print("Set the main object to", u21.Name)
+                        end
+                        if a2 then
+                            if type(a2) ~= "table" then
+                                v1 = {a2}
+                            else
+                                v1 = a2
+                            end
+                            local v2 = v1
+                            if not a3 then
+                                for i2, i3 in ipairs(v2) do
+                                    if i3 and i3:IsA("Player") and i3.Character then
+                                        wrap(function() -- Line: 304 -- upvalues: TweenCommunication (upval), i3 (val), p2 (upval), infoToTable (upval), p3 (upval), p4 (upval), u3 (upval), u79 (upval), p5 (upval), u69 (upval), u73 (upval)
+                                            local v1 = infoToTable(p3)
+                                            local Time = u3:GetTime()
+                                            TweenCommunication:FireClient(i3, p2, v1, p4, Time, u79.TweenId, p5, u69, nil, u73)
+                                        end)()
+                                    end
+                                end
+                            else
+                                for i4, j in ipairs(v2) do
+                                    if j and j:IsA("Player") and j.Character then
+                                        wrap(function() -- Line: 274 -- upvalues: j (val), u5 (ref), u69 (upval), u21 (ref), a3 (val), TweenCommunication (upval), p2 (upval), infoToTable (upval), p3 (upval), p4 (upval), u3 (upval), u79 (upval), p5 (upval), u73 (upval)
+                                            local v1 = j.Character:FindFirstChild(u5, true)
+                                            if v1 then
+                                                if u69 then
+                                                    print("Found root part of " .. j.Name .. ":", u5)
+                                                end
+                                                local magnitude = (u21.Position - v1.Position).magnitude
+                                                if magnitude <= a3 then
+                                                    local v2 = infoToTable(p3)
+                                                    local Time = u3:GetTime()
+                                                    TweenCommunication:FireClient(j, p2, v2, p4, Time, u79.TweenId, p5, u69, nil, u73)
+                                                    if u69 then
+                                                        print("Sent tween data to " .. j.Name .. ". Distance from object:", magnitude)
+                                                    end
+                                                end
+                                            end
+                                        end)()
+                                    end
+                                end
+                            end
+                        elseif not a3 then
+                            local v3 = infoToTable(p3)
+                            local Time_2 = u3:GetTime()
+                            TweenCommunication:FireAllClients(p2, v3, p4, Time_2, u79.TweenId, p5, u69, nil, u73)
+                        else
+                            for i, v in ipairs(game.Players:GetPlayers()) do
+                                if v and v:IsA("Player") and v.Character then
+                                    wrap(function() -- Line: 320 -- upvalues: v (val), u5 (ref), u69 (upval), u21 (ref), a3 (val), TweenCommunication (upval), p2 (upval), infoToTable (upval), p3 (upval), p4 (upval), u3 (upval), u79 (upval), p5 (upval), u73 (upval)
+                                        local v1 = v.Character:FindFirstChild(u5, true)
+                                        if v1 then
+                                            if u69 then
+                                                print("Found root part of " .. v.Name .. ":", u5)
+                                            end
+                                            local magnitude = (u21.Position - v1.Position).magnitude
+                                            if magnitude <= a3 then
+                                                local v2 = infoToTable(p3)
+                                                local Time = u3:GetTime()
+                                                TweenCommunication:FireClient(v, p2, v2, p4, Time, u79.TweenId, p5, u69, nil, u73)
+                                                if u69 then
+                                                    print("Sent tween data to " .. v.Name .. ". Distance from object:", magnitude)
+                                                end
+                                            end
+                                        end
+                                    end)()
+                                end
+                            end
+                        end
+                        Time = p3.Time
+                        wrap(function() -- Line: 200 -- upvalues: u79 (upval), Time (ref), u69 (upval), u74 (upval), p3 (upval), u3 (upval), u106 (upval), assign (upval), p2 (upval), p4 (upval)
+                            if u79.IsPaused then
+                                Time = Time - u79.TimeElapsed
+                                if u69 then
+                                    print("Tween is resuming from a pause. Length:", Time)
+                                end
+                                u74.Resumed:Fire()
+                                u79.IsPaused = false
+                            end
+                            if u79.IsCancelled then
+                                u79.IsCancelled = false
+                            end
+                            if 0 < p3.DelayTime then
+                                local Delayed = Enum.PlaybackState.Delayed
+                                u79.PlaybackState = Delayed
+                                if u69 then
+                                    print("Playback state changed. New playback state:", (tostring(Delayed)))
+                                end
+                                task.wait(p3.DelayTime)
+                            end
+                            u79.LastPlay = u3:GetTime()
+                            local Playing = Enum.PlaybackState.Playing
+                            u79.PlaybackState = Playing
+                            if u69 then
+                                print("Playback state changed. New playback state:", (tostring(Playing)))
+                            end
+                            if u106(Time) then
+                                return
+                            end
+                            assign(p2, p4, u69)
+                            if not p3.Reverses then
+                                local Completed = Enum.PlaybackState.Completed
+                                u79.PlaybackState = Completed
+                                if u69 then
+                                    print("Playback state changed. New playback state:", (tostring(Completed)))
+                                end
+                                u74.Completed:Fire()
+                                return
+                            end
+                            if p3.Reverses then
+                                task.wait(Time)
+                                if not u79.IsPaused then
+                                    assign(p2, nil, u69)
+                                    local Completed_2 = Enum.PlaybackState.Completed
+                                    u79.PlaybackState = Completed_2
+                                    if u69 then
+                                        print("Playback state changed. New playback state:", (tostring(Completed_2)))
+                                    end
+                                    u74.Completed:Fire()
+                                end
+                            end
+                        end)()
+                        return
+                    elseif not (a5:IsA("BasePart")) then
+                        warn("The mainObject must be a BasePart in the workspace.")
+                        return
+                    elseif not (a5:IsDescendantOf(workspace)) then
+                        warn("The mainObject must be a BasePart in the workspace.")
+                        return
+                    end
+                end
+                function u79.Cancel(p1, p2) -- Line: 355 -- upvalues: TweenCommunication (upval), u3 (upval), u79 (val), u69 (ref), u74 (val)
+                    if not p2 then
+                        local Time_2 = u3:GetTime()
+                        TweenCommunication:FireAllClients(nil, nil, nil, Time_2, u79.TweenId, nil, u69, "Cancel")
+                    else
+                        local Time, v1
+                        if type(p2) ~= "table" then
+                            v1 = {p2}
+                        else
+                            v1 = p2
+                        end
+                        local v2 = v1
+                        for i, v in ipairs(v2) do
+                            Time = u3:GetTime()
+                            TweenCommunication:FireClient(v, nil, nil, nil, Time, u79.TweenId, nil, u69, "Cancel")
+                        end
+                    end
+                    u74.Cancelled:Fire()
+                    u79.IsCancelled = true
+                    local Cancelled = Enum.PlaybackState.Cancelled
+                    u79.PlaybackState = Cancelled
+                    if u69 then
+                        print("Playback state changed. New playback state:", (tostring(Cancelled)))
+                    end
+                end
+                function u79.Pause(p1, p2) -- Line: 373 -- upvalues: TweenCommunication (upval), u3 (upval), u79 (val), u69 (ref), u74 (val)
+                    if not p2 then
+                        local Time_2 = u3:GetTime()
+                        TweenCommunication:FireAllClients(nil, nil, nil, Time_2, u79.TweenId, nil, u69, "Pause")
+                    else
+                        local Time, v1
+                        if type(p2) ~= "table" then
+                            v1 = {p2}
+                        else
+                            v1 = p2
+                        end
+                        local v2 = v1
+                        for i, v in ipairs(v2) do
+                            Time = u3:GetTime()
+                            TweenCommunication:FireClient(v, nil, nil, nil, Time, u79.TweenId, nil, u69, "Pause")
+                        end
+                    end
+                    local Time_3 = u3:GetTime()
+                    u79.TimeElapsed = Time_3 - u79.LastPlay
+                    u79.LastPlay = u3:GetTime()
+                    u74.Paused:Fire()
+                    u79.IsPaused = true
+                    local Paused = Enum.PlaybackState.Paused
+                    u79.PlaybackState = Paused
+                    if u69 then
+                        print("Playback state changed. New playback state:", (tostring(Paused)))
+                    end
+                end
+                return u79
+            elseif not type(p7) == "boolean" then
+                warn("The parameter clientSync must be true or false!")
+                return
+            end
+        elseif not type(p6) == "boolean" then
+            warn("The debugMode parameter must be true or false!")
+            return
+        end
+    elseif not type(p5) == "number" then
+        warn("Latency threshold must be a number!")
+        return
+    end
 end
-if v3:IsClient() then
-	local v_u_60 = game.Players.LocalPlayer
-	local v_u_61 = {}
-	v_u_7.OnClientEvent:Connect(function(p_u_62, p63, p_u_64, p65, p_u_66, p67, p68, p69, p70)
-		-- upvalues: (copy) v_u_61, (copy) v_u_2, (copy) v_u_60, (copy) v_u_6, (copy) v_u_4
-		if p69 then
-			local v71 = v_u_61[p_u_66]
-			if not v71 then
-				warn("The tween you tried to modify does not exist.")
-				return
-			end
-			if p69 == "Cancel" then
-				v71:Cancel()
-				if p68 then
-					local v72 = v_u_2:GetTime() - p65
-					print("Cancelled a tween. Latency:", v72)
-				end
-				return
-			end
-			if p69 == "Pause" then
-				v71:Pause()
-				if p68 then
-					local v73 = v_u_2:GetTime() - p65
-					print("Paused a tween. Latency:", v73)
-				end
-				return
-			end
-		end
-		local v74 = v_u_2:GetTime() - p65
-		local v75 = p70 and p63.Time - v74 or p63.Time
-		if p68 then
-			print("Approximate latency for " .. v_u_60.Name .. ": " .. v74 .. " seconds. \n New tween time: " .. v75 .. " seconds")
-		end
-		if (p67 or 0) < v75 and (p_u_62 and (p_u_64 and p_u_66)) then
-			local v_u_76 = TweenInfo.new(v75, p63.EasingStyle, p63.EasingDirection, p63.RepeatCount, p63.Reverses, p63.DelayTime)
-			v_u_6(function()
-				-- upvalues: (ref) v_u_61, (copy) p_u_66, (ref) v_u_4, (copy) p_u_62, (copy) v_u_76, (copy) p_u_64
-				if not v_u_61[p_u_66] then
-					v_u_61[p_u_66] = v_u_4:Create(p_u_62, v_u_76, p_u_64)
-				end
-				v_u_61[p_u_66]:Play()
-				v_u_61[p_u_66].Completed:Wait()
-				v_u_61[p_u_66] = nil
-			end)()
-			if p68 then
-				v_u_6(function()
-					-- upvalues: (copy) p_u_62, (copy) p_u_64
-					print("Currently tweening properties of " .. p_u_62.Name .. ":")
-					for v77, v78 in pairs(p_u_64) do
-						print(v77 .. " to " .. tostring(v78))
-					end
-				end)()
-			end
-		end
-	end)
+if RunService:IsClient() then
+    local LocalPlayer = game.Players.LocalPlayer
+    local u61 = {}
+    TweenCommunication.OnClientEvent:Connect(function(p1, p2, p3, p4, p5, p6, p7, p8, p9) -- Line: 403 -- upvalues: u61 (val), u3 (val), LocalPlayer (val), wrap (val), TweenService (val)
+        local v1
+        if not p8 then
+            local Time
+            v1 = u3:GetTime() - p4
+            if not p9 then
+                Time = p2.Time
+            else
+                Time = p2.Time - v1
+            end
+            if p7 then
+                print("Approximate latency for " .. LocalPlayer.Name .. ": " .. v1 .. " seconds. \n New tween time: " .. Time .. " seconds")
+            end
+            if (p6 or 0 < Time) and p1 and p3 and p5 then
+                local u94 = TweenInfo.new(Time, p2.EasingStyle, p2.EasingDirection, p2.RepeatCount, p2.Reverses, p2.DelayTime)
+                wrap(function() -- Line: 465 -- upvalues: u61 (upval), p5 (val), TweenService (upval), p1 (val), u94 (val), p3 (val)
+                    if not (u61[p5]) then
+                        u61[p5] = TweenService:Create(p1, u94, p3)
+                    end
+                    u61[p5]:Play()
+                    u61[p5].Completed:Wait()
+                    u61[p5] = nil
+                end)()
+                if p7 then
+                    wrap(function() -- Line: 479 -- upvalues: p1 (val), p3 (val)
+                        print("Currently tweening properties of " .. p1.Name .. ":")
+                        for k, v in pairs(p3) do
+                            print(k .. " to " .. tostring(v))
+                        end
+                    end)()
+                end
+            end
+            return
+        else
+            local v2
+            v1 = u61[p5]
+            if not v1 then
+                warn("The tween you tried to modify does not exist.")
+                return
+            end
+            if p8 == "Cancel" then
+                v1:Cancel()
+                if p7 then
+                    v2 = u3:GetTime() - p4
+                    print("Cancelled a tween. Latency:", v2)
+                end
+                return
+            end
+            if p8 == "Pause" then
+                v1:Pause()
+                if p7 then
+                    v2 = u3:GetTime() - p4
+                    print("Paused a tween. Latency:", v2)
+                end
+                return
+            end
+        end
+    end)
 end
 return v1

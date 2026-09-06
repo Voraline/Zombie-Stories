@@ -1,7 +1,6 @@
-local v1 = require(game.ReplicatedStorage.Packages.Red)
-local v2 = require(game.ReplicatedStorage.Packages.Guard)
-local v_u_3 = v2.Or(v2.Vector3, v2.CFrame)
-return v1.SharedSignalEvent("ForceTeleport", function(p4)
-	-- upvalues: (copy) v_u_3
-	return v_u_3(p4)
+local Red = require(game.ReplicatedStorage.Packages.Red)
+local Guard = require(game.ReplicatedStorage.Packages.Guard)
+local u15 = Guard.Or(Guard.Vector3, Guard.CFrame)
+return Red.SharedSignalEvent("ForceTeleport", function(p1) -- Line: 6 -- upvalues: u15 (val)
+    return u15(p1)
 end)

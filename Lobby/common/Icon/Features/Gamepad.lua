@@ -1,159 +1,182 @@
-local v_u_1 = game:GetService("GamepadService")
-local v_u_2 = game:GetService("UserInputService")
-local v_u_3 = game:GetService("GuiService")
-local v_u_4 = {}
-local v_u_5 = nil
-function v_u_4.start(p6) -- name: start
-	-- upvalues: (ref) v_u_5, (copy) v_u_3, (copy) v_u_2, (copy) v_u_4, (copy) v_u_1
-	v_u_5 = p6
-	v_u_5.highlightKey = Enum.KeyCode.DPadUp
-	v_u_5.highlightIcon = false
-	task.delay(1, function()
-		-- upvalues: (ref) v_u_5, (ref) v_u_3, (ref) v_u_2, (ref) v_u_4, (ref) v_u_1
-		local v_u_7 = v_u_5.iconsDictionary
-		local v_u_8 = nil
-		local v_u_9 = false
-		local v_u_10 = false
-		require("../Utility")
-		local v_u_11 = require("../Elements/Selection")
-		local function v_u_18() -- name: updateSelectedObject
-			-- upvalues: (ref) v_u_3, (copy) v_u_7, (ref) v_u_2, (copy) v_u_11, (ref) v_u_5, (ref) v_u_8, (ref) v_u_10, (ref) v_u_9, (ref) v_u_4
-			local v12 = v_u_3.SelectedObject
-			if v12 then
-				v12 = v12:GetAttribute("CorrespondingIconUID")
-			end
-			if v12 then
-				v12 = v_u_7[v12]
-			end
-			local v13 = v_u_2.GamepadEnabled
-			if v12 then
-				if v13 then
-					local v14 = v12:getInstance("ClickRegion")
-					local v15 = v12.selection
-					if not v15 then
-						v15 = v12.janitor:add(v_u_11(v_u_5))
-						v15:SetAttribute("IgnoreVisibilityUpdater", true)
-						v15.Parent = v12.widget
-						v12.selection = v15
-						v12:refreshAppearance(v15)
-					end
-					v14.SelectionImageObject = v15.Selection
-				end
-				if v_u_8 and v_u_8 ~= v12 then
-					v_u_8:setIndicator()
-				end
-				local v16
-				if v13 and not (v_u_10 or v12.parentIconUID) then
-					v16 = Enum.KeyCode.ButtonB
-				else
-					v16 = nil
-				end
-				v_u_8 = v12
-				v_u_5.lastHighlightedIcon = v12
-				v12:setIndicator(v16)
-			else
-				local v17
-				if v13 and not v_u_9 then
-					v17 = v_u_5.highlightKey
-				else
-					v17 = nil
-				end
-				if not v_u_8 then
-					v_u_8 = v_u_4.getIconToHighlight()
-				end
-				if v17 == v_u_5.highlightKey then
-					v_u_9 = true
-				end
-				if v_u_8 then
-					v_u_8:setIndicator(v17)
-				end
-			end
-		end
-		v_u_3:GetPropertyChangedSignal("SelectedObject"):Connect(v_u_18)
-		local function v19() -- name: checkGamepadEnabled
-			-- upvalues: (ref) v_u_2, (ref) v_u_9, (ref) v_u_10, (copy) v_u_18
-			if not v_u_2.GamepadEnabled then
-				v_u_9 = false
-				v_u_10 = false
-			end
-			v_u_18()
-		end
-		v_u_2:GetPropertyChangedSignal("GamepadEnabled"):Connect(v19)
-		if not v_u_2.GamepadEnabled then
-			v_u_9 = false
-			v_u_10 = false
-		end
-		v_u_18()
-		v_u_2.InputBegan:Connect(function(p20, _)
-			-- upvalues: (ref) v_u_3, (copy) v_u_7, (ref) v_u_5, (ref) v_u_4, (ref) v_u_1
-			if p20.UserInputType == Enum.UserInputType.MouseButton1 then
-				local v21 = v_u_3.SelectedObject
-				if v21 then
-					v21 = v21:GetAttribute("CorrespondingIconUID")
-				end
-				if v21 then
-					v21 = v_u_7[v21]
-				end
-				if v21 then
-					v_u_3.SelectedObject = nil
-				end
-				return
-			elseif p20.KeyCode == v_u_5.highlightKey then
-				local v22 = v_u_4.getIconToHighlight()
-				if v22 then
-					if v_u_1.GamepadCursorEnabled then
-						task.wait(0.2)
-						v_u_1:DisableGamepadCursor()
-					end
-					v_u_3.SelectedObject = v22:getInstance("ClickRegion")
-				end
-			end
-		end)
-	end)
+local GamepadService = game:GetService("GamepadService")
+local UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
+local u15 = {}
+local u16 = nil
+function u15.start(p1) -- Line: 24 -- upvalues: u16 (ref), GuiService (val), UserInputService (val), u15 (val), GamepadService (val)
+    u16 = p1
+    u16.highlightKey = Enum.KeyCode.DPadUp
+    u16.highlightIcon = false
+    task.delay(1, function() -- Line: 33 -- upvalues: u16 (upval), GuiService (upval), UserInputService (upval), u15 (upval), GamepadService (upval)
+        local iconsDictionary = u16.iconsDictionary
+        local function getIconFromSelectedObject() -- Line: 36 -- upvalues: GuiService (upval), iconsDictionary (val)
+            local SelectedObject = GuiService.SelectedObject
+            local Attribute = SelectedObject
+            if Attribute then
+                Attribute = SelectedObject:GetAttribute("CorrespondingIconUID")
+            end
+            local v1 = Attribute
+            if v1 then
+                v1 = iconsDictionary[Attribute]
+            end
+            return v1
+        end
+        local u3 = nil
+        local u4 = false
+        local u5 = false
+        require("../Utility")
+        local u11 = require("../Elements/Selection")
+        local function updateSelectedObject() -- Line: 50 -- upvalues: GuiService (upval), iconsDictionary (val), UserInputService (upval), u11 (val), u16 (upval), u3 (ref), u5 (ref), u4 (ref), u15 (upval)
+            local ButtonB
+            local SelectedObject = GuiService.SelectedObject
+            local Attribute = SelectedObject
+            if Attribute then
+                Attribute = SelectedObject:GetAttribute("CorrespondingIconUID")
+            end
+            local v1 = Attribute
+            if v1 then
+                v1 = iconsDictionary[Attribute]
+            end
+            local v2 = v1
+            local GamepadEnabled = UserInputService.GamepadEnabled
+            if not v2 then
+                local highlightKey
+                if not GamepadEnabled then
+                    highlightKey = nil
+                elseif not u4 then
+                    highlightKey = u16.highlightKey
+                end
+                if not u3 then
+                    u3 = u15.getIconToHighlight()
+                end
+                if highlightKey == u16.highlightKey then
+                    u4 = true
+                end
+                if u3 then
+                    u3:setIndicator(highlightKey)
+                end
+                return
+            end
+            if GamepadEnabled then
+                local v3 = v2:getInstance("ClickRegion")
+                local selection = v2.selection
+                if not selection then
+                    selection = v2.janitor:add(u11(u16))
+                    selection:SetAttribute("IgnoreVisibilityUpdater", true)
+                    selection.Parent = v2.widget
+                    v2.selection = selection
+                    v2:refreshAppearance(selection)
+                end
+                v3.SelectionImageObject = selection.Selection
+            end
+            if u3 and u3 ~= v2 then
+                u3:setIndicator()
+            end
+            if not GamepadEnabled then
+                ButtonB = nil
+            elseif u5 then
+                ButtonB = nil
+            elseif v2.parentIconUID then
+                ButtonB = nil
+            else
+                ButtonB = Enum.KeyCode.ButtonB
+            end
+            u3 = v2
+            u16.lastHighlightedIcon = v2
+            v2:setIndicator(ButtonB)
+        end
+        local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("SelectedObject")
+        PropertyChangedSignal:Connect(updateSelectedObject)
+        local PropertyChangedSignal_2 = UserInputService:GetPropertyChangedSignal("GamepadEnabled")
+        PropertyChangedSignal_2:Connect(function() -- Line: 93 -- upvalues: UserInputService (upval), u4 (ref), u5 (ref), updateSelectedObject (val)
+            if not UserInputService.GamepadEnabled then
+                u4 = false
+                u5 = false
+            end
+            updateSelectedObject()
+        end)
+        if UserInputService.GamepadEnabled then end
+        updateSelectedObject()
+        UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 107 -- upvalues: GuiService (upval), iconsDictionary (val), u16 (upval), u15 (upval), GamepadService (upval)
+            if p1.UserInputType == Enum.UserInputType.MouseButton1 then
+                local SelectedObject = GuiService.SelectedObject
+                local Attribute = SelectedObject
+                if Attribute then
+                    Attribute = SelectedObject:GetAttribute("CorrespondingIconUID")
+                end
+                local v1 = Attribute
+                if v1 then
+                    v1 = iconsDictionary[Attribute]
+                end
+                if v1 then
+                    GuiService.SelectedObject = nil
+                end
+                return
+            end
+            if p1.KeyCode ~= u16.highlightKey then
+                return
+            end
+            local v2 = u15.getIconToHighlight()
+            if v2 then
+                if GamepadService.GamepadCursorEnabled then
+                    task.wait(0.2)
+                    GamepadService:DisableGamepadCursor()
+                end
+                local v3 = v2:getInstance("ClickRegion")
+                GuiService.SelectedObject = v3
+            end
+        end)
+    end)
 end
-function v_u_4.getIconToHighlight() -- name: getIconToHighlight
-	-- upvalues: (ref) v_u_5
-	local v23 = v_u_5.iconsDictionary
-	local v24 = v_u_5.highlightIcon or v_u_5.lastHighlightedIcon
-	if not v24 then
-		local v25 = nil
-		for _, v26 in pairs(v23) do
-			if not v26.parentIconUID and (not v25 or v26.widget.AbsolutePosition.X < v25) then
-				v25 = v26.widget.AbsolutePosition.X
-				v24 = v26
-			end
-		end
-	end
-	return v24
+function u15.getIconToHighlight() -- Line: 134 -- upvalues: u16 (ref)
+    local highlightIcon = u16.highlightIcon
+    if not highlightIcon then
+        highlightIcon = u16.lastHighlightedIcon
+    end
+    if not highlightIcon then
+        local X = nil
+        for k, v in pairs(u16.iconsDictionary) do
+            if not v.parentIconUID then
+                if not X then
+                    X = v.widget.AbsolutePosition.X
+                elseif v.widget.AbsolutePosition.X >= X then
+                end
+            end
+        end
+    end
+    return highlightIcon
 end
-function v_u_4.registerButton(p_u_27) -- name: registerButton
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-	local v_u_28 = false
-	p_u_27.InputBegan:Connect(function(_)
-		-- upvalues: (ref) v_u_28
-		v_u_28 = true
-		task.wait()
-		task.wait()
-		v_u_28 = false
-	end)
-	local v_u_32 = v_u_2.InputBegan:Connect(function(p29)
-		-- upvalues: (ref) v_u_28, (ref) v_u_1, (ref) v_u_3, (copy) p_u_27
-		task.wait()
-		if p29.KeyCode == Enum.KeyCode.ButtonA and v_u_28 then
-			task.wait(0.2)
-			v_u_1:DisableGamepadCursor()
-			v_u_3.SelectedObject = p_u_27
-		else
-			local v30 = v_u_3.SelectedObject == p_u_27
-			local v31 = p29.KeyCode.Name
-			if table.find({ "ButtonB", "ButtonSelect" }, v31) and (v30 and (v31 ~= "ButtonSelect" or v_u_1.GamepadCursorEnabled)) then
-				v_u_3.SelectedObject = nil
-			end
-		end
-	end)
-	p_u_27.Destroying:Once(function()
-		-- upvalues: (copy) v_u_32
-		v_u_32:Disconnect()
-	end)
+function u15.registerButton(p1) -- Line: 156 -- upvalues: UserInputService (val), GamepadService (val), GuiService (val)
+    local u1 = false
+    p1.InputBegan:Connect(function(p1) -- Line: 162 -- upvalues: u1 (ref)
+        u1 = true
+        task.wait()
+        task.wait()
+        u1 = false
+    end)
+    local u12 = UserInputService.InputBegan:Connect(function(a1) -- Line: 171 -- upvalues: u1 (ref), GamepadService (upval), GuiService (upval), p1 (val)
+        task.wait()
+        if a1.KeyCode ~= Enum.KeyCode.ButtonA then
+            local v1 = GuiService.SelectedObject == p1
+            local v2 = {"ButtonB", "ButtonSelect"}
+            local Name = a1.KeyCode.Name
+            if table.find(v2, Name) and v1 then
+                if Name ~= "ButtonSelect" then
+                    GuiService.SelectedObject = nil
+                elseif GamepadService.GamepadCursorEnabled then
+                    GuiService.SelectedObject = nil
+                end
+            end
+            return
+        elseif u1 then
+            task.wait(0.2)
+            GamepadService:DisableGamepadCursor()
+            GuiService.SelectedObject = p1
+            return
+        end
+    end)
+    p1.Destroying:Once(function() -- Line: 192 -- upvalues: u12 (val)
+        u12:Disconnect()
+    end)
 end
-return v_u_4
+return u15

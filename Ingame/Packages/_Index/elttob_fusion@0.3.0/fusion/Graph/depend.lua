@@ -1,14 +1,18 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Graph.evaluate)
-local v_u_4 = require(v1.Utility.nameOf)
-return function(p5, p6) -- name: depend
-	-- upvalues: (copy) v_u_3, (copy) v_u_2, (copy) v_u_4
-	v_u_3(p6, false)
-	if table.isfrozen(p5.dependencySet) or table.isfrozen(p6.dependentSet) then
-		v_u_2.logError("cannotDepend", nil, v_u_4(p5, "Dependent"), v_u_4(p6, "dependency"))
-	end
-	p6.dependentSet[p5] = true
-	p5.dependencySet[p6] = true
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local evaluate = require(Parent.Graph.evaluate)
+local nameOf = require(Parent.Utility.nameOf)
+return function(p1, p2) -- Line: 16 -- upvalues: evaluate (val), External (val), nameOf (val)
+    local v1
+    evaluate(p2, false)
+    if table.isfrozen(p1.dependencySet) then
+        v1 = nameOf(p1, "Dependent")
+        External.logError("cannotDepend", nil, v1, nameOf(p2, "dependency"))
+    elseif table.isfrozen(p2.dependentSet) then
+        v1 = nameOf(p1, "Dependent")
+        External.logError("cannotDepend", nil, v1, nameOf(p2, "dependency"))
+    end
+    p2.dependentSet[p1] = true
+    p1.dependencySet[p2] = true
 end

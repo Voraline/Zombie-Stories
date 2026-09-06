@@ -1,41 +1,58 @@
-return { function(p1, p2, p3, p4, p5) -- name: WeldTogether
-		local v6 = Instance.new(p3)
-		v6.Name = p1.Name .. ":" .. p2.Name
-		v6.Part0 = p1
-		v6.Part1 = p2
-		if not p5 then
-			v6.C0 = v6.Part0.CFrame:Inverse() * v6.Part1.CFrame
-		end
-		v6.Parent = p4 or p1
-		return v6
-	end, function(p7, p8, p9) -- name: WeldAllToBase
-		local v10 = {}
-		for _, v11 in pairs(p7:GetChildren()) do
-			if v11:IsA("BasePart") and (not v10[v11] and v11 ~= p8) then
-				v11.Anchored = false
-				v11.CanCollide = false
-				v11.CanTouch = false
-				v11.CanQuery = false
-				v10[v11] = true
-			end
-			for _, v12 in pairs(v11:GetDescendants()) do
-				if v12:IsA("BasePart") and (not v10[v12] and (not v10[v12] and v12 ~= p8)) then
-					v12.Anchored = false
-					v12.CanCollide = false
-					v12.CanTouch = false
-					v12.CanQuery = false
-					v10[v12] = true
-				end
-			end
-		end
-		for v13, _ in pairs(v10) do
-			local v14 = Instance.new("Weld")
-			v14.Name = p8.Name .. ":" .. v13.Name
-			v14.Part0 = p8
-			v14.Part1 = v13
-			if not p9 then
-				v14.C0 = v14.Part0.CFrame:Inverse() * v14.Part1.CFrame
-			end
-			v14.Parent = p8
-		end
-	end }
+local v1 = {
+    function(p1, p2, p3, p4, p5) -- Line: 1
+        local v1 = Instance.new(p3)
+        v1.Name = p1.Name .. ":" .. p2.Name
+        v1.Part0 = p1
+        v1.Part1 = p2
+        if not p5 then
+            local v2 = v1.Part0.CFrame:Inverse()
+            v1.C0 = v2 * v1.Part1.CFrame
+        end
+        v1.Parent = p4 or p1
+        return v1
+    end,
+}
+v1[2] = function(p1, p2, p3) -- Line: 16
+    local Weld, u100, v1, v2
+    local u102 = {}
+    local function addTo(p1) -- Line: 18 -- upvalues: u102 (val), p2 (val)
+        if not (u102[p1]) and p1 ~= p2 then
+            p1.Anchored = false
+            p1.CanCollide = false
+            p1.CanTouch = false
+            p1.CanQuery = false
+            u102[p1] = true
+        end
+    end
+    u100, v2 = p2, p3
+    for k, v in pairs(p1:GetChildren()) do
+        if v:IsA("BasePart") and not (u102[v]) and v ~= u100 then
+            v.Anchored = false
+            v.CanCollide = false
+            v.CanTouch = false
+            v.CanQuery = false
+            u102[v] = true
+        end
+        for k2, i in pairs(v:GetDescendants()) do
+            if i:IsA("BasePart") and not (u102[i]) and not (u102[i]) and i ~= u100 then
+                i.Anchored = false
+                i.CanCollide = false
+                i.CanTouch = false
+                i.CanQuery = false
+                u102[i] = true
+            end
+        end
+    end
+    for k3, j in pairs(u102) do
+        Weld = Instance.new("Weld")
+        Weld.Name = u100.Name .. ":" .. k3.Name
+        Weld.Part0 = u100
+        Weld.Part1 = k3
+        if not v2 then
+            v1 = Weld.Part0.CFrame:Inverse()
+            Weld.C0 = v1 * Weld.Part1.CFrame
+        end
+        Weld.Parent = u100 or u100
+    end
+end
+return v1

@@ -1,29 +1,27 @@
-local v1 = script.Parent
-require(v1.Types)
-local v_u_2 = nil
+require(script.Parent.Types)
+local u5 = nil
 return {
-	["setDebugger"] = function(p3) -- name: setDebugger
-		-- upvalues: (ref) v_u_2
-		local v4 = v_u_2
-		if v4 ~= nil then
-			v4.stopDebugging()
-		end
-		v_u_2 = p3
-		if p3 ~= nil then
-			p3.startDebugging()
-		end
-		return v4
-	end,
-	["trackScope"] = function(p5) -- name: trackScope
-		-- upvalues: (ref) v_u_2
-		if v_u_2 ~= nil then
-			v_u_2.trackScope(p5)
-		end
-	end,
-	["untrackScope"] = function(p6) -- name: untrackScope
-		-- upvalues: (ref) v_u_2
-		if v_u_2 ~= nil then
-			v_u_2.trackScope(p6)
-		end
-	end
+    setDebugger = function(p1) -- Line: 26 -- upvalues: u5 (ref)
+        local v1 = u5
+        if v1 ~= nil then
+            v1.stopDebugging()
+        end
+        u5 = p1
+        if p1 ~= nil then
+            p1.startDebugging()
+        end
+        return v1
+    end,
+    trackScope = function(p1) -- Line: 46 -- upvalues: u5 (ref)
+        if u5 == nil then
+            return
+        end
+        u5.trackScope(p1)
+    end,
+    untrackScope = function(p1) -- Line: 61 -- upvalues: u5 (ref)
+        if u5 == nil then
+            return
+        end
+        u5.trackScope(p1)
+    end,
 }

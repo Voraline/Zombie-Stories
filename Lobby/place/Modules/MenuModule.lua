@@ -1,87 +1,74 @@
-local v_u_1 = {}
-v_u_1.__index = v_u_1
-local v_u_2 = {}
-local v_u_3 = {}
-function v_u_1.new(p4, p5, p6, p7) -- name: new
-	-- upvalues: (copy) v_u_1
-	local v8 = {
-		["SubMenus"] = {},
-		["CloseWithParent"] = p5 or false,
-		["UI"] = p4,
-		["IsOpen"] = p7
-	}
-	local v9 = v_u_1
-	setmetatable(v8, v9)
-	if p6 then
-		v8:SetZone(p6)
-	end
-	return v8
+local u0 = {}
+u0.__index = u0
+local u1 = {}
+local u2 = {}
+function u0.new(p1, p2, p3, p4) -- Line: 7 -- upvalues: u0 (val)
+    local v1 = {SubMenus = {}, CloseWithParent = p2 or false, UI = p1, IsOpen = p4}
+    setmetatable(v1, u0)
+    if p3 then
+        v1:SetZone(p3)
+    end
+    return v1
 end
-function v_u_1.closeByZone(p10) -- name: closeByZone
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	if v_u_2[p10] then
-		for _, v11 in pairs(v_u_2[p10]) do
-			if v11.IsOpen then
-				v11.IsOpen = false
-				v11:Close()
-			end
-		end
-	end
-	if v_u_3[p10] then
-		for _, v12 in pairs(v_u_3[p10]) do
-			v12.Visible = false
-		end
-	end
+function u0.closeByZone(p1) -- Line: 23 -- upvalues: u1 (val), u2 (val)
+    if u1[p1] then
+        for k, v in pairs(u1[p1]) do
+            if v.IsOpen then
+                v.IsOpen = false
+                v:Close()
+            end
+        end
+    end
+    if u2[p1] then
+        for k2, i in pairs(u2[p1]) do
+            i.Visible = false
+        end
+    end
 end
-function v_u_1.hideWhenZoneClosed(p13, p14) -- name: hideWhenZoneClosed
-	-- upvalues: (copy) v_u_3
-	if not v_u_3[p14] then
-		v_u_3[p14] = {}
-	end
-	local v15 = v_u_3[p14]
-	table.insert(v15, p13)
+function u0.hideWhenZoneClosed(p1, p2) -- Line: 39 -- upvalues: u2 (val)
+    if not (u2[p2]) then
+        u2[p2] = {}
+    end
+    table.insert(u2[p2], p1)
 end
-function v_u_1.SetOpenFunction(p16, p17) -- name: SetOpenFunction
-	p16.OpenFunction = p17
+function u0.SetOpenFunction(p1, p2) -- Line: 48
+    p1.OpenFunction = p2
 end
-function v_u_1.SetCloseFunction(p18, p19) -- name: SetCloseFunction
-	p18.CloseFunction = p19
+function u0.SetCloseFunction(p1, p2) -- Line: 52
+    p1.CloseFunction = p2
 end
-function v_u_1.Open(p20) -- name: Open
-	if p20.OpenFunction then
-		p20.IsOpen = true
-		p20.OpenFunction()
-	end
+function u0.Open(p1) -- Line: 56
+    if p1.OpenFunction then
+        p1.IsOpen = true
+        p1.OpenFunction()
+    end
 end
-function v_u_1.Close(p21) -- name: Close
-	if p21.CloseFunction then
-		p21.IsOpen = false
-		p21.CloseFunction()
-	end
-	for _, v22 in pairs(p21.SubMenus) do
-		if v22.CloseWithParent then
-			p21.IsOpen = false
-			v22:Close()
-		end
-	end
+function u0:Close() -- Line: 63
+    if self.CloseFunction then
+        self.IsOpen = false
+        self.CloseFunction()
+    end
+    for k, v in pairs(self.SubMenus) do
+        if v.CloseWithParent then
+            self.IsOpen = false
+            v:Close()
+        end
+    end
 end
-function v_u_1.AddSubMenu(p23, p24) -- name: AddSubMenu
-	local v25 = p23.SubMenus
-	table.insert(v25, p24)
+function u0.AddSubMenu(p1, p2) -- Line: 76
+    table.insert(p1.SubMenus, p2)
 end
-function v_u_1.SetZone(p26, p27) -- name: SetZone
-	-- upvalues: (copy) v_u_2
-	p26.Zone = p27
-	if not v_u_2[p27] then
-		v_u_2[p27] = {}
-	end
-	local v28 = v_u_2[p27]
-	table.insert(v28, p26)
+function u0:SetZone(p2) -- Line: 80 -- upvalues: u1 (val)
+    self.Zone = p2
+    if not (u1[p2]) then
+        u1[p2] = {}
+    end
+    table.insert(u1[p2], self)
 end
-function v_u_1.SetUI(p29, p30) -- name: SetUI
-	p29.UI = p30
+function u0.SetUI(p1, p2) -- Line: 86
+    p1.UI = p2
 end
-function v_u_1.GetUI(p31) -- name: GetUI
-	return p31.UI
+function u0.GetUI(p1) -- Line: 90
+    return p1.UI
 end
-return v_u_1
+return u0

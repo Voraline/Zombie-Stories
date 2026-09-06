@@ -1,164 +1,155 @@
-local v_u_1 = game:GetService("UserInputService")
-local v_u_2 = game:GetService("RunService")
-local v3 = {}
-local v_u_4 = {}
-v_u_4.__index = v_u_4
-function v3.new(p_u_5, p6, p7, p8, p9, p10)
-	-- upvalues: (copy) v_u_4
-	local v11 = v_u_4
-	local v_u_12 = setmetatable({}, v11)
-	local v13 = p9.min
-	assert(v13, "sliderConfigurations need a min variable.")
-	local v14 = p9.max
-	assert(v14, "sliderConfigurations need a max variable.")
-	local v15 = p9.snapFactor
-	assert(v15, "sliderConfigurations need a snapFactor variable.")
-	local v16 = p_u_5.AnchorPoint == Vector2.new(0.5, 0.5)
-	local v17 = "Set the AnchorPoint of " .. p_u_5.Name .. " to (0.5, 0.5)"
-	assert(v16, v17)
-	local v18 = p7:IsDescendantOf(p6)
-	assert(v18, "SliderButton needs to be a descendant of sliderMarker.")
-	v_u_12.slidingBase = p_u_5
-	v_u_12.sliderMarker = p6
-	v_u_12.sliderButton = p7
-	v_u_12.sliderFill = p8
-	v_u_12.min = p9.min
-	v_u_12.max = p9.max
-	v_u_12.snapFactor = p9.snapFactor
-	local v19 = p_u_5.AbsoluteSize
-	local v20 = workspace.CurrentCamera.ViewportSize
-	local v21 = UDim2.new(v19.X / v20.X, 0, v19.Y / v20.Y, 0)
-	local v22 = p_u_5.AbsolutePosition
-	local v23 = workspace.CurrentCamera.ViewportSize
-	local v24 = UDim2.new(v22.X / v23.X, 0, (v22.Y + 36) / v23.Y, 0)
-	p_u_5.Changed:Connect(function()
-		-- upvalues: (copy) p_u_5, (copy) v_u_12
-		local v25 = p_u_5.AbsoluteSize
-		local v26 = workspace.CurrentCamera.ViewportSize
-		local v27 = UDim2.new(v25.X / v26.X, 0, v25.Y / v26.Y, 0)
-		local v28 = p_u_5.AbsolutePosition
-		local v29 = workspace.CurrentCamera.ViewportSize
-		local v30 = UDim2.new(v28.X / v29.X, 0, (v28.Y + 36) / v29.Y, 0)
-		v_u_12.firstPartPos = UDim2.new(v30.X.Scale, 0, v30.Y.Scale, 0)
-		v_u_12.lineSize = v27.X.Scale
-	end)
-	v_u_12.firstPartPos = UDim2.new(v24.X.Scale, 0, v24.Y.Scale, 0)
-	v_u_12.lineSize = v21.X.Scale
-	if p10 then
-		v_u_12.TargetTextLabel = p10.TextBox
-		v_u_12.TargetTextBox = p10.TextBox
-		if p10.TextLabel then
-			v_u_12.TargetTextLabel = p10.TextLabel
-		end
-	end
-	v_u_12.InteractionBegan = Instance.new("BindableEvent")
-	v_u_12.InteractionEnded = Instance.new("BindableEvent")
-	v_u_12.ValueChanged = Instance.new("BindableEvent")
-	return v_u_12
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local v1 = {}
+local u11 = {}
+u11.__index = u11
+local function calculateScalePosFromScreenSize(p1) -- Line: 9
+    local AbsolutePosition = p1.AbsolutePosition
+    local ViewportSize = workspace.CurrentCamera.ViewportSize
+    return UDim2.new(AbsolutePosition.X / ViewportSize.X, 0, (AbsolutePosition.Y + 36) / ViewportSize.Y, 0)
 end
-function v_u_4.Activate(p_u_31) -- name: Activate
-	-- upvalues: (copy) v_u_2, (copy) v_u_1
-	local v_u_32 = nil
-	local v_u_33 = 0
-	p_u_31.sliderButton.MouseButton1Down:Connect(function()
-		-- upvalues: (copy) p_u_31, (ref) v_u_32, (ref) v_u_2, (ref) v_u_1, (ref) v_u_33
-		p_u_31.InteractionBegan:Fire()
-		v_u_32 = v_u_2.RenderStepped:Connect(function()
-			-- upvalues: (ref) v_u_1, (ref) v_u_32, (ref) p_u_31, (ref) v_u_33
-			if v_u_1:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
-				local v34 = workspace.Camera.ViewportSize.X
-				local v35 = (v_u_1:GetMouseLocation().X - p_u_31.firstPartPos.X.Scale * v34) / v34
-				local v36 = p_u_31.lineSize
-				local v37 = math.clamp(v35, 0, v36)
-				if v37 > 0 then
-					if v37 < 1 then
-						local v38 = p_u_31.sliderMarker
-						local v39 = UDim2.new
-						local v40 = p_u_31
-						local v41 = v37 / p_u_31.lineSize / v40.snapFactor
-						local v42 = math.floor(v41) * v40.snapFactor
-						v38.Position = v39(math.clamp(v42, 0, 1), 0, p_u_31.sliderMarker.Position.Y.Scale, 0)
-						local v43 = p_u_31.sliderFill
-						local v44 = UDim2.new
-						local v45 = p_u_31
-						local v46 = v37 / p_u_31.lineSize / v45.snapFactor
-						local v47 = math.floor(v46) * v45.snapFactor
-						v43.Size = v44(math.clamp(v47, 0, 1), 0, p_u_31.sliderFill.Size.Y.Scale, 0)
-						local v48 = p_u_31
-						local v49 = p_u_31
-						local v50 = p_u_31
-						local v51 = v37 / p_u_31.lineSize / v50.snapFactor
-						local v52 = math.floor(v51) * v50.snapFactor
-						local v53 = math.clamp(v52, 0, 1)
-						local v54 = 1 / v49.snapFactor
-						local v55 = (v49.max - v49.min) / v54 * (v53 / v49.snapFactor) * 100
-						v48.CurrentValue = math.round(v55) / 100 + v49.min
-						if p_u_31.TargetTextLabel then
-							local v56 = p_u_31.TargetTextLabel
-							local v57 = p_u_31.CurrentValue
-							v56.Text = string.format("%.2f", v57)
-						end
-						if v_u_33 ~= p_u_31.CurrentValue then
-							v_u_33 = p_u_31.CurrentValue
-							p_u_31.ValueChanged:Fire(p_u_31.CurrentValue)
-							return
-						end
-					end
-				else
-					p_u_31.sliderMarker.Position = UDim2.new(0, 0, p_u_31.sliderMarker.Position.Y.Scale, 0)
-					p_u_31.sliderFill.Size = UDim2.new(0, 0, p_u_31.sliderFill.Size.Y.Scale, 0)
-					local v58 = p_u_31
-					local v59 = p_u_31
-					local v60 = p_u_31
-					local v61 = v37 / p_u_31.lineSize / v60.snapFactor
-					local v62 = math.floor(v61) * v60.snapFactor
-					local v63 = math.clamp(v62, 0, 1)
-					local v64 = 1 / v59.snapFactor
-					local v65 = (v59.max - v59.min) / v64 * (v63 / v59.snapFactor) * 100
-					v58.CurrentValue = math.round(v65) / 100 + v59.min
-					if p_u_31.TargetTextLabel then
-						local v66 = p_u_31.TargetTextLabel
-						local v67 = p_u_31.CurrentValue
-						v66.Text = string.format("%.2f", v67)
-					end
-				end
-			else
-				v_u_32:Disconnect()
-				p_u_31.InteractionEnded:Fire(p_u_31.CurrentValue)
-			end
-		end)
-	end)
-	local function v_u_78(p68) -- name: update
-		-- upvalues: (copy) p_u_31
-		local v69 = p_u_31.TargetTextBox.Text
-		local v70 = tonumber(v69)
-		if p68 then
-			p_u_31.TargetTextBox.Text = string.format("%.2f", p68)
-		else
-			p68 = v70
-		end
-		if p68 then
-			local v71 = p_u_31
-			local v72 = p_u_31.min
-			local v73 = math.max(v72, p68)
-			local v74 = p_u_31.max
-			v71.CurrentValue = math.min(v73, v74)
-			local v75 = p_u_31.TargetTextBox
-			local v76 = p_u_31.CurrentValue
-			v75.Text = string.format("%.2f", v76)
-			local v77 = (p_u_31.CurrentValue - p_u_31.min) / (p_u_31.max - p_u_31.min)
-			p_u_31.sliderMarker.Position = UDim2.new(v77, 0, p_u_31.sliderMarker.Position.Y.Scale, 0)
-			p_u_31.sliderFill.Size = UDim2.new(v77, 0, p_u_31.sliderFill.Size.Y.Scale, 0)
-		end
-	end
-	p_u_31.TargetTextBox.FocusLost:Connect(function(p79)
-		-- upvalues: (copy) v_u_78, (copy) p_u_31
-		if p79 then
-			v_u_78()
-			p_u_31.InteractionEnded:Fire(p_u_31.CurrentValue)
-		end
-	end)
-	v_u_78()
-	return v_u_78
+local function calculateScaleSizeFromScreenSize(p1) -- Line: 16
+    local AbsoluteSize = p1.AbsoluteSize
+    local ViewportSize = workspace.CurrentCamera.ViewportSize
+    return UDim2.new(AbsoluteSize.X / ViewportSize.X, 0, AbsoluteSize.Y / ViewportSize.Y, 0)
 end
-return v3
+function v1.new(p1, p2, p3, p4, p5, p6) -- Line: 23 -- upvalues: u11 (val)
+    local u9 = setmetatable({}, u11)
+    assert(p5.min, "sliderConfigurations need a min variable.")
+    assert(p5.max, "sliderConfigurations need a max variable.")
+    assert(p5.snapFactor, "sliderConfigurations need a snapFactor variable.")
+    local AnchorPoint = p1.AnchorPoint
+    local v1 = AnchorPoint == Vector2.new(0.5, 0.5)
+    assert(v1, "Set the AnchorPoint of " .. p1.Name .. " to (0.5, 0.5)")
+    v1 = p3:IsDescendantOf(p2)
+    assert(v1, "SliderButton needs to be a descendant of sliderMarker.")
+    u9.slidingBase = p1
+    u9.sliderMarker = p2
+    u9.sliderButton = p3
+    u9.sliderFill = p4
+    u9.min = p5.min
+    u9.max = p5.max
+    u9.snapFactor = p5.snapFactor
+    local AbsoluteSize = p1.AbsoluteSize
+    local ViewportSize = workspace.CurrentCamera.ViewportSize
+    local v2 = UDim2.new(AbsoluteSize.X / ViewportSize.X, 0, AbsoluteSize.Y / ViewportSize.Y, 0)
+    local AbsolutePosition = p1.AbsolutePosition
+    local ViewportSize_2 = workspace.CurrentCamera.ViewportSize
+    v1 = UDim2.new(AbsolutePosition.X / ViewportSize_2.X, 0, (AbsolutePosition.Y + 36) / ViewportSize_2.Y, 0)
+    p1.Changed:Connect(function() -- Line: 42 -- upvalues: p1 (val), u9 (val)
+        local AbsoluteSize = p1.AbsoluteSize
+        local ViewportSize = workspace.CurrentCamera.ViewportSize
+        local v1 = UDim2.new(AbsoluteSize.X / ViewportSize.X, 0, AbsoluteSize.Y / ViewportSize.Y, 0)
+        local AbsolutePosition = p1.AbsolutePosition
+        local ViewportSize_2 = workspace.CurrentCamera.ViewportSize
+        local v2 = UDim2.new(AbsolutePosition.X / ViewportSize_2.X, 0, (AbsolutePosition.Y + 36) / ViewportSize_2.Y, 0)
+        u9.firstPartPos = UDim2.new(v2.X.Scale, 0, v2.Y.Scale, 0)
+        u9.lineSize = v1.X.Scale
+    end)
+    u9.firstPartPos = UDim2.new(v1.X.Scale, 0, v1.Y.Scale, 0)
+    u9.lineSize = v2.X.Scale
+    if p6 then
+        u9.TargetTextLabel = p6.TextBox
+        u9.TargetTextBox = p6.TextBox
+        if p6.TextLabel then
+            u9.TargetTextLabel = p6.TextLabel
+        end
+    end
+    u9.InteractionBegan = Instance.new("BindableEvent")
+    u9.InteractionEnded = Instance.new("BindableEvent")
+    u9.ValueChanged = Instance.new("BindableEvent")
+    return u9
+end
+local function decimalRound(p1, p2) -- Line: 69
+    local v1 = 10 ^ p2
+    return math.round(p1 * v1) / v1
+end
+local function snap(p1, p2) -- Line: 74
+    local v1 = math.floor(p2 / p1.snapFactor)
+    local v2 = v1 * p1.snapFactor
+    return (math.clamp(v2, 0, 1))
+end
+local function formatNumber(p1) -- Line: 79
+    return string.format("%.2f", p1)
+end
+local function getText(p1, p2) -- Line: 83
+    return math.round((p1.max - p1.min) / (1 / p1.snapFactor) * (p2 / p1.snapFactor) * 100) / 100 + p1.min
+end
+function u11.Activate(p1) -- Line: 90 -- upvalues: RunService (val), UserInputService (val)
+    local u1 = nil
+    local u2 = 0
+    p1.sliderButton.MouseButton1Down:Connect(function() -- Line: 94 -- upvalues: p1 (val), u1 (ref), RunService (upval), UserInputService (upval), u2 (ref)
+        p1.InteractionBegan:Fire()
+        u1 = RunService.RenderStepped:Connect(function() -- Line: 97 -- upvalues: UserInputService (upval), u1 (upval), p1 (upval), u2 (upval)
+            local v1, v2, v3, v4
+            if not (UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)) then
+                u1:Disconnect()
+                p1.InteractionEnded:Fire(p1.CurrentValue)
+                return
+            end
+            local X = workspace.Camera.ViewportSize.X
+            local v5 = (UserInputService:GetMouseLocation().X - p1.firstPartPos.X.Scale * X) / X
+            local v6 = math.clamp(v5, 0, p1.lineSize)
+            if 0 >= v6 then
+                p1.sliderMarker.Position = UDim2.new(0, 0, p1.sliderMarker.Position.Y.Scale, 0)
+                p1.sliderFill.Size = UDim2.new(0, 0, p1.sliderFill.Size.Y.Scale, 0)
+                v2 = p1
+                v4 = p1
+                v1 = math.floor(v6 / p1.lineSize / v4.snapFactor)
+                v3 = math.clamp(v1 * v4.snapFactor, 0, 1)
+                p1.CurrentValue = math.round((v2.max - v2.min) / (1 / v2.snapFactor) * (v3 / v2.snapFactor) * 100) / 100 + v2.min
+                if p1.TargetTextLabel then
+                    p1.TargetTextLabel.Text = string.format("%.2f", p1.CurrentValue)
+                end
+                return
+            end
+            if v6 >= 1 then
+                return
+            end
+            v3 = p1
+            local v7 = math.floor(v6 / p1.lineSize / v3.snapFactor)
+            v2 = math.clamp(v7 * v3.snapFactor, 0, 1)
+            p1.sliderMarker.Position = UDim2.new(v2, 0, p1.sliderMarker.Position.Y.Scale, 0)
+            v3 = p1
+            v7 = math.floor(v6 / p1.lineSize / v3.snapFactor)
+            v2 = math.clamp(v7 * v3.snapFactor, 0, 1)
+            p1.sliderFill.Size = UDim2.new(v2, 0, p1.sliderFill.Size.Y.Scale, 0)
+            v2 = p1
+            v4 = p1
+            v1 = math.floor(v6 / p1.lineSize / v4.snapFactor)
+            v3 = math.clamp(v1 * v4.snapFactor, 0, 1)
+            p1.CurrentValue = math.round((v2.max - v2.min) / (1 / v2.snapFactor) * (v3 / v2.snapFactor) * 100) / 100 + v2.min
+            if p1.TargetTextLabel then
+                p1.TargetTextLabel.Text = string.format("%.2f", p1.CurrentValue)
+            end
+            if u2 == p1.CurrentValue then
+                return
+            end
+            u2 = p1.CurrentValue
+            p1.ValueChanged:Fire(p1.CurrentValue)
+        end)
+    end)
+    local function update(a1) -- Line: 135 -- upvalues: p1 (val)
+        local v1 = tonumber(p1.TargetTextBox.Text)
+        if a1 then
+            p1.TargetTextBox.Text = string.format("%.2f", a1)
+        end
+        if v1 then
+            local v2 = math.max(p1.min, v1)
+            p1.CurrentValue = math.min(v2, p1.max)
+            p1.TargetTextBox.Text = string.format("%.2f", p1.CurrentValue)
+            local v3 = (p1.CurrentValue - p1.min) / (p1.max - p1.min)
+            p1.sliderMarker.Position = UDim2.new(v3, 0, p1.sliderMarker.Position.Y.Scale, 0)
+            p1.sliderFill.Size = UDim2.new(v3, 0, p1.sliderFill.Size.Y.Scale, 0)
+        end
+    end
+    p1.TargetTextBox.FocusLost:Connect(function(a1) -- Line: 161 -- upvalues: update (val), p1 (val)
+        if a1 then
+            update()
+            p1.InteractionEnded:Fire(p1.CurrentValue)
+        end
+    end)
+    update()
+    return update
+end
+return v1

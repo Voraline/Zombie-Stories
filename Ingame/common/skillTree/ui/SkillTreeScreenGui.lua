@@ -1,29 +1,29 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("Players")
-local v3 = v1.Packages
-local v_u_4 = require(v3.Fusion).Children
-local v_u_5 = require("./SkillsUI/SkillsUI")
-return function(p_u_6)
-	-- upvalues: (copy) v_u_2, (copy) v_u_4, (copy) v_u_5
-	local v7 = p_u_6.scope
-	local v9 = v7:Computed(function(p8)
-		-- upvalues: (copy) p_u_6
-		return p8(p_u_6.SelectedSkillId) ~= nil
-	end)
-	local v10 = v7:New("ScreenGui")
-	local v11 = {
-		["Name"] = "SkillTreeGui",
-		["Parent"] = v_u_2.LocalPlayer:WaitForChild("PlayerGui"),
-		["ResetOnSpawn"] = false,
-		["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling,
-		[v_u_4] = { v_u_5({
-				["scope"] = v7,
-				["Visible"] = v9,
-				["SelectedSkillId"] = p_u_6.SelectedSkillId,
-				["CurrentRank"] = p_u_6.CurrentRank,
-				["OnBuy"] = p_u_6.OnBuy,
-				["OnExit"] = p_u_6.OnExit
-			}) }
-	}
-	return v10(v11)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local u17 = require("./SkillsUI/SkillsUI")
+return function(p1) -- Line: 25 -- upvalues: Players (val), Children (val), u17 (val)
+    local scope = p1.scope
+    local v1 = scope:Computed(function(a1) -- Line: 28 -- upvalues: p1 (val)
+        local v1 = a1(p1.SelectedSkillId) ~= nil
+        return v1
+    end)
+    local v2 = scope:New("ScreenGui")
+    local v3 = {
+        Name = "SkillTreeGui",
+        Parent = Players.LocalPlayer:WaitForChild("PlayerGui"),
+        ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        IgnoreGuiInset = false,
+        DisplayOrder = 24,
+    }
+    v3[Children] = {u17({
+        scope = scope,
+        Visible = v1,
+        SelectedSkillId = p1.SelectedSkillId,
+        CurrentRank = p1.CurrentRank,
+        OnBuy = p1.OnBuy,
+        OnExit = p1.OnExit,
+    })}
+    return v2(v3)
 end

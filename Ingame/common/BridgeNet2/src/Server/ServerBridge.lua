@@ -1,258 +1,255 @@
-local v_u_1 = require("../Constants")
-local v_u_2 = require("../../RemotePacketSizeCounter")
-local v_u_3 = require("./ServerProcess")
-local v_u_4 = require("../../TableKit")
+local u2 = require("../Constants")
+local u5 = require("../../RemotePacketSizeCounter")
+local u8 = require("./ServerProcess")
+local u11 = require("../../TableKit")
 require("../Types")
-local v_u_5 = require("../Utilities/Output")
-local v_u_6 = require("./PlayerContainers")
-local v_u_7 = require("./ServerConnection")
-local v_u_8 = require("./ServerIdentifiers")
-local v_u_9 = game:GetService("Players")
-local function v_u_13(p10) -- name: toStringData
-	-- upvalues: (copy) v_u_4
-	if typeof(p10) == "table" then
-		if v_u_4.IsArray(p10) then
-			return v_u_4.ToArrayString(p10)
-		else
-			return v_u_4.ToString(p10)
-		end
-	else
-		local v11 = ""
-		local v12 = ""
-		if typeof(p10) == "CFrame" then
-			v11 = "CFrame("
-			v12 = ")"
-		elseif typeof(p10) == "Vector3" then
-			v11 = "Vector3("
-			v12 = ")"
-		end
-		return ("%*%*%*"):format(v11, tostring(p10), v12)
-	end
+local u17 = require("../Utilities/Output")
+local u20 = require("./PlayerContainers")
+local u23 = require("./ServerConnection")
+local u26 = require("./ServerIdentifiers")
+local Players = game:GetService("Players")
+local function toStringData(p1) -- Line: 17 -- upvalues: u11 (val)
+    if typeof(p1) == "table" then
+        if u11.IsArray(p1) then
+            return u11.ToArrayString(p1)
+        end
+        return u11.ToString(p1)
+    end
+    local v1 = ""
+    local v2 = ""
+    if typeof(p1) == "CFrame" then
+        v1 = "CFrame("
+        v2 = ")"
+    elseif typeof(p1) == "Vector3" then
+        v1 = "Vector3("
+        v2 = ")"
+    end
+    local v3 = tostring(p1)
+    return (("%*%*%*"):format(v1, v3, v2))
 end
-local v14 = {}
-local v_u_15 = {
-	["__index"] = v14,
-	["__tostring"] = function(_) -- name: __tostring
-		return "ServerBridge"
-	end
+local v1 = {}
+local u34 = {
+    __index = v1,
+    __tostring = function(p1) -- Line: 42
+        return "ServerBridge"
+    end,
 }
-function v14.InboundMiddleware(p16, p17) -- name: InboundMiddleware
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p16) == "ServerBridge", "InboundMiddleware called with . instead of :")
-	p16._inboundMiddleware = p17
+function v1.InboundMiddleware(p1, p2) -- Line: 46 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "InboundMiddleware called with . instead of :")
+    p1._inboundMiddleware = p2
 end
-function v14.OutboundMiddleware(p18, p19) -- name: OutboundMiddleware
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p18) == "ServerBridge", "OutboundMiddleware called with . instead of :")
-	p18._outboundMiddleware = p19
+function v1.OutboundMiddleware(p1, p2) -- Line: 51 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "OutboundMiddleware called with . instead of :")
+    p1._outboundMiddleware = p2
 end
-function v14.Connect(p_u_20, p_u_21) -- name: Connect
-	-- upvalues: (copy) v_u_5, (copy) v_u_7, (copy) v_u_8, (copy) v_u_1, (copy) v_u_13, (copy) v_u_2
-	v_u_5.fatalAssert(tostring(p_u_20) == "ServerBridge", "Connect called with . instead of :")
-	v_u_5.typecheck("function", "Connect", "callback", p_u_21)
-	return v_u_7(p_u_20._identifier, function(p_u_22, p23)
-		-- upvalues: (ref) v_u_8, (copy) p_u_20, (ref) v_u_5, (ref) v_u_1, (ref) v_u_13, (ref) v_u_2, (copy) p_u_21
-		if typeof(p23) == "table" and p23[1] == v_u_8.ref("REQUEST") then
-			return
-		else
-			if p_u_20.RateLimitActive then
-				if p_u_20._rateMap[p_u_22] == nil then
-					p_u_20._rateMap[p_u_22] = 1
-				else
-					local v24 = p_u_20._rateMap[p_u_22]
-					p_u_20._rateMap[p_u_22] = v24 + 1
-				end
-				task.delay(1, function()
-					-- upvalues: (ref) p_u_20, (copy) p_u_22
-					local v25 = p_u_20._rateMap[p_u_22]
-					local v26 = p_u_20._rateMap
-					local v27 = p_u_22
-					local v28 = v25 - 1
-					v26[v27] = math.min(0, v28)
-				end)
-				if p_u_20._rateMap[p_u_22] >= p_u_20._maxRate and not p_u_20._overflowFunction(p_u_22) then
-					return
-				end
-			end
-			if p_u_20._inboundMiddleware == nil then
-				if p_u_20.Logging then
-					local v29 = string.format(v_u_1.SERVER_CONNECT_LOG, p_u_20._name, p_u_22.Name, v_u_13(p23), v_u_2.GetDataByteSize(p23))
-					v_u_5.log(v29)
-				end
-				p_u_21(p_u_22, p23)
-			else
-				local v30 = p23
-				for _, v31 in p_u_20._inboundMiddleware do
-					local v32 = v31(p_u_22, p23)
-					if typeof(v32) == "table" then
-						p23 = v32
-					else
-						v_u_5.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", p_u_20._name))
-					end
-				end
-				if p_u_20.Logging and p_u_20.Logging then
-					local v33 = string.format(v_u_1.SERVER_CONNECT_LOG, p_u_20._name, p_u_22.Name, v_u_13(v30), v_u_2.GetDataByteSize(v30))
-					v_u_5.log(v33)
-				end
-				p_u_21(p_u_22, p23)
-			end
-		end
-	end)
+function v1:Connect(p2) -- Line: 58 -- upvalues: u17 (val), u23 (val), u26 (val), u2 (val), toStringData (val), u5 (val)
+    local v1 = tostring(self) == "ServerBridge"
+    u17.fatalAssert(v1, "Connect called with . instead of :")
+    u17.typecheck("function", "Connect", "callback", p2)
+    return u23(self._identifier, function(p1, a2) -- Line: 62 -- upvalues: u26 (upval), self (val), u17 (upval), u2 (upval), toStringData (upval), u5 (upval), p2 (val)
+        if typeof(a2) ~= "table" then
+            local v1
+            if not self.RateLimitActive then
+                local _inboundMiddleware, v2
+                if self._inboundMiddleware == nil then
+                    if self.Logging then
+                        local Name_2 = p1.Name
+                        local v3 = toStringData(a2)
+                        v1 = string.format(u2.SERVER_CONNECT_LOG, self._name, Name_2, v3, u5.GetDataByteSize(a2))
+                        u17.log(v1)
+                    end
+                    p2(p1, a2)
+                    return
+                end
+                v1 = a2
+                _inboundMiddleware = self._inboundMiddleware
+                local v4 = nil
+                local v5 = nil
+                for i, j in _inboundMiddleware, v4, v5 do
+                    v2 = j(p1, v1)
+                    if typeof(v2) == "table" then
+                        v1 = v2
+                    else
+                        u17.silent(string.format("Inbound middleware on bridge %* did not return a table; ignoring the return.", self._name))
+                    end
+                end
+                if self.Logging and self.Logging then
+                    local Name = p1.Name
+                    local v6 = toStringData(a2)
+                    local v7 = string.format(u2.SERVER_CONNECT_LOG, self._name, Name, v6, u5.GetDataByteSize(a2))
+                    u17.log(v7)
+                end
+                p2(p1, v1)
+                return
+            else
+                if self._rateMap[p1] == nil then
+                    self._rateMap[p1] = 1
+                else
+                    self._rateMap[p1] = self._rateMap[p1] + 1
+                end
+                task.delay(1, function() -- Line: 76 -- upvalues: self (upval), p1 (val)
+                    self._rateMap[p1] = math.min(0, self._rateMap[p1] - 1)
+                end)
+                v1 = self._rateMap[p1]
+                if self._maxRate <= v1 and not (self._overflowFunction(p1)) then
+                    return
+                end
+            end
+        elseif a2[1] == u26.ref("REQUEST") then
+            return
+        end
+    end)
 end
-function v14.RateLimit(p34, p35, p36) -- name: RateLimit
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p34) == "ServerBridge", "RateLimit called with . instead of :")
-	p34.RateLimitActive = true
-	p34._overflowFunction = p36
-	p34._maxRate = p35
+function v1.RateLimit(p1, p2, p3) -- Line: 137 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "RateLimit called with . instead of :")
+    p1.RateLimitActive = true
+    p1._overflowFunction = p3
+    p1._maxRate = p2
 end
-function v14.DisableRateLimit(p37) -- name: DisableRateLimit
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p37) == "ServerBridge", "DisableRateLimit called with . instead of :")
-	p37.RateLimitActive = false
+function v1.DisableRateLimit(p1) -- Line: 144 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "DisableRateLimit called with . instead of :")
+    p1.RateLimitActive = false
 end
-function v14.Wait(p38) -- name: Wait
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p38) == "ServerBridge", "Wait called with . instead of :")
-	local v_u_39 = coroutine.running()
-	p38:Connect(function(p40, p41)
-		-- upvalues: (copy) v_u_39
-		coroutine.resume(v_u_39, p40, p41)
-	end)
-	return coroutine.yield()
+function v1.Wait(p1) -- Line: 149 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "Wait called with . instead of :")
+    local u13 = coroutine.running()
+    p1:Connect(function(p1, p2) -- Line: 152 -- upvalues: u13 (val)
+        coroutine.resume(u13, p1, p2)
+    end)
+    return coroutine.yield()
 end
-function v14.Once(p42, p_u_43) -- name: Once
-	-- upvalues: (copy) v_u_5
-	v_u_5.fatalAssert(tostring(p42) == "ServerBridge", "Once called with . instead of :")
-	v_u_5.typecheck("function", "Once", "callback", p_u_43)
-	local v_u_44 = nil
-	v_u_44 = p42:Connect(function(p45, p46)
-		-- upvalues: (ref) v_u_44, (copy) p_u_43
-		v_u_44:Disconnect()
-		p_u_43(p45, p46)
-	end)
-	return v_u_44
+function v1.Once(p1, p2) -- Line: 158 -- upvalues: u17 (val)
+    local v1 = tostring(p1) == "ServerBridge"
+    u17.fatalAssert(v1, "Once called with . instead of :")
+    u17.typecheck("function", "Once", "callback", p2)
+    local u21 = nil
+    u21 = p1:Connect(function(p1, a2) -- Line: 163 -- upvalues: u21 (ref), p2 (val)
+        u21:Disconnect()
+        p2(p1, a2)
+    end)
+    return u21
 end
-function v14.FireAllInRangeExcept(p47, p48, p49, p50, p51) -- name: FireAllInRangeExcept
-	-- upvalues: (copy) v_u_9, (copy) v_u_6
-	local v52 = {}
-	local v53 = {}
-	for _, v54 in ipairs(p51) do
-		v52[v54] = true
-	end
-	for _, v55 in v_u_9:GetPlayers() do
-		if v55:DistanceFromCharacter(p48) <= p49 and not v52[v55] then
-			table.insert(v53, v55)
-		end
-	end
-	p47:Fire(v_u_6.Players(v53), p50)
-	return v53
+function v1.FireAllInRangeExcept(p1, p2, p3, p4, p5) -- Line: 170 -- upvalues: Players (val), u20 (val)
+    local v1 = {}
+    local v2 = {}
+    for i, v in ipairs(p5) do
+        v2[v] = true
+    end
+    for i2, j in Players:GetPlayers() do
+        if j:DistanceFromCharacter(p2) <= p3 and not (v2[j]) then
+            table.insert(v1, j)
+        end
+    end
+    local v3 = u20.Players(v1)
+    p1:Fire(v3, p4)
+    return v1
 end
-function v14.FireAllInRange(p56, p57, p58, p59) -- name: FireAllInRange
-	-- upvalues: (copy) v_u_9, (copy) v_u_6
-	local v60 = {}
-	for _, v61 in v_u_9:GetPlayers() do
-		if v61:DistanceFromCharacter(p57) <= p58 then
-			table.insert(v60, v61)
-		end
-	end
-	p56:Fire(v_u_6.Players(v60), p59)
-	return v60
+function v1.FireAllInRange(p1, p2, p3, p4) -- Line: 190 -- upvalues: Players (val), u20 (val)
+    local v1 = {}
+    for i, j in Players:GetPlayers() do
+        if j:DistanceFromCharacter(p2) <= p3 then
+            table.insert(v1, j)
+        end
+    end
+    local v2 = u20.Players(v1)
+    p1:Fire(v2, p4)
+    return v1
 end
-function v14.Fire(p62, p63, p64) -- name: Fire
-	-- upvalues: (copy) v_u_5, (copy) v_u_6, (copy) v_u_1, (copy) v_u_4, (copy) v_u_13, (copy) v_u_2, (copy) v_u_3
-	v_u_5.fatalAssert(tostring(p62) == "ServerBridge", "Fire called with . instead of :")
-	local v65 = nil
-	if typeof(p63) == "Instance" then
-		if p63:IsA("Player") then
-			v65 = v_u_6.Single(p63)
-		else
-			v_u_5.fatal("non-player instance passed into :Fire()")
-		end
-	else
-		if typeof(p63) == "nil" then
-			v_u_5.fatal("target parameter passed into ServerBridge:Fire() is nil")
-		end
-		v_u_5.typecheck("table", "Fire", "target", p63)
-		v65 = p63
-	end
-	if p62._outboundMiddleware == nil then
-		if p62.Logging and p62.Logging then
-			local v66 = string.format
-			local v67 = v_u_1.SERVER_FIRE_LOG
-			local v68 = p62._name
-			local v69
-			if v65.kind == "all" then
-				v69 = "{all}"
-			elseif v65.kind == "single" then
-				v69 = v65.value.Name
-			else
-				v69 = v_u_4.ToArrayString(v65.value)
-			end
-			local v70 = v66(v67, v68, v69, v_u_13(p64), v_u_2.GetDataByteSize(p64))
-			v_u_5.log(v70)
-		end
-		v_u_3.addToQueue(v65, p62._identifier, p64)
-	else
-		for _, v71 in p62._outboundMiddleware do
-			local v72 = v71(p64)
-			if typeof(v72) == "table" then
-				p64 = v72
-			else
-				v_u_5.silent(string.format("Outbound middleware on bridge %* did not return a table; ignoring the return.", p62._name))
-			end
-		end
-		if p62.Logging then
-			local v73 = string.format
-			local v74 = v_u_1.SERVER_FIRE_LOG
-			local v75 = p62._name
-			local v76
-			if v65.kind == "all" then
-				v76 = "{all}"
-			elseif v65.kind == "single" then
-				v76 = v65.value.Name
-			else
-				v76 = v_u_4.ToArrayString(v65.value)
-			end
-			local v77 = v73(v74, v75, v76, v_u_13(p64), v_u_2.GetDataByteSize(p64))
-			v_u_5.log(v77)
-		end
-		v_u_3.addToQueue(v65, p62._identifier, p64)
-	end
+function v1:Fire(p2, p3) -- Line: 203 -- upvalues: u17 (val), u20 (val), u2 (val), u11 (val), toStringData (val), u5 (val), u8 (val)
+    local _outboundMiddleware, v1
+    local v2 = tostring(self) == "ServerBridge"
+    u17.fatalAssert(v2, "Fire called with . instead of :")
+    local v3 = nil
+    if typeof(p2) ~= "Instance" then
+        if typeof(p2) == "nil" then
+            u17.fatal("target parameter passed into ServerBridge:Fire() is nil")
+        end
+        u17.typecheck("table", "Fire", "target", p2)
+        v3 = p2
+    elseif not (p2:IsA("Player")) then
+        u17.fatal("non-player instance passed into :Fire()")
+    else
+        v3 = u20.Single(p2)
+    end
+    if self._outboundMiddleware == nil then
+        if self.Logging and self.Logging then
+            local Name_2
+            if v3.kind == "all" then
+                Name_2 = "{all}"
+            elseif v3.kind ~= "single" then
+                Name_2 = u11.ToArrayString(v3.value)
+            else
+                Name_2 = v3.value.Name
+            end
+            local v4 = toStringData(p3)
+            v2 = string.format(u2.SERVER_FIRE_LOG, self._name, Name_2, v4, u5.GetDataByteSize(p3))
+            u17.log(v2)
+        end
+        u8.addToQueue(v3, self._identifier, p3)
+        return
+    end
+    v2 = p3
+    _outboundMiddleware = self._outboundMiddleware
+    local v5 = nil
+    local v6 = nil
+    for i, j in _outboundMiddleware, v5, v6 do
+        v1 = j(v2)
+        if typeof(v1) == "table" then
+            v2 = v1
+        else
+            u17.silent(string.format("Outbound middleware on bridge %* did not return a table; ignoring the return.", self._name))
+        end
+    end
+    if self.Logging then
+        local Name
+        if v3.kind == "all" then
+            Name = "{all}"
+        elseif v3.kind ~= "single" then
+            Name = u11.ToArrayString(v3.value)
+        else
+            Name = v3.value.Name
+        end
+        local v7 = toStringData(v2)
+        local v8 = string.format(u2.SERVER_FIRE_LOG, self._name, Name, v7, u5.GetDataByteSize(v2))
+        u17.log(v8)
+    end
+    u8.addToQueue(v3, self._identifier, v2)
 end
-return function(p78)
-	-- upvalues: (copy) v_u_8, (copy) v_u_15, (copy) v_u_3
-	local v79 = {
-		["_identifier"] = nil,
-		["_outboundMiddleware"] = nil,
-		["_inboundMiddleware"] = nil,
-		["_name"] = nil,
-		["Logging"] = false,
-		["OnServerInvoke"] = nil,
-		["RateLimitActive"] = false,
-		["_maxRate"] = 500,
-		["_rateMap"] = nil,
-		["_overflowFunction"] = nil,
-		["_identifier"] = v_u_8.ref(p78),
-		["_name"] = p78,
-		["OnServerInvoke"] = function() end,
-		["_rateMap"] = {},
-		["_overflowFunction"] = function() -- name: _overflowFunction
-			return false
-		end
-	}
-	local v80 = v_u_15
-	local v_u_81 = setmetatable(v79, v80)
-	v_u_3.registerBridge(v_u_81._identifier)
-	v_u_3.connect(v_u_81._identifier, function(p82, p83)
-		-- upvalues: (copy) v_u_81, (ref) v_u_8
-		if typeof(p83) == "table" then
-			if v_u_81.OnServerInvoke ~= nil and p83[1] == v_u_8.ref("REQUEST") then
-				local v84 = p83[2]
-				local v85 = v_u_81.OnServerInvoke(p82, p83[3])
-				v_u_81:Fire(p82, { v_u_8.ref("REQUEST"), v84, v85 })
-			end
-		end
-	end)
-	return v_u_81
+return function(p1) -- Line: 276 -- upvalues: u26 (val), u34 (val), u8 (val)
+    local v1 = {
+        Logging = false,
+        RateLimitActive = false,
+        _maxRate = 500,
+        _identifier = u26.ref(p1),
+        _name = p1,
+        OnServerInvoke = function() end,
+    }
+    local v2 = {}
+    v1._rateMap = v2
+    function v1._overflowFunction() -- Line: 294
+        return false
+    end
+    local u11 = setmetatable(v1, u34)
+    u8.registerBridge(u11._identifier)
+    u8.connect(u11._identifier, function(p1, p2) -- Line: 301 -- upvalues: u11 (val), u26 (upval)
+        local REQUEST
+        if typeof(p2) ~= "table" then
+            return
+        end
+        if u11.OnServerInvoke ~= nil and p2[1] == u26.ref("REQUEST") then
+            local v1 = u11.OnServerInvoke(p1, p2[3])
+            local v2 = {}
+            REQUEST = u26.ref("REQUEST")
+            v2[1] = REQUEST
+            v2[2] = p2[2]
+            v2[3] = v1
+            u11:Fire(p1, v2)
+        end
+    end)
+    return u11
 end

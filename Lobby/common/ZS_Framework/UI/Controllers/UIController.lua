@@ -1,10 +1,9 @@
-local v_u_1 = game:GetService("Players")
-local v_u_2 = require("../../Data/PlayerDatabase")
-task.spawn(function()
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	while not v_u_1.LocalPlayer:FindFirstChild("PlayerGui") do
-		task.wait(0.1)
-	end
-	v_u_2.PlayerGui:set(v_u_1.LocalPlayer:FindFirstChild("PlayerGui"))
+local Players = game:GetService("Players")
+local u7 = require("../../Data/PlayerDatabase")
+task.spawn(function() -- Line: 7 -- upvalues: Players (val), u7 (val)
+    while not (Players.LocalPlayer:FindFirstChild("PlayerGui")) do
+        task.wait(0.1)
+    end
+    u7.PlayerGui:set(Players.LocalPlayer:FindFirstChild("PlayerGui"))
 end)
 return {}

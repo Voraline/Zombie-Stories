@@ -1,19 +1,17 @@
-local v_u_1 = {}
-v_u_1.__index = v_u_1
-function v_u_1.__tostring(p2) -- name: __tostring
-	return p2._name
+local u0 = {}
+u0.__index = u0
+function u0.__tostring(p1) -- Line: 8
+    return p1._name
 end
-function v_u_1.new(p3) -- name: new
-	-- upvalues: (copy) v_u_1
-	local v4 = {
-		["_name"] = nil,
-		["_type"] = "phase",
-		["_name"] = p3 or debug.info(2, "sl")
-	}
-	local v5 = v_u_1
-	return setmetatable(v4, v5)
+function u0.new(p1) -- Line: 16 -- upvalues: u0 (val)
+    local v1 = p1
+    if not v1 then
+        v1 = debug.info(2, "sl")
+    end
+    local v2 = {_type = "phase", _name = v1}
+    return (setmetatable(v2, u0))
 end
-v_u_1.PreStartup = v_u_1.new("PreStartup")
-v_u_1.Startup = v_u_1.new("Startup")
-v_u_1.PostStartup = v_u_1.new("PostStartup")
-return v_u_1
+u0.PreStartup = u0.new("PreStartup")
+u0.Startup = u0.new("Startup")
+u0.PostStartup = u0.new("PostStartup")
+return u0

@@ -1,3 +1,2 @@
-local v1 = script.Parent.Parent.Parent
-require(v1.Types)
+require(script.Parent.Parent.Parent.Types)
 return nil

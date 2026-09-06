@@ -1,209 +1,185 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require(v1.Packages.Fusion)
-local v_u_3 = require("../Components/ServerList/ServerList")
-local v_u_4 = require(v1.common.fusion_utils)
-local v_u_5 = require("@game/ReplicatedStorage/common/zap")
-local v_u_6 = require("../../Data/PlayerDatabase")
-local v_u_7 = {}
-local v_u_8 = nil
-local v_u_9 = nil
-local v_u_10 = nil
-local v_u_11 = nil
-local v_u_12 = nil
-v_u_5.ServerList.On(function(p13)
-	-- upvalues: (ref) v_u_8, (ref) v_u_9, (ref) v_u_10
-	if v_u_8 then
-		v_u_8:set(p13.Servers)
-	end
-	if v_u_9 then
-		v_u_9:set(false)
-		if v_u_10 then
-			task.cancel(v_u_10)
-			v_u_10 = nil
-		end
-		task.delay(3, function()
-			-- upvalues: (ref) v_u_9
-			if v_u_9 then
-				v_u_9:set(false)
-			end
-		end)
-	end
-end)
-v_u_5.JoinServerResponse.On(function(p14)
-	-- upvalues: (copy) v_u_6, (ref) v_u_11
-	v_u_6.Signals.StatusMessage:Fire(p14.Message, 0)
-	if v_u_11 then
-		v_u_11:set(false)
-	end
-end)
-v_u_5.PrivateServerCreated.On(function(p15)
-	-- upvalues: (ref) v_u_12
-	print("Private server created with ID: " .. p15.PrivateServerId)
-	v_u_12:set(p15.PrivateServerId)
-end)
-function v_u_7.FailedTeleport() -- name: FailedTeleport
-	-- upvalues: (ref) v_u_11, (copy) v_u_6
-	if not v_u_11 then
-		return false
-	end
-	v_u_11:set(false)
-	v_u_6.Signals.StatusMessage:Fire("Failed to join server", 0)
-	return true
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local u11 = require("../Components/ServerList/ServerList")
+local fusion_utils = require(ReplicatedStorage.common.fusion_utils)
+local u18 = require("@game/ReplicatedStorage/common/zap")
+local u21 = require("../../Data/PlayerDatabase")
+local u22 = {}
+local u23 = nil
+local u24 = nil
+local u25 = nil
+local u26 = nil
+local u27 = nil
+local u28 = nil
+local function getTeleportPresenter() -- Line: 25
+    local v1, v2, v3
+    local ReplicatedFirst = game:GetService("ReplicatedFirst")
+    local ZSTeleport = ReplicatedFirst:FindFirstChild("ZSTeleport")
+    local TeleportPresenter = ZSTeleport
+    if TeleportPresenter then
+        TeleportPresenter = ZSTeleport:FindFirstChild("TeleportPresenter")
+    end
+    if not TeleportPresenter or not (TeleportPresenter:IsA("ModuleScript")) then
+        return nil
+    end
+    v1, v2 = pcall(require, TeleportPresenter)
+    if not v1 then
+        v3 = nil
+    else
+        v3 = v2
+        if not v3 then
+            v3 = nil
+        end
+    end
+    return v3
 end
-function v_u_7.new(p_u_16, p_u_17, p_u_18) -- name: new
-	-- upvalues: (copy) v_u_4, (ref) v_u_9, (ref) v_u_11, (ref) v_u_8, (ref) v_u_12, (copy) v_u_5, (ref) v_u_10, (copy) v_u_3
-	local v_u_19 = p_u_16.scope:innerScope(v_u_4)
-	local v_u_20 = v_u_19:Value({})
-	v_u_9 = v_u_19:Value(false)
-	v_u_11 = v_u_19:Value(false)
-	v_u_8 = v_u_20
-	v_u_12 = v_u_19:Value("")
-	local v_u_21 = v_u_19:New("Sound")({
-		["Parent"] = nil,
-		["SoundId"] = "rbxassetid://265275704",
-		["Volume"] = 0.5,
-		["Parent"] = p_u_16.target
-	})
-	local function v_u_23(p22) -- name: onRefresh
-		-- upvalues: (ref) v_u_5, (ref) v_u_9, (ref) v_u_10
-		p22:set({})
-		v_u_5.RefreshServers.Fire({
-			["ServerType"] = "Arcade"
-		})
-		if v_u_9 then
-			v_u_9:set(true)
-			v_u_10 = task.delay(10, function()
-				-- upvalues: (ref) v_u_9
-				if v_u_9 then
-					v_u_9:set(false)
-				end
-			end)
-		end
-	end
-	local function v_u_27(p24) -- name: onJoin
-		-- upvalues: (copy) v_u_19, (copy) v_u_20, (ref) v_u_11, (ref) v_u_5
-		print("Joining server", p24)
-		local v25 = false
-		for _, _ in v_u_19.peek(v_u_20) do
-			v25 = true
-			break
-		end
-		local v26 = not v25 and "" or p24
-		if v_u_11 then
-			v_u_11:set(true)
-		end
-		v_u_5.JoinServer.Fire({
-			["ServerID"] = nil,
-			["ServerType"] = "Arcade",
-			["ServerID"] = v26
-		})
-	end
-	local function v_u_28() -- name: onJoinPrivateServer
-		-- upvalues: (ref) v_u_11, (ref) v_u_5, (copy) v_u_19, (ref) v_u_12
-		if v_u_11 then
-			v_u_11:set(true)
-		end
-		v_u_5.JoinPrivateServer.Fire({
-			["ServerType"] = "Arcade",
-			["PrivateServerId"] = nil,
-			["PrivateServerId"] = v_u_19.peek(v_u_12)
-		})
-	end
-	v_u_23(v_u_20)
-	return v_u_3({
-		["OnRefresh"] = function() -- name: OnRefresh
-			-- upvalues: (copy) v_u_21, (copy) p_u_16, (copy) v_u_23, (copy) v_u_20
-			local v_u_29 = v_u_21:Clone()
-			v_u_29.Parent = p_u_16.target
-			v_u_29.Ended:Connect(function()
-				-- upvalues: (copy) v_u_29
-				v_u_29:Destroy()
-			end)
-			v_u_29.Playing = true
-			v_u_23(v_u_20)
-		end,
-		["OnJoin"] = function(p30) -- name: OnJoin
-			-- upvalues: (copy) v_u_21, (copy) p_u_16, (copy) v_u_27
-			local v_u_31 = v_u_21:Clone()
-			v_u_31.Parent = p_u_16.target
-			v_u_31.Ended:Connect(function()
-				-- upvalues: (copy) v_u_31
-				v_u_31:Destroy()
-			end)
-			v_u_31.Playing = true
-			v_u_27(p30)
-		end,
-		["OnExit"] = function() -- name: OnExit
-			-- upvalues: (copy) v_u_21, (copy) p_u_16, (copy) v_u_19, (copy) p_u_17, (copy) p_u_18
-			local v_u_32 = v_u_21:Clone()
-			v_u_32.Parent = p_u_16.target
-			v_u_32.Ended:Connect(function()
-				-- upvalues: (copy) v_u_32
-				v_u_32:Destroy()
-			end)
-			v_u_32.Playing = true
-			v_u_19:doCleanup()
-			local v33 = p_u_18
-			if p_u_17 then
-				v33()
-			end
-		end,
-		["OnJoinPrivateServer"] = function() -- name: OnJoinPrivateServer
-			-- upvalues: (copy) v_u_21, (copy) p_u_16, (copy) v_u_28
-			local v_u_34 = v_u_21:Clone()
-			v_u_34.Parent = p_u_16.target
-			v_u_34.Ended:Connect(function()
-				-- upvalues: (copy) v_u_34
-				v_u_34:Destroy()
-			end)
-			v_u_34.Playing = true
-			v_u_28()
-		end,
-		["OnStartPrivateServer"] = function() -- name: OnStartPrivateServer
-			-- upvalues: (copy) v_u_21, (copy) p_u_16, (ref) v_u_5
-			local v_u_35 = v_u_21:Clone()
-			v_u_35.Parent = p_u_16.target
-			v_u_35.Ended:Connect(function()
-				-- upvalues: (copy) v_u_35
-				v_u_35:Destroy()
-			end)
-			v_u_35.Playing = true
-			print("Starting private server")
-			v_u_5.StartPrivateServer.Fire({
-				["ServerType"] = "Arcade"
-			})
-		end,
-		["PrivateServerId"] = v_u_12,
-		["PlayClickSound"] = function() -- name: playClickSound
-			-- upvalues: (copy) v_u_21, (copy) p_u_16
-			local v_u_36 = v_u_21:Clone()
-			v_u_36.Parent = p_u_16.target
-			v_u_36.Ended:Connect(function()
-				-- upvalues: (copy) v_u_36
-				v_u_36:Destroy()
-			end)
-			v_u_36.Playing = true
-		end,
-		["Joining"] = v_u_11,
-		["Refreshing"] = v_u_9,
-		["ServerData"] = v_u_20,
-		["scope"] = v_u_19,
-		["target"] = p_u_16.target
-	})
+local function armArcade() -- Line: 33 -- upvalues: getTeleportPresenter (val)
+    local v1 = getTeleportPresenter()
+    if v1 then
+        v1.Arm("Arcade", {destMode = "Arcade"})
+        v1.Present()
+    end
 end
-function v_u_7.test() -- name: test
-	-- upvalues: (copy) v_u_2, (copy) v_u_7
-	local v37 = v_u_2.scoped(v_u_2)
-	local v38 = {
-		["target"] = v37:New("ScreenGui")({
-			["Parent"] = nil,
-			["Name"] = "ServerListController",
-			["ZIndexBehavior"] = nil,
-			["Parent"] = game.Players.LocalPlayer:WaitForChild("PlayerGui"),
-			["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
-		}),
-		["scope"] = v37
-	}
-	v_u_7.new(v38)
+u18.ServerList.On(function(p1) -- Line: 41 -- upvalues: u23 (ref), u24 (ref), u25 (ref)
+    if u23 then
+        u23:set(p1.Servers)
+    end
+    if u24 then
+        u24:set(false)
+        if u25 then
+            task.cancel(u25)
+            u25 = nil
+        end
+        task.delay(3, function() -- Line: 53 -- upvalues: u24 (upval)
+            if u24 then
+                u24:set(false)
+            end
+        end)
+    end
+end)
+u18.JoinServerResponse.On(function(p1) -- Line: 61 -- upvalues: u21 (val), getTeleportPresenter (val), u26 (ref)
+    u21.Signals.StatusMessage:Fire(p1.Message, 0)
+    local v1 = getTeleportPresenter()
+    if v1 then
+        v1.Dismiss("ServerJoinRejected")
+    end
+    if u26 then
+        u26:set(false)
+    end
+end)
+u18.PrivateServerCreated.On(function(p1) -- Line: 73 -- upvalues: u27 (ref)
+    print("Private server created with ID: " .. p1.PrivateServerId)
+    u27:set(p1.PrivateServerId)
+end)
+function u22.FailedTeleport() -- Line: 79 -- upvalues: getTeleportPresenter (val), u26 (ref), u21 (val)
+    local v1 = getTeleportPresenter()
+    if v1 then
+        v1.Dismiss("ServerBrowserFailed")
+    end
+    if not u26 then
+        return false
+    end
+    u26:set(false)
+    u21.Signals.StatusMessage:Fire("Failed to join server", 0)
+    return true
 end
-return v_u_7
+function u22.Close() -- Line: 93 -- upvalues: u28 (ref)
+    if u28 then
+        u28()
+    end
+end
+function u22.new(p1, p2, p3) -- Line: 100 -- upvalues: fusion_utils (val), u24 (ref), u26 (ref), u23 (ref), u27 (ref), u18 (val), u25 (ref), getTeleportPresenter (val), u28 (ref), u11 (val)
+    local u28
+    local u7 = p1.scope:innerScope(fusion_utils)
+    local u11 = u7:Value({})
+    u24 = u7:Value(false)
+    u26 = u7:Value(false)
+    u23 = u11
+    u27 = u7:Value("")
+    local function onRefresh(p1) -- Line: 109 -- upvalues: u18 (upval), u24 (upval), u25 (upval)
+        p1:set({})
+        u18.RefreshServers.Fire({ServerType = "Arcade"})
+        if u24 then
+            u24:set(true)
+            u25 = task.delay(10, function() -- Line: 120 -- upvalues: u24 (upval)
+                if u24 then
+                    u24:set(false)
+                end
+            end)
+        end
+    end
+    local function onExit(p1, p2) -- Line: 152
+        if p1 then
+            p2()
+        end
+    end
+    function u28() -- Line: 159 -- upvalues: u28 (upval), u28 (ref), u7 (val), p2 (val), p3 (val)
+        if u28 == u28 then
+            u28 = nil
+        end
+        u7:doCleanup()
+        if p2 then
+            p3()
+        end
+    end
+    u28 = u28
+    onRefresh(u11)
+    local v1 = {
+        OnRefresh = function() -- Line: 191 -- upvalues: onRefresh (val), u11 (val)
+            onRefresh(u11)
+        end,
+        OnJoin = function(p1) -- Line: 128 -- upvalues: getTeleportPresenter (upval), u7 (val), u11 (val), u26 (upval), u18 (upval)
+            local v1
+            print("Joining server", p1)
+            local v2 = getTeleportPresenter()
+            if v2 then
+                v2.Arm("Arcade", {destMode = "Arcade"})
+                v2.Present()
+            end
+            v2 = false
+            for i, j in u7.peek(u11) do
+                v2 = true
+                break
+            end
+            if v2 then
+                v1 = p1
+            else
+                v1 = ""
+            end
+            if u26 then
+                u26:set(true)
+            end
+            u18.JoinServer.Fire({ServerType = "Arcade", ServerID = v1})
+        end,
+        OnExit = u28,
+        OnJoinPrivateServer = function() -- Line: 176 -- upvalues: getTeleportPresenter (upval), u26 (upval), u18 (upval), u7 (val), u27 (upval)
+            local v1 = getTeleportPresenter()
+            if v1 then
+                v1.Arm("Arcade", {destMode = "Arcade"})
+                v1.Present()
+            end
+            if u26 then
+                u26:set(true)
+            end
+            u18.JoinPrivateServer.Fire({ServerType = "Arcade", PrivateServerId = u7.peek(u27)})
+        end,
+        OnStartPrivateServer = function() -- Line: 168 -- upvalues: u18 (upval)
+            print("Starting private server")
+            u18.StartPrivateServer.Fire({ServerType = "Arcade"})
+        end,
+        PrivateServerId = u27,
+        Joining = u26,
+        Refreshing = u24,
+        ServerData = u11,
+        scope = u7,
+        target = p1.target,
+    }
+    return (u11(v1))
+end
+function u22.test() -- Line: 215 -- upvalues: Fusion (val), u22 (val)
+    local v1 = Fusion.scoped(Fusion)
+    local v2 = v1:New("ScreenGui")
+    v2 = v2({Name = "ServerListController", Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"), ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
+    u22.new({target = v2, scope = v1})
+end
+return u22

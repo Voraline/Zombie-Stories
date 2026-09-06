@@ -1,22 +1,17 @@
-local v_u_1 = {
-	["Connected"] = true
-}
-v_u_1.__index = v_u_1
-function v_u_1.Disconnect(p2) -- name: Disconnect
-	if p2.Connected then
-		p2.Connected = false
-		p2.Connection:Disconnect()
-	end
+local u0 = {Connected = true}
+u0.__index = u0
+function u0:Disconnect() -- Line: 20
+    if self.Connected then
+        self.Connected = false
+        self.Connection:Disconnect()
+    end
 end
-function v_u_1._new(p3) -- name: _new
-	-- upvalues: (copy) v_u_1
-	local v4 = v_u_1
-	return setmetatable({
-		["Connection"] = p3
-	}, v4)
+function u0._new(p1) -- Line: 27 -- upvalues: u0 (val)
+    local v1 = {Connection = p1}
+    return (setmetatable(v1, u0))
 end
-function v_u_1.__tostring(p5) -- name: __tostring
-	local v6 = p5.Connected
-	return "RbxScriptConnection<" .. tostring(v6) .. ">"
+function u0.__tostring(p1) -- Line: 33
+    local v1 = tostring(p1.Connected)
+    return "RbxScriptConnection<" .. v1 .. ">"
 end
-return v_u_1
+return u0

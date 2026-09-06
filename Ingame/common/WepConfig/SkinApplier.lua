@@ -1,609 +1,699 @@
-local function v_u_6(p1, p2) -- name: split
-	local v3 = {}
-	for v4 in p1:gmatch((("([^%s]+)"):format(p2))) do
-		local v5 = tonumber(v4)
-		table.insert(v3, v5)
-	end
-	return unpack(v3)
+local function findClosestPart2(p1, p2, p3, p4) -- Line: 2
+    local Magnitude, Magnitude_2
+    local v1 = nil
+    local v2 = (1 / 0)
+    local v3 = (1 / 0)
+    for i, v in ipairs(p4) do
+        if v:IsA("BasePart") and v ~= p1 then
+            Magnitude_2 = (p2 - v.Position).Magnitude
+            if Magnitude_2 < v2 then
+                v1 = v
+                v2 = Magnitude_2
+            end
+        end
+    end
+    if v1 then
+        return v1
+    end
+    for i2, i3 in ipairs(p4) do
+        if i3:IsA("BasePart") and i3 ~= p1 and (p2 - i3.Position).Magnitude < 1 then
+            Magnitude = (p3 - i3.Size).Magnitude
+            if Magnitude < v3 then
+                v3 = Magnitude
+                v1 = i3
+            end
+        end
+    end
+    return v1
 end
-local v_u_7 = game:GetService("HttpService")
-local v8 = {}
-local function v_u_13(p9, p10) -- name: ApplyAttributes
-	for v11, v12 in p9:GetAttributes() do
-		if v11 ~= "Skin" then
-			p10:SetAttribute(v11, v12)
-		end
-	end
+local function split(p1, p2) -- Line: 34
+    local v1 = {}
+    for i in p1:gmatch((("([^%s]+)"):format(p2))) do
+        table.insert(v1, (tonumber(i)))
+    end
+    return unpack(v1)
 end
-function v8.ApplyFolder(_, p14, p15) -- name: ApplyFolder
-	-- upvalues: (copy) v_u_13
-	if not p15:GetAttribute("DontHideGun") then
-		p14.Weapon:ClearAllChildren()
-	end
-	for _, v16 in p15:GetChildren() do
-		if v16:IsA("Model") then
-			local v17 = v16:Clone()
-			if not v17:GetAttribute("CustomWelded") then
-				for _, v18 in v17:QueryDescendants("BasePart") do
-					if v18 ~= v17.PrimaryPart then
-						local v19 = v17.PrimaryPart
-						local v20 = Instance.new("Weld")
-						v20.Name = v19.Name .. ":" .. v18.Name
-						v20.Part0 = v19
-						v20.Part1 = v18
-						v20.C0 = CFrame.new()
-						v20.C1 = v18.CFrame:toObjectSpace(v19.CFrame)
-						v20.Parent = v19
-					end
-					v18.Anchored = false
-					v18.CanCollide = false
-					v18.CanTouch = false
-					v18.CanQuery = false
-				end
-			end
-			local v21 = p14.KeyParts[v17.Name]
-			local v22 = v17.PrimaryPart
-			local v23 = Instance.new("Weld")
-			v23.Name = v22.Name .. ":" .. v21.Name
-			v23.Part0 = v22
-			v23.Part1 = v21
-			v23.Parent = v22
-			for _, v24 in v17:GetChildren() do
-				if v24.Name == "Override" then
-					v24.Name = v21.Name
-					v21.Name = "Overidden"
-					v24.Parent = v21.Parent
-				elseif v24 ~= v17.PrimaryPart then
-					v24.Parent = p14.Weapon
-				end
-			end
-			v17.Parent = p14.Weapon
-		end
-	end
-	v_u_13(p15, p14)
-	if p14:FindFirstChild("Animations") and p15:FindFirstChild("Animations") then
-		for _, v25 in p14.Animations:GetChildren() do
-			local v26 = p15.Animations:FindFirstChild(v25.Name)
-			if v26 then
-				v26:Clone().Parent = v25.Parent
-				v25:Destroy()
-			end
-		end
-	end
-	p14.Parent = workspace
-	local v27 = p14:FindFirstChild("GlobalParts")
-	local v28 = p15:FindFirstChild("GlobalParts")
-	local v29 = p15:FindFirstChild("Handle")
-	if v28 and (v27 and (v29 and v29.PrimaryPart)) then
-		local v30 = v28:Clone()
-		local v31 = v29.PrimaryPart:Clone()
-		local v32 = Instance.new("Model")
-		v31.Parent = v32
-		v30.Parent = v32
-		v32.PrimaryPart = v31
-		local v33 = p14.KeyParts.Handle
-		v32:PivotTo(v33.CFrame)
-		v30.Parent = nil
-		v32:Destroy()
-		local v34 = {}
-		for _, v35 in v27:QueryDescendants("BasePart") do
-			for _, v36 in v35:GetJoints() do
-				if v36:IsA("JointInstance") then
-					local v37
-					if v36.Part0 == v35 then
-						v37 = v36.Part1
-					else
-						v37 = v36.Part0
-					end
-					if v37 then
-						if v37.Name ~= "Handle" then
-							v34[v35.Name] = v37
-							break
-						end
-						if not v34[v35.Name] then
-							v34[v35.Name] = v37
-						end
-					end
-				end
-			end
-			local v38 = v30.BasePoints:FindFirstChild(v35.Name)
-			if v38 then
-				local v39
-				if v34[v35.Name] then
-					v39 = v34[v35.Name]
-				else
-					v39 = v33
-				end
-				local v40 = Instance.new("Weld")
-				v40.Name = v39.Name .. ":" .. v38.Name
-				v40.Part0 = v39
-				v40.Part1 = v38
-				v40.C0 = CFrame.new()
-				v40.C1 = v38.CFrame:toObjectSpace(v39.CFrame)
-				v40.Parent = v39
-				v38.Parent = v35.Parent
-				v35:Destroy()
-			end
-		end
-	end
-	p14.Parent = nil
+local HttpService = game:GetService("HttpService")
+local v1 = {}
+local function WeldTogether(p1, p2, p3, p4, p5) -- Line: 48
+    local v1 = Instance.new(p3 or "Weld")
+    v1.Name = p1.Name .. ":" .. p2.Name
+    v1.Part0 = p1
+    v1.Part1 = p2
+    if not p5 then
+        v1.C0 = CFrame.new()
+        v1.C1 = p2.CFrame:toObjectSpace(p1.CFrame)
+    end
+    v1.Parent = p4 or p1
+    return v1
 end
-function v8.DecodeSkin(_, p41, p42) -- name: DecodeSkin
-	-- upvalues: (copy) v_u_13, (copy) v_u_7, (copy) v_u_6
-	v_u_13(p42, p41)
-	local v43 = p42:GetAttribute("Skin")
-	if not v43 then
-		return
-	end
-	local v44 = {}
-	for v45, v46 in pairs(v_u_7:JSONDecode(v43)) do
-		for _, v47 in p41.Weapon:QueryDescendants("BasePart") do
-			if v47:GetAttribute("uid") == v45 then
-				v44[v47:GetAttribute("uid")] = true
-				if v46.Color then
-					v47.Color = Color3.new(v_u_6(v46.Color, ","))
-				end
-				if v46.Material then
-					v47.Material = Enum.Material[v46.Material]
-				end
-				if v46.Reflectance then
-					v47.Reflectance = v46.Reflectance
-				end
-				if v46.Transparency then
-					v47.Transparency = v46.Transparency
-				end
-				if v47:IsA("UnionOperation") and v46.UsePartColor then
-					v47.UsePartColor = v46.UsePartColor
-				end
-				break
-			end
-		end
-	end
+local function ApplyAttributes(p1, p2) -- Line: 69
+    for i, j in p1:GetAttributes() do
+        if i ~= "Skin" then
+            p2:SetAttribute(i, j)
+        end
+    end
 end
-function v8.AddGlobalParts(_, p48, p49) -- name: AddGlobalParts
-	local v50 = p49:Clone()
-	v50.Parent = workspace.Ignore
-	local v51 = not p48.KeyParts:FindFirstChild("BulletEjection", true) and v50.KeyParts:FindFirstChild("BulletEjection", true)
-	if v51 then
-		v51:Clone().Parent = p48.KeyParts.Handle
-	end
-	if p48:FindFirstChild("Animations") then
-		if p48:FindFirstChild("Animations") then
-			for _, v52 in v50:WaitForChild("Animations"):GetChildren() do
-				if v52.Name ~= "3P" and (v52.Name ~= "Idle" and (v52.Name ~= "Shoot" and not p48.Animations:FindFirstChild(v52.Name))) then
-					v52:Clone().Parent = p48.Animations
-				end
-			end
-		end
-	else
-		v50.Animations:Clone().Parent = p48
-	end
-	local v53 = v50:FindFirstChild("GlobalParts")
-	local v54 = p48:FindFirstChild("GlobalParts")
-	if v53 then
-		p48:PivotTo(v50.PrimaryPart.CFrame)
-		local v55 = v53:Clone()
-		local v56 = {}
-		if v54 then
-			if v55:FindFirstChild("BasePoints") and v54:FindFirstChild("BasePoints") then
-				for _, v57 in v54.BasePoints:GetChildren() do
-					if v55.BasePoints:FindFirstChild(v57.Name) then
-						v56[v57.Name] = false
-						v55.BasePoints[v57.Name]:Destroy()
-					end
-					v57.Parent = v55.BasePoints
-				end
-			end
-			for _, v58 in v55:GetChildren() do
-				if v58.Name ~= "BasePoints" and (v58:IsA("Folder") and v54:FindFirstChild(v58.Name)) then
-					v58:Destroy()
-				end
-			end
-		end
-		for _, v59 in v53:QueryDescendants("BasePart") do
-			if v56[v59.Name] ~= false then
-				local v60 = nil
-				for _, v61 in v59:GetJoints() do
-					if v61:IsA("JointInstance") then
-						local v62
-						if v61.Part0 == v59 then
-							v62 = v61.Part1
-						else
-							v62 = v61.Part0
-						end
-						if v62 then
-							if v62.Name ~= "Handle" then
-								v60 = v62.Name
-								break
-							end
-							if not v60 then
-								v60 = v62.Name
-							end
-						end
-					end
-				end
-				if v60 then
-					v56[v59.Name] = v60
-				end
-			end
-		end
-		for _, v63 in v55:QueryDescendants("BasePart") do
-			v63:BreakJoints()
-			if v56[v63.Name] then
-				local v64 = p48.KeyParts:FindFirstChild(v56[v63.Name]) or p48.KeyParts.Handle
-				local v65 = Instance.new("Weld")
-				v65.Name = v64.Name .. ":" .. v63.Name
-				v65.Part0 = v64
-				v65.Part1 = v63
-				v65.C0 = CFrame.new()
-				v65.C1 = v63.CFrame:toObjectSpace(v64.CFrame)
-				v65.Parent = v64
-			end
-		end
-		if v54 then
-			for _, v66 in v55:GetChildren() do
-				if v66.Name == "BasePoints" then
-					for _, v67 in v66:GetChildren() do
-						v67.Parent = v54.BasePoints
-					end
-				else
-					v66.Parent = v54
-				end
-			end
-			v55:Destroy()
-		else
-			v55.Parent = p48
-			v54 = v55
-		end
-		if v54 and v54:FindFirstChild("ToWeapon") then
-			for _, v68 in v54.ToWeapon:QueryDescendants("BasePart") do
-				local v69 = p48.KeyParts.Handle
-				local v70 = Instance.new("Weld")
-				v70.Name = v69.Name .. ":" .. v68.Name
-				v70.Part0 = v69
-				v70.Part1 = v68
-				v70.C0 = CFrame.new()
-				v70.C1 = v68.CFrame:toObjectSpace(v69.CFrame)
-				v70.Parent = v69
-			end
-			for _, v71 in v54.ToWeapon:GetChildren() do
-				if p48.Weapon:FindFirstChild(v71.Name) then
-					for _, v72 in v71:GetChildren() do
-						v72.Parent = p48.Weapon[v71.Name]
-					end
-					v71:Destroy()
-				else
-					v71.Parent = p48.Weapon
-				end
-			end
-		end
-	end
-	v50:Destroy()
+function v1.ApplyFolder(p1, p2, p3) -- Line: 94 -- upvalues: ApplyAttributes (val)
+    local Model, PrimaryPart, PrimaryPart_2, Weld_2, Weld_3, v1, v2, v3, v4
+    if not (p3:GetAttribute("DontHideGun")) then
+        p2.Weapon:ClearAllChildren()
+    end
+    v2, v1 = p3, p2
+    for i, j in p3:GetChildren() do
+        if j:IsA("Model") then
+            v3 = j:Clone()
+            if not (v3:GetAttribute("CustomWelded")) then
+                for k, n in v3:QueryDescendants("BasePart") do
+                    if n ~= v3.PrimaryPart then
+                        PrimaryPart = v3.PrimaryPart
+                        Weld_2 = Instance.new("Weld")
+                        Weld_2.Name = PrimaryPart.Name .. ":" .. n.Name
+                        Weld_2.Part0 = PrimaryPart
+                        Weld_2.Part1 = n
+                        Weld_2.C0 = CFrame.new()
+                        Weld_2.C1 = n.CFrame:toObjectSpace(PrimaryPart.CFrame)
+                        Weld_2.Parent = PrimaryPart
+                    end
+                    n.Anchored = false
+                    n.CanCollide = false
+                    n.CanTouch = false
+                    n.CanQuery = false
+                end
+            end
+            v4 = v1.KeyParts[v3.Name]
+            PrimaryPart_2 = v3.PrimaryPart
+            Weld_3 = Instance.new("Weld")
+            Weld_3.Name = PrimaryPart_2.Name .. ":" .. v4.Name
+            Weld_3.Part0 = PrimaryPart_2
+            Weld_3.Part1 = v4
+            Weld_3.Parent = PrimaryPart_2
+            for m, i5 in v3:GetChildren() do
+                if i5.Name == "Override" then
+                    i5.Name = v4.Name
+                    v4.Name = "Overidden"
+                    i5.Parent = v4.Parent
+                elseif i5 ~= v3.PrimaryPart then
+                    i5.Parent = v1.Weapon
+                end
+            end
+            v3.Parent = v1.Weapon
+        end
+    end
+    ApplyAttributes(v2, v1)
+    if v1:FindFirstChild("Animations") and v2:FindFirstChild("Animations") then
+        for i6, i7 in v1.Animations:GetChildren() do
+            v3 = v2.Animations:FindFirstChild(i7.Name)
+            if v3 then
+                v4 = v3:Clone()
+                v4.Parent = i7.Parent
+                i7:Destroy()
+            end
+        end
+    end
+    v1.Parent = workspace
+    local GlobalParts = v1:FindFirstChild("GlobalParts")
+    local GlobalParts_2 = v2:FindFirstChild("GlobalParts")
+    local Handle = v2:FindFirstChild("Handle")
+    if GlobalParts_2 and GlobalParts and Handle and Handle.PrimaryPart then
+        local Part1, Weld, v5, v6
+        local v7 = GlobalParts_2:Clone()
+        local v8 = Handle.PrimaryPart:Clone()
+        Model = Instance.new("Model")
+        v8.Parent = Model
+        v7.Parent = Model
+        Model.PrimaryPart = v8
+        local Handle_2 = v1.KeyParts.Handle
+        Model:PivotTo(Handle_2.CFrame)
+        v7.Parent = nil
+        Model:Destroy()
+        local v9 = {}
+        for i8, i9 in GlobalParts:QueryDescendants("BasePart") do
+            for i10, i11 in i9:GetJoints() do
+                if i11:IsA("JointInstance") then
+                    if i11.Part0 ~= i9 then
+                        Part1 = i11.Part0
+                    else
+                        Part1 = i11.Part1
+                    end
+                    if Part1 then
+                        if Part1.Name ~= "Handle" then
+                            v9[i9.Name] = Part1
+                            break
+                        end
+                        if not (v9[i9.Name]) then
+                            v9[i9.Name] = Part1
+                        end
+                    end
+                end
+            end
+            v5 = v7.BasePoints:FindFirstChild(i9.Name)
+            if v5 then
+                if not (v9[i9.Name]) then
+                    v6 = Handle_2
+                else
+                    v6 = v9[i9.Name]
+                end
+                Weld = Instance.new("Weld")
+                Weld.Name = v6.Name .. ":" .. v5.Name
+                Weld.Part0 = v6
+                Weld.Part1 = v5
+                Weld.C0 = CFrame.new()
+                Weld.C1 = v5.CFrame:toObjectSpace(v6.CFrame)
+                Weld.Parent = v6
+                v5.Parent = i9.Parent
+                i9:Destroy()
+            end
+        end
+    end
+    v1.Parent = nil
 end
-function v8.ApplyCreatorSkin(_, p73, p74) -- name: ApplyCreatorSkin
-	if not p74:GetAttribute("DontHideGun") then
-		p73.Weapon:ClearAllChildren()
-	end
-	p73.Parent = workspace
-	local v75 = p74:FindFirstChild("Geometry")
-	if v75 then
-		for _, v76 in v75:GetChildren() do
-			if v76:IsA("Model") then
-				local v77 = v76:Clone()
-				local v78 = v77:GetAttribute("WeldTarget") or "Handle"
-				local v79 = p73.KeyParts:FindFirstChild(v78) or p73.KeyParts.Handle
-				local v80 = v77:FindFirstChild("AttachmentWeld", true)
-				if v80 and v80:IsA("BasePart") then
-					v77.PrimaryPart = v80
-				elseif not v77.PrimaryPart then
-					for _, v81 in v77:GetDescendants() do
-						if v81:IsA("BasePart") then
-							v77.PrimaryPart = v81
-							break
-						end
-					end
-				end
-				local v82 = v77:GetAttribute("VisibilityRule")
-				local v83 = v82 == "Replace"
-				if v83 then
-					if v77.PrimaryPart then
-						v77:PivotTo(v79.CFrame)
-					end
-				elseif v77.PrimaryPart then
-					v77:PivotTo(v79.CFrame * v77:GetPivot())
-				end
-				if v77.PrimaryPart and not v77:GetAttribute("CustomWelded") then
-					for _, v84 in v77:GetDescendants() do
-						if v84:IsA("BasePart") then
-							if v84 ~= v77.PrimaryPart then
-								local v85 = v77.PrimaryPart
-								local v86 = Instance.new("Weld")
-								v86.Name = v85.Name .. ":" .. v84.Name
-								v86.Part0 = v85
-								v86.Part1 = v84
-								v86.C0 = CFrame.new()
-								v86.C1 = v84.CFrame:toObjectSpace(v85.CFrame)
-								v86.Parent = v85
-							end
-							if not v83 or v84 ~= v77.PrimaryPart then
-								v84.Anchored = false
-							end
-							v84.CanCollide = false
-							v84.CanTouch = false
-							v84.CanQuery = false
-						end
-					end
-				end
-				if not v83 and v77.PrimaryPart then
-					local v87 = v77.PrimaryPart
-					local v88 = Instance.new("Weld")
-					v88.Name = v79.Name .. ":" .. v87.Name
-					v88.Part0 = v79
-					v88.Part1 = v87
-					v88.C0 = CFrame.new()
-					v88.C1 = v87.CFrame:toObjectSpace(v79.CFrame)
-					v88.Parent = v79
-				end
-				v77.Parent = p73.Weapon
-				if v82 == "Show" or v83 then
-					for _, v89 in v77:GetDescendants() do
-						if v89:IsA("BasePart") or (v89:IsA("Decal") or v89:IsA("Texture")) then
-							v89:SetAttribute("VisibilityOrigTransparency", v89.Transparency)
-							v89.Transparency = 1
-						elseif v89:IsA("Beam") or v89:IsA("ParticleEmitter") then
-							v89:SetAttribute("VisibilityOrigEnabled", v89.Enabled)
-							v89.Enabled = false
-						end
-					end
-				end
-			end
-		end
-	end
-	local v90 = p74:FindFirstChild("BasePoints")
-	local v91 = p73:FindFirstChild("GlobalParts")
-	if v90 and v91 then
-		local v92 = v91:FindFirstChild("BasePoints")
-		if v92 then
-			for _, v93 in v90:GetChildren() do
-				if v93:IsA("BasePart") then
-					local v94 = v92:FindFirstChild(v93.Name)
-					local v95 = v93:GetAttribute("WeldTarget") or "Handle"
-					local v96 = p73.KeyParts:FindFirstChild(v95) or p73.KeyParts.Handle
-					local v97 = v93:FindFirstChildWhichIsA("Weld")
-					local v98 = v97 and v97.C0 or CFrame.new()
-					local v99 = v93:Clone()
-					v99.Anchored = false
-					v99.CanCollide = false
-					v99.CanTouch = false
-					v99.CanQuery = false
-					local v100 = v99:FindFirstChildWhichIsA("Weld")
-					if v100 then
-						v100:Destroy()
-					end
-					v99.CFrame = v96.CFrame * v98
-					local v101 = Instance.new("Weld")
-					v101.Name = v96.Name .. ":" .. v99.Name
-					v101.Part0 = v96
-					v101.Part1 = v99
-					v101.C0 = CFrame.new()
-					v101.C1 = v99.CFrame:toObjectSpace(v96.CFrame)
-					v101.Parent = v96
-					v99.Parent = v92
-					if v94 then
-						v94:BreakJoints()
-						v94:Destroy()
-					end
-				end
-			end
-		end
-	end
-	local v102 = p74:FindFirstChild("Animations")
-	if v102 and p73:FindFirstChild("Animations") then
-		for _, v103 in v102:GetChildren() do
-			if v103:IsA("Animation") then
-				local v104 = p73.Animations:FindFirstChild(v103.Name)
-				if v104 then
-					v104:Destroy()
-				end
-				v103:Clone().Parent = p73.Animations
-			end
-		end
-	end
-	local v105 = {
-		["SkinSDKVersion"] = true,
-		["BaseWeapon"] = true,
-		["DontHideGun"] = true,
-		["Author"] = true,
-		["Category"] = true
-	}
-	for v106, v107 in p74:GetAttributes() do
-		if not v105[v106] then
-			p73:SetAttribute(v106, v107)
-		end
-	end
-	local v108 = p74:FindFirstChild("KeyPartOverrides")
-	if v108 then
-		local v109 = v108:GetAttribute("BarrelOffset")
-		local v110 = v108:GetAttribute("BarrelSize")
-		local v111 = (v109 or v110) and p73.KeyParts:FindFirstChild("Barrel")
-		if v111 then
-			local v112 = v111:FindFirstChild("BulletEjection")
-			local v113
-			if v112 and v112:IsA("BasePart") then
-				v113 = v112.CFrame or nil
-			else
-				v113 = nil
-			end
-			if v109 then
-				v111.CFrame = v111.CFrame * v109
-			end
-			if v110 then
-				v111.Size = v110
-			end
-			if v112 and v113 then
-				v112:BreakJoints()
-				v112.CFrame = v113
-				local v114 = Instance.new("Weld")
-				v114.Name = v111.Name .. ":" .. v112.Name
-				v114.Part0 = v111
-				v114.Part1 = v112
-				v114.C0 = CFrame.new()
-				v114.C1 = v112.CFrame:toObjectSpace(v111.CFrame)
-				v114.Parent = v111
-			end
-		end
-		local v115 = v108:GetAttribute("AimPartOffset")
-		if v115 then
-			p73:SetAttribute("SkinAimPartOffset", v115)
-		end
-	end
-	if v75 then
-		local v116 = {}
-		for _, v117 in v75:GetChildren() do
-			if v117:IsA("Model") then
-				local v118 = v117:GetAttribute("OptionGroup")
-				if v118 and v118 ~= "" then
-					if not v116[v118] then
-						v116[v118] = {}
-					end
-					local v119 = v116[v118]
-					local v120 = {
-						["name"] = v117.Name,
-						["isDefault"] = v117:GetAttribute("OptionGroupDefault") or false
-					}
-					table.insert(v119, v120)
-				end
-			end
-		end
-		for _, v121 in v116 do
-			local v122 = false
-			for _, v123 in v121 do
-				if v123.isDefault then
-					v122 = true
-					break
-				end
-			end
-			for v124, v125 in v121 do
-				local v126
-				if v122 then
-					v126 = v125.isDefault
-				else
-					v126 = v124 == 1
-				end
-				if not v126 then
-					local v127 = p73:FindFirstChild("Weapon")
-					if v127 then
-						v127 = v127:FindFirstChild(v125.name)
-					end
-					if v127 then
-						for _, v128 in v127:GetDescendants() do
-							if v128:IsA("BasePart") or (v128:IsA("Decal") or v128:IsA("Texture")) then
-								v128:SetAttribute("OptionGroupHidden", true)
-								v128:SetAttribute("OrigTransparency", v128.Transparency)
-								v128.Transparency = 1
-							elseif v128:IsA("Beam") or v128:IsA("ParticleEmitter") then
-								v128:SetAttribute("OptionGroupHidden", true)
-								v128:SetAttribute("OrigEnabled", v128.Enabled)
-								v128.Enabled = false
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-	if not v75 then
-		::l140::
-		if v75 then
-			local v129 = p73:FindFirstChild("GlobalParts")
-			if v129 then
-				v129 = v129:FindFirstChild("BasePoints")
-			end
-			if v129 then
-				local v130 = {}
-				for _, v131 in v75:GetChildren() do
-					if v131:IsA("Model") then
-						local v132 = p73:FindFirstChild("Weapon")
-						if v132 then
-							v132 = v132:FindFirstChild(v131.Name)
-						end
-						if v132 then
-							local v133 = v132:FindFirstChildWhichIsA("BasePart", true)
-							if not (v133 and v133:GetAttribute("OptionGroupHidden")) then
-								goto l171
-							end
-						else
-							::l171::
-							for v134, v135 in v131:GetAttributes() do
-								if string.sub(v134, 1, 13) == "NodeOverride_" then
-									local v136 = string.sub(v134, 14)
-									local v137 = string.split(tostring(v135), ",")
-									if #v137 == 3 then
-										local v138 = v137[1]
-										local v139 = tonumber(v138) or 0
-										local v140 = v137[2]
-										local v141 = tonumber(v140) or 0
-										local v142 = v137[3]
-										local v143 = tonumber(v142) or 0
-										v130[v136] = Vector3.new(v139, v141, v143)
-									end
-								end
-							end
-						end
-					end
-				end
-				local v144 = p73:FindFirstChild("Handle") or p73.PrimaryPart
-				for v145, v148 in v130 do
-					local v147 = v129:FindFirstChild(v145)
-					if v147 and v147:IsA("BasePart") then
-						if v144 then
-							local v148 = v144.CFrame:VectorToWorldSpace(v148)
-						end
-						v147.CFrame = CFrame.new(v147.CFrame.Position + v148) * v147.CFrame.Rotation
-					end
-				end
-				goto l161
-			end
-		end
-		::l161::
-		p73.Parent = nil
-		return
-	end
-	local v149 = p73:FindFirstChild("Weapon")
-	local v150 = {}
-	for _, v151 in v75:GetChildren() do
-		if v151:IsA("Model") then
-			local v152
-			if v149 then
-				v152 = v149:FindFirstChild(v151.Name)
-			else
-				v152 = v149
-			end
-			if v152 then
-				local v153 = v152:FindFirstChildWhichIsA("BasePart", true)
-				if not (v153 and v153:GetAttribute("OptionGroupHidden")) then
-					goto l147
-				end
-			else
-				::l147::
-				local v154 = v151:GetAttribute("LockedNodes")
-				if v154 and v154 ~= "" then
-					for _, v155 in string.split(v154, ",") do
-						v150[v155] = true
-					end
-				end
-			end
-		end
-	end
-	if next(v150) then
-		local v156 = {}
-		for v157 in v150 do
-			table.insert(v156, v157)
-		end
-		p73:SetAttribute("SkinLockedNodes", table.concat(v156, ","))
-	else
-		p73:SetAttribute("SkinLockedNodes", nil)
-	end
-	goto l140
+function v1.DecodeSkin(p1, p2, p3) -- Line: 202 -- upvalues: ApplyAttributes (val), HttpService (val), split (val)
+    local Attribute_2
+    ApplyAttributes(p3, p2)
+    local Attribute = p3:GetAttribute("Skin")
+    if not Attribute then
+        return
+    end
+    local v1 = {}
+    local v2 = p2
+    for k, v in pairs(HttpService:JSONDecode(Attribute)) do
+        for i, j in v2.Weapon:QueryDescendants("BasePart") do
+            if j:GetAttribute("uid") == k then
+                Attribute_2 = j:GetAttribute("uid")
+                v1[Attribute_2] = true
+                if v.Color then
+                    j.Color = Color3.new(split(v.Color, ","))
+                end
+                if v.Material then
+                    j.Material = Enum.Material[v.Material]
+                end
+                if v.Reflectance then
+                    j.Reflectance = v.Reflectance
+                end
+                if v.Transparency then
+                    j.Transparency = v.Transparency
+                end
+                if not (j:IsA("UnionOperation")) or not v.UsePartColor then
+                    break
+                end
+                j.UsePartColor = v.UsePartColor
+                break
+            end
+        end
+    end
 end
-return v8
+function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
+    local BulletEjection, Name
+    local v1 = p3:Clone()
+    v1.Parent = workspace.Ignore
+    if not (p2.KeyParts:FindFirstChild("BulletEjection", true)) then
+        BulletEjection = v1.KeyParts:FindFirstChild("BulletEjection", true)
+        if BulletEjection then
+            local v2 = BulletEjection:Clone()
+            v2.Parent = p2.KeyParts.Handle
+        end
+    end
+    if not (p2:FindFirstChild("Animations")) then
+        v1.Animations:Clone().Parent = p2
+    elseif p2:FindFirstChild("Animations") then
+        local v3
+        for i, j in v1:WaitForChild("Animations"):GetChildren() do
+            if j.Name ~= "3P" and j.Name ~= "Idle" and j.Name ~= "Shoot" and not (p2.Animations:FindFirstChild(j.Name)) then
+                v3 = j:Clone()
+                v3.Parent = p2.Animations
+            end
+        end
+    end
+    local GlobalParts = v1:FindFirstChild("GlobalParts")
+    local GlobalParts_2 = p2:FindFirstChild("GlobalParts")
+    if GlobalParts then
+        local Handle, Handle_2, Part1, Weld_2, v4
+        p2:PivotTo(v1.PrimaryPart.CFrame)
+        local v5 = GlobalParts:Clone()
+        local v6 = {}
+        if not GlobalParts_2 then
+            v4 = p2
+        else
+            if v5:FindFirstChild("BasePoints") and GlobalParts_2:FindFirstChild("BasePoints") then
+                v4 = p2
+                for k, n in GlobalParts_2.BasePoints:GetChildren() do
+                    if v5.BasePoints:FindFirstChild(n.Name) then
+                        v6[n.Name] = false
+                        v5.BasePoints[n.Name]:Destroy()
+                    end
+                    n.Parent = v5.BasePoints
+                end
+            end
+            for m, i5 in v5:GetChildren() do
+                if i5.Name ~= "BasePoints" and i5:IsA("Folder") and GlobalParts_2:FindFirstChild(i5.Name) then
+                    i5:Destroy()
+                end
+            end
+        end
+        for i6, i7 in GlobalParts:QueryDescendants("BasePart") do
+            if v6[i7.Name] ~= false then
+                Name = nil
+                for i8, i9 in i7:GetJoints() do
+                    if i9:IsA("JointInstance") then
+                        if i9.Part0 ~= i7 then
+                            Part1 = i9.Part0
+                        else
+                            Part1 = i9.Part1
+                        end
+                        if Part1 then
+                            if Part1.Name ~= "Handle" then
+                                Name = Part1.Name
+                                break
+                            end
+                            if not Name then
+                                Name = Part1.Name
+                            end
+                        end
+                    end
+                end
+                if Name then
+                    v6[i7.Name] = Name
+                end
+            end
+        end
+        for i10, i11 in v5:QueryDescendants("BasePart") do
+            i11:BreakJoints()
+            if v6[i11.Name] then
+                Handle_2 = v4.KeyParts:FindFirstChild(v6[i11.Name])
+                if not Handle_2 then
+                    Handle_2 = v4.KeyParts.Handle
+                end
+                Weld_2 = Instance.new("Weld")
+                Weld_2.Name = Handle_2.Name .. ":" .. i11.Name
+                Weld_2.Part0 = Handle_2
+                Weld_2.Part1 = i11
+                Weld_2.C0 = CFrame.new()
+                Weld_2.C1 = i11.CFrame:toObjectSpace(Handle_2.CFrame)
+                Weld_2.Parent = Handle_2
+            end
+        end
+        if GlobalParts_2 then
+            for i12, i13 in v5:GetChildren() do
+                if i13.Name ~= "BasePoints" then
+                    i13.Parent = GlobalParts_2
+                else
+                    for i14, i15 in i13:GetChildren() do
+                        i15.Parent = GlobalParts_2.BasePoints
+                    end
+                end
+            end
+            v5:Destroy()
+        else
+            v5.Parent = v4
+            GlobalParts_2 = v5
+        end
+        if GlobalParts_2 and GlobalParts_2:FindFirstChild("ToWeapon") then
+            local Weld
+            for i16, i17 in GlobalParts_2.ToWeapon:QueryDescendants("BasePart") do
+                Handle = v4.KeyParts.Handle
+                Weld = Instance.new("Weld")
+                Weld.Name = Handle.Name .. ":" .. i17.Name
+                Weld.Part0 = Handle
+                Weld.Part1 = i17
+                Weld.C0 = CFrame.new()
+                Weld.C1 = i17.CFrame:toObjectSpace(Handle.CFrame)
+                Weld.Parent = Handle
+            end
+            for i18, i19 in GlobalParts_2.ToWeapon:GetChildren() do
+                if v4.Weapon:FindFirstChild(i19.Name) then
+                    for i20, i21 in i19:GetChildren() do
+                        i21.Parent = v4.Weapon[i19.Name]
+                    end
+                    i19:Destroy()
+                else
+                    i19.Parent = v4.Weapon
+                end
+            end
+        end
+    end
+    v1:Destroy()
+end
+function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
+    local BasePart, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
+    if not (p3:GetAttribute("DontHideGun")) then
+        p2.Weapon:ClearAllChildren()
+    end
+    p2.Parent = workspace
+    local Geometry = p3:FindFirstChild("Geometry")
+    if not Geometry then
+        v11, v1 = p3, p2
+    else
+        local AttachmentWeld, Attribute, Handle, PrimaryPart, PrimaryPart_2, Weld, Weld_2
+        v1, v11 = p2, p3
+        for i, j in Geometry:GetChildren() do
+            if j:IsA("Model") then
+                v12 = j:Clone()
+                v2 = v12:GetAttribute("WeldTarget") or "Handle"
+                Handle = v1.KeyParts:FindFirstChild(v2)
+                if not Handle then
+                    Handle = v1.KeyParts.Handle
+                end
+                AttachmentWeld = v12:FindFirstChild("AttachmentWeld", true)
+                if not AttachmentWeld then
+                    if not v12.PrimaryPart then
+                        for k, n in v12:GetDescendants() do
+                            if n:IsA("BasePart") then
+                                v12.PrimaryPart = n
+                                break
+                            end
+                        end
+                    end
+                elseif AttachmentWeld:IsA("BasePart") then
+                    v12.PrimaryPart = AttachmentWeld
+                end
+                Attribute = v12:GetAttribute("VisibilityRule")
+                v6 = Attribute == "Replace"
+                if not v6 then
+                    if v12.PrimaryPart then
+                        v12:PivotTo(Handle.CFrame * v12:GetPivot())
+                    end
+                elseif v12.PrimaryPart then
+                    v12:PivotTo(Handle.CFrame)
+                end
+                if v12.PrimaryPart and not (v12:GetAttribute("CustomWelded")) then
+                    for m, i5 in v12:GetDescendants() do
+                        if i5:IsA("BasePart") then
+                            if i5 ~= v12.PrimaryPart then
+                                PrimaryPart = v12.PrimaryPart
+                                Weld = Instance.new("Weld")
+                                Weld.Name = PrimaryPart.Name .. ":" .. i5.Name
+                                Weld.Part0 = PrimaryPart
+                                Weld.Part1 = i5
+                                Weld.C0 = CFrame.new()
+                                Weld.C1 = i5.CFrame:toObjectSpace(PrimaryPart.CFrame)
+                                Weld.Parent = PrimaryPart
+                            end
+                            if not v6 then
+                                i5.Anchored = false
+                            elseif i5 == v12.PrimaryPart then
+                            end
+                            i5.CanCollide = false
+                            i5.CanTouch = false
+                            i5.CanQuery = false
+                        end
+                    end
+                end
+                if not v6 and v12.PrimaryPart then
+                    v7 = Handle
+                    PrimaryPart_2 = v12.PrimaryPart
+                    Weld_2 = Instance.new("Weld")
+                    Weld_2.Name = v7.Name .. ":" .. PrimaryPart_2.Name
+                    Weld_2.Part0 = v7
+                    Weld_2.Part1 = PrimaryPart_2
+                    Weld_2.C0 = CFrame.new()
+                    Weld_2.C1 = PrimaryPart_2.CFrame:toObjectSpace(v7.CFrame)
+                    Weld_2.Parent = v7
+                end
+                v12.Parent = v1.Weapon
+                if Attribute == "Show" then
+                    for i6, i7 in v12:GetDescendants() do
+                        if i7:IsA("BasePart") then
+                            i7:SetAttribute("VisibilityOrigTransparency", i7.Transparency)
+                            i7.Transparency = 1
+                        elseif not (i7:IsA("Decal")) and not (i7:IsA("Texture")) then
+                            if i7:IsA("Beam") then
+                                i7:SetAttribute("VisibilityOrigEnabled", i7.Enabled)
+                                i7.Enabled = false
+                            elseif not (i7:IsA("ParticleEmitter")) then
+                            end
+                        end
+                    end
+                elseif not v6 then
+                end
+            end
+        end
+    end
+    local BasePoints = v11:FindFirstChild("BasePoints")
+    local GlobalParts = v1:FindFirstChild("GlobalParts")
+    if BasePoints and GlobalParts then
+        local BasePoints_2 = GlobalParts:FindFirstChild("BasePoints")
+        if BasePoints_2 then
+            local C0, Handle_2, Weld_3, Weld_4, Weld_5
+            for i8, i9 in BasePoints:GetChildren() do
+                if i9:IsA("BasePart") then
+                    v4 = BasePoints_2:FindFirstChild(i9.Name)
+                    v5 = i9:GetAttribute("WeldTarget") or "Handle"
+                    Handle_2 = v1.KeyParts:FindFirstChild(v5)
+                    if not Handle_2 then
+                        Handle_2 = v1.KeyParts.Handle
+                    end
+                    Weld_3 = i9:FindFirstChildWhichIsA("Weld")
+                    if not Weld_3 then
+                        C0 = CFrame.new()
+                    else
+                        C0 = Weld_3.C0
+                    end
+                    v9 = i9:Clone()
+                    v9.Anchored = false
+                    v9.CanCollide = false
+                    v9.CanTouch = false
+                    v9.CanQuery = false
+                    Weld_4 = v9:FindFirstChildWhichIsA("Weld")
+                    if Weld_4 then
+                        Weld_4:Destroy()
+                    end
+                    v9.CFrame = Handle_2.CFrame * C0
+                    Weld_5 = Instance.new("Weld")
+                    Weld_5.Name = Handle_2.Name .. ":" .. v9.Name
+                    Weld_5.Part0 = Handle_2
+                    Weld_5.Part1 = v9
+                    Weld_5.C0 = CFrame.new()
+                    Weld_5.C1 = v9.CFrame:toObjectSpace(Handle_2.CFrame)
+                    Weld_5.Parent = Handle_2
+                    v9.Parent = BasePoints_2
+                    if v4 then
+                        v4:BreakJoints()
+                        v4:Destroy()
+                    end
+                end
+            end
+        end
+    end
+    local Animations = v11:FindFirstChild("Animations")
+    if Animations and v1:FindFirstChild("Animations") then
+        for i10, i11 in Animations:GetChildren() do
+            if i11:IsA("Animation") then
+                v4 = v1.Animations:FindFirstChild(i11.Name)
+                if v4 then
+                    v4:Destroy()
+                end
+                v5 = i11:Clone()
+                v5.Parent = v1.Animations
+            end
+        end
+    end
+    local v13 = {
+        SkinSDKVersion = true,
+        BaseWeapon = true,
+        DontHideGun = true,
+        Author = true,
+        Category = true,
+    }
+    for i12, i13 in v11:GetAttributes() do
+        if not (v13[i12]) then
+            v1:SetAttribute(i12, i13)
+        end
+    end
+    local KeyPartOverrides = v11:FindFirstChild("KeyPartOverrides")
+    if KeyPartOverrides then
+        local Attribute_2 = KeyPartOverrides:GetAttribute("BarrelOffset")
+        local Attribute_3 = KeyPartOverrides:GetAttribute("BarrelSize")
+        if Attribute_2 then
+            local Barrel = v1.KeyParts:FindFirstChild("Barrel")
+            if Barrel then
+                local CFrame
+                local BulletEjection = Barrel:FindFirstChild("BulletEjection")
+                if not BulletEjection then
+                    CFrame = nil
+                elseif BulletEjection:IsA("BasePart") then
+                    CFrame = BulletEjection.CFrame
+                end
+                if Attribute_2 then
+                    Barrel.CFrame = Barrel.CFrame * Attribute_2
+                end
+                if Attribute_3 then
+                    Barrel.Size = Attribute_3
+                end
+                if BulletEjection and CFrame then
+                    BulletEjection:BreakJoints()
+                    BulletEjection.CFrame = CFrame
+                    local Weld_6 = Instance.new("Weld")
+                    Weld_6.Name = Barrel.Name .. ":" .. BulletEjection.Name
+                    Weld_6.Part0 = Barrel
+                    Weld_6.Part1 = BulletEjection
+                    Weld_6.C0 = CFrame.new()
+                    Weld_6.C1 = BulletEjection.CFrame:toObjectSpace(Barrel.CFrame)
+                    Weld_6.Parent = Barrel
+                end
+            end
+        elseif not Attribute_3 then
+        end
+        local Attribute_4 = KeyPartOverrides:GetAttribute("AimPartOffset")
+        if Attribute_4 then
+            v1:SetAttribute("SkinAimPartOffset", Attribute_4)
+        end
+    end
+    if Geometry then
+        local Attribute_5, Weapon, isDefault, v14
+        v12 = {}
+        for i14, i15 in Geometry:GetChildren() do
+            if i15:IsA("Model") then
+                Attribute_5 = i15:GetAttribute("OptionGroup")
+                if Attribute_5 and Attribute_5 ~= "" then
+                    if not (v12[Attribute_5]) then
+                        v12[Attribute_5] = {}
+                    end
+                    table.insert(v12[Attribute_5], {name = i15.Name, isDefault = i15:GetAttribute("OptionGroupDefault") or false})
+                end
+            end
+        end
+        v2 = v12
+        v3 = nil
+        v4 = nil
+        for i16, i17 in v2, v3, v4 do
+            v7 = false
+            v8 = i17
+            v9 = nil
+            v10 = nil
+            for i18, i19 in v8, v9, v10 do
+                if i19.isDefault then
+                    v7 = true
+                    break
+                end
+            end
+            v8 = i17
+            v9 = nil
+            v10 = nil
+            for i20, i21 in v8, v9, v10 do
+                if not v7 then
+                    isDefault = i20 == 1
+                else
+                    isDefault = i21.isDefault
+                end
+                if not isDefault then
+                    Weapon = v1:FindFirstChild("Weapon")
+                    v14 = Weapon
+                    if v14 then
+                        v14 = Weapon:FindFirstChild(i21.name)
+                    end
+                    if v14 then
+                        for i22, i23 in v14:GetDescendants() do
+                            if i23:IsA("BasePart") then
+                                i23:SetAttribute("OptionGroupHidden", true)
+                                i23:SetAttribute("OrigTransparency", i23.Transparency)
+                                i23.Transparency = 1
+                            elseif not (i23:IsA("Decal")) and not (i23:IsA("Texture")) then
+                                if i23:IsA("Beam") then
+                                    i23:SetAttribute("OptionGroupHidden", true)
+                                    i23:SetAttribute("OrigEnabled", i23.Enabled)
+                                    i23.Enabled = false
+                                elseif not (i23:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if Geometry then
+        local Attribute_6
+        local Weapon_2 = v1:FindFirstChild("Weapon")
+        v2 = {}
+        for i24, i25 in Geometry:GetChildren() do
+            if i25:IsA("Model") then
+                v8 = Weapon_2
+                if v8 then
+                    v8 = Weapon_2:FindFirstChild(i25.Name)
+                end
+                if not v8 then
+                    Attribute_6 = i25:GetAttribute("LockedNodes")
+                    if Attribute_6 and Attribute_6 ~= "" then
+                        for i26, i27 in string.split(Attribute_6, ",") do
+                            v2[i27] = true
+                        end
+                    end
+                else
+                    BasePart = v8:FindFirstChildWhichIsA("BasePart", true)
+                    if BasePart and BasePart:GetAttribute("OptionGroupHidden") then end
+                end
+            end
+        end
+        if not (next(v2)) then
+            v1:SetAttribute("SkinLockedNodes", nil)
+        else
+            v3 = {}
+            v4 = v2
+            v5 = nil
+            v6 = nil
+            for i28 in v4, v5, v6 do
+                table.insert(v3, i28)
+            end
+            v1:SetAttribute("SkinLockedNodes", table.concat(v3, ","))
+        end
+    end
+    if Geometry then
+        local GlobalParts_2 = v1:FindFirstChild("GlobalParts")
+        local BasePoints_3 = GlobalParts_2
+        if BasePoints_3 then
+            BasePoints_3 = GlobalParts_2:FindFirstChild("BasePoints")
+        end
+        if BasePoints_3 then
+            local BasePart_2, Weapon_3, v15, v16, v17, v18, v19, v20, v21
+            v3 = {}
+            for i29, i30 in Geometry:GetChildren() do
+                if i30:IsA("Model") then
+                    Weapon_3 = v1:FindFirstChild("Weapon")
+                    v10 = Weapon_3
+                    if v10 then
+                        v10 = Weapon_3:FindFirstChild(i30.Name)
+                    end
+                    if not v10 then
+                        for i31, i32 in i30:GetAttributes() do
+                            if string.sub(i31, 1, 13) == "NodeOverride_" then
+                                v17 = string.sub(i31, 14)
+                                v19 = tostring(i32)
+                                v18 = string.split(v19, ",")
+                                if #v18 == 3 then
+                                    v20 = tonumber(v18[1]) or 0
+                                    v21 = tonumber(v18[2]) or 0
+                                    v3[v17] = Vector3.new(v20, v21, tonumber(v18[3]) or 0)
+                                end
+                            end
+                        end
+                    else
+                        BasePart_2 = v10:FindFirstChildWhichIsA("BasePart", true)
+                        if BasePart_2 and BasePart_2:GetAttribute("OptionGroupHidden") then end
+                    end
+                end
+            end
+            local Handle_3 = v1:FindFirstChild("Handle")
+            if not Handle_3 then
+                Handle_3 = v1.PrimaryPart
+            end
+            v5 = v3
+            v6 = nil
+            v7 = nil
+            for i33, i34 in v5, v6, v7 do
+                v10 = BasePoints_3:FindFirstChild(i33)
+                if v10 and v10:IsA("BasePart") then
+                    if not Handle_3 then
+                        v15 = i34
+                    else
+                        v15 = Handle_3.CFrame:VectorToWorldSpace(i34)
+                    end
+                    v16 = CFrame.new(v10.CFrame.Position + v15)
+                    v10.CFrame = v16 * v10.CFrame.Rotation
+                end
+            end
+        end
+    end
+    v1.Parent = nil
+end
+return v1

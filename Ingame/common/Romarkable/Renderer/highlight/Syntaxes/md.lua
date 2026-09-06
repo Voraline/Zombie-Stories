@@ -1,104 +1,115 @@
-local v_u_1 = {}
-local v_u_2 = {
-	{ "^[%c%s]*#+ .-\n[%c%s]*", "header" },
-	{ "^[%c%s]*%.-\n%-%-%-\n[%c%s]*", "header" },
-	{ "^[%c%s]*> .-\n\n[%c%s]*", "quote" },
-	{ "^[%c%s]*```%w-\n.-```[%c%s]*", "code" },
-	{ "^[%c%s]*%* .-\n[%c%s]*", "list" },
-	{ "^[%c%s]*%d[%.)] .-\n[%c%s]*", "list" },
-	{ "^[%c%s]*%-%-%-%-%-*\n?[%c%s]*", "ruler" },
-	{ "^[%c%s]*[%w \t]+[%c%s]*", "text" },
-	{ "^.", "text" }
-}
-function v_u_1.scan(p_u_3) -- name: scan
-	-- upvalues: (copy) v_u_1, (copy) v_u_2
-	v_u_1.finished = false
-	local v_u_4 = 1
-	local v_u_5 = #p_u_3
-	return function()
-		-- upvalues: (ref) v_u_4, (copy) v_u_5, (ref) v_u_2, (copy) p_u_3, (ref) v_u_1
-		if v_u_4 <= v_u_5 then
-			for _, v6 in ipairs(v_u_2) do
-				local v7, v8 = string.find(p_u_3, v6[1], v_u_4)
-				if v7 then
-					local v9 = p_u_3
-					local v10 = string.sub(v9, v7, v8)
-					v_u_4 = v8 + 1
-					v_u_1.finished = v_u_5 < v_u_4
-					return v6[2], v10
-				end
-			end
-		end
-	end
+local u0 = {}
+local u1 = {}
+local v1 = {"^[%c%s]*#+ .-\n[%c%s]*", "header"}
+local v2 = {"^[%c%s]*> .-\n\n[%c%s]*", "quote"}
+local v3 = {"^[%c%s]*```%w-\n.-```[%c%s]*", "code"}
+local v4 = {"^[%c%s]*%* .-\n[%c%s]*", "list"}
+local v5 = {"^[%c%s]*%d[%.)] .-\n[%c%s]*", "list"}
+local v6 = {"^[%c%s]*[%w \t]+[%c%s]*", "text"}
+local v7 = {"^.", "text"}
+u1[1] = v1
+u1[2] = {"^[%c%s]*%.-\n%-%-%-\n[%c%s]*", "header"}
+u1[3] = v2
+u1[4] = v3
+u1[5] = v4
+u1[6] = v5
+u1[7] = {"^[%c%s]*%-%-%-%-%-*\n?[%c%s]*", "ruler"}
+u1[8] = v6
+u1[9] = v7
+function u0.scan(p1) -- Line: 55 -- upvalues: u0 (val), u1 (val)
+    u0.finished = false
+    local u3 = 1
+    local u4 = #p1
+    return function() -- Line: 62 -- upvalues: u3 (ref), u4 (val), u1 (upval), p1 (val), u0 (upval)
+        local v1, v2, v3, v4
+        if u3 > u4 then
+            return
+        end
+        for i, v in ipairs(u1) do
+            v1, v2 = string.find(p1, v[1], u3)
+            if v1 then
+                v3 = string.sub(p1, v1, v2)
+                u3 = v2 + 1
+                v4 = u4 < u3
+                u0.finished = v4
+                return v[2], v3
+            end
+        end
+    end
 end
-function v_u_1.navigator() -- name: navigator
-	-- upvalues: (copy) v_u_1
-	local v_u_28 = {
-		["Source"] = "",
-		["TokenCache"] = nil,
-		["_RealIndex"] = 0,
-		["_UserIndex"] = 0,
-		["_ScanThread"] = nil,
-		["TokenCache"] = table.create(50),
-		["Destroy"] = function(p11) -- name: Destroy
-			p11.Source = nil
-			p11._RealIndex = nil
-			p11._UserIndex = nil
-			p11.TokenCache = nil
-			p11._ScanThread = nil
-		end,
-		["SetSource"] = function(p_u_12, p13) -- name: SetSource
-			-- upvalues: (ref) v_u_1
-			p_u_12.Source = p13
-			p_u_12._RealIndex = 0
-			p_u_12._UserIndex = 0
-			table.clear(p_u_12.TokenCache)
-			p_u_12._ScanThread = coroutine.create(function()
-				-- upvalues: (ref) v_u_1, (copy) p_u_12
-				for v14, v15 in v_u_1.scan(p_u_12.Source) do
-					local v16 = p_u_12
-					v16._RealIndex = v16._RealIndex + 1
-					p_u_12.TokenCache[p_u_12._RealIndex] = { v14, v15 }
-					coroutine.yield(v14, v15)
-				end
-			end)
-		end,
-		["Next"] = function() -- name: Next
-			-- upvalues: (copy) v_u_28
-			local v17 = v_u_28
-			v17._UserIndex = v17._UserIndex + 1
-			if v_u_28._RealIndex >= v_u_28._UserIndex then
-				local v18 = v_u_28.TokenCache[v_u_28._UserIndex]
-				return table.unpack(v18)
-			elseif coroutine.status(v_u_28._ScanThread) ~= "dead" then
-				local v19, v20, v21 = coroutine.resume(v_u_28._ScanThread)
-				if v19 and v20 then
-					return v20, v21
-				end
-			end
-		end,
-		["Peek"] = function(p22) -- name: Peek
-			-- upvalues: (copy) v_u_28
-			local v23 = v_u_28._UserIndex + p22
-			if v23 <= v_u_28._RealIndex then
-				if v23 > 0 then
-					local v24 = v_u_28.TokenCache[v23]
-					return table.unpack(v24)
-				end
-			elseif coroutine.status(v_u_28._ScanThread) ~= "dead" then
-				local v25 = nil
-				local v26 = nil
-				for _ = 1, v23 - v_u_28._RealIndex do
-					local v27
-					v27, v25, v26 = coroutine.resume(v_u_28._ScanThread)
-					if not (v27 or v25) then
-						break
-					end
-				end
-				return v25, v26
-			end
-		end
-	}
-	return v_u_28
+function u0.navigator() -- Line: 78 -- upvalues: u0 (val)
+    local u0 = {
+        Source = "",
+        _RealIndex = 0,
+        _UserIndex = 0,
+        TokenCache = table.create(50),
+        Destroy = function(p1) -- Line: 88
+            p1.Source = nil
+            p1._RealIndex = nil
+            p1._UserIndex = nil
+            p1.TokenCache = nil
+            p1._ScanThread = nil
+        end,
+    }
+    function u0.SetSource(p1, p2) -- Line: 96 -- upvalues: u0 (upval)
+        p1.Source = p2
+        p1._RealIndex = 0
+        p1._UserIndex = 0
+        table.clear(p1.TokenCache)
+        p1._ScanThread = coroutine.create(function() -- Line: 103 -- upvalues: u0 (upval), p1 (val)
+            local v1
+            for i, j in u0.scan(p1.Source) do
+                v1 = p1
+                v1._RealIndex = v1._RealIndex + 1
+                p1.TokenCache[p1._RealIndex] = {i, j}
+                coroutine.yield(i, j)
+            end
+        end)
+    end
+    function u0.Next() -- Line: 112 -- upvalues: u0 (val)
+        local v1, v2
+        local v3 = u0
+        v3._UserIndex = v3._UserIndex + 1
+        if u0._UserIndex <= u0._RealIndex then
+            return table.unpack(u0.TokenCache[u0._UserIndex])
+        end
+        if coroutine.status(u0._ScanThread) == "dead" then
+            return
+        end
+        v3, v1, v2 = coroutine.resume(u0._ScanThread)
+        if not v3 then
+            return
+        end
+        if v1 then
+            return v1, v2
+        end
+    end
+    function u0.Peek(p1) -- Line: 135 -- upvalues: u0 (val)
+        local v1, v2, v3
+        local v4 = u0._UserIndex + p1
+        if v4 <= u0._RealIndex then
+            if 0 < v4 then
+                return table.unpack(u0.TokenCache[v4])
+            end
+            return
+        end
+        if coroutine.status(u0._ScanThread) == "dead" then
+            return
+        end
+        local v5 = nil
+        local v6 = nil
+        local v7 = v4 - u0._RealIndex
+        local v8 = 1
+        for i = 1, v7, v8 do
+            v3, v1, v2 = coroutine.resume(u0._ScanThread)
+            v5 = v1
+            v6 = v2
+            if not v3 and not v5 then
+                break
+            end
+        end
+        return v5, v6
+    end
+    return u0
 end
-return v_u_1
+return u0

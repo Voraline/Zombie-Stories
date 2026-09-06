@@ -1,108 +1,122 @@
-local v_u_1 = {
-	"Connect",
-	"On",
-	"on",
-	"connect"
-}
-local v_u_2 = {
-	"disconnect",
-	"Disconnect",
-	"destroy",
-	"Destroy"
-}
-local function v_u_11(p3, p_u_4) -- name: getConnectFunction
-	-- upvalues: (copy) v_u_1
-	local v_u_5 = p3
-	if typeof(p_u_4) == "RBXScriptSignal" or type(p_u_4) == "table" then
-		v_u_5 = p_u_4
-	elseif type(p_u_4) == "string" then
-		v_u_5 = p3[p_u_4]
-	end
-	if type(v_u_5) == "function" then
-		return v_u_5
-	end
-	if typeof(v_u_5) == "RBXScriptSignal" then
-		return function(p6)
-			-- upvalues: (ref) v_u_5
-			return v_u_5:Connect(p6)
-		end
-	end
-	if type(v_u_5) == "table" then
-		if type(p_u_4) == "function" then
-			return function(p7)
-				-- upvalues: (copy) p_u_4, (ref) v_u_5
-				return p_u_4(v_u_5, p7)
-			end
-		end
-		for _, v_u_8 in v_u_1 do
-			local v9 = v_u_5[v_u_8]
-			if type(v9) == "function" then
-				return function(p10)
-					-- upvalues: (ref) v_u_5, (copy) v_u_8
-					return v_u_5[v_u_8](v_u_5, p10)
-				end
-			end
-		end
-	end
-	return nil
+local u5 = {"Connect", "On", "on", "connect"}
+local u10 = {"disconnect", "Disconnect", "destroy", "Destroy"}
+local function getConnectFunction(p1, p2) -- Line: 135 -- upvalues: u5 (val)
+    local u12 = p1
+    if typeof(p2) == "RBXScriptSignal" then
+        u12 = p2
+    elseif type(p2) ~= "table" and type(p2) == "string" then
+        u12 = p1[p2]
+    end
+    if type(u12) == "function" then
+        return u12
+    end
+    if typeof(u12) == "RBXScriptSignal" then
+        return function(p1) -- Line: 147 -- upvalues: u12 (ref)
+            return u12:Connect(p1)
+        end
+    end
+    if type(u12) ~= "table" then
+        return nil
+    end
+    if type(p2) == "function" then
+        return function(p1) -- Line: 154 -- upvalues: p2 (val), u12 (ref)
+            return p2(u12, p1)
+        end
+    end
+    local v1 = u5
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if type(u12[j]) == "function" then
+            return function(p1) -- Line: 164 -- upvalues: u12 (ref), j (val)
+                return u12[j](u12, p1)
+            end
+        end
+    end
+    return nil
 end
 return {
-	["getSystem"] = function(p12) -- name: getSystem
-		if type(p12) == "function" then
-			return p12
-		elseif type(p12) == "table" and p12.system then
-			return p12.system
-		else
-			return nil
-		end
-	end,
-	["getSystemName"] = function(p13) -- name: getSystemName
-		local v14 = debug.info(p13, "n")
-		if not v14 or string.len(v14) == 0 then
-			local v15, v16 = debug.info(p13, "sl")
-			v14 = ("%*:%*"):format(v15, v16)
-		end
-		return v14
-	end,
-	["isPhase"] = function(p17) -- name: isPhase
-		if type(p17) == "table" and p17._type == "phase" then
-			return p17
-		else
-			return nil
-		end
-	end,
-	["isPipeline"] = function(p18) -- name: isPipeline
-		if type(p18) == "table" and p18._type == "pipeline" then
-			return p18
-		else
-			return nil
-		end
-	end,
-	["getEventIdentifier"] = function(p19, p20) -- name: getEventIdentifier
-		return ("%*%*"):format(p19, p20 and ("@%*"):format(p20) or "")
-	end,
-	["isValidEvent"] = function(p21, p22) -- name: isValidEvent
-		-- upvalues: (copy) v_u_11
-		return v_u_11(p21, p22) ~= nil
-	end,
-	["getConnectFunction"] = v_u_11,
-	["disconnectEvent"] = function(p23) -- name: disconnectEvent
-		-- upvalues: (copy) v_u_2
-		if type(p23) == "function" then
-			p23()
-			return
-		elseif typeof(p23) == "RBXScriptConnection" then
-			p23:Disconnect()
-		elseif type(p23) == "table" then
-			for _, v24 in v_u_2 do
-				if p23[v24] then
-					local v25 = p23[v24]
-					if type(v25) == "function" then
-						p23[v24](p23)
-						return
-					end
-				end
-			end
-		end
-	end
+    getSystem = function(p1) -- Line: 14
+        if type(p1) == "function" then
+            return p1
+        end
+        if type(p1) ~= "table" then
+            return nil
+        end
+        if p1.system then
+            return p1.system
+        end
+        return nil
+    end,
+    getSystemName = function(p1) -- Line: 24
+        local v1, v2
+        local v3 = debug.info(p1, "n")
+        if not v3 then
+            v1, v2 = debug.info(p1, "sl")
+            v3 = ("%*:%*"):format(v1, v2)
+        elseif string.len(v3) == 0 then
+            v1, v2 = debug.info(p1, "sl")
+            v3 = ("%*:%*"):format(v1, v2)
+        end
+        return v3
+    end,
+    isPhase = function(p1) -- Line: 34
+        if type(p1) ~= "table" then
+            return nil
+        end
+        if p1._type == "phase" then
+            return p1
+        end
+        return nil
+    end,
+    isPipeline = function(p1) -- Line: 42
+        if type(p1) ~= "table" then
+            return nil
+        end
+        if p1._type == "pipeline" then
+            return p1
+        end
+        return nil
+    end,
+    getEventIdentifier = function(p1, p2) -- Line: 50
+        local v1
+        local v2 = "%*%*"
+        local v3 = p1
+        if not p2 then
+            v1 = ""
+        else
+            v1 = ("@%*"):format(p2)
+            if not v1 then
+                v1 = ""
+            end
+        end
+        return (v2:format(v3, v1))
+    end,
+    isValidEvent = function(p1, p2) -- Line: 173 -- upvalues: getConnectFunction (val)
+        local v1 = getConnectFunction(p1, p2) ~= nil
+        return v1
+    end,
+    getConnectFunction = getConnectFunction,
+    disconnectEvent = function(p1) -- Line: 73 -- upvalues: u10 (val)
+        if type(p1) == "function" then
+            p1()
+            return
+        end
+        if typeof(p1) == "RBXScriptConnection" then
+            p1:Disconnect()
+            return
+        end
+        if type(p1) ~= "table" then
+            return
+        end
+        local v1 = u10
+        local v2 = nil
+        local v3 = nil
+        for i, j in v1, v2, v3 do
+            if p1[j] and type(p1[j]) == "function" then
+                p1[j](p1)
+                return
+            end
+        end
+    end,
 }

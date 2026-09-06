@@ -1,413 +1,496 @@
-local v_u_1 = game:GetService("RunService")
-local v2 = require("./SkillTreeCamera")
-local v3, v4, v5, v6 = v2.getBounds()
-local v_u_7 = v2.getTreeOrigin()
-local v_u_8 = v4 - v3 + 100
-local v_u_9 = v6 - v5 + 100
-local v_u_10 = (v4 + v3) / 2
-local v_u_11 = (v6 + v5) / 2
-local v_u_12 = Color3.fromRGB(37, 161, 255)
-local v_u_13 = {}
-v_u_13.__index = v_u_13
-function v_u_13.new() -- name: new
-	-- upvalues: (copy) v_u_13, (copy) v_u_10, (copy) v_u_7, (copy) v_u_11, (copy) v_u_8, (copy) v_u_9, (copy) v_u_12
-	local v14 = v_u_13
-	local v15 = setmetatable({}, v14)
-	v15.circleBin = {}
-	v15.circleData = {}
-	v15.lineList = {}
-	v15.connections = {}
-	v15.running = false
-	v15.grid = {}
-	for v16 = -5, 40 do
-		v15.grid[v16] = {}
-		for v17 = -5, 40 do
-			v15.grid[v16][v17] = {}
-		end
-	end
-	v15.backgroundPart = Instance.new("Part")
-	v15.backgroundPart.Name = "BackgroundPlaceholder"
-	v15.backgroundPart.Anchored = true
-	v15.backgroundPart.BottomSurface = Enum.SurfaceType.Smooth
-	v15.backgroundPart.TopSurface = Enum.SurfaceType.Smooth
-	v15.backgroundPart.CFrame = CFrame.new(v_u_10, v_u_7.Y - 35, v_u_11)
-	v15.backgroundPart.CastShadow = false
-	v15.backgroundPart.Color = Color3.fromRGB(63, 75, 86)
-	v15.backgroundPart.Locked = true
-	v15.backgroundPart.Material = Enum.Material.Neon
-	local v18 = v_u_8
-	local v19 = v_u_9
-	v15.backgroundPart.Size = Vector3.new(v18, 48, v19)
-	v15.surfaceGui = Instance.new("SurfaceGui")
-	v15.surfaceGui.Name = "BackgroundEffect"
-	v15.surfaceGui.Face = Enum.NormalId.Top
-	v15.surfaceGui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	v15.surfaceGui.PixelsPerStud = 2
-	v15.surfaceGui.LightInfluence = 0
-	v15.surfaceGui.Brightness = 1
-	v15.surfaceGui.Parent = v15.backgroundPart
-	v15.container = Instance.new("Frame")
-	v15.container.Name = "Container"
-	v15.container.BackgroundTransparency = 1
-	v15.container.Size = UDim2.fromScale(1, 1)
-	v15.container.Parent = v15.surfaceGui
-	local v20 = Instance.new("ImageLabel")
-	v20.Name = "background"
-	v20.AnchorPoint = Vector2.new(0.5, 0.5)
-	v20.BackgroundColor3 = Color3.fromRGB(4, 14, 34)
-	v20.BorderSizePixel = 0
-	v20.Image = "rbxassetid://924320031"
-	v20.ImageTransparency = 1
-	v20.Position = UDim2.fromScale(0.5, 0.5)
-	v20.Size = UDim2.fromScale(2.5, 2.5)
-	v20.ZIndex = 0
-	v20.Parent = v15.container
-	v15.effectFrame = Instance.new("Frame")
-	v15.effectFrame.Name = "Frame"
-	v15.effectFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	v15.effectFrame.BackgroundTransparency = 1
-	v15.effectFrame.Position = UDim2.fromScale(0.5, 0.5)
-	v15.effectFrame.Size = UDim2.fromScale(1.5, 1.5)
-	v15.effectFrame.ZIndex = 1
-	v15.effectFrame.Parent = v15.container
-	local v21 = Instance.new("ImageLabel")
-	v21.Name = "crosstexture"
-	v21.AnchorPoint = Vector2.new(0.5, 0.5)
-	v21.BackgroundTransparency = 1
-	v21.BorderSizePixel = 0
-	v21.Image = "rbxassetid://1826269153"
-	v21.ImageColor3 = Color3.fromRGB(17, 57, 118)
-	v21.ImageTransparency = 0.8
-	v21.Position = UDim2.fromScale(0.5, 0.5)
-	v21.ScaleType = Enum.ScaleType.Tile
-	v21.Size = UDim2.fromScale(2.5, 2.5)
-	v21.TileSize = UDim2.fromOffset(20, 20)
-	v21.ZIndex = 2
-	v21.Parent = v15.container
-	local v22 = Instance.new("ImageLabel")
-	v22.Name = "fade"
-	v22.AnchorPoint = Vector2.new(0.5, 0.5)
-	v22.BackgroundTransparency = 1
-	v22.BorderSizePixel = 0
-	v22.Image = "rbxassetid://1826269005"
-	v22.ImageColor3 = Color3.fromRGB(115, 183, 255)
-	v22.ImageTransparency = 0.75
-	v22.Position = UDim2.fromScale(0.5, 0.5)
-	v22.ScaleType = Enum.ScaleType.Fit
-	v22.Size = UDim2.fromScale(1.5, 1.5)
-	v22.ZIndex = 2
-	v22.Parent = v15.container
-	v15.lineTemplate = Instance.new("Frame")
-	v15.lineTemplate.Name = "LineTemplate"
-	v15.lineTemplate.AnchorPoint = Vector2.new(0.5, 0.5)
-	v15.lineTemplate.BackgroundColor3 = v_u_12
-	v15.lineTemplate.BackgroundTransparency = 0.6
-	v15.lineTemplate.BorderSizePixel = 0
-	v15.lineTemplate.Size = UDim2.fromOffset(200, 2)
-	v15.lineTemplate.Visible = false
-	local v23 = Instance.new("Frame")
-	v23.Name = "fade"
-	v23.AnchorPoint = Vector2.new(0.5, 0.5)
-	v23.BackgroundColor3 = v_u_12
-	v23.BackgroundTransparency = 0.8
-	v23.BorderSizePixel = 0
-	v23.Position = UDim2.fromScale(0.5, 0.5)
-	v23.Size = UDim2.new(1, 0, 0, 6)
-	v23.Parent = v15.lineTemplate
-	v15.circleTemplate = Instance.new("ImageLabel")
-	v15.circleTemplate.Name = "CircleTemplate"
-	v15.circleTemplate.AnchorPoint = Vector2.new(0.5, 0.5)
-	v15.circleTemplate.BackgroundTransparency = 1
-	v15.circleTemplate.BorderSizePixel = 0
-	v15.circleTemplate.Image = "rbxassetid://357953997"
-	v15.circleTemplate.ImageColor3 = v_u_12
-	v15.circleTemplate.ImageTransparency = 0.85
-	v15.circleTemplate.Size = UDim2.fromOffset(6, 6)
-	v15.circleTemplate.Visible = false
-	return v15
+local v1, v2, v3, v4
+local RunService = game:GetService("RunService")
+local v5 = require("./SkillTreeCamera")
+v1, v2, v3, v4 = v5.getBounds()
+local u14 = v5.getTreeOrigin()
+local u16 = v2 - v1 + 100
+local u18 = v4 - v3 + 100
+local u20 = (v2 + v1) / 2
+local u22 = (v4 + v3) / 2
+local u27 = Color3.fromRGB(37, 161, 255)
+local u28 = {}
+u28.__index = u28
+function u28.new() -- Line: 67 -- upvalues: u28 (val), u20 (val), u14 (val), u22 (val), u16 (val), u18 (val), u27 (val)
+    local v1, v2, v3
+    local v4 = setmetatable({}, u28)
+    v4.circleBin = {}
+    v4.circleData = {}
+    v4.lineList = {}
+    v4.connections = {}
+    v4.running = false
+    v4.grid = {}
+    local v5 = 40
+    local v6 = 1
+    for i = -5, v5, v6 do
+        v4.grid[i] = {}
+        v1 = 40
+        v2 = 1
+        for j = -5, v1, v2 do
+            v3 = v4.grid[i]
+            v3[j] = {}
+        end
+    end
+    v4.backgroundPart = Instance.new("Part")
+    v4.backgroundPart.Name = "BackgroundPlaceholder"
+    v4.backgroundPart.Anchored = true
+    v4.backgroundPart.BottomSurface = Enum.SurfaceType.Smooth
+    v4.backgroundPart.TopSurface = Enum.SurfaceType.Smooth
+    v4.backgroundPart.CFrame = CFrame.new(u20, u14.Y - 35, u22)
+    v4.backgroundPart.CastShadow = false
+    v4.backgroundPart.Color = Color3.fromRGB(63, 75, 86)
+    v4.backgroundPart.Locked = true
+    v4.backgroundPart.Material = Enum.Material.Neon
+    v4.backgroundPart.Size = Vector3.new(u16, 48, u18)
+    v4.surfaceGui = Instance.new("SurfaceGui")
+    v4.surfaceGui.Name = "BackgroundEffect"
+    v4.surfaceGui.Face = Enum.NormalId.Top
+    v4.surfaceGui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+    v4.surfaceGui.PixelsPerStud = 2
+    v4.surfaceGui.LightInfluence = 0
+    v4.surfaceGui.Brightness = 1
+    v4.surfaceGui.Parent = v4.backgroundPart
+    v4.container = Instance.new("Frame")
+    v4.container.Name = "Container"
+    v4.container.BackgroundTransparency = 1
+    v4.container.Size = UDim2.fromScale(1, 1)
+    v4.container.Parent = v4.surfaceGui
+    local ImageLabel = Instance.new("ImageLabel")
+    ImageLabel.Name = "background"
+    ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    ImageLabel.BackgroundColor3 = Color3.fromRGB(4, 14, 34)
+    ImageLabel.BorderSizePixel = 0
+    ImageLabel.Image = "rbxassetid://924320031"
+    ImageLabel.ImageTransparency = 1
+    ImageLabel.Position = UDim2.fromScale(0.5, 0.5)
+    ImageLabel.Size = UDim2.fromScale(2.5, 2.5)
+    ImageLabel.ZIndex = 0
+    ImageLabel.Parent = v4.container
+    v4.effectFrame = Instance.new("Frame")
+    v4.effectFrame.Name = "Frame"
+    v4.effectFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    v4.effectFrame.BackgroundTransparency = 1
+    v4.effectFrame.Position = UDim2.fromScale(0.5, 0.5)
+    v4.effectFrame.Size = UDim2.fromScale(1.5, 1.5)
+    v4.effectFrame.ZIndex = 1
+    v4.effectFrame.Parent = v4.container
+    local ImageLabel_2 = Instance.new("ImageLabel")
+    ImageLabel_2.Name = "crosstexture"
+    ImageLabel_2.AnchorPoint = Vector2.new(0.5, 0.5)
+    ImageLabel_2.BackgroundTransparency = 1
+    ImageLabel_2.BorderSizePixel = 0
+    ImageLabel_2.Image = "rbxassetid://1826269153"
+    ImageLabel_2.ImageColor3 = Color3.fromRGB(17, 57, 118)
+    ImageLabel_2.ImageTransparency = 0.8
+    ImageLabel_2.Position = UDim2.fromScale(0.5, 0.5)
+    ImageLabel_2.ScaleType = Enum.ScaleType.Tile
+    ImageLabel_2.Size = UDim2.fromScale(2.5, 2.5)
+    ImageLabel_2.TileSize = UDim2.fromOffset(20, 20)
+    ImageLabel_2.ZIndex = 2
+    ImageLabel_2.Parent = v4.container
+    local ImageLabel_3 = Instance.new("ImageLabel")
+    ImageLabel_3.Name = "fade"
+    ImageLabel_3.AnchorPoint = Vector2.new(0.5, 0.5)
+    ImageLabel_3.BackgroundTransparency = 1
+    ImageLabel_3.BorderSizePixel = 0
+    ImageLabel_3.Image = "rbxassetid://1826269005"
+    ImageLabel_3.ImageColor3 = Color3.fromRGB(115, 183, 255)
+    ImageLabel_3.ImageTransparency = 0.75
+    ImageLabel_3.Position = UDim2.fromScale(0.5, 0.5)
+    ImageLabel_3.ScaleType = Enum.ScaleType.Fit
+    ImageLabel_3.Size = UDim2.fromScale(1.5, 1.5)
+    ImageLabel_3.ZIndex = 2
+    ImageLabel_3.Parent = v4.container
+    v4.lineTemplate = Instance.new("Frame")
+    v4.lineTemplate.Name = "LineTemplate"
+    v4.lineTemplate.AnchorPoint = Vector2.new(0.5, 0.5)
+    v4.lineTemplate.BackgroundColor3 = u27
+    v4.lineTemplate.BackgroundTransparency = 0.6
+    v4.lineTemplate.BorderSizePixel = 0
+    v4.lineTemplate.Size = UDim2.fromOffset(200, 2)
+    v4.lineTemplate.Visible = false
+    local Frame = Instance.new("Frame")
+    Frame.Name = "fade"
+    Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame.BackgroundColor3 = u27
+    Frame.BackgroundTransparency = 0.8
+    Frame.BorderSizePixel = 0
+    Frame.Position = UDim2.fromScale(0.5, 0.5)
+    Frame.Size = UDim2.new(1, 0, 0, 6)
+    Frame.Parent = v4.lineTemplate
+    v4.circleTemplate = Instance.new("ImageLabel")
+    v4.circleTemplate.Name = "CircleTemplate"
+    v4.circleTemplate.AnchorPoint = Vector2.new(0.5, 0.5)
+    v4.circleTemplate.BackgroundTransparency = 1
+    v4.circleTemplate.BorderSizePixel = 0
+    v4.circleTemplate.Image = "rbxassetid://357953997"
+    v4.circleTemplate.ImageColor3 = u27
+    v4.circleTemplate.ImageTransparency = 0.85
+    v4.circleTemplate.Size = UDim2.fromOffset(6, 6)
+    v4.circleTemplate.Visible = false
+    return v4
 end
-function v_u_13.getLine(p24, p25) -- name: getLine
-	local v26 = p24.lineList[p25]
-	if not v26 then
-		v26 = p24.lineTemplate:Clone()
-		v26.Parent = p24.effectFrame
-		p24.lineList[p25] = v26
-	end
-	return v26
+function u28:getLine(p2) -- Line: 207
+    local v1 = self.lineList[p2]
+    if not v1 then
+        v1 = self.lineTemplate:Clone()
+        v1.Parent = self.effectFrame
+        self.lineList[p2] = v1
+    end
+    return v1
 end
-function v_u_13.drawLine(p27, p28, p29, p30, p31) -- name: drawLine
-	local v32 = p27:getLine(p30)
-	local v33 = (p28.X + p29.X) * 0.5
-	local v34 = (p28.Y + p29.Y) * 0.5
-	local v35 = (p28 - p29).Magnitude
-	local v36 = p29.Y - p28.Y
-	local v37 = p29.X - p28.X
-	local v38 = math.atan2(v36, v37)
-	v32.Position = UDim2.fromOffset(v33, v34)
-	v32.Size = UDim2.fromOffset(v35, 2)
-	v32.Rotation = math.deg(v38)
-	v32.Visible = true
-	v32.BackgroundTransparency = p31 * 0.15 + 0.6
-	local v39 = v32:FindFirstChild("fade")
-	if v39 then
-		v39.BackgroundTransparency = p31 * 0.1 + 0.8
-	end
+function u28:drawLine(p2, p3, p4, p5) -- Line: 220
+    local v1 = self:getLine(p4)
+    local v2 = (p2.X + p3.X) * 0.5
+    local v3 = (p2.Y + p3.Y) * 0.5
+    local v4 = math.atan2(p3.Y - p2.Y, p3.X - p2.X)
+    v1.Position = UDim2.fromOffset(v2, v3)
+    v1.Size = UDim2.fromOffset((p2 - p3).Magnitude, 2)
+    v1.Rotation = math.deg(v4)
+    v1.Visible = true
+    v1.BackgroundTransparency = p5 * 0.15 + 0.6
+    local fade = v1:FindFirstChild("fade")
+    if fade then
+        fade.BackgroundTransparency = p5 * 0.1 + 0.8
+    end
 end
-function v_u_13.getCircle(p40) -- name: getCircle
-	if #p40.circleBin <= 0 then
-		return p40.circleTemplate:Clone()
-	end
-	local v41 = p40.circleBin[#p40.circleBin]
-	p40.circleBin[#p40.circleBin] = nil
-	return v41
+function u28:getCircle() -- Line: 242
+    local v1 = #self.circleBin
+    if 0 >= v1 then
+        return (self.circleTemplate:Clone())
+    end
+    local v2 = self.circleBin[#self.circleBin]
+    self.circleBin[#self.circleBin] = nil
+    return v2
 end
-function v_u_13.createTerminateFunctions(p_u_42) -- name: createTerminateFunctions
-	local v_u_43 = p_u_42.surfaceGui.AbsoluteSize
-	function p_u_42.side1Terminate(p44)
-		-- upvalues: (copy) v_u_43, (copy) p_u_42
-		local v45 = p44.Position
-		local v46 = p44.Size
-		if v45.X.Offset - v46.X.Offset / 2 > v_u_43.X or (v45.Y.Offset + v46.Y.Offset / 2 < 0 or v45.Y.Offset - v46.Y.Offset / 2 > v_u_43.Y) then
-			p44.Parent = nil
-			p_u_42.circleData[p44] = nil
-			local v47 = p_u_42.circleBin
-			table.insert(v47, p44)
-		end
-	end
-	function p_u_42.side2Terminate(p48)
-		-- upvalues: (copy) v_u_43, (copy) p_u_42
-		local v49 = p48.Position
-		local v50 = p48.Size
-		if v49.Y.Offset - v50.Y.Offset / 2 > v_u_43.Y or (v49.X.Offset + v50.X.Offset / 2 < 0 or v49.X.Offset - v50.X.Offset / 2 > v_u_43.X) then
-			p48.Parent = nil
-			p_u_42.circleData[p48] = nil
-			local v51 = p_u_42.circleBin
-			table.insert(v51, p48)
-		end
-	end
-	function p_u_42.side3Terminate(p52)
-		-- upvalues: (copy) v_u_43, (copy) p_u_42
-		local v53 = p52.Position
-		local v54 = p52.Size
-		if v53.X.Offset + v54.X.Offset / 2 < 0 or (v53.Y.Offset + v54.Y.Offset / 2 < 0 or v53.Y.Offset - v54.Y.Offset / 2 > v_u_43.Y) then
-			p52.Parent = nil
-			p_u_42.circleData[p52] = nil
-			local v55 = p_u_42.circleBin
-			table.insert(v55, p52)
-		end
-	end
-	function p_u_42.side4Terminate(p56)
-		-- upvalues: (copy) v_u_43, (copy) p_u_42
-		local v57 = p56.Position
-		local v58 = p56.Size
-		if v57.Y.Offset + v58.Y.Offset / 2 < 0 or (v57.X.Offset + v58.X.Offset / 2 < 0 or v57.X.Offset - v58.X.Offset / 2 > v_u_43.X) then
-			p56.Parent = nil
-			p_u_42.circleData[p56] = nil
-			local v59 = p_u_42.circleBin
-			table.insert(v59, p56)
-		end
-	end
+local function clampGrid(p1, p2) -- Line: 258
+    local v1 = math.clamp(p1, -5, 40)
+    return v1, (math.clamp(p2, -5, 40))
 end
-function v_u_13.spawnCircle(p60) -- name: spawnCircle
-	local v61 = p60.surfaceGui.AbsoluteSize
-	local v62 = math.random(1, 4)
-	local v63 = math.random()
-	local v64 = math.random() * 50 + 50
-	local v65 = math.random() * 50 + 50
-	local v66 = p60:getCircle()
-	local v67
-	if v62 == 1 then
-		v67 = {
-			["Velocity"] = nil,
-			["LastPos"] = nil,
-			["LastTick"] = nil,
-			["Terminate"] = nil,
-			["Connected"] = nil,
-			["GX"] = -5,
-			["GY"] = nil,
-			["Velocity"] = Vector2.new(v64, v65 * (math.random(0, 1) == 0 and -1 or 1)),
-			["LastPos"] = Vector2.new(-3, v61.Y * v63),
-			["LastTick"] = tick(),
-			["Terminate"] = p60.side1Terminate,
-			["Connected"] = {}
-		}
-		local v68 = v61.Y * v63 / 250
-		v67.GY = math.floor(v68)
-	elseif v62 == 2 then
-		v67 = {
-			["Velocity"] = nil,
-			["LastPos"] = nil,
-			["LastTick"] = nil,
-			["Terminate"] = nil,
-			["Connected"] = nil,
-			["GX"] = nil,
-			["GY"] = -5,
-			["Velocity"] = Vector2.new(v64 * (math.random(0, 1) == 0 and -1 or 1), v65),
-			["LastPos"] = Vector2.new(v61.X * v63, -3),
-			["LastTick"] = tick(),
-			["Terminate"] = p60.side2Terminate,
-			["Connected"] = {}
-		}
-		local v69 = v61.X * v63 / 250
-		v67.GX = math.floor(v69)
-	elseif v62 == 3 then
-		v67 = {
-			["Velocity"] = nil,
-			["LastPos"] = nil,
-			["LastTick"] = nil,
-			["Terminate"] = nil,
-			["Connected"] = nil,
-			["GX"] = 40,
-			["GY"] = nil,
-			["Velocity"] = Vector2.new(-v64, v65 * (math.random(0, 1) == 0 and -1 or 1)),
-			["LastPos"] = Vector2.new(v61.X + 3, v61.Y * v63),
-			["LastTick"] = tick(),
-			["Terminate"] = p60.side3Terminate,
-			["Connected"] = {}
-		}
-		local v70 = v61.Y * v63 / 250
-		v67.GY = math.floor(v70)
-	else
-		v67 = {
-			["Velocity"] = nil,
-			["LastPos"] = nil,
-			["LastTick"] = nil,
-			["Terminate"] = nil,
-			["Connected"] = nil,
-			["GX"] = nil,
-			["GY"] = 40,
-			["Velocity"] = Vector2.new(v64 * (math.random(0, 1) == 0 and -1 or 1), -v65),
-			["LastPos"] = Vector2.new(v61.X * v63, v61.Y + 3),
-			["LastTick"] = tick(),
-			["Terminate"] = p60.side4Terminate,
-			["Connected"] = {}
-		}
-		local v71 = v61.X * v63 / 250
-		v67.GX = math.floor(v71)
-	end
-	local v72 = v67.GX
-	local v73 = v67.GY
-	local v74 = math.clamp(v72, -5, 40)
-	local v75 = math.clamp(v73, -5, 40)
-	v67.GX = v74
-	v67.GY = v75
-	p60.circleData[v66] = v67
-	v66.Parent = p60.effectFrame
-	v66.Visible = true
+function u28:createTerminateFunctions() -- Line: 265
+    local AbsoluteSize = self.surfaceGui.AbsoluteSize
+    function self.side1Terminate(p1) -- Line: 269 -- upvalues: AbsoluteSize (val), self (val)
+        local Position = p1.Position
+        local Size = p1.Size
+        local v1 = Position.X.Offset - Size.X.Offset / 2
+        if AbsoluteSize.X < v1 then
+            p1.Parent = nil
+            self.circleData[p1] = nil
+            table.insert(self.circleBin, p1)
+        else
+            v1 = Position.Y.Offset + Size.Y.Offset / 2
+            if v1 < 0 then
+                p1.Parent = nil
+                self.circleData[p1] = nil
+                table.insert(self.circleBin, p1)
+            else
+                v1 = Position.Y.Offset - Size.Y.Offset / 2
+                if AbsoluteSize.Y < v1 then
+                    p1.Parent = nil
+                    self.circleData[p1] = nil
+                    table.insert(self.circleBin, p1)
+                end
+            end
+        end
+    end
+    function self.side2Terminate(p1) -- Line: 282 -- upvalues: AbsoluteSize (val), self (val)
+        local Position = p1.Position
+        local Size = p1.Size
+        local v1 = Position.Y.Offset - Size.Y.Offset / 2
+        if AbsoluteSize.Y < v1 then
+            p1.Parent = nil
+            self.circleData[p1] = nil
+            table.insert(self.circleBin, p1)
+        else
+            v1 = Position.X.Offset + Size.X.Offset / 2
+            if v1 < 0 then
+                p1.Parent = nil
+                self.circleData[p1] = nil
+                table.insert(self.circleBin, p1)
+            else
+                v1 = Position.X.Offset - Size.X.Offset / 2
+                if AbsoluteSize.X < v1 then
+                    p1.Parent = nil
+                    self.circleData[p1] = nil
+                    table.insert(self.circleBin, p1)
+                end
+            end
+        end
+    end
+    function self.side3Terminate(p1) -- Line: 295 -- upvalues: AbsoluteSize (val), self (val)
+        local Position = p1.Position
+        local Size = p1.Size
+        local v1 = Position.X.Offset + Size.X.Offset / 2
+        if v1 < 0 then
+            p1.Parent = nil
+            self.circleData[p1] = nil
+            table.insert(self.circleBin, p1)
+        else
+            v1 = Position.Y.Offset + Size.Y.Offset / 2
+            if v1 < 0 then
+                p1.Parent = nil
+                self.circleData[p1] = nil
+                table.insert(self.circleBin, p1)
+            else
+                v1 = Position.Y.Offset - Size.Y.Offset / 2
+                if AbsoluteSize.Y < v1 then
+                    p1.Parent = nil
+                    self.circleData[p1] = nil
+                    table.insert(self.circleBin, p1)
+                end
+            end
+        end
+    end
+    function self.side4Terminate(p1) -- Line: 308 -- upvalues: AbsoluteSize (val), self (val)
+        local Position = p1.Position
+        local Size = p1.Size
+        local v1 = Position.Y.Offset + Size.Y.Offset / 2
+        if v1 < 0 then
+            p1.Parent = nil
+            self.circleData[p1] = nil
+            table.insert(self.circleBin, p1)
+        else
+            v1 = Position.X.Offset + Size.X.Offset / 2
+            if v1 < 0 then
+                p1.Parent = nil
+                self.circleData[p1] = nil
+                table.insert(self.circleBin, p1)
+            else
+                v1 = Position.X.Offset - Size.X.Offset / 2
+                if AbsoluteSize.X < v1 then
+                    p1.Parent = nil
+                    self.circleData[p1] = nil
+                    table.insert(self.circleBin, p1)
+                end
+            end
+        end
+    end
 end
-function v_u_13.update(p76) -- name: update
-	local v77 = tick()
-	for v78, v79 in p76.circleData do
-		local v80 = v77 - v79.LastTick
-		local v81 = v79.LastPos.X + v79.Velocity.X * v80
-		local v82 = v79.LastPos.Y + v79.Velocity.Y * v80
-		v78.Position = UDim2.fromOffset(v81, v82)
-		v79.LastTick = v77
-		v79.LastPos = Vector2.new(v81, v82)
-		v79.Terminate(v78)
-		if v78.Parent then
-			local v83 = v79.GX
-			local v84 = v79.GY
-			local v85 = v81 / 250
-			local v86 = math.floor(v85)
-			local v87 = v82 / 250
-			local v88 = math.floor(v87)
-			local v89 = math.clamp(v86, -5, 40)
-			local v90 = math.clamp(v88, -5, 40)
-			if v83 ~= v89 or v84 ~= v90 then
-				p76.grid[v83][v84][v78] = nil
-				v79.GX = v89
-				v79.GY = v90
-			end
-			p76.grid[v89][v90][v78] = true
-		else
-			p76.grid[v79.GX][v79.GY][v78] = nil
-		end
-	end
-	local v91 = 1
-	for v92, v93 in p76.circleData do
-		table.clear(v93.Connected)
-		for v94 = -1, 1 do
-			for v95 = -1, 1 do
-				local v96 = v93.GX + v94
-				local v97 = v93.GY + v95
-				local v98 = math.clamp(v96, -5, 40)
-				local v99 = math.clamp(v97, -5, 40)
-				for v100 in p76.grid[v98][v99] do
-					if v100 ~= v92 then
-						local v101 = p76.circleData[v100]
-						if v101 and not v101.Connected[v92] then
-							local v102 = v101.LastPos
-							local v103 = v93.LastPos
-							local v104 = (v102 - v103).Magnitude
-							if v104 <= 250 then
-								v93.Connected[v100] = true
-								p76:drawLine(v102, v103, v91, v104 / 250)
-								v91 = v91 + 1
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-	for v105 = v91, #p76.lineList do
-		p76.lineList[v105].Visible = false
-	end
+function u28:spawnCircle() -- Line: 324
+    local v1, v2, v3
+    local AbsoluteSize = self.surfaceGui.AbsoluteSize
+    local v4 = math.random(1, 4)
+    local v5 = math.random()
+    local v6 = math.random() * 50 + 50
+    local v7 = math.random() * 50 + 50
+    local v8 = self:getCircle()
+    if v4 == 1 then
+        v3 = {GX = -5}
+        if math.random(0, 1) ~= 0 then
+            v1 = 1
+        else
+            v1 = -1
+        end
+        v3.Velocity = Vector2.new(v6, v7 * v1)
+        v3.LastPos = Vector2.new(-3, AbsoluteSize.Y * v5)
+        v3.LastTick = tick()
+        v3.Terminate = self.side1Terminate
+        v3.Connected = {}
+        v3.GY = math.floor(AbsoluteSize.Y * v5 / 250)
+        v2 = v3
+    else
+        local v9
+        if v4 == 2 then
+            v3 = {GY = -5}
+            if math.random(0, 1) ~= 0 then
+                v9 = 1
+            else
+                v9 = -1
+            end
+            v3.Velocity = Vector2.new(v6 * v9, v7)
+            v3.LastPos = Vector2.new(AbsoluteSize.X * v5, -3)
+            v3.LastTick = tick()
+            v3.Terminate = self.side2Terminate
+            v3.Connected = {}
+            v3.GX = math.floor(AbsoluteSize.X * v5 / 250)
+            v2 = v3
+        elseif v4 ~= 3 then
+            v3 = {GY = 40}
+            if math.random(0, 1) ~= 0 then
+                v9 = 1
+            else
+                v9 = -1
+            end
+            v3.Velocity = Vector2.new(v6 * v9, -v7)
+            v3.LastPos = Vector2.new(AbsoluteSize.X * v5, AbsoluteSize.Y + 3)
+            v3.LastTick = tick()
+            v3.Terminate = self.side4Terminate
+            v3.Connected = {}
+            v3.GX = math.floor(AbsoluteSize.X * v5 / 250)
+            v2 = v3
+        else
+            v3 = {GX = 40}
+            if math.random(0, 1) ~= 0 then
+                v1 = 1
+            else
+                v1 = -1
+            end
+            v3.Velocity = Vector2.new(-v6, v7 * v1)
+            v3.LastPos = Vector2.new(AbsoluteSize.X + 3, AbsoluteSize.Y * v5)
+            v3.LastTick = tick()
+            v3.Terminate = self.side3Terminate
+            v3.Connected = {}
+            v3.GY = math.floor(AbsoluteSize.Y * v5 / 250)
+            v2 = v3
+        end
+    end
+    v3 = math.clamp(v2.GX, -5, 40)
+    v2.GX = v3
+    v2.GY = math.clamp(v2.GY, -5, 40)
+    self.circleData[v8] = v2
+    v8.Parent = self.effectFrame
+    v8.Visible = true
 end
-function v_u_13.start(p_u_106, p107) -- name: start
-	-- upvalues: (copy) v_u_1
-	if not p_u_106.running then
-		p_u_106.running = true
-		p_u_106.backgroundPart.Parent = p107 or workspace
-		task.defer(function()
-			-- upvalues: (copy) p_u_106
-			p_u_106:createTerminateFunctions()
-		end)
-		local v108 = v_u_1.Heartbeat:Connect(function()
-			-- upvalues: (copy) p_u_106
-			p_u_106:update()
-		end)
-		local v109 = p_u_106.connections
-		table.insert(v109, v108)
-		task.spawn(function()
-			-- upvalues: (copy) p_u_106
-			while p_u_106.running do
-				local v110 = math.random() * 0.15000000000000002 + 0.25
-				task.wait(v110)
-				if p_u_106.running and p_u_106.side1Terminate then
-					p_u_106:spawnCircle()
-				end
-			end
-		end)
-	end
+function u28:update() -- Line: 391
+    local GX, GY, LastPos, LastPos_2, Magnitude, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14
+    local v15 = tick()
+    local circleData = self.circleData
+    local v16 = nil
+    local v17 = nil
+    local v18 = self
+    for i, j in circleData, v16, v17 do
+        v12 = v15 - j.LastTick
+        v13 = j.LastPos.X + j.Velocity.X * v12
+        v14 = j.LastPos.Y + j.Velocity.Y * v12
+        i.Position = UDim2.fromOffset(v13, v14)
+        j.LastTick = v15
+        j.LastPos = Vector2.new(v13, v14)
+        j.Terminate(i)
+        if not i.Parent then
+            v1 = v18.grid[j.GX][j.GY]
+            v1[i] = nil
+        else
+            GX = j.GX
+            GY = j.GY
+            v3 = math.floor(v13 / 250)
+            v5 = math.clamp(v3, -5, 40)
+            v3 = v5
+            v4 = math.clamp(math.floor(v14 / 250), -5, 40)
+            if GX ~= v3 then
+                v5 = v18.grid[GX][GY]
+                v5[i] = nil
+                j.GX = v3
+                j.GY = v4
+            elseif GY == v4 then
+            end
+            v5 = v18.grid[v3][v4]
+            v5[i] = true
+        end
+    end
+    local v19 = 1
+    local circleData_2 = v18.circleData
+    v17 = nil
+    local v20 = nil
+    for k, n in circleData_2, v17, v20 do
+        table.clear(n.Connected)
+        v13 = 1
+        v14 = 1
+        for m = -1, v13, v14 do
+            v2 = 1
+            v3 = 1
+            for i5 = -1, v2, v3 do
+                v7 = n.GY + i5
+                v5 = math.clamp(n.GX + m, -5, 40)
+                v6 = math.clamp(v7, -5, 40)
+                v7 = v18.grid[v5][v6]
+                v8 = nil
+                v9 = nil
+                for i6 in v7, v8, v9 do
+                    if i6 ~= k then
+                        v10 = v18.circleData[i6]
+                        if v10 and not (v10.Connected[k]) then
+                            LastPos = v10.LastPos
+                            LastPos_2 = n.LastPos
+                            Magnitude = (LastPos - LastPos_2).Magnitude
+                            if Magnitude <= 250 then
+                                n.Connected[i6] = true
+                                v18:drawLine(LastPos, LastPos_2, v19, Magnitude / 250)
+                                v19 = v19 + 1
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    v16 = #v18.lineList
+    v17 = 1
+    for i7 = v19, v16, v17 do
+        v11 = v18.lineList[i7]
+        v11.Visible = false
+    end
 end
-function v_u_13.stop(p111) -- name: stop
-	p111.running = false
-	for _, v112 in p111.connections do
-		v112:Disconnect()
-	end
-	p111.connections = {}
+function u28.start(p1, p2) -- Line: 467 -- upvalues: RunService (val)
+    if p1.running then
+        return
+    end
+    p1.running = true
+    local v1 = p2
+    if not v1 then
+        v1 = workspace
+    end
+    p1.backgroundPart.Parent = v1
+    task.defer(function() -- Line: 476 -- upvalues: p1 (val)
+        p1:createTerminateFunctions()
+    end)
+    local v2 = RunService.Heartbeat:Connect(function() -- Line: 481 -- upvalues: p1 (val)
+        p1:update()
+    end)
+    table.insert(p1.connections, v2)
+    task.spawn(function() -- Line: 487 -- upvalues: p1 (val)
+        local v1
+        while p1.running do
+            v1 = math.random() * 0.15000000000000002 + 0.25
+            task.wait(v1)
+            if p1.running and p1.side1Terminate then
+                p1:spawnCircle()
+            end
+        end
+    end)
 end
-function v_u_13.destroy(p113) -- name: destroy
-	p113:stop()
-	for v114 in p113.circleData do
-		v114:Destroy()
-	end
-	p113.circleData = {}
-	for _, v115 in p113.circleBin do
-		v115:Destroy()
-	end
-	p113.circleBin = {}
-	for _, v116 in p113.lineList do
-		v116:Destroy()
-	end
-	p113.lineList = {}
-	for v117 = -5, 40 do
-		for v118 = -5, 40 do
-			table.clear(p113.grid[v117][v118])
-		end
-	end
-	p113.backgroundPart:Destroy()
+function u28:stop() -- Line: 501
+    self.running = false
+    local connections = self.connections
+    local v1 = nil
+    local v2 = nil
+    for i, j in connections, v1, v2 do
+        j:Disconnect()
+    end
+    self.connections = {}
 end
-return v_u_13
+function u28.destroy(p1) -- Line: 513
+    local v1, v2
+    p1:stop()
+    local circleData = p1.circleData
+    local v3 = nil
+    local v4 = nil
+    for i in circleData, v3, v4 do
+        i:Destroy()
+    end
+    p1.circleData = {}
+    local circleBin = p1.circleBin
+    v3 = nil
+    v4 = nil
+    for j, k in circleBin, v3, v4 do
+        k:Destroy()
+    end
+    p1.circleBin = {}
+    local lineList = p1.lineList
+    v3 = nil
+    v4 = nil
+    for n, m in lineList, v3, v4 do
+        m:Destroy()
+    end
+    p1.lineList = {}
+    local v5 = 40
+    v3 = 1
+    local v6 = p1
+    for i5 = -5, v5, v3 do
+        v1 = 40
+        v2 = 1
+        for i6 = -5, v1, v2 do
+            table.clear(v6.grid[i5][i6])
+        end
+    end
+    v6.backgroundPart:Destroy()
+end
+return u28

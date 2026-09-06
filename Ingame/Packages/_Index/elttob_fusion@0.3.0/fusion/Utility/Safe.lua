@@ -1,5 +1,5 @@
-local _ = script.Parent.Parent
-return function(p1) -- name: Safe
-	local _, v2 = xpcall(p1.try, p1.fallback)
-	return v2
+return function(p1) -- Line: 13
+    local v1
+    _, v1 = xpcall(p1.try, p1.fallback)
+    return v1
 end

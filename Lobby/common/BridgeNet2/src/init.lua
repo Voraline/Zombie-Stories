@@ -1,74 +1,67 @@
-local v1 = game:GetService("RunService")
-local v_u_2 = require("@self/Client")
+local deser, makeBridge, makeBridge_2, makeBridge_3, makeIdentifier, ser
+local RunService = game:GetService("RunService")
+local u7 = require("@self/Client")
 require("@self/PublicTypes")
-local v_u_3 = require("@self/Server")
-local v4 = require("@self/Utilities/NetworkUtils")
-local v_u_5 = require("@self/Utilities/Output")
-local v_u_6 = v1:IsServer()
-task.spawn(function()
-	-- upvalues: (copy) v_u_6, (copy) v_u_3, (copy) v_u_2
-	if v_u_6 then
-		v_u_3.start()
-	else
-		v_u_2.start()
-	end
+local u13 = require("@self/Server")
+local v1 = require("@self/Utilities/NetworkUtils")
+local u19 = require("@self/Utilities/Output")
+local u22 = RunService:IsServer()
+task.spawn(function() -- Line: 12 -- upvalues: u22 (val), u13 (val), u7 (val)
+    if u22 then
+        u13.start()
+        return
+    end
+    u7.start()
 end)
-local v7 = {
-	["ToHex"] = v4.ToHex,
-	["ToReadableHex"] = v4.ToReadableHex,
-	["FromHex"] = v4.FromHex,
-	["CreateUUID"] = v4.CreateUUID,
-	["NumberToBestForm"] = v4.NumberToBestForm
+local v2 = {
+    ToHex = v1.ToHex,
+    ToReadableHex = v1.ToReadableHex,
+    FromHex = v1.FromHex,
+    CreateUUID = v1.CreateUUID,
+    NumberToBestForm = v1.NumberToBestForm,
 }
-local v8
-if v_u_6 then
-	v8 = v_u_3.makeIdentifier
+if not u22 then
+    makeIdentifier = u7.makeIdentifier
 else
-	v8 = v_u_2.makeIdentifier
+    makeIdentifier = u13.makeIdentifier
 end
-v7.ReferenceIdentifier = v8
-local v9
-if v_u_6 then
-	v9 = v_u_3.deser
+v2.ReferenceIdentifier = makeIdentifier
+if not u22 then
+    deser = u7.deser
 else
-	v9 = v_u_2.deser
+    deser = u13.deser
 end
-v7.Deserialize = v9
-local v10
-if v_u_6 then
-	v10 = v_u_3.ser
+v2.Deserialize = deser
+if not u22 then
+    ser = u7.ser
 else
-	v10 = v_u_2.ser
+    ser = u13.ser
 end
-v7.Serialize = v10
-v7.AllPlayers = v_u_3.playerContainers().All
-v7.PlayersExcept = v_u_3.playerContainers().Except
-v7.Players = v_u_3.playerContainers().Players
-local v11
-if v_u_6 then
-	v11 = v_u_3.makeBridge
+v2.Serialize = ser
+v2.AllPlayers = u13.playerContainers().All
+v2.PlayersExcept = u13.playerContainers().Except
+v2.Players = u13.playerContainers().Players
+if not u22 then
+    makeBridge = u7.makeBridge
 else
-	v11 = v_u_2.makeBridge
+    makeBridge = u13.makeBridge
 end
-v7.ReferenceBridge = v11
-local v12
-if v_u_6 then
-	v12 = v_u_3.makeBridge
+v2.ReferenceBridge = makeBridge
+if not u22 then
+    makeBridge_2 = nil
 else
-	v12 = nil
+    makeBridge_2 = u13.makeBridge
 end
-v7.ServerBridge = v12
-local v13
-if v_u_6 then
-	v13 = nil
+v2.ServerBridge = makeBridge_2
+if u22 then
+    makeBridge_3 = nil
 else
-	v13 = v_u_2.makeBridge
+    makeBridge_3 = u7.makeBridge
 end
-v7.ClientBridge = v13
-function v7.HandleInvalidPlayer(p14) -- name: HandleInvalidPlayer
-	-- upvalues: (copy) v_u_5, (copy) v_u_6, (copy) v_u_3
-	v_u_5.fatalAssert(v_u_6, "Cannot call from client")
-	v_u_3.invalidPlayerhandler(p14)
+v2.ClientBridge = makeBridge_3
+function v2.HandleInvalidPlayer(p1) -- Line: 41 -- upvalues: u19 (val), u22 (val), u13 (val)
+    u19.fatalAssert(u22, "Cannot call from client")
+    u13.invalidPlayerhandler(p1)
 end
-table.freeze(v7)
-return v7
+table.freeze(v2)
+return v2

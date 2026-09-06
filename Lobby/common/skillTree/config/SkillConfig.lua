@@ -3,75 +3,91 @@ local v1 = require("./CoreSkills")
 local v2 = require("./CombatSkills")
 local v3 = require("./SurvivalSkills")
 local v4 = require("./SkillLayout")
-local v_u_5 = {}
-local function v8(p6) -- name: registerSkills
-	-- upvalues: (copy) v_u_5
-	for _, v7 in p6 do
-		if v_u_5[v7.id] then
-			warn((("Duplicate skill ID: %*"):format(v7.id)))
-		end
-		v_u_5[v7.id] = v7
-	end
+local u15 = {}
+local function registerSkills(p1) -- Line: 28 -- upvalues: u15 (val)
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if u15[j.id] then
+            warn((("Duplicate skill ID: %*"):format(j.id)))
+        end
+        u15[j.id] = j
+    end
 end
-v8(v1)
-v8(v2)
-v8(v3)
+registerSkills(v1)
+registerSkills(v2)
+registerSkills(v3)
 return {
-	["skills"] = v_u_5,
-	["layout"] = v4,
-	["getSkill"] = function(p9) -- name: getSkill
-		-- upvalues: (copy) v_u_5
-		return v_u_5[p9]
-	end,
-	["getSkillsByBranch"] = function(p10) -- name: getSkillsByBranch
-		-- upvalues: (copy) v_u_5
-		local v11 = {}
-		for _, v12 in v_u_5 do
-			if v12.branch == p10 then
-				table.insert(v11, v12)
-			end
-		end
-		return v11
-	end,
-	["getSkillsByTier"] = function(p13, p14) -- name: getSkillsByTier
-		-- upvalues: (copy) v_u_5
-		local v15 = {}
-		for _, v16 in v_u_5 do
-			if v16.branch == p13 and v16.tier == p14 then
-				table.insert(v15, v16)
-			end
-		end
-		return v15
-	end,
-	["getAllSkillIds"] = function() -- name: getAllSkillIds
-		-- upvalues: (copy) v_u_5
-		local v17 = {}
-		for v18 in v_u_5 do
-			table.insert(v17, v18)
-		end
-		return v17
-	end,
-	["getTierRequiredCount"] = function(p19, p20) -- name: getTierRequiredCount
-		-- upvalues: (copy) v_u_5
-		for _, v21 in v_u_5 do
-			if v21.branch == p19 and (v21.tier == p20 + 1 and v21.requirements) then
-				for _, v22 in v21.requirements.requirements do
-					if v22.type == "tier" and v22.tier == p20 then
-						return v22.count or 4
-					end
-				end
-			end
-		end
-		return 4
-	end,
-	["countSkillsAtTier"] = function(p23, p24, p25) -- name: countSkillsAtTier
-		-- upvalues: (copy) v_u_5
-		local v26 = 0
-		for _, v27 in v_u_5 do
-			if v27.branch == p23 and v27.tier == p24 then
-				v26 = v26 + (p25[v27.id] or 0)
-			end
-		end
-		return v26
-	end
+    skills = u15,
+    layout = v4,
+    getSkill = function(p1) -- Line: 49 -- upvalues: u15 (val)
+        return u15[p1]
+    end,
+    getSkillsByBranch = function(p1) -- Line: 54 -- upvalues: u15 (val)
+        local v1 = {}
+        local v2 = u15
+        local v3 = nil
+        local v4 = nil
+        for i, j in v2, v3, v4 do
+            if j.branch == p1 then
+                table.insert(v1, j)
+            end
+        end
+        return v1
+    end,
+    getSkillsByTier = function(p1, p2) -- Line: 65 -- upvalues: u15 (val)
+        local v1 = {}
+        local v2 = u15
+        local v3 = nil
+        local v4 = nil
+        for i, j in v2, v3, v4 do
+            if j.branch == p1 and j.tier == p2 then
+                table.insert(v1, j)
+            end
+        end
+        return v1
+    end,
+    getAllSkillIds = function() -- Line: 76 -- upvalues: u15 (val)
+        local v1 = {}
+        local v2 = u15
+        local v3 = nil
+        local v4 = nil
+        for i in v2, v3, v4 do
+            table.insert(v1, i)
+        end
+        return v1
+    end,
+    getTierRequiredCount = function(p1, p2) -- Line: 86 -- upvalues: u15 (val)
+        local requirements, v1, v2, v3, v4
+        local v5 = u15
+        local v6 = nil
+        local v7 = nil
+        v1, v2 = p1, p2
+        for i, j in v5, v6, v7 do
+            if j.branch == v1 and j.tier == v2 + 1 and j.requirements then
+                requirements = j.requirements.requirements
+                v3 = nil
+                v4 = nil
+                for k, n in requirements, v3, v4 do
+                    if n.type == "tier" and n.tier == v2 then
+                        return n.count or 4
+                    end
+                end
+            end
+        end
+        return 4
+    end,
+    countSkillsAtTier = function(p1, p2, p3) -- Line: 101 -- upvalues: u15 (val)
+        local v1 = 0
+        local v2 = u15
+        local v3 = nil
+        local v4 = nil
+        for i, j in v2, v3, v4 do
+            if j.branch == p1 and j.tier == p2 then
+                v1 = v1 + (p3[j.id] or 0)
+            end
+        end
+        return v1
+    end,
 }

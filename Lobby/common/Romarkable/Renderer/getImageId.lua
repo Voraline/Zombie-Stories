@@ -1,85 +1,85 @@
-local v_u_1 = game:GetService("MarketplaceService")
-local v_u_2 = game:GetService("ReplicatedStorage")
-local v_u_3 = {}
-local function v_u_10(p4) -- name: resolveAssetPath
-	-- upvalues: (copy) v_u_2
-	local v5 = string.split(p4, "/")
-	local v6, v7 = pcall(function()
-		-- upvalues: (ref) v_u_2
-		return require(v_u_2.common:FindFirstChild("Assets", true):FindFirstChild("assets"))
-	end)
-	if v6 and v7 then
-		local v8 = v7.Images
-		for _, v9 in v5 do
-			if type(v8) ~= "table" then
-				return nil
-			end
-			v8 = v8[v9]
-		end
-		if type(v8) == "string" then
-			return v8
-		else
-			return nil
-		end
-	else
-		return nil
-	end
+local MarketplaceService = game:GetService("MarketplaceService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u10 = {}
+local function resolveAssetPath(p1) -- Line: 6 -- upvalues: ReplicatedStorage (val)
+    local v1, v2
+    local v3 = string.split(p1, "/")
+    v1, v2 = pcall(function() -- Line: 9 -- upvalues: ReplicatedStorage (upval)
+        local Assets = ReplicatedStorage.common:FindFirstChild("Assets", true)
+        return require(Assets:FindFirstChild("assets"))
+    end)
+    if not v1 or not v2 then
+        return nil
+    end
+    local Images = v2.Images
+    local v4 = v3
+    local v5 = nil
+    local v6 = nil
+    for i, j in v4, v5, v6 do
+        if type(Images) ~= "table" then
+            return nil
+        end
+        Images = Images[j]
+    end
+    if type(Images) == "string" then
+        return Images
+    end
+    return nil
 end
-return function(p11)
-	-- upvalues: (copy) v_u_3, (copy) v_u_10, (copy) v_u_1
-	local v12 = string.match(p11, "^asset://(.+)$")
-	if v12 then
-		local v13 = v_u_3[v12]
-		if v13 then
-			return v13
-		end
-		local v14 = v_u_10(v12)
-		if not v14 then
-			return "rbxassetid://6266306999"
-		end
-		v_u_3[v12] = v14
-		return v14
-	else
-		local v_u_15 = string.match(p11, "%d+")
-		local v_u_16 = tonumber(v_u_15)
-		local v_u_17 = v_u_3[v_u_15]
-		if v_u_17 then
-			return v_u_17
-		else
-			local v_u_18 = nil
-			local v23, v24 = pcall(function()
-				-- upvalues: (ref) v_u_18, (ref) v_u_1, (copy) v_u_15, (ref) v_u_17, (ref) v_u_3, (copy) v_u_16
-				v_u_18 = v_u_1:GetProductInfo(v_u_15, Enum.InfoType.Asset)
-				if v_u_18.AssetTypeId == 1 then
-					v_u_17 = "rbxassetid://" .. v_u_15
-					v_u_3[v_u_15] = v_u_17
-					return v_u_17
-				end
-				if v_u_18.AssetTypeId ~= 13 then
-					return "rbxassetid://6266306999"
-				end
-				local v19 = v_u_18.Creator.Id
-				for v20 = 0, 50 do
-					local v21 = v_u_1:GetProductInfo(v_u_16 - v20, Enum.InfoType.Asset)
-					if v21.AssetTypeId == 1 and v21.Creator.Id == v19 then
-						v_u_17 = "rbxassetid://" .. v_u_16 - v20
-						v_u_3[v_u_15] = v_u_17
-						return v_u_17
-					end
-					local v22 = v_u_3[v_u_15]
-					if v22 then
-						return v22
-					end
-				end
-				v_u_17 = "rbxthumb://type=Asset&id=" .. v_u_15 .. "&w=420&h=420"
-				v_u_3[v_u_15] = v_u_17
-				return v_u_17
-			end)
-			if v23 then
-				return v24
-			else
-				return "rbxthumb://type=Asset&id=" .. v_u_15 .. "&w=420&h=420"
-			end
-		end
-	end
+return function(p1) -- Line: 23 -- upvalues: u10 (val), resolveAssetPath (val), MarketplaceService (val)
+    local v1, v2, v3
+    local v4 = string.match(p1, "^asset://(.+)$")
+    if v4 then
+        v1 = u10[v4]
+        if v1 then
+            return v1
+        end
+        local v5 = resolveAssetPath(v4)
+        if not v5 then
+            return "rbxassetid://6266306999"
+        end
+        u10[v4] = v5
+        return v5
+    end
+    local u15 = string.match(p1, "%d+")
+    local u18 = tonumber(u15)
+    local u20 = u10[u15]
+    if u20 then
+        return u20
+    end
+    local u21 = nil
+    v2, v3 = pcall(function() -- Line: 50 -- upvalues: u21 (ref), MarketplaceService (upval), u15 (val), u20 (ref), u10 (upval), u18 (val)
+        local ProductInfo, v1
+        u21 = MarketplaceService:GetProductInfo(u15, Enum.InfoType.Asset)
+        if u21.AssetTypeId == 1 then
+            u20 = "rbxassetid://" .. u15
+            u10[u15] = u20
+            return u20
+        end
+        if u21.AssetTypeId ~= 13 then
+            return "rbxassetid://6266306999"
+        end
+        local Id = u21.Creator.Id
+        local v2 = 50
+        local v3 = 1
+        for i = 0, v2, v3 do
+            ProductInfo = MarketplaceService:GetProductInfo(u18 - i, Enum.InfoType.Asset)
+            if ProductInfo.AssetTypeId == 1 and ProductInfo.Creator.Id == Id then
+                u20 = "rbxassetid://" .. u18 - i
+                u10[u15] = u20
+                return u20
+            end
+            v1 = u10[u15]
+            if v1 then
+                return v1
+            end
+        end
+        u20 = "rbxthumb://type=Asset&id=" .. u15 .. "&w=420&h=420"
+        u10[u15] = u20
+        return u20
+    end)
+    if not v2 then
+        return "rbxthumb://type=Asset&id=" .. u15 .. "&w=420&h=420"
+    end
+    return v3
 end

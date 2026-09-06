@@ -1,83 +1,76 @@
-local v1 = script.Parent
-local v_u_2 = require(v1.Logging.formatError)
-require(v1.Types)
-local v_u_3 = {
-	["safetyTimerMultiplier"] = 1
-}
-local v_u_4 = {}
-local v_u_5 = nil
-local v_u_6 = 0
-function v_u_3.setExternalProvider(p7) -- name: setExternalProvider
-	-- upvalues: (ref) v_u_5
-	local v8 = v_u_5
-	if v8 ~= nil then
-		v8.stopScheduler()
-	end
-	v_u_5 = p7
-	if p7 ~= nil then
-		p7.startScheduler()
-	end
-	return v8
+local Parent = script.Parent
+local formatError = require(Parent.Logging.formatError)
+require(Parent.Types)
+local u9 = {safetyTimerMultiplier = 1}
+local u11 = {}
+local u12 = nil
+local u13 = 0
+function u9.setExternalProvider(p1) -- Line: 36 -- upvalues: u12 (ref)
+    local v1 = u12
+    if v1 ~= nil then
+        v1.stopScheduler()
+    end
+    u12 = p1
+    if p1 ~= nil then
+        p1.startScheduler()
+    end
+    return v1
 end
-function v_u_3.isTimeCritical() -- name: isTimeCritical
-	return false
+function u9.isTimeCritical() -- Line: 53
+    return false
 end
-function v_u_3.doTaskImmediate(p9) -- name: doTaskImmediate
-	-- upvalues: (ref) v_u_5, (copy) v_u_3
-	if v_u_5 == nil then
-		v_u_3.logError("noTaskScheduler")
-	else
-		v_u_5.doTaskImmediate(p9)
-	end
+function u9.doTaskImmediate(p1) -- Line: 60 -- upvalues: u12 (ref), u9 (val)
+    if u12 == nil then
+        u9.logError("noTaskScheduler")
+        return
+    end
+    u12.doTaskImmediate(p1)
 end
-function v_u_3.doTaskDeferred(p10) -- name: doTaskDeferred
-	-- upvalues: (ref) v_u_5, (copy) v_u_3
-	if v_u_5 == nil then
-		v_u_3.logError("noTaskScheduler")
-	else
-		v_u_5.doTaskDeferred(p10)
-	end
+function u9.doTaskDeferred(p1) -- Line: 73 -- upvalues: u12 (ref), u9 (val)
+    if u12 == nil then
+        u9.logError("noTaskScheduler")
+        return
+    end
+    u12.doTaskDeferred(p1)
 end
-function v_u_3.logError(p11, p12, ...) -- name: logError
-	-- upvalues: (copy) v_u_2, (ref) v_u_5
-	error(v_u_2(v_u_5, p11, p12, ...), 0)
+function u9.logError(p1, p2, ...) -- Line: 86 -- upvalues: formatError (val), u12 (ref)
+    local v1 = formatError(u12, p1, p2, ...)
+    error(v1, 0)
 end
-function v_u_3.logErrorNonFatal(p13, p14, ...) -- name: logErrorNonFatal
-	-- upvalues: (copy) v_u_2, (ref) v_u_5
-	local v15 = v_u_2(v_u_5, p13, p14, ...)
-	if v_u_5 == nil then
-		print(v15)
-	else
-		v_u_5.logErrorNonFatal(v15)
-	end
+function u9.logErrorNonFatal(p1, p2, ...) -- Line: 97 -- upvalues: formatError (val), u12 (ref)
+    local v1 = formatError(u12, p1, p2, ...)
+    if u12 ~= nil then
+        u12.logErrorNonFatal(v1)
+        return
+    end
+    print(v1)
 end
-function v_u_3.logWarn(p16, ...) -- name: logWarn
-	-- upvalues: (copy) v_u_2, (ref) v_u_5
-	local v17 = v_u_2(v_u_5, p16, debug.traceback(nil, 2), ...)
-	if v_u_5 == nil then
-		print(v17)
-	else
-		v_u_5.logWarn(v17)
-	end
+function u9.logWarn(p1, ...) -- Line: 113 -- upvalues: formatError (val), u12 (ref)
+    local v1 = debug.traceback(nil, 2)
+    local v2 = formatError(u12, p1, v1, ...)
+    if u12 ~= nil then
+        u12.logWarn(v2)
+        return
+    end
+    print(v2)
 end
-function v_u_3.bindToUpdateStep(p18) -- name: bindToUpdateStep
-	-- upvalues: (copy) v_u_4
-	local v_u_19 = {}
-	v_u_4[v_u_19] = p18
-	return function()
-		-- upvalues: (ref) v_u_4, (copy) v_u_19
-		v_u_4[v_u_19] = nil
-	end
+function u9.bindToUpdateStep(p1) -- Line: 135 -- upvalues: u11 (val)
+    local u1 = {}
+    u11[u1] = p1
+    return function() -- Line: 142 -- upvalues: u11 (upval), u1 (val)
+        u11[u1] = nil
+    end
 end
-function v_u_3.performUpdateStep(p20) -- name: performUpdateStep
-	-- upvalues: (ref) v_u_6, (copy) v_u_4
-	v_u_6 = p20
-	for _, v21 in v_u_4 do
-		v21(p20)
-	end
+function u9.performUpdateStep(p1) -- Line: 152 -- upvalues: u13 (ref), u11 (val)
+    u13 = p1
+    local v1 = u11
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        j(p1)
+    end
 end
-function v_u_3.lastUpdateStep() -- name: lastUpdateStep
-	-- upvalues: (ref) v_u_6
-	return v_u_6
+function u9.lastUpdateStep() -- Line: 164 -- upvalues: u13 (ref)
+    return u13
 end
-return v_u_3
+return u9

@@ -1,139 +1,150 @@
+local ConEvents
 game:GetService("ReplicatedStorage")
-local v_u_1 = game.Players.LocalPlayer
-local v_u_2 = v_u_1.Character
-v_u_2 = v_u_2
-local v_u_3
-if v_u_2 then
-	v_u_3 = v_u_2:WaitForChild("Humanoid", 5)
-else
-	v_u_3 = v_u_2
+local LocalPlayer = game.Players.LocalPlayer
+local Character = LocalPlayer.Character
+local Humanoid = Character
+if Humanoid then
+    Humanoid = Character:WaitForChild("Humanoid", 5)
 end
-local v_u_4 = script:WaitForChild("Animations"):GetChildren()
-local v_u_5 = Instance.new("BindableEvent")
-local v_u_6 = Instance.new("BindableEvent")
-local v_u_7 = Instance.new("BindableEvent")
-local v_u_8 = require("@game/ReplicatedStorage/common/Settings")
-local v_u_9 = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
-local v_u_12 = {
-	["HasLanded"] = true,
-	["Climbing"] = false,
-	["GetOff"] = false,
-	["Jumped"] = v_u_5.Event,
-	["Landed"] = v_u_6.Event,
-	["Respawned"] = v_u_7.Event,
-	["JumpPower"] = 30,
-	["Animations"] = {},
-	["hpUpdated"] = function(_, _) -- name: hpUpdated end,
-	["SetJumpPower"] = function(p10, p11) -- name: SetJumpPower
-		p10.JumpPower = p11
-		if p10.Humanoid then
-			p10.Humanoid.JumpPower = p11
-		end
-	end
+local Children = script:WaitForChild("Animations"):GetChildren()
+local BindableEvent = Instance.new("BindableEvent")
+local BindableEvent_2 = Instance.new("BindableEvent")
+local BindableEvent_3 = Instance.new("BindableEvent")
+local u34 = require("@game/ReplicatedStorage/common/Settings")
+local peek = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
+local u45 = {
+    HasLanded = true,
+    Climbing = false,
+    GetOff = false,
+    Jumped = BindableEvent.Event,
+    Landed = BindableEvent_2.Event,
+    Respawned = BindableEvent_3.Event,
+    JumpPower = 30,
+    Animations = {},
+    hpUpdated = function(p1, p2) end,
+    SetJumpPower = function(p1, p2) -- Line: 43
+        p1.JumpPower = p2
+        if p1.Humanoid then
+            p1.Humanoid.JumpPower = p2
+        end
+    end,
 }
-local function v_u_18(p_u_13) -- name: ConEvents
-	-- upvalues: (ref) v_u_3, (copy) v_u_12, (copy) v_u_4, (copy) v_u_5, (copy) v_u_6, (copy) v_u_1, (copy) v_u_7, (copy) v_u_18, (copy) v_u_9, (copy) v_u_8
-	if not v_u_3 then
-		v_u_3 = p_u_13:WaitForChild("Humanoid")
-	end
-	task.defer(function()
-		-- upvalues: (ref) v_u_3, (ref) v_u_12
-		local v14 = Instance.new("BuoyancySensor")
-		v14.Parent = v_u_3.Parent:WaitForChild("Left Leg")
-		v_u_12.WaterSensor = v14
-	end)
-	for _, v15 in pairs(v_u_4) do
-		v_u_12.Animations[v15.Name] = v_u_3:WaitForChild("Animator"):LoadAnimation(v15)
-	end
-	v_u_3.Jumping:Connect(function()
-		-- upvalues: (ref) v_u_12, (ref) v_u_5
-		if v_u_12.HasLanded then
-			v_u_5:Fire()
-		end
-		v_u_12.HasLanded = false
-	end)
-	v_u_3.Running:Connect(function()
-		-- upvalues: (ref) v_u_12
-		if v_u_12.Climbing == true then
-			v_u_12.Climbing = false
-		end
-	end)
-	v_u_3.StateChanged:Connect(function(_, p16)
-		-- upvalues: (ref) v_u_12, (ref) v_u_6
-		if p16 == Enum.HumanoidStateType.Freefall then
-			v_u_12.HasLanded = false
-		elseif p16 == Enum.HumanoidStateType.Landed then
-			if not v_u_12.HasLanded then
-				v_u_6:Fire()
-			end
-			v_u_12.HasLanded = true
-		end
-	end)
-	v_u_3.Climbing:Connect(function()
-		-- upvalues: (ref) v_u_12
-		v_u_12.Climbing = true
-	end)
-	v_u_3.Seated:Connect(function(p17)
-		-- upvalues: (ref) v_u_12
-		if p17 == true then
-			v_u_12.HasLanded = false
-		else
-			v_u_12.GetOff = true
-		end
-	end)
-	v_u_3.Died:Connect(function()
-		-- upvalues: (ref) v_u_12, (ref) p_u_13, (ref) v_u_1, (ref) v_u_3, (ref) v_u_7, (ref) v_u_18
-		v_u_12.Alive = false
-		v_u_12.WaterSensor = nil
-		p_u_13 = v_u_1.CharacterAdded:Wait()
-		v_u_3 = p_u_13:WaitForChild("Humanoid")
-		v_u_7:Fire(v_u_3)
-		v_u_18()
-	end)
-	v_u_3:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
-	v_u_3:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-	v_u_3:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-	v_u_3.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-	v_u_12.Humanoid = v_u_3
-	v_u_3.UseJumpPower = true
-	v_u_3.JumpPower = v_u_12.JumpPower
-	v_u_3.AutoJumpEnabled = v_u_9(v_u_8.Controls.AutoJump) or false
+function ConEvents(p1) -- Line: 51 -- upvalues: Humanoid (ref), u45 (val), Children (val), BindableEvent (val), BindableEvent_2 (val), LocalPlayer (val), BindableEvent_3 (val), ConEvents (val), peek (val), u34 (val)
+    local Animator
+    if not Humanoid then
+        Humanoid = p1:WaitForChild("Humanoid")
+    end
+    local u6 = Humanoid
+    task.defer(function() -- Line: 57 -- upvalues: u6 (val), p1 (ref), u45 (upval)
+        local v1
+        if u6.Parent ~= p1 then
+            return
+        end
+        if u6.RigType ~= Enum.HumanoidRigType.R6 then
+            v1 = "LeftFoot"
+        else
+            v1 = "Left Leg"
+        end
+        local HumanoidRootPart = p1:FindFirstChild(v1)
+        if not HumanoidRootPart then
+            HumanoidRootPart = p1:FindFirstChild("HumanoidRootPart")
+        end
+        if not HumanoidRootPart or not (HumanoidRootPart:IsA("BasePart")) then
+            warn("[HumanoidUtil] Cannot attach BuoyancySensor; character has no suitable body part")
+            return
+        end
+        local BuoyancySensor = Instance.new("BuoyancySensor")
+        BuoyancySensor.Parent = HumanoidRootPart
+        u45.WaterSensor = BuoyancySensor
+    end)
+    for k, v in pairs(Children) do
+        Animator = Humanoid:WaitForChild("Animator")
+        u45.Animations[v.Name] = Animator:LoadAnimation(v)
+    end
+    Humanoid.Jumping:Connect(function() -- Line: 79 -- upvalues: u45 (upval), BindableEvent (upval)
+        if u45.HasLanded then
+            BindableEvent:Fire()
+        end
+        u45.HasLanded = false
+    end)
+    Humanoid.Running:Connect(function() -- Line: 85 -- upvalues: u45 (upval)
+        if u45.Climbing == true then
+            u45.Climbing = false
+        end
+    end)
+    Humanoid.StateChanged:Connect(function(p1, p2) -- Line: 91 -- upvalues: u45 (upval), BindableEvent_2 (upval)
+        if p2 == Enum.HumanoidStateType.Freefall then
+            u45.HasLanded = false
+            return
+        end
+        if p2 == Enum.HumanoidStateType.Landed then
+            if not u45.HasLanded then
+                BindableEvent_2:Fire()
+            end
+            u45.HasLanded = true
+        end
+    end)
+    Humanoid.Climbing:Connect(function() -- Line: 102 -- upvalues: u45 (upval)
+        u45.Climbing = true
+    end)
+    Humanoid.Seated:Connect(function(p1) -- Line: 106 -- upvalues: u45 (upval)
+        if p1 == true then
+            u45.HasLanded = false
+            return
+        end
+        u45.GetOff = true
+    end)
+    Humanoid.Died:Connect(function() -- Line: 114 -- upvalues: u45 (upval), p1 (ref), LocalPlayer (upval), Humanoid (upval), BindableEvent_3 (upval), ConEvents (upval)
+        u45.Alive = false
+        u45.WaterSensor = nil
+        p1 = LocalPlayer.CharacterAdded:Wait()
+        Humanoid = p1:WaitForChild("Humanoid")
+        BindableEvent_3:Fire(Humanoid)
+        ConEvents()
+    end)
+    Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
+    Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+    Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    u45.Humanoid = Humanoid
+    Humanoid.UseJumpPower = true
+    Humanoid.JumpPower = u45.JumpPower
+    Humanoid.AutoJumpEnabled = peek(u34.Controls.AutoJump) or false
 end
-if v_u_2 then
-	print("HumanoidUtil Char")
-	v_u_18(v_u_2)
+if not Character then
+    task.defer(function() -- Line: 138 -- upvalues: Character (ref), LocalPlayer (val), Humanoid (ref), ConEvents (val)
+        if Character then
+            return
+        end
+        local Character_2 = LocalPlayer.Character
+        if not Character_2 then
+            Character_2 = LocalPlayer.CharacterAdded:Wait()
+        end
+        task.wait()
+        Character = Character_2
+        if Humanoid then
+            return
+        end
+        Humanoid = Character:WaitForChild("Humanoid")
+        ConEvents(Character)
+        print("HumanoidUtil defer")
+    end)
 else
-	task.defer(function()
-		-- upvalues: (ref) v_u_2, (copy) v_u_1, (ref) v_u_3, (copy) v_u_18
-		if v_u_2 then
-			return
-		else
-			local v19 = v_u_1.Character or v_u_1.CharacterAdded:Wait()
-			task.wait()
-			v_u_2 = v19
-			if not v_u_3 then
-				v_u_3 = v_u_2:WaitForChild("Humanoid")
-				v_u_18(v_u_2)
-				print("HumanoidUtil defer")
-			end
-		end
-	end)
+    print("HumanoidUtil Char")
+    ConEvents(Character)
 end
-v_u_1.CharacterAdded:Connect(function(p20)
-	-- upvalues: (copy) v_u_18
-	print("HumanoidUtil Add")
-	v_u_18(p20)
+LocalPlayer.CharacterAdded:Connect(function(p1) -- Line: 157 -- upvalues: ConEvents (val)
+    print("HumanoidUtil Add")
+    ConEvents(p1)
 end)
-v_u_1.CharacterRemoving:Connect(function()
-	-- upvalues: (copy) v_u_12, (ref) v_u_3
-	print("HumanoidUtil Remove")
-	v_u_12.Humanoid = nil
-	v_u_3 = nil
+LocalPlayer.CharacterRemoving:Connect(function() -- Line: 161 -- upvalues: u45 (val), Humanoid (ref)
+    print("HumanoidUtil Remove")
+    u45.Humanoid = nil
+    Humanoid = nil
 end)
-v_u_8.SettingsChanged:Connect(function()
-	-- upvalues: (ref) v_u_3, (copy) v_u_9, (copy) v_u_8
-	if v_u_3 then
-		v_u_3.AutoJumpEnabled = v_u_9(v_u_8.Controls.AutoJump) or false
-	end
+u34.SettingsChanged:Connect(function() -- Line: 167 -- upvalues: Humanoid (ref), peek (val), u34 (val)
+    if Humanoid then
+        Humanoid.AutoJumpEnabled = peek(u34.Controls.AutoJump) or false
+    end
 end)
-return v_u_12
+return u45

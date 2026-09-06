@@ -1,10 +1,14 @@
-local v1 = {}
-for _, v2 in script:GetChildren() do
-	for v3, v4 in require(v2) do
-		v1[v3] = v4
-	end
+local v1, v2, v3
+local v4 = {}
+for i, j in script:GetChildren() do
+    v1 = require(j)
+    v2 = nil
+    v3 = nil
+    for k, n in v1, v2, v3 do
+        v4[k] = n
+    end
 end
-for v5, _ in pairs(v1) do
-	v1[v5].Name = v5
+for k2, v in pairs(v4) do
+    v4[k2].Name = k2
 end
-return v1
+return v4

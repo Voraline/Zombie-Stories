@@ -1,27 +1,22 @@
-local v_u_1 = require("../Shared/Util")
-local v_u_2 = { "Primary", "Secondary" }
-local v_u_7 = {
-	["DisplayName"] = "Gun slot",
-	["Prefixes"] = "",
-	["Transform"] = nil,
-	["Validate"] = nil,
-	["Autocomplete"] = nil,
-	["Parse"] = nil,
-	["Transform"] = function(p3) -- name: Transform
-		-- upvalues: (copy) v_u_1, (copy) v_u_2
-		return v_u_1.MakeFuzzyFinder(v_u_2)(p3)
-	end,
-	["Validate"] = function(p4) -- name: Validate
-		return #p4 > 0, "No slot with that name exists."
-	end,
-	["Autocomplete"] = function(p5) -- name: Autocomplete
-		return p5
-	end,
-	["Parse"] = function(p6) -- name: Parse
-		return p6[1]
-	end
+local u2 = require("../Shared/Util")
+local u3 = {"Primary", "Secondary"}
+local u6 = {
+    DisplayName = "Gun slot",
+    Prefixes = "",
+    Transform = function(p1) -- Line: 11 -- upvalues: u2 (val), u3 (val)
+        return u2.MakeFuzzyFinder(u3)(p1)
+    end,
+    Validate = function(p1) -- Line: 16
+        local v1 = 0 < #p1
+        return v1, "No slot with that name exists."
+    end,
+    Autocomplete = function(p1) -- Line: 20
+        return p1
+    end,
+    Parse = function(p1) -- Line: 24
+        return p1[1]
+    end,
 }
-return function(p8)
-	-- upvalues: (copy) v_u_7
-	p8:RegisterType("gunSlot", v_u_7)
+return function(p1) -- Line: 29 -- upvalues: u6 (val)
+    p1:RegisterType("gunSlot", u6)
 end

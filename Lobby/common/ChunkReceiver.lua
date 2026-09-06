@@ -1,76 +1,91 @@
 local v1 = {}
-local v2 = {
-	["Players"] = game:GetService("Players"),
-	["ReplicatedStorage"] = game:GetService("ReplicatedStorage")
-}
+local v2 = {Players = game:GetService("Players"), ReplicatedStorage = game:GetService("ReplicatedStorage")}
 v2.ReplicatedStorage.common:WaitForChild("SharedResources")
-local v_u_3 = v2.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ReplicationTarget")
-local v_u_4 = require("@game/ReplicatedStorage/common/RedEvents/NPC/ChunkReceived"):Client()
+local ReplicationTarget = v2.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ReplicationTarget")
+local u33 = require("@game/ReplicatedStorage/common/RedEvents/NPC/ChunkReceived"):Client()
 require(game.ReplicatedStorage.common:WaitForChild("HUDService"))
-local v_u_5 = nil
-local function v_u_17(p6) -- name: HandleReplication
-	-- upvalues: (copy) v_u_4
-	local v7 = p6:WaitForChild("NumberOfDescendants", 30)
-	if v7 then
-		local v8 = v7.Value
-		local v9 = workspace:GetServerTimeNow()
-		while #p6:GetDescendants() < v8 do
-			p6.DescendantAdded:Wait()
-			if workspace:GetServerTimeNow() - v9 > 30 then
-				warn("[ChunkReceiver] Timed out waiting for descendants on: " .. p6.Name .. " (got " .. #p6:GetDescendants() .. "/" .. v8 .. ")")
-				p6:Destroy()
-				return
-			end
-		end
-		for _, v10 in p6:QueryDescendants("Model") do
-			local v11 = v10:WaitForChild("ThePrimaryPart", 30)
-			if not v11 then
-				warn("[ChunkReceiver] Timed out waiting for ThePrimaryPart on model: " .. v10.Name)
-				p6:Destroy()
-				return
-			end
-			v10.PrimaryPart = v11.Value
-			v11:Destroy()
-		end
-		for _, v12 in p6:QueryDescendants("Weld, Motor6D") do
-			if v12.Name ~= "NULL" and (v12.Name ~= "Grip" and (v12.Part0 == nil or v12.Part1 == nil)) then
-				local v13 = workspace:GetServerTimeNow()
-				while v12.Part1 == nil or v12.Part0 == nil do
-					task.wait()
-					if workspace:GetServerTimeNow() - v13 > 30 then
-						warn("[ChunkReceiver] Timed out waiting for joint parts on: " .. v12:GetFullName())
-						p6:Destroy()
-						return
-					end
-				end
-			end
-		end
-		local v14 = p6:Clone()
-		local v15 = v14:WaitForChild("ToParent", 30)
-		if v15 then
-			local v16 = v15.Value
-			v15:Destroy()
-			v14.Parent = v16
-			v_u_4:Fire(p6)
-		else
-			warn("[ChunkReceiver] Timed out waiting for ToParent on clone: " .. v14.Name)
-			v14:Destroy()
-		end
-	else
-		warn("[ChunkReceiver] Timed out waiting for NumberOfDescendants on: " .. p6.Name)
-		p6:Destroy()
-		return
-	end
+local u43 = nil
+local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
+    local Name, ServerTimeNow_2, ThePrimaryPart, v1, v2, v3
+    local NumberOfDescendants = p1:WaitForChild("NumberOfDescendants", 30)
+    if not NumberOfDescendants then
+        warn("[ChunkReceiver] Timed out waiting for NumberOfDescendants on: " .. p1.Name)
+        p1:Destroy()
+        return
+    end
+    local Value = NumberOfDescendants.Value
+    local ServerTimeNow = workspace:GetServerTimeNow()
+    while #p1:GetDescendants() < Value do
+        p1.DescendantAdded:Wait()
+        v2 = workspace:GetServerTimeNow() - ServerTimeNow
+        if 30 < v2 then
+            Name = p1.Name
+            v3 = #p1:GetDescendants()
+            warn("[ChunkReceiver] Timed out waiting for descendants on: " .. Name .. " (got " .. v3 .. "/" .. Value .. ")")
+            p1:Destroy()
+            return
+        end
+    end
+    local function isJoint(p1) -- Line: 46
+        local v1 = p1:IsA("Weld")
+        if not v1 then
+            v1 = p1:IsA("Motor6D")
+        end
+        return v1
+    end
+    for i, j in p1:QueryDescendants("Model") do
+        ThePrimaryPart = j:WaitForChild("ThePrimaryPart", 30)
+        if not ThePrimaryPart then
+            warn("[ChunkReceiver] Timed out waiting for ThePrimaryPart on model: " .. j.Name)
+            p1:Destroy()
+            return
+        end
+        j.PrimaryPart = ThePrimaryPart.Value
+        ThePrimaryPart:Destroy()
+    end
+    local v4 = p1
+    for k, n in p1:QueryDescendants("Weld, Motor6D") do
+        if n.Name ~= "NULL" and n.Name ~= "Grip" then
+            if n.Part0 ~= nil and n.Part1 ~= nil then
+                continue
+            end
+            ServerTimeNow_2 = workspace:GetServerTimeNow()
+            while true do
+                if n.Part1 == nil then
+                    task.wait()
+                    v1 = workspace:GetServerTimeNow() - ServerTimeNow_2
+                    if 30 < v1 then
+                        warn("[ChunkReceiver] Timed out waiting for joint parts on: " .. n:GetFullName())
+                        v4:Destroy()
+                        return
+                    end
+                elseif n.Part0 ~= nil then
+                    break
+                end
+            end
+        end
+    end
+    local v5 = v4:Clone()
+    local ToParent = v5:WaitForChild("ToParent", 30)
+    if not ToParent then
+        warn("[ChunkReceiver] Timed out waiting for ToParent on clone: " .. v5.Name)
+        v5:Destroy()
+        return
+    end
+    local Value_2 = ToParent.Value
+    ToParent:Destroy()
+    v5.Parent = Value_2
+    u33:Fire(v4)
 end
-function v1.Main() -- name: Main
-	-- upvalues: (ref) v_u_5, (copy) v_u_3, (copy) v_u_17
-	if not v_u_5 then
-		v_u_5 = true
-		local v18 = v_u_3:GetChildren()
-		for _, v19 in pairs(v18) do
-			v_u_17(v19)
-		end
-		v_u_3.ChildAdded:Connect(v_u_17)
-	end
+function v1.Main() -- Line: 96 -- upvalues: u43 (ref), ReplicationTarget (val), HandleReplication (val)
+    if u43 then
+        return
+    end
+    u43 = true
+    local Children = ReplicationTarget:GetChildren()
+    for k, v in pairs(Children) do
+        HandleReplication(v)
+    end
+    ReplicationTarget.ChildAdded:Connect(HandleReplication)
 end
 return v1

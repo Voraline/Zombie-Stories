@@ -1,7 +1,7 @@
-local v1 = require(game.ReplicatedStorage.Packages.Red)
+local Red = require(game.ReplicatedStorage.Packages.Red)
 require(game.ReplicatedStorage.Packages.Guard)
-return v1.Function("SettingsFunction", function(p2)
-	return p2
-end, function(p3)
-	return p3
+return Red.Function("SettingsFunction", function(p1) -- Line: 4
+    return p1
+end, function(p1) -- Line: 6
+    return p1
 end)

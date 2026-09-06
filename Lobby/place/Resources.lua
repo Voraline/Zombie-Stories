@@ -1,239 +1,303 @@
-local v1 = game:GetService("RunService")
+local RunService = game:GetService("RunService")
+local v1 = {}
 local v2 = {}
-local v_u_3 = setmetatable({}, v2)
-local v_u_4 = {}
-local v_u_5 = Instance.new
-local v_u_6 = type
-local v_u_7 = require
-local v_u_8 = nil
-local v_u_9 = v1:IsServer()
-local v_u_15 = setmetatable({
-	["Folder"] = false,
-	["RemoteEvent"] = false,
-	["BindableEvent"] = false,
-	["RemoteFunction"] = false,
-	["BindableFunction"] = false,
-	["Library"] = true
+local u338 = setmetatable(v2, v1)
+local u10 = {}
+local new = Instance.new
+local u12 = type
+local u353 = require
+local u14 = nil
+local u17 = RunService:IsServer()
+local u22 = setmetatable({
+    Folder = false,
+    RemoteEvent = false,
+    BindableEvent = false,
+    RemoteFunction = false,
+    BindableFunction = false,
+    Library = true,
 }, {
-	["__index"] = function(p10, p11) -- name: __index
-		-- upvalues: (copy) v_u_5
-		local v12, v13 = pcall(v_u_5, p11)
-		local v14
-		if v12 and v13 then
-			v13:Destroy()
-			v14 = false
-		else
-			v14 = true
-		end
-		p10[p11] = v14
-		return v14
-	end
+    __index = function(p1, p2) -- Line: 22 -- upvalues: new (val)
+        local v1, v2, v3
+        v1, v2 = pcall(new, p2)
+        if not v1 then
+            v3 = true
+        elseif not v2 then
+            v3 = true
+        else
+            v2:Destroy()
+            v3 = false
+        end
+        p1[p2] = v3
+        return v3
+    end,
 })
-function v_u_3.GetLocalTable(p16, p17) -- name: GetLocalTable
-	-- upvalues: (copy) v_u_3, (copy) v_u_4
-	if p16 ~= v_u_3 and p16 then
-		p17 = p16
-	end
-	local v18 = v_u_4[p17]
-	if not v18 then
-		v18 = {}
-		v_u_4[p17] = v18
-	end
-	return v18
+function u338.GetLocalTable(p1, p2) -- Line: 38 -- upvalues: u338 (val), u10 (val)
+    local v1
+    if p1 == u338 then
+        v1 = p2
+    else
+        v1 = p1
+        if not v1 then
+            v1 = p2
+        end
+    end
+    local v2 = v1
+    v1 = u10[v2]
+    if not v1 then
+        u10[v2] = {}
+    end
+    return v1
 end
-local function v_u_23(p19, p20, p21) -- name: GetFirstChild
-	-- upvalues: (copy) v_u_15, (copy) v_u_5
-	local v22 = p19:FindFirstChild(p20)
-	if not v22 then
-		if v_u_15[p21] then
-			error("[Resources] " .. p21 .. " \"" .. p20 .. "\" is not installed within " .. p19:GetFullName() .. ".", 2)
-		end
-		v22 = v_u_5(p21)
-		v22.Name = p20
-		v22.Parent = p19
-	end
-	return v22
+local function GetFirstChild(p1, p2, p3) -- Line: 50 -- upvalues: u22 (val), new (val)
+    local v1 = p1:FindFirstChild(p2)
+    if not v1 then
+        if u22[p3] then
+            local FullName = p1:GetFullName()
+            error("[Resources] " .. p3 .. " \"" .. p2 .. "\" is not installed within " .. FullName .. ".", 2)
+        end
+        v1 = new(p3)
+        v1.Name = p2
+        v1.Parent = p1
+    end
+    return v1
 end
-function v2.__index(p_u_24, p_u_25) -- name: __index
-	-- upvalues: (copy) v_u_6, (copy) v_u_23, (ref) v_u_8, (copy) v_u_3, (copy) v_u_4, (copy) v_u_9
-	if v_u_6(p_u_25) ~= "string" then
-		error("[Resources] Attempt to index Resources with invalid key: string expected, got " .. typeof(p_u_25), 2)
-	end
-	if p_u_25:sub(1, 3) ~= "Get" then
-		error("[Resources] Methods should begin with \"Get\"", 2)
-	end
-	local v_u_26 = p_u_25:sub(4)
-	local v27, v28 = v_u_26:byte(-2, -1)
-	local v_u_29 = v28 == 121 and (v27 ~= 97 and (v27 ~= 101 and (v27 ~= 105 and (v27 ~= 111 and v27 ~= 117)))) and v_u_26:sub(1, -2) .. "ies" or v_u_26 .. "s"
-	local v_u_30 = v_u_26:sub(1, 5) == "Local"
-	local v_u_31 = nil
-	local v_u_32 = nil
-	local v_u_33
-	if v_u_30 then
-		v_u_26 = v_u_26:sub(6)
-		if v_u_26 == "Folder" then
-			v_u_33 = function()
-				-- upvalues: (ref) v_u_23, (ref) v_u_8
-				return v_u_23(v_u_8, "Resources", "Folder")
-			end
-		else
-			v_u_33 = v_u_3.GetLocalFolder
-		end
-	elseif v_u_26 == "Folder" then
-		v_u_33 = function()
-			return script
-		end
-	else
-		v_u_33 = v_u_3.GetFolder
-	end
-	local function v40(p34, p35) -- name: GetFunction
-		-- upvalues: (copy) p_u_24, (ref) v_u_6, (copy) p_u_25, (ref) v_u_32, (ref) v_u_31, (ref) v_u_4, (copy) v_u_29, (ref) v_u_33, (copy) v_u_30, (ref) v_u_9, (ref) v_u_23, (ref) v_u_26
-		if p34 ~= p_u_24 and p34 then
-			p35 = p34
-		end
-		if v_u_6(p35) ~= "string" then
-			error("[Resources] " .. p_u_25 .. " expected a string parameter, got " .. typeof(p35), 2)
-		end
-		if not v_u_32 then
-			v_u_31 = v_u_4[v_u_29]
-			v_u_32 = v_u_33(v_u_30 and v_u_29:sub(6) or v_u_29)
-			if not v_u_31 then
-				v_u_31 = v_u_32:GetChildren()
-				v_u_4[v_u_29] = v_u_31
-				for v36 = 1, #v_u_31 do
-					local v37 = v_u_31[v36]
-					v_u_31[v37.Name] = v37
-					v_u_31[v36] = nil
-				end
-			end
-		end
-		local v38 = v_u_31[p35]
-		if not v38 then
-			if v_u_9 or v_u_30 then
-				v38 = v_u_23(v_u_32, p35, v_u_26)
-			else
-				v38 = v_u_32:WaitForChild(p35, 5)
-				if not v38 then
-					local v39 = getfenv(0).script
-					if v39 and (v39.Parent and v39.Parent.Parent == script) then
-						warn("[Resources] Make sure a Script in ServerScriptService calls `Resources:LoadLibrary(\"" .. v39.Name .. "\")`")
-					elseif v_u_26 == "Library" then
-						warn("[Resources] Did you forget to install " .. p35 .. "?")
-					elseif v_u_26 == "Folder" then
-						warn("[Resources] Make sure a Script in ServerScriptService calls `require(ReplicatedStorage:WaitForChild(\"Resources\"))`")
-					end
-					v38 = v_u_32:WaitForChild(p35)
-				end
-			end
-			v_u_31[p35] = v38
-		end
-		return v38
-	end
-	v_u_3[p_u_25] = v40
-	return v40
+function v1.__index(p1, p2) -- Line: 63 -- upvalues: u12 (val), GetFirstChild (val), u14 (ref), u338 (val), u10 (val), u17 (val)
+    local GetLocalFolder, u44, v1, v2
+    if u12(p2) ~= "string" then
+        v1 = "[Resources] Attempt to index Resources with invalid key: string expected, got " .. typeof(p2)
+        error(v1, 2)
+    end
+    if p2:sub(1, 3) ~= "Get" then
+        error("[Resources] Methods should begin with \"Get\"", 2)
+    end
+    local u27 = p2:sub(4)
+    v1, v2 = u27:byte(-2, -1)
+    if v2 ~= 121 then
+        u44 = u27 .. "s"
+    elseif v1 ~= 97 and v1 ~= 101 and v1 ~= 105 and v1 ~= 111 and v1 ~= 117 then
+        local v3 = u27:sub(1, -2)
+        u44 = v3 .. "ies"
+    end
+    local u52 = u27:sub(1, 5) == "Local"
+    local u53 = nil
+    local u54 = nil
+    if u52 then
+        u27 = u27:sub(6)
+        if u27 ~= "Folder" then
+            GetLocalFolder = u338.GetLocalFolder
+        else
+            function GetLocalFolder() -- Line: 78 -- upvalues: GetFirstChild (upval), u14 (upval)
+                return GetFirstChild(u14, "Resources", "Folder")
+            end
+        end
+    elseif u27 ~= "Folder" then
+        GetLocalFolder = u338.GetFolder
+    else
+        function GetLocalFolder() -- Line: 84
+            return script
+        end
+    end
+    local function GetFunction(a1, a2) -- Line: 90 -- upvalues: p1 (val), u12 (upval), p2 (val), u54 (ref), u53 (ref), u10 (upval), u44 (val), GetLocalFolder (ref), u52 (val), u17 (upval), GetFirstChild (upval), u27 (ref)
+        local v1, v2
+        if a1 == p1 then
+            v1 = a2
+        else
+            v1 = a1
+        end
+        local v3 = v1
+        if u12(v3) ~= "string" then
+            v2 = "[Resources] " .. p2 .. " expected a string parameter, got " .. typeof(v3)
+            error(v2, 2)
+        end
+        if not u54 then
+            u53 = u10[u44]
+            v1 = GetLocalFolder
+            if not u52 then
+                v2 = u44
+            else
+                v2 = u44:sub(6)
+            end
+            u54 = v1(v2)
+            if not u53 then
+                local v4
+                u53 = u54:GetChildren()
+                u10[u44] = u53
+                v1 = #u53
+                v2 = 1
+                for i = 1, v1, v2 do
+                    v4 = u53[i]
+                    u53[v4.Name] = v4
+                    u53[i] = nil
+                end
+            end
+        end
+        v1 = u53[v3]
+        if not v1 then
+            if u17 then
+                v1 = GetFirstChild(u54, v3, u27)
+            elseif not u52 then
+                v1 = u54:WaitForChild(v3, 5)
+                if not v1 then
+                    local script = getfenv(0).script
+                    if not script then
+                        if u27 == "Library" then
+                            warn("[Resources] Did you forget to install " .. v3 .. "?")
+                        elseif u27 == "Folder" then
+                            warn("[Resources] Make sure a Script in ServerScriptService calls `require(ReplicatedStorage:WaitForChild(\"Resources\"))`")
+                        end
+                    elseif script.Parent and script.Parent.Parent == script then
+                        warn("[Resources] Make sure a Script in ServerScriptService calls `Resources:LoadLibrary(\"" .. script.Name .. "\")`")
+                    end
+                    v1 = u54:WaitForChild(v3)
+                end
+            else
+                v1 = GetFirstChild(u54, v3, u27)
+            end
+            u53[v3] = v1
+        end
+        return v1
+    end
+    u338[p2] = GetFunction
+    return GetFunction
 end
-if v_u_9 then
-	v_u_8 = game:GetService("ServerStorage")
-	local v41 = v_u_8:FindFirstChild("Repository") or game:GetService("ServerScriptService"):FindFirstChild("Repository")
-	local function v45(p42, p43, p44) -- name: CacheLibrary
-		if p42[p43.Name] then
-			error("[Resources] Duplicate " .. p44 .. " Found:\n\t" .. p42[p43.Name]:GetFullName() .. " and \n\t" .. p43:GetFullName() .. "\nOvershadowing is only permitted when a server-only library overshadows a replicated library", 0)
-		else
-			p42[p43.Name] = p43
-		end
-	end
-	if v41 then
-		local v46 = v_u_3:GetLocalTable("Libraries")
-		local v47 = v41:GetChildren()
-		local v48 = {}
-		local v49 = false
-		local v50 = {}
-		while v47 do
-			v48[v47] = nil
-			for v51 = 1, #v47 do
-				local v52 = v47[v51]
-				local v53 = v52.ClassName
-				local v54 = v49 or (v52.Name:find("Server", 1, true) and true or false)
-				if v53 == "ModuleScript" then
-					if v54 then
-						v52.Parent = v_u_3:GetLocalFolder("Libraries")
-						v45(v50, v52, "ServerLibraries")
-					else
-						local v55 = v52:GetDescendants()
-						local v56 = nil
-						for v57 = 1, #v55 do
-							local v58 = v55[v57]
-							if v58.Name:find("Server", 1, true) then
-								v56 = v56 or v52:Clone()
-								v58:Destroy()
-							end
-						end
-						if v56 then
-							v56.Parent = v_u_3:GetLocalFolder("Libraries")
-							v45(v50, v56, "ServerLibraries")
-						end
-						v52.Parent = v_u_3:GetFolder("Libraries")
-						v45(v46, v52, "ReplicatedLibraries")
-					end
-				elseif v53 == "Folder" then
-					v48[v52:GetChildren()] = v54
-				else
-					error("[Resources] Instances within your Repository must be either a ModuleScript or a Folder, found: " .. v53 .. " " .. v52:GetFullName(), 0)
-				end
-			end
-			v47, v49 = next(v48)
-		end
-		for v59, v60 in next, v50 do
-			v46[v59] = v60
-		end
-		v41:Destroy()
-	end
+if u17 then
+    u14 = game:GetService("ServerStorage")
+    local Repository = u14:FindFirstChild("Repository")
+    if not Repository then
+        local ServerScriptService = game:GetService("ServerScriptService")
+        Repository = ServerScriptService:FindFirstChild("Repository")
+    end
+    local function CacheLibrary(p1, p2, p3) -- Line: 152
+        if not (p1[p2.Name]) then
+            p1[p2.Name] = p2
+            return
+        end
+        local FullName = p1[p2.Name]:GetFullName()
+        local FullName_2 = p2:GetFullName()
+        error("[Resources] Duplicate " .. p3 .. " Found:\n\t" .. FullName .. " and \n\t" .. FullName_2 .. "\nOvershadowing is only permitted when a server-only library overshadows a replicated library", 0)
+    end
+    if Repository then
+        local ClassName, Descendants, v3, v4, v5, v6, v7, v8, v9, v10
+        local v11 = {}
+        local LocalTable_2 = u338:GetLocalTable("Libraries")
+        local v12 = {}
+        local v13 = Repository:GetChildren()
+        local v14 = false
+        while v13 do
+            v12[v13] = nil
+            v3 = #v13
+            v4 = 1
+            for i = 1, v3, v4 do
+                v5 = v13[i]
+                ClassName = v5.ClassName
+                v6 = v14
+                if not v6 then
+                    v6 = not (not (v5.Name:find("Server", 1, true)))
+                end
+                if ClassName ~= "ModuleScript" then
+                    if ClassName ~= "Folder" then
+                        v7 = "[Resources] Instances within your Repository must be either a ModuleScript or a Folder, found: " .. ClassName .. " " .. v5:GetFullName()
+                        error(v7, 0)
+                    else
+                        v12[v5:GetChildren()] = v6
+                    end
+                elseif not v6 then
+                    Descendants = v5:GetDescendants()
+                    v7 = nil
+                    v8 = #Descendants
+                    v9 = 1
+                    for j = 1, v8, v9 do
+                        v10 = Descendants[j]
+                        if v10.Name:find("Server", 1, true) then
+                            if not v7 then
+                                v7 = v5:Clone()
+                            end
+                            v10:Destroy()
+                        end
+                    end
+                    if v7 then
+                        v7.Parent = u338:GetLocalFolder("Libraries")
+                        CacheLibrary(v11, v7, "ServerLibraries")
+                    end
+                    v5.Parent = u338:GetFolder("Libraries")
+                    CacheLibrary(LocalTable_2, v5, "ReplicatedLibraries")
+                else
+                    v5.Parent = u338:GetLocalFolder("Libraries")
+                    CacheLibrary(v11, v5, "ServerLibraries")
+                end
+            end
+            v3, v4 = next(v12)
+            v13 = v3
+            v14 = v4
+        end
+        v3 = next
+        v4 = v11
+        local v15 = nil
+        for k, n in v3, v4, v15 do
+            LocalTable_2[k] = n
+        end
+        Repository:Destroy()
+    end
 else
-	repeat
-		local v61 = game:GetService("Players").LocalPlayer
-	until v61 or not wait()
-	repeat
-		v_u_8 = v61:FindFirstChildOfClass("PlayerScripts")
-	until v_u_8 or not wait()
+    local LocalPlayer
+    while true do
+        LocalPlayer = game:GetService("Players").LocalPlayer
+        if LocalPlayer or not (wait()) then
+            break
+        end
+    end
+    while true do
+        u14 = LocalPlayer:FindFirstChildOfClass("PlayerScripts")
+        if u14 or not (wait()) then
+            break
+        end
+    end
 end
-local v_u_62 = v_u_3:GetLocalTable("LoadedLibraries")
-local v_u_63 = {}
-function v_u_3.LoadLibrary(p64, p65) -- name: LoadLibrary
-	-- upvalues: (copy) v_u_3, (copy) v_u_62, (copy) v_u_63, (copy) v_u_7
-	if p64 ~= v_u_3 and p64 then
-		p65 = p64
-	end
-	local v66 = v_u_62[p65]
-	if v66 == nil then
-		local v67 = getfenv(0).script or {
-			["Name"] = "Command bar"
-		}
-		local v68 = v_u_3:GetLibrary(p65)
-		v_u_63[v67] = v68
-		local v69 = v68
-		local v70 = 0
-		while v68 do
-			v70 = v70 + 1
-			v68 = v_u_63[v68]
-			if v68 == v69 then
-				local v71 = v68.Name
-				for _ = 1, v70 do
-					v68 = v_u_63[v68]
-					v71 = v71 .. " -> " .. v68.Name
-				end
-				error("[Resources] Circular dependency chain detected: " .. v71)
-			end
-		end
-		v66 = v_u_7(v69)
-		if v_u_63[v67] == v69 then
-			v_u_63[v67] = nil
-		end
-		if v66 == nil then
-			error("[Resources] " .. p65 .. " must return a non-nil value. Return false instead.")
-		end
-		v_u_62[p65] = v66
-	end
-	return v66
+local LocalTable = u338:GetLocalTable("LoadedLibraries")
+local u315 = {}
+function u338.LoadLibrary(p1, p2) -- Line: 235 -- upvalues: u338 (val), LocalTable (val), u315 (val), u353 (val)
+    local v1
+    if p1 == u338 then
+        v1 = p2
+    else
+        v1 = p1
+    end
+    local v2 = v1
+    v1 = LocalTable[v2]
+    if v1 == nil then
+        local Name, v3, v4
+        local script = getfenv(0).script
+        if not script then
+            script = {Name = "Command bar"}
+        end
+        local Library = u338:GetLibrary(v2)
+        u315[script] = Library
+        local v5 = Library
+        local v6 = 0
+        while v5 do
+            v6 = v6 + 1
+            v5 = u315[v5]
+            if v5 == Library then
+                Name = v5.Name
+                v3 = v6
+                v4 = 1
+                for i = 1, v3, v4 do
+                    v5 = u315[v5]
+                    Name = Name .. " -> " .. v5.Name
+                end
+                error("[Resources] Circular dependency chain detected: " .. Name)
+            end
+        end
+        v1 = u353(Library)
+        if u315[script] == Library then
+            u315[script] = nil
+        end
+        if v1 == nil then
+            error("[Resources] " .. v2 .. " must return a non-nil value. Return false instead.")
+        end
+        LocalTable[v2] = v1
+    end
+    return v1
 end
-v2.__call = v_u_3.LoadLibrary
-return v_u_3
+v1.__call = u338.LoadLibrary
+return u338

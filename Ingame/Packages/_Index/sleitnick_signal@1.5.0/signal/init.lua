@@ -1,186 +1,159 @@
-local v_u_1 = nil
-local function v_u_4(p2, ...) -- name: acquireRunnerThreadAndCallEventHandler
-	-- upvalues: (ref) v_u_1
-	local v3 = v_u_1
-	v_u_1 = nil
-	p2(...)
-	v_u_1 = v3
+local u0 = nil
+local function acquireRunnerThreadAndCallEventHandler(p1, ...) -- Line: 53 -- upvalues: u0 (ref)
+    u0 = nil
+    p1(...)
+    u0 = u0
 end
-local function v_u_5(...) -- name: runEventHandlerInFreeThread
-	-- upvalues: (copy) v_u_4
-	v_u_4(...)
-	while true do
-		v_u_4(coroutine.yield())
-	end
+local function runEventHandlerInFreeThread(...) -- Line: 64 -- upvalues: acquireRunnerThreadAndCallEventHandler (val)
+    acquireRunnerThreadAndCallEventHandler(...)
+    while true do
+        acquireRunnerThreadAndCallEventHandler(coroutine.yield())
+    end
 end
-local v_u_6 = {}
-v_u_6.__index = v_u_6
-function v_u_6.new(p7, p8) -- name: new
-	-- upvalues: (copy) v_u_6
-	local v9 = v_u_6
-	return setmetatable({
-		["Connected"] = true,
-		["_signal"] = nil,
-		["_fn"] = nil,
-		["_next"] = false,
-		["_signal"] = p7,
-		["_fn"] = p8
-	}, v9)
+local u3 = {}
+u3.__index = u3
+function u3.new(p1, p2) -- Line: 90 -- upvalues: u3 (val)
+    local v1 = {Connected = true, _next = false, _signal = p1, _fn = p2}
+    return (setmetatable(v1, u3))
 end
-function v_u_6.Disconnect(p10) -- name: Disconnect
-	if p10.Connected then
-		p10.Connected = false
-		if p10._signal._handlerListHead == p10 then
-			p10._signal._handlerListHead = p10._next
-		else
-			local v11 = p10._signal._handlerListHead
-			while v11 and v11._next ~= p10 do
-				v11 = v11._next
-			end
-			if v11 then
-				v11._next = p10._next
-			end
-		end
-	else
-		return
-	end
+function u3:Disconnect() -- Line: 99
+    local _handlerListHead
+    if not self.Connected then
+        return
+    end
+    self.Connected = false
+    if self._signal._handlerListHead == self then
+        self._signal._handlerListHead = self._next
+        return
+    end
+    _handlerListHead = self._signal._handlerListHead
+    while _handlerListHead do
+        if _handlerListHead._next == self then
+            break
+        end
+        _handlerListHead = _handlerListHead._next
+    end
+    if _handlerListHead then
+        _handlerListHead._next = self._next
+    end
 end
-v_u_6.Destroy = v_u_6.Disconnect
-setmetatable(v_u_6, {
-	["__index"] = function(_, p12) -- name: __index
-		error(("Attempt to get Connection::%s (not a valid member)"):format((tostring(p12))), 2)
-	end,
-	["__newindex"] = function(_, p13, _) -- name: __newindex
-		error(("Attempt to set Connection::%s (not a valid member)"):format((tostring(p13))), 2)
-	end
+u3.Destroy = u3.Disconnect
+setmetatable(u3, {
+    __index = function(p1, p2) -- Line: 126
+        local v1 = ("Attempt to get Connection::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
+    __newindex = function(p1, p2, p3) -- Line: 129
+        local v1 = ("Attempt to set Connection::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
 })
-local v_u_14 = {}
-v_u_14.__index = v_u_14
-function v_u_14.new() -- name: new
-	-- upvalues: (copy) v_u_14
-	local v15 = v_u_14
-	return setmetatable({
-		["_handlerListHead"] = false,
-		["_proxyHandler"] = nil
-	}, v15)
+local u13 = {}
+u13.__index = u13
+function u13.new() -- Line: 165 -- upvalues: u13 (val)
+    local v1 = {_handlerListHead = false}
+    return (setmetatable(v1, u13))
 end
-function v_u_14.Wrap(p16) -- name: Wrap
-	-- upvalues: (copy) v_u_14
-	local v17 = typeof(p16) == "RBXScriptSignal"
-	local v18 = "Argument #1 to Signal.Wrap must be a RBXScriptSignal; got " .. typeof(p16)
-	assert(v17, v18)
-	local v_u_19 = v_u_14.new()
-	v_u_19._proxyHandler = p16:Connect(function(...)
-		-- upvalues: (copy) v_u_19
-		v_u_19:Fire(...)
-	end)
-	return v_u_19
+function u13.Wrap(p1) -- Line: 186 -- upvalues: u13 (val)
+    local v1 = typeof(p1) == "RBXScriptSignal"
+    assert(v1, "Argument #1 to Signal.Wrap must be a RBXScriptSignal; got " .. typeof(p1))
+    local u17 = u13.new()
+    u17._proxyHandler = p1:Connect(function(...) -- Line: 192 -- upvalues: u17 (val)
+        u17:Fire(...)
+    end)
+    return u17
 end
-function v_u_14.Is(p20) -- name: Is
-	-- upvalues: (copy) v_u_14
-	local v21
-	if type(p20) == "table" then
-		v21 = getmetatable(p20) == v_u_14
-	else
-		v21 = false
-	end
-	return v21
+function u13.Is(p1) -- Line: 204 -- upvalues: u13 (val)
+    local v1 = false
+    if type(p1) == "table" then
+        local v2 = getmetatable(p1)
+        v1 = v2 == u13
+    end
+    return v1
 end
-function v_u_14.Connect(p22, p23) -- name: Connect
-	-- upvalues: (copy) v_u_6
-	local v24 = v_u_6.new(p22, p23)
-	if not p22._handlerListHead then
-		p22._handlerListHead = v24
-		return v24
-	end
-	v24._next = p22._handlerListHead
-	p22._handlerListHead = v24
-	return v24
+function u13:Connect(p2) -- Line: 221 -- upvalues: u3 (val)
+    local v1 = u3.new(self, p2)
+    if not self._handlerListHead then
+        self._handlerListHead = v1
+        return v1
+    end
+    v1._next = self._handlerListHead
+    self._handlerListHead = v1
+    return v1
 end
-function v_u_14.ConnectOnce(p25, p26) -- name: ConnectOnce
-	return p25:Once(p26)
+function u13.ConnectOnce(p1, p2) -- Line: 237
+    return p1:Once(p2)
 end
-function v_u_14.Once(p27, p_u_28) -- name: Once
-	local v_u_29 = nil
-	local v_u_30 = false
-	v_u_29 = p27:Connect(function(...)
-		-- upvalues: (ref) v_u_30, (ref) v_u_29, (copy) p_u_28
-		if not v_u_30 then
-			v_u_30 = true
-			v_u_29:Disconnect()
-			p_u_28(...)
-		end
-	end)
-	return v_u_29
+function u13:Once(p2) -- Line: 256
+    local u2 = nil
+    local u3 = false
+    u2 = self:Connect(function(...) -- Line: 259 -- upvalues: u3 (ref), u2 (ref), p2 (val)
+        if u3 then
+            return
+        end
+        u3 = true
+        u2:Disconnect()
+        p2(...)
+    end)
+    return u2
 end
-function v_u_14.GetConnections(p31) -- name: GetConnections
-	local v32 = p31._handlerListHead
-	local v33 = {}
-	while v32 do
-		table.insert(v33, v32)
-		v32 = v32._next
-	end
-	return v33
+function u13.GetConnections(p1) -- Line: 270
+    local v1 = {}
+    local _handlerListHead = p1._handlerListHead
+    while _handlerListHead do
+        table.insert(v1, _handlerListHead)
+        _handlerListHead = _handlerListHead._next
+    end
+    return v1
 end
-function v_u_14.DisconnectAll(p34) -- name: DisconnectAll
-	local v35 = p34._handlerListHead
-	while v35 do
-		v35.Connected = false
-		v35 = v35._next
-	end
-	p34._handlerListHead = false
+function u13:DisconnectAll() -- Line: 288
+    local _handlerListHead = self._handlerListHead
+    while _handlerListHead do
+        _handlerListHead.Connected = false
+        _handlerListHead = _handlerListHead._next
+    end
+    self._handlerListHead = false
 end
-function v_u_14.Fire(p36, ...) -- name: Fire
-	-- upvalues: (ref) v_u_1, (copy) v_u_5
-	local v37 = p36._handlerListHead
-	while v37 do
-		if v37.Connected then
-			if not v_u_1 then
-				v_u_1 = coroutine.create(v_u_5)
-			end
-			task.spawn(v_u_1, v37._fn, ...)
-		end
-		v37 = v37._next
-	end
+function u13:Fire(, ...) -- Line: 312 -- upvalues: u0 (ref), runEventHandlerInFreeThread (val)
+    local _handlerListHead = self._handlerListHead
+    while _handlerListHead do
+        if _handlerListHead.Connected then
+            if not u0 then
+                u0 = coroutine.create(runEventHandlerInFreeThread)
+            end
+            task.spawn(u0, _handlerListHead._fn, ...)
+        end
+        _handlerListHead = _handlerListHead._next
+    end
 end
-function v_u_14.FireDeferred(p38, ...) -- name: FireDeferred
-	local v39 = p38._handlerListHead
-	while v39 do
-		task.defer(v39._fn, ...)
-		v39 = v39._next
-	end
+function u13.FireDeferred(p1, ...) -- Line: 333
+    local _handlerListHead = p1._handlerListHead
+    while _handlerListHead do
+        task.defer(_handlerListHead._fn, ...)
+        _handlerListHead = _handlerListHead._next
+    end
 end
-function v_u_14.Wait(p40) -- name: Wait
-	local v_u_41 = coroutine.running()
-	local v_u_42 = nil
-	local v_u_43 = false
-	v_u_42 = p40:Connect(function(...)
-		-- upvalues: (ref) v_u_43, (ref) v_u_42, (copy) v_u_41
-		if not v_u_43 then
-			v_u_43 = true
-			v_u_42:Disconnect()
-			task.spawn(v_u_41, ...)
-		end
-	end)
-	return coroutine.yield()
+function u13.Wait(p1) -- Line: 356
+    local u2 = coroutine.running()
+    local u3 = nil
+    local u4 = false
+    return coroutine.yield()
 end
-function v_u_14.Destroy(p44) -- name: Destroy
-	p44:DisconnectAll()
-	local v45 = rawget(p44, "_proxyHandler")
-	if v45 then
-		v45:Disconnect()
-	end
+function u13.Destroy(p1) -- Line: 383
+    p1:DisconnectAll()
+    local v1 = rawget(p1, "_proxyHandler")
+    if v1 then
+        v1:Disconnect()
+    end
 end
-setmetatable(v_u_14, {
-	["__index"] = function(_, p46) -- name: __index
-		error(("Attempt to get Signal::%s (not a valid member)"):format((tostring(p46))), 2)
-	end,
-	["__newindex"] = function(_, p47, _) -- name: __newindex
-		error(("Attempt to set Signal::%s (not a valid member)"):format((tostring(p47))), 2)
-	end
+setmetatable(u13, {
+    __index = function(p1, p2) -- Line: 393
+        local v1 = ("Attempt to get Signal::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
+    __newindex = function(p1, p2, p3) -- Line: 396
+        local v1 = ("Attempt to set Signal::%s (not a valid member)"):format((tostring(p2)))
+        error(v1, 2)
+    end,
 })
-return {
-	["new"] = v_u_14.new,
-	["Wrap"] = v_u_14.Wrap,
-	["Is"] = v_u_14.Is
-}
+return {new = u13.new, Wrap = u13.Wrap, Is = u13.Is}

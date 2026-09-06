@@ -1,16 +1,34 @@
-local v1 = game:GetService("ReplicatedStorage")
-require(v1.Packages.Fusion)
-return function(p_u_2)
-	local v3 = p_u_2.scope
-	return v3:Computed(function(p4)
-		-- upvalues: (copy) p_u_2
-		if p4(p_u_2.Quest.IsCompleted) then
-			return Color3.fromRGB(31, 31, 31)
-		else
-			return Color3.fromRGB(92, 92, 92)
-		end
-	end), v3:Computed(function(p5)
-		-- upvalues: (copy) p_u_2
-		return p5(p_u_2.Quest.IsCompleted) and 0.95 or 0.75
-	end)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+require(ReplicatedStorage.Packages.Fusion)
+local u11 = require("../../Theme")
+return function(p1) -- Line: 28 -- upvalues: u11 (val)
+    local scope = p1.scope
+    local v1 = scope:Computed(function(a1) -- Line: 31 -- upvalues: p1 (val), u11 (upval)
+        if a1(p1.Quest.IsCompleted) then
+            return u11.Menu.Positive
+        end
+        if a1(p1.Quest.IsBonus or false) then
+            return u11.Menu.Accent
+        end
+        return u11.Menu.Border
+    end)
+    local v2 = scope:Computed(function(a1) -- Line: 41 -- upvalues: p1 (val), u11 (upval)
+        if a1(p1.Quest.IsCompleted) then
+            return u11.Menu.Positive
+        end
+        return u11.Menu.Accent
+    end)
+    local v3 = scope:Computed(function(a1) -- Line: 45 -- upvalues: p1 (val), u11 (upval)
+        if a1(p1.Quest.IsCompleted) then
+            return u11.Menu.Panel
+        end
+        return u11.Menu.PanelDeep
+    end)
+    return v1, v2, v3, (scope:Computed(function(a1) -- Line: 49 -- upvalues: p1 (val), u11 (upval)
+    if not (a1(p1.Quest.IsCompleted)) then
+        return u11.Menu.Text
+    else
+        return u11.Menu.TextMuted
+    end
+end))
 end

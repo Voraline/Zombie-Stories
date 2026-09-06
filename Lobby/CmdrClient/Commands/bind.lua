@@ -1,59 +1,41 @@
-local v_u_1 = game:GetService("UserInputService")
-return {
-	["Name"] = "bind",
-	["Aliases"] = nil,
-	["Description"] = "Binds a command string to a key or mouse input.",
-	["Group"] = "DefaultUtil",
-	["Args"] = nil,
-	["ClientRun"] = nil,
-	["Aliases"] = {},
-	["Args"] = {
-		{
-			["Type"] = "userInput ! bindableResource @ player",
-			["Name"] = "Input",
-			["Description"] = "The key or input type you\'d like to bind the command to."
-		},
-		{
-			["Type"] = "command",
-			["Name"] = "Command",
-			["Description"] = "The command you want to run on this input"
-		},
-		{
-			["Type"] = "string",
-			["Name"] = "Arguments",
-			["Description"] = "The arguments for the command",
-			["Default"] = ""
-		}
-	},
-	["ClientRun"] = function(p_u_2, p_u_3, p4, p5) -- name: ClientRun
-		-- upvalues: (copy) v_u_1
-		local v6 = p_u_2:GetStore("CMDR_Binds")
-		local v_u_7 = p4 .. " " .. p5
-		if v6[p_u_3] then
-			v6[p_u_3]:Disconnect()
-		end
-		local v8 = p_u_2:GetArgument(1).Type.Name
-		if v8 == "userInput" then
-			v6[p_u_3] = v_u_1.InputBegan:Connect(function(p9, p10)
-				-- upvalues: (copy) p_u_3, (copy) p_u_2, (ref) v_u_7
-				if not p10 then
-					if p9.UserInputType == p_u_3 or p9.KeyCode == p_u_3 then
-						p_u_2:Reply(p_u_2.Dispatcher:EvaluateAndRun(p_u_2.Cmdr.Util.RunEmbeddedCommands(p_u_2.Dispatcher, v_u_7)))
-					end
-				end
-			end)
-		else
-			if v8 == "bindableResource" then
-				return "Unimplemented..."
-			end
-			if v8 == "player" then
-				v6[p_u_3] = p_u_3.Chatted:Connect(function(p11)
-					-- upvalues: (copy) p_u_2, (ref) v_u_7, (copy) p_u_3
-					local v12 = p_u_2.Cmdr.Util.RunEmbeddedCommands(p_u_2.Dispatcher, p_u_2.Cmdr.Util.SubstituteArgs(v_u_7, { p11 }))
-					p_u_2:Reply(("%s $ %s : %s"):format(p_u_3.Name, v12, p_u_2.Dispatcher:EvaluateAndRun(v12)), Color3.fromRGB(244, 92, 66))
-				end)
-			end
-		end
-		return "Bound command to input."
-	end
-}
+local UserInputService = game:GetService("UserInputService")
+local v1 = {Name = "bind", Description = "Binds a command string to a key or mouse input.", Group = "DefaultUtil", Aliases = {}}
+local v2 = {}
+local v3 = {Type = "string", Name = "Arguments", Description = "The arguments for the command", Default = ""}
+v2[1] = {Type = "userInput ! bindableResource @ player", Name = "Input", Description = "The key or input type you'd like to bind the command to."}
+v2[2] = {Type = "command", Name = "Command", Description = "The command you want to run on this input"}
+v2[3] = v3
+v1.Args = v2
+function v1.ClientRun(p1, p2, p3, p4) -- Line: 27 -- upvalues: UserInputService (val)
+    local Store = p1:GetStore("CMDR_Binds")
+    local u11 = p3 .. " " .. p4
+    if Store[p2] then
+        Store[p2]:Disconnect()
+    end
+    local Name = p1:GetArgument(1).Type.Name
+    if Name == "userInput" then
+        Store[p2] = UserInputService.InputBegan:Connect(function(a1, a2) -- Line: 39 -- upvalues: p2 (val), p1 (val), u11 (ref)
+            if a2 then
+                return
+            end
+            if a1.UserInputType == p2 then
+                p1:Reply(p1.Dispatcher:EvaluateAndRun(p1.Cmdr.Util.RunEmbeddedCommands(p1.Dispatcher, u11)))
+            elseif a1.KeyCode == p2 then
+                p1:Reply(p1.Dispatcher:EvaluateAndRun(p1.Cmdr.Util.RunEmbeddedCommands(p1.Dispatcher, u11)))
+            end
+        end)
+        return "Bound command to input."
+    end
+    if Name == "bindableResource" then
+        return "Unimplemented..."
+    end
+    if Name == "player" then
+        Store[p2] = p2.Chatted:Connect(function(a1) -- Line: 51 -- upvalues: p1 (val), u11 (ref), p2 (val)
+            local v1 = p1.Cmdr.Util.RunEmbeddedCommands(p1.Dispatcher, p1.Cmdr.Util.SubstituteArgs(u11, {a1}))
+            local v2 = ("%s $ %s : %s"):format(p2.Name, v1, p1.Dispatcher:EvaluateAndRun(v1))
+            p1:Reply(v2, Color3.fromRGB(244, 92, 66))
+        end)
+    end
+    return "Bound command to input."
+end
+return v1

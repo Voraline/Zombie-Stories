@@ -1,101 +1,99 @@
-local v_u_1 = {
-	{
-		"core1",
-		"core2",
-		"core3",
-		"core4",
-		"core5"
-	}
+local v1, v2, v3
+local u119 = {}
+local v4 = {
+    "core1",
+    "core2",
+    "core3",
+    "core4",
+    "core5",
 }
-local v_u_2 = {}
-local v_u_3 = {
-	{ "thickSkin", "grit" },
-	{ "adrenaline", "ironWill", "desperateSprint" },
-	{
-		"secondChance",
-		"swanSong",
-		"secondWind",
-		"lastStand"
-	},
-	{ "theSpartan" }
-}
-local v_u_4 = {
-	{ "steadyAim", "fastHands" },
-	{
-		"deepPockets",
-		"quickInteract",
-		"sleightSwitch",
-		"meleeTempo"
-	},
-	{ "fury", "deadEye", "parryMaster" },
-	{ "quickDraw" }
-}
-for v5, v6 in v_u_1[1] do
-	v_u_2[v6] = {
-		["row"] = nil,
-		["column"] = 0,
-		["row"] = (v5 - 1) * 1.5
-	}
+u119[1] = v4
+local u90 = {}
+local v5 = {"steadyAim", "fastHands"}
+u90[1] = v5
+u90[2] = {"deepPockets", "quickInteract", "sleightSwitch", "meleeTempo"}
+u90[3] = {"fury", "deadEye", "parryMaster"}
+u90[4] = {"quickDraw"}
+local u122 = {}
+local v6 = {"thickSkin", "grit"}
+u122[1] = v6
+u122[2] = {"adrenaline", "ironWill", "desperateSprint"}
+u122[3] = {"secondChance", "swanSong", "secondWind", "lastStand"}
+u122[4] = {"theSpartan"}
+local u124 = {}
+local v7 = u119[1]
+local v8 = nil
+local v9 = nil
+for i, j in v7, v8, v9 do
+    u124[j] = {column = 0, row = (i - 1) * 1.5}
 end
-for v7, v8 in v_u_3 do
-	local v9 = #v8
-	for v10, v11 in v8 do
-		v_u_2[v11] = {
-			["row"] = 1.5 + ((v9 - 1) / 2 - (v10 - 1)),
-			["column"] = -v7
-		}
-	end
+v7 = u122
+v8 = nil
+v9 = nil
+for k, n in v7, v8, v9 do
+    v1 = n
+    v2 = nil
+    v3 = nil
+    for m, i5 in v1, v2, v3 do
+        u124[i5] = {row = 1.5 + ((#n - 1) / 2 - (m - 1)), column = -k}
+    end
 end
-for v12, v13 in v_u_4 do
-	local v14 = #v13
-	for v15, v16 in v13 do
-		v_u_2[v16] = {
-			["row"] = 3 + ((v14 - 1) / 2 - (v15 - 1)),
-			["column"] = v12
-		}
-	end
+v7 = u90
+v8 = nil
+v9 = nil
+for i6, i7 in v7, v8, v9 do
+    v1 = i7
+    v2 = nil
+    v3 = nil
+    for i8, i9 in v1, v2, v3 do
+        u124[i9] = {row = 3 + ((#i7 - 1) / 2 - (i8 - 1)), column = i6}
+    end
 end
 return {
-	["positions"] = v_u_2,
-	["combatTiers"] = v_u_4,
-	["survivalTiers"] = v_u_3,
-	["coreTiers"] = v_u_1,
-	["getPosition"] = function(p17) -- name: getPosition
-		-- upvalues: (copy) v_u_2
-		return v_u_2[p17]
-	end,
-	["getTierInfo"] = function(p18) -- name: getTierInfo
-		-- upvalues: (copy) v_u_4, (copy) v_u_3, (copy) v_u_1
-		for v19, v20 in v_u_4 do
-			for _, v21 in v20 do
-				if v21 == p18 then
-					return {
-						["branch"] = "combat",
-						["tier"] = nil,
-						["tier"] = v19
-					}
-				end
-			end
-		end
-		for v22, v23 in v_u_3 do
-			for _, v24 in v23 do
-				if v24 == p18 then
-					return {
-						["branch"] = "survival",
-						["tier"] = nil,
-						["tier"] = v22
-					}
-				end
-			end
-		end
-		for _, v25 in v_u_1[1] do
-			if v25 == p18 then
-				return {
-					["branch"] = "core",
-					["tier"] = 0
-				}
-			end
-		end
-		return nil
-	end
+    positions = u124,
+    combatTiers = u90,
+    survivalTiers = u122,
+    coreTiers = u119,
+    getPosition = function(p1) -- Line: 87 -- upvalues: u124 (val)
+        return u124[p1]
+    end,
+    getTierInfo = function(p1) -- Line: 92 -- upvalues: u90 (val), u122 (val), u119 (val)
+        local v1, v2, v3
+        local v4 = u90
+        local v5 = nil
+        local v6 = nil
+        local v7 = p1
+        for i, j in v4, v5, v6 do
+            v1 = j
+            v2 = nil
+            v3 = nil
+            for k, n in v1, v2, v3 do
+                if n == v7 then
+                    return {branch = "combat", tier = i}
+                end
+            end
+        end
+        v4 = u122
+        v5 = nil
+        v6 = nil
+        for m, i5 in v4, v5, v6 do
+            v1 = i5
+            v2 = nil
+            v3 = nil
+            for i6, i7 in v1, v2, v3 do
+                if i7 == v7 then
+                    return {branch = "survival", tier = m}
+                end
+            end
+        end
+        v4 = u119[1]
+        v5 = nil
+        v6 = nil
+        for i8, i9 in v4, v5, v6 do
+            if i9 == v7 then
+                return {branch = "core", tier = 0}
+            end
+        end
+        return nil
+    end,
 }

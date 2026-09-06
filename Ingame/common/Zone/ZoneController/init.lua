@@ -1,494 +1,515 @@
-local v_u_1 = require("./Janitor")
+local v1
+local u2 = require("./Janitor")
 local v2 = require("./Enum")
 require("./Signal")
-local v_u_3 = require("@self/Tracker")
-local v_u_4 = require("@self/CollectiveWorldModel")
-local v_u_5 = v2.enums
-local v_u_6 = game:GetService("Players")
-local v_u_7 = {}
-local v_u_8 = 0
-local v_u_9 = {}
-local v_u_10 = {}
-local v_u_11 = {}
-local v_u_12 = {}
-local v_u_13 = {}
-local v_u_14 = {}
-local v_u_15 = 0
-local v16 = game:GetService("RunService")
-local v_u_17 = v16.Heartbeat
-local v_u_18 = {}
-local v_u_19 = v16:IsClient()
-if v_u_19 then
-	v_u_19 = v_u_6.LocalPlayer
+local u11 = require("@self/Tracker")
+local u14 = require("@self/CollectiveWorldModel")
+local enums = v2.enums
+local Players = game:GetService("Players")
+local u21 = {}
+local u22 = 0
+local u23 = {}
+local u24 = {}
+local u25 = {}
+local u26 = {}
+local u27 = {}
+local u28 = {}
+local u29 = 0
+local RunService = game:GetService("RunService")
+local Heartbeat = RunService.Heartbeat
+local u36 = {}
+local LocalPlayer = RunService:IsClient()
+if LocalPlayer then
+    LocalPlayer = Players.LocalPlayer
 end
-local v_u_20 = {}
-local v_u_21 = {
-	["player"] = v_u_3.new("player"),
-	["item"] = v_u_3.new("item")
+local u41 = {}
+local u42 = {player = u11.new("player"), item = u11.new("item")}
+u41.trackers = u42
+local function dictLength(p1) -- Line: 40
+    local v1 = 0
+    for k, v in pairs(p1) do
+        v1 = v1 + 1
+    end
+    return v1
+end
+local function fillOccupants(p1, p2, p3) -- Line: 48
+    local v1 = p1[p2]
+    if not v1 then
+        p1[p2] = {}
+    end
+    local Character = p3:IsA("Player")
+    if Character then
+        Character = p3.Character
+    end
+    v1[p3] = Character or true
+end
+local u52 = {
+    player = function(p1) -- Line: 59 -- upvalues: u41 (val), u21 (val), u22 (ref)
+        return u41._getZonesAndItems("player", u21, u22, true, p1)
+    end,
+    localPlayer = function(p1) -- Line: 62 -- upvalues: LocalPlayer (val), u41 (val), u42 (val)
+        local Character_2, v1, v2
+        local v3 = {}
+        local Character = LocalPlayer.Character
+        if not Character then
+            return v3
+        end
+        local v4 = u41.getTouchingZones(Character, true, p1, u42.player)
+        for k, v in pairs(v4) do
+            if v.activeTriggers.localPlayer then
+                v2 = LocalPlayer
+                v1 = v3[v]
+                if not v1 then
+                    v3[v] = {}
+                end
+                Character_2 = v2:IsA("Player")
+                if Character_2 then
+                    Character_2 = v2.Character
+                end
+                v1[v2] = Character_2 or true
+            end
+        end
+        return v3
+    end,
+    item = function(p1) -- Line: 76 -- upvalues: u41 (val), u21 (val), u22 (ref)
+        return u41._getZonesAndItems("item", u21, u22, true, p1)
+    end,
 }
-v_u_20.trackers = v_u_21
-local v_u_32 = {
-	["player"] = function(p22)
-		-- upvalues: (copy) v_u_20, (copy) v_u_7, (ref) v_u_8
-		return v_u_20._getZonesAndItems("player", v_u_7, v_u_8, true, p22)
-	end,
-	["localPlayer"] = function(p23)
-		-- upvalues: (copy) v_u_19, (copy) v_u_20, (copy) v_u_21
-		local v24 = {}
-		local v25 = v_u_19.Character
-		if not v25 then
-			return v24
-		end
-		local v26 = v_u_20.getTouchingZones(v25, true, p23, v_u_21.player)
-		for _, v27 in pairs(v26) do
-			if v27.activeTriggers.localPlayer then
-				local v28 = v_u_19
-				local v29 = v24[v27]
-				if not v29 then
-					v29 = {}
-					v24[v27] = v29
-				end
-				local v30 = v28:IsA("Player")
-				if v30 then
-					v30 = v28.Character
-				end
-				v29[v28] = v30 or true
-			end
-		end
-		return v24
-	end,
-	["item"] = function(p31)
-		-- upvalues: (copy) v_u_20, (copy) v_u_7, (ref) v_u_8
-		return v_u_20._getZonesAndItems("item", v_u_7, v_u_8, true, p31)
-	end
-}
-function v_u_20._registerZone(p33) -- name: _registerZone
-	-- upvalues: (copy) v_u_10, (copy) v_u_1, (copy) v_u_20
-	v_u_10[p33] = true
-	local v34 = p33.janitor:add(v_u_1.new(), "destroy")
-	p33._registeredJanitor = v34
-	v34:add(p33.updated:Connect(function()
-		-- upvalues: (ref) v_u_20
-		v_u_20._updateZoneDetails()
-	end), "Disconnect")
-	v_u_20._updateZoneDetails()
+function u41._registerZone(p1) -- Line: 84 -- upvalues: u24 (val), u2 (val), u41 (val)
+    u24[p1] = true
+    local v1 = p1.janitor:add(u2.new(), "destroy")
+    p1._registeredJanitor = v1
+    local v2 = p1.updated:Connect(function() -- Line: 88 -- upvalues: u41 (upval)
+        u41._updateZoneDetails()
+    end)
+    v1:add(v2, "Disconnect")
+    u41._updateZoneDetails()
 end
-function v_u_20._deregisterZone(p35) -- name: _deregisterZone
-	-- upvalues: (copy) v_u_10, (copy) v_u_20
-	v_u_10[p35] = nil
-	p35._registeredJanitor:destroy()
-	p35._registeredJanitor = nil
-	v_u_20._updateZoneDetails()
+function u41._deregisterZone(p1) -- Line: 94 -- upvalues: u24 (val), u41 (val)
+    u24[p1] = nil
+    p1._registeredJanitor:destroy()
+    p1._registeredJanitor = nil
+    u41._updateZoneDetails()
 end
-function v_u_20._registerConnection(p36, p37) -- name: _registerConnection
-	-- upvalues: (ref) v_u_15, (copy) v_u_7, (copy) v_u_20, (copy) v_u_9, (copy) v_u_32
-	local v38 = p36.activeTriggers
-	local v39 = 0
-	for _, _ in pairs(v38) do
-		v39 = v39 + 1
-	end
-	v_u_15 = v_u_15 + 1
-	if v39 == 0 then
-		v_u_7[p36] = true
-		v_u_20._updateZoneDetails()
-	end
-	local v40 = v_u_9[p37]
-	v_u_9[p37] = v40 and v40 + 1 or 1
-	p36.activeTriggers[p37] = true
-	if p36.touchedConnectionActions[p37] then
-		p36:_formTouchedConnection(p37)
-	end
-	if v_u_32[p37] then
-		v_u_20._formHeartbeat(p37)
-	end
+function u41._registerConnection(p1, p2) -- Line: 101 -- upvalues: u29 (ref), u21 (val), u41 (val), u23 (val), u52 (val)
+    local v1
+    local v2 = 0
+    for k, v in pairs(p1.activeTriggers) do
+        v2 = v2 + 1
+    end
+    u29 = u29 + 1
+    if v2 == 0 then
+        u21[p1] = true
+        u41._updateZoneDetails()
+    end
+    local v3 = u23[p2]
+    v2 = u23
+    if not v3 then
+        v1 = 1
+    else
+        v1 = v3 + 1
+    end
+    v2[p2] = v1
+    p1.activeTriggers[p2] = true
+    if p1.touchedConnectionActions[p2] then
+        p1:_formTouchedConnection(p2)
+    end
+    if u52[p2] then
+        u41._formHeartbeat(p2)
+    end
 end
-function v_u_20.updateDetection(p41) -- name: updateDetection
-	-- upvalues: (copy) v_u_3, (copy) v_u_5
-	for v42, v43 in pairs({
-		["enterDetection"] = "_currentEnterDetection",
-		["exitDetection"] = "_currentExitDetection"
-	}) do
-		local v44 = p41[v42]
-		local v45 = v_u_3.getCombinedTotalVolumes()
-		if v44 == v_u_5.Detection.Automatic then
-			if v45 > 729000 then
-				v44 = v_u_5.Detection.Centre
-			else
-				v44 = v_u_5.Detection.WholeBody
-			end
-		end
-		p41[v43] = v44
-	end
+function u41.updateDetection(p1) -- Line: 121 -- upvalues: u11 (val), enums (val)
+    local Centre
+    local v1 = {enterDetection = "_currentEnterDetection", exitDetection = "_currentExitDetection"}
+    local v2 = p1
+    for k, v in pairs(v1) do
+        Centre = v2[k]
+        if Centre == enums.Detection.Automatic then
+            if 729000 >= u11.getCombinedTotalVolumes() then
+                Centre = enums.Detection.WholeBody
+            else
+                Centre = enums.Detection.Centre
+            end
+        end
+        v2[v] = Centre
+    end
 end
-function v_u_20._formHeartbeat(p_u_46) -- name: _formHeartbeat
-	-- upvalues: (copy) v_u_18, (copy) v_u_17, (copy) v_u_7, (copy) v_u_20, (copy) v_u_32, (copy) v_u_5
-	if not v_u_18[p_u_46] then
-		local v_u_47 = 0
-		v_u_18[p_u_46] = v_u_17:Connect(function()
-			-- upvalues: (ref) v_u_47, (ref) v_u_7, (copy) p_u_46, (ref) v_u_20, (ref) v_u_32, (ref) v_u_5
-			local v48 = os.clock()
-			if v_u_47 <= v48 then
-				local v49 = nil
-				local v50 = nil
-				for v51, _ in pairs(v_u_7) do
-					if v51.activeTriggers[p_u_46] then
-						local v52 = v51.accuracy
-						if v49 ~= nil and v52 >= v49 then
-							v52 = v49
-						end
-						v_u_20.updateDetection(v51)
-						local v53 = v51._currentEnterDetection
-						if v50 == nil or v53 < v50 then
-							v50 = v53
-							v49 = v52
-						else
-							v49 = v52
-						end
-					end
-				end
-				local v54 = v_u_32[p_u_46](v50)
-				local v55 = {}
-				local v56 = {}
-				for v57, v58 in pairs(v54) do
-					local v59 = v57.settingsGroupName
-					if v59 then
-						v59 = v_u_20.getGroup(v57.settingsGroupName)
-					end
-					if v59 and v59.onlyEnterOnceExitedAll == true then
-						for v60, _ in pairs(v58) do
-							local v61 = v55[v57.settingsGroupName]
-							if not v61 then
-								v61 = {}
-								v55[v57.settingsGroupName] = v61
-							end
-							v61[v60] = v57
-						end
-						v56[v57] = v58
-					end
-				end
-				for v62, v63 in pairs(v56) do
-					local v64 = v55[v62.settingsGroupName]
-					if v64 then
-						for v65, _ in pairs(v63) do
-							local v66 = v64[v65]
-							if v66 and v66 ~= v62 then
-								v63[v65] = nil
-							end
-						end
-					end
-				end
-				local v67 = {
-					{},
-					{}
-				}
-				for v68, _ in pairs(v_u_7) do
-					if v68.activeTriggers[p_u_46] then
-						local v69 = v68.accuracy
-						local v70 = v54[v68] or {}
-						local v71 = false
-						for _, _ in pairs(v70) do
-							v71 = true
-							break
-						end
-						if v71 then
-							if v49 >= v69 then
-								v69 = v49
-							end
-						else
-							v69 = v49
-						end
-						local v72 = v68:_updateOccupants(p_u_46, v70)
-						v67[1][v68] = v72.exited
-						v67[2][v68] = v72.entered
-						v49 = v69
-					end
-				end
-				local v73 = { "Exited", "Entered" }
-				for v74, v75 in pairs(v67) do
-					local v76 = p_u_46 .. v73[v74]
-					for v77, v78 in pairs(v75) do
-						local v79 = v77[v76]
-						if v79 then
-							for _, v80 in pairs(v78) do
-								v79:Fire(v80)
-							end
-						end
-					end
-				end
-				v_u_47 = v48 + v_u_5.Accuracy.getProperty(v49)
-			end
-		end)
-	end
+function u41._formHeartbeat(p1) -- Line: 140 -- upvalues: u36 (val), Heartbeat (val), u21 (val), u41 (val), u52 (val), enums (val)
+    local v1
+    if u36[p1] then
+        return
+    end
+    local u3 = 0
+    v1 = Heartbeat:Connect(function() -- Line: 150 -- upvalues: u3 (ref), u21 (upval), p1 (val), u41 (upval), u52 (upval), enums (upval)
+        local v1 = os.clock()
+        if u3 <= v1 then
+            local _currentEnterDetection, accuracy, accuracy_2, settingsGroupName, v2, v3, v4, v5, v6, v7
+            local v8 = nil
+            local v9 = nil
+            for k, v in pairs(u21) do
+                if k.activeTriggers[p1] then
+                    accuracy_2 = k.accuracy
+                    if v8 == nil then
+                        v8 = accuracy_2
+                    elseif accuracy_2 >= v8 then
+                    end
+                    u41.updateDetection(k)
+                    _currentEnterDetection = k._currentEnterDetection
+                    if v9 == nil then
+                        v9 = _currentEnterDetection
+                    elseif _currentEnterDetection >= v9 then
+                    end
+                end
+            end
+            local v10 = v8
+            local v11 = u52[p1](v9)
+            local v12 = {}
+            local v13 = {}
+            for k2, i in pairs(v11) do
+                settingsGroupName = k2.settingsGroupName
+                if settingsGroupName then
+                    settingsGroupName = u41.getGroup(k2.settingsGroupName)
+                end
+                if settingsGroupName and settingsGroupName.onlyEnterOnceExitedAll == true then
+                    for k3, j in pairs(i) do
+                        v6 = v12[k2.settingsGroupName]
+                        if not v6 then
+                            v12[k2.settingsGroupName] = {}
+                        end
+                        v6[k3] = k2
+                    end
+                    v13[k2] = i
+                end
+            end
+            for k4, k5 in pairs(v13) do
+                v2 = v12[k4.settingsGroupName]
+                if v2 then
+                    for k6, n in pairs(k5) do
+                        v6 = v2[k6]
+                        if v6 and v6 ~= k4 then
+                            k5[k6] = nil
+                        end
+                    end
+                end
+            end
+            local v14 = {{}, {}}
+            for k7, m in pairs(u21) do
+                if k7.activeTriggers[p1] then
+                    accuracy = k7.accuracy
+                    v3 = v11[k7]
+                    if not v3 then
+                        v3 = {}
+                    end
+                    v4 = false
+                    for k8, i5 in pairs(v3) do
+                        v4 = true
+                        break
+                    end
+                    if v4 and v10 < accuracy then
+                        v10 = accuracy
+                    end
+                    v5 = k7:_updateOccupants(p1, v3)
+                    v14[1][k7] = v5.exited
+                    v14[2][k7] = v5.entered
+                end
+            end
+            local v15 = {"Exited", "Entered"}
+            for k9, i6 in pairs(v14) do
+                v4 = p1 .. v15[k9]
+                for k10, i7 in pairs(i6) do
+                    v7 = k10[v4]
+                    if v7 then
+                        for k11, i8 in pairs(i7) do
+                            v7:Fire(i8)
+                        end
+                    end
+                end
+            end
+            u3 = v1 + enums.Accuracy.getProperty(v10)
+        end
+    end)
+    u36[p1] = v1
 end
-function v_u_20._deregisterConnection(p81, p82) -- name: _deregisterConnection
-	-- upvalues: (ref) v_u_15, (copy) v_u_9, (copy) v_u_18, (copy) v_u_7, (copy) v_u_20
-	v_u_15 = v_u_15 - 1
-	if v_u_9[p82] == 1 then
-		v_u_9[p82] = nil
-		local v83 = v_u_18[p82]
-		if v83 then
-			v_u_18[p82] = nil
-			v83:Disconnect()
-		end
-	else
-		local v84 = v_u_9
-		v84[p82] = v84[p82] - 1
-	end
-	p81.activeTriggers[p82] = nil
-	local v85 = p81.activeTriggers
-	local v86 = 0
-	for _, _ in pairs(v85) do
-		v86 = v86 + 1
-	end
-	if v86 == 0 then
-		v_u_7[p81] = nil
-		v_u_20._updateZoneDetails()
-	end
-	if p81.touchedConnectionActions[p82] then
-		p81:_disconnectTouchedConnection(p82)
-	end
+function u41._deregisterConnection(p1, p2) -- Line: 249 -- upvalues: u29 (ref), u23 (val), u36 (val), u21 (val), u41 (val)
+    local v1
+    u29 = u29 - 1
+    if u23[p2] ~= 1 then
+        v1 = u23
+        v1[p2] = v1[p2] - 1
+    else
+        u23[p2] = nil
+        v1 = u36[p2]
+        if v1 then
+            u36[p2] = nil
+            v1:Disconnect()
+        end
+    end
+    p1.activeTriggers[p2] = nil
+    local v2 = 0
+    for k, v in pairs(p1.activeTriggers) do
+        v2 = v2 + 1
+    end
+    if v2 == 0 then
+        u21[p1] = nil
+        u41._updateZoneDetails()
+    end
+    if p1.touchedConnectionActions[p2] then
+        p1:_disconnectTouchedConnection(p2)
+    end
 end
-function v_u_20._updateZoneDetails() -- name: _updateZoneDetails
-	-- upvalues: (ref) v_u_11, (ref) v_u_12, (ref) v_u_13, (ref) v_u_14, (ref) v_u_8, (copy) v_u_10, (copy) v_u_7
-	v_u_11 = {}
-	v_u_12 = {}
-	v_u_13 = {}
-	v_u_14 = {}
-	v_u_8 = 0
-	for v87, _ in pairs(v_u_10) do
-		local v88 = v_u_7[v87]
-		if v88 then
-			v_u_8 = v_u_8 + v87.volume
-		end
-		for _, v89 in pairs(v87.zoneParts) do
-			if v88 then
-				local v90 = v_u_11
-				table.insert(v90, v89)
-				v_u_12[v89] = v87
-			end
-			local v91 = v_u_13
-			table.insert(v91, v89)
-			v_u_14[v89] = v87
-		end
-	end
+function u41._updateZoneDetails() -- Line: 271 -- upvalues: u25 (ref), u26 (ref), u27 (ref), u28 (ref), u22 (ref), u24 (val), u21 (val)
+    local v1
+    u25 = {}
+    u26 = {}
+    u27 = {}
+    u28 = {}
+    u22 = 0
+    for k, v in pairs(u24) do
+        v1 = u21[k]
+        if v1 then
+            u22 = u22 + k.volume
+        end
+        for k2, i in pairs(k.zoneParts) do
+            if v1 then
+                table.insert(u25, i)
+                u26[i] = k
+            end
+            table.insert(u27, i)
+            u28[i] = k
+        end
+    end
 end
-function v_u_20._getZonesAndItems(p92, p93, p94, p95, p96) -- name: _getZonesAndItems
-	-- upvalues: (copy) v_u_21, (copy) v_u_20, (copy) v_u_6, (copy) v_u_4
-	if not p94 then
-		for v97, _ in pairs(p93) do
-			p94 = p94 + v97.volume
-		end
-	end
-	local v98 = {}
-	local v99 = v_u_21[p92]
-	if v99.totalVolume < p94 then
-		for _, v100 in pairs(v99.items) do
-			local v101 = v_u_20.getTouchingZones(v100, p95, p96, v99)
-			for _, v102 in pairs(v101) do
-				if not p95 or v102.activeTriggers[p92] then
-					local v103
-					if p92 == "player" then
-						v103 = v_u_6:GetPlayerFromCharacter(v100)
-					else
-						v103 = v100
-					end
-					if v103 then
-						local v104 = v98[v102]
-						if not v104 then
-							v104 = {}
-							v98[v102] = v104
-						end
-						local v105 = v103:IsA("Player")
-						if v105 then
-							v105 = v103.Character
-						end
-						v104[v103] = v105 or true
-					end
-				end
-			end
-		end
-		return v98
-	else
-		for v106, _ in pairs(p93) do
-			if not p95 or v106.activeTriggers[p92] then
-				local v107 = v_u_4:GetPartBoundsInBox(v106.region.CFrame, v106.region.Size, v99.whitelistParams)
-				local v108 = {}
-				for _, v109 in pairs(v107) do
-					local v110 = v99.partToItem[v109]
-					if not v108[v110] then
-						v108[v110] = true
-					end
-				end
-				for v111, _ in pairs(v108) do
-					if p92 == "player" then
-						local v112 = v_u_6:GetPlayerFromCharacter(v111)
-						if v106:findPlayer(v112) then
-							local v113 = v98[v106]
-							if not v113 then
-								v113 = {}
-								v98[v106] = v113
-							end
-							local v114 = v112:IsA("Player")
-							if v114 then
-								v114 = v112.Character
-							end
-							v113[v112] = v114 or true
-						end
-					elseif v106:findItem(v111) then
-						local v115 = v98[v106]
-						if not v115 then
-							v115 = {}
-							v98[v106] = v115
-						end
-						local v116 = v111:IsA("Player")
-						if v116 then
-							v116 = v111.Character
-						end
-						v115[v111] = v116 or true
-					end
-				end
-			end
-		end
-		return v98
-	end
+function u41._getZonesAndItems(p1, p2, p3, p4, p5) -- Line: 293 -- upvalues: u42 (val), u41 (val), Players (val), u14 (val)
+    local Character_2, Character_3, PartBoundsInBox, PlayerFromCharacter, v1, v2, v3, v4, v5
+    local v6 = p3
+    if not v6 then
+        for k, v in pairs(p2) do
+            v6 = v6 + k.volume
+        end
+    end
+    local v7 = {}
+    local v8 = u42[p1]
+    if v8.totalVolume < v6 then
+        local Character, v9, v10, v11
+        v5, v11, v1 = p4, p5, p1
+        for k6, n in pairs(v8.items) do
+            v9 = u41.getTouchingZones(n, v5, v11, v8)
+            for k7, m in pairs(v9) do
+                if not v5 then
+                    v10 = if v1 == "player" then Players:GetPlayerFromCharacter(n) else n
+                    if v10 then
+                        v3 = v10
+                        v4 = v7[m]
+                        if not v4 then
+                            v7[m] = {}
+                        end
+                        Character = v3:IsA("Player")
+                        if Character then
+                            Character = v3.Character
+                        end
+                        v4[v3] = Character or true
+                    end
+                elseif not (m.activeTriggers[v1]) then
+                end
+            end
+        end
+        return v7
+    end
+    v5, v1 = p4, p1
+    for k2, i in pairs(p2) do
+        if not v5 then
+            PartBoundsInBox = u14:GetPartBoundsInBox(k2.region.CFrame, k2.region.Size, v8.whitelistParams)
+            v2 = {}
+            for k3, j in pairs(PartBoundsInBox) do
+                v3 = v8.partToItem[j]
+                if not (v2[v3]) then
+                    v2[v3] = true
+                end
+            end
+            for k4, k5 in pairs(v2) do
+                if v1 == "player" then
+                    PlayerFromCharacter = Players:GetPlayerFromCharacter(k4)
+                    if k2:findPlayer(PlayerFromCharacter) then
+                        v4 = v7[k2]
+                        if not v4 then
+                            v7[k2] = {}
+                        end
+                        Character_2 = PlayerFromCharacter:IsA("Player")
+                        if Character_2 then
+                            Character_2 = PlayerFromCharacter.Character
+                        end
+                        v4[PlayerFromCharacter] = Character_2 or true
+                    end
+                elseif k2:findItem(k4) then
+                    v3 = v7[k2]
+                    if not v3 then
+                        v7[k2] = {}
+                    end
+                    Character_3 = k4:IsA("Player")
+                    if Character_3 then
+                        Character_3 = k4.Character
+                    end
+                    v3[k4] = Character_3 or true
+                end
+            end
+        elseif not (k2.activeTriggers[v1]) then
+        end
+    end
+    return v7
 end
-function v_u_20.getZones() -- name: getZones
-	-- upvalues: (copy) v_u_10
-	local v117 = {}
-	for v118, _ in pairs(v_u_10) do
-		table.insert(v117, v118)
-	end
-	return v117
+function u41.getZones() -- Line: 354 -- upvalues: u24 (val)
+    local v1 = {}
+    for k, v in pairs(u24) do
+        table.insert(v1, k)
+    end
+    return v1
 end
-function v_u_20.getTouchingZones(p119, p120, p121, p122) -- name: getTouchingZones
-	-- upvalues: (copy) v_u_5, (copy) v_u_3, (ref) v_u_11, (ref) v_u_13, (ref) v_u_12, (ref) v_u_14, (copy) v_u_4
-	local v123
-	if p122 then
-		v123 = p122.exitDetections[p119]
-		p122.exitDetections[p119] = nil
-	else
-		v123 = nil
-	end
-	local v124 = v123 or p121
-	local v125 = nil
-	local v126 = nil
-	local v127 = p119:IsA("BasePart")
-	local v128 = not v127
-	local v129 = {}
-	if v127 then
-		v125 = p119.Size
-		v126 = p119.CFrame
-		table.insert(v129, p119)
-	elseif v124 == v_u_5.Detection.WholeBody then
-		v125, v126 = v_u_3.getCharacterSize(p119)
-		v129 = p119:GetChildren()
-	else
-		local v130 = p119:FindFirstChild("HumanoidRootPart")
-		if v130 then
-			v125 = v130.Size
-			v126 = v130.CFrame
-			table.insert(v129, v130)
-		end
-	end
-	if not (v125 and v126) then
-		return {}
-	end
-	local v131 = p120 and v_u_11 or v_u_13
-	local v132 = p120 and v_u_12 or v_u_14
-	local v133 = OverlapParams.new()
-	v133.FilterType = Enum.RaycastFilterType.Whitelist
-	v133.MaxParts = #v131
-	v133.FilterDescendantsInstances = v131
-	local v134 = v_u_4:GetPartBoundsInBox(v126, v125, v133)
-	local v135 = {}
-	local v136 = {}
-	local v137 = {}
-	for _, v138 in pairs(v134) do
-		local v139 = v132[v138]
-		if v139 and v139.allZonePartsAreBlocks then
-			v135[v139] = true
-			v136[v138] = v139
-		else
-			table.insert(v137, v138)
-		end
-	end
-	local v140 = #v137
-	local v141 = 0
-	if v140 > 0 then
-		local v142 = OverlapParams.new()
-		v142.FilterType = Enum.RaycastFilterType.Whitelist
-		v142.MaxParts = v140
-		v142.FilterDescendantsInstances = v137
-		for _, v143 in pairs(v129) do
-			local v144 = false
-			if v143:IsA("BasePart") and not (v128 and v_u_3.bodyPartsToIgnore[v143.Name]) then
-				local v145 = v_u_4:GetPartsInPart(v143, v142)
-				for _, v146 in pairs(v145) do
-					if not v136[v146] then
-						local v147 = v132[v146]
-						if v147 then
-							v135[v147] = true
-							v136[v146] = v147
-							v141 = v141 + 1
-						end
-						if v141 == v140 then
-							v144 = true
-							break
-						end
-					end
-				end
-				if v144 then
-					break
-				end
-			end
-		end
-	end
-	local v148 = nil
-	local v149 = {}
-	for v150, _ in pairs(v135) do
-		if v148 == nil or v150._currentExitDetection < v148 then
-			v148 = v150._currentExitDetection
-		end
-		table.insert(v149, v150)
-	end
-	if v148 and p122 then
-		p122.exitDetections[p119] = v148
-	end
-	return v149, v136
+function u41.getTouchingZones(p1, p2, p3, p4) -- Line: 374 -- upvalues: enums (val), u11 (val), u25 (ref), u27 (ref), u26 (ref), u28 (ref), u14 (val)
+    local v1, v2, v3, v4, v5, v6
+    local v7 = nil
+    if p4 then
+        v7 = p4.exitDetections[p1]
+        p4.exitDetections[p1] = nil
+    end
+    local Size = nil
+    local CFrame = nil
+    local v8 = p1:IsA("BasePart")
+    local v9 = not v8
+    local v10 = {}
+    if v8 then
+        Size = p1.Size
+        CFrame = p1.CFrame
+        table.insert(v10, p1)
+    elseif v7 or p3 ~= enums.Detection.WholeBody then
+        local HumanoidRootPart = p1:FindFirstChild("HumanoidRootPart")
+        if HumanoidRootPart then
+            Size = HumanoidRootPart.Size
+            CFrame = HumanoidRootPart.CFrame
+            table.insert(v10, HumanoidRootPart)
+        end
+    else
+        v2, v3 = u11.getCharacterSize(p1)
+        Size = v2
+        CFrame = v3
+        v10 = p1:GetChildren()
+    end
+    if not Size or not CFrame then
+        return {}
+    end
+    if not p2 then
+        v2 = u27
+    else
+        v2 = u25
+    end
+    if not p2 then
+        v3 = u28
+    else
+        v3 = u26
+    end
+    local v11 = OverlapParams.new()
+    v11.FilterType = Enum.RaycastFilterType.Whitelist
+    v11.MaxParts = #v2
+    v11.FilterDescendantsInstances = v2
+    local v12 = {}
+    local v13 = {}
+    local PartBoundsInBox = u14:GetPartBoundsInBox(CFrame, Size, v11)
+    local v14 = {}
+    v1, v6 = p1, p4
+    for k, v in pairs(PartBoundsInBox) do
+        v5 = v3[v]
+        if not v5 then
+            table.insert(v14, v)
+        elseif v5.allZonePartsAreBlocks then
+            v13[v5] = true
+            v12[v] = v5
+        end
+    end
+    local v15 = #v14
+    local v16 = 0
+    if 0 < v15 then
+        local PartsInPart, v17, v18
+        v4 = OverlapParams.new()
+        v4.FilterType = Enum.RaycastFilterType.Whitelist
+        v4.MaxParts = v15
+        v4.FilterDescendantsInstances = v14
+        for k2, i in pairs(v10) do
+            v17 = false
+            if i:IsA("BasePart") then
+                if v9 and u11.bodyPartsToIgnore[i.Name] then
+                    continue
+                end
+                PartsInPart = u14:GetPartsInPart(i, v4)
+                for k3, j in pairs(PartsInPart) do
+                    if not (v12[j]) then
+                        v18 = v3[j]
+                        if v18 then
+                            v13[v18] = true
+                            v12[j] = v18
+                            v16 = v16 + 1
+                        end
+                        if v16 == v15 then
+                            v17 = true
+                            break
+                        end
+                    end
+                end
+                if v17 then
+                    break
+                end
+            end
+        end
+    end
+    v4 = {}
+    local _currentExitDetection = nil
+    for k4, k5 in pairs(v13) do
+        if _currentExitDetection == nil then
+            _currentExitDetection = k4._currentExitDetection
+        elseif k4._currentExitDetection >= _currentExitDetection then
+        end
+        table.insert(v4, k4)
+    end
+    if _currentExitDetection and v6 then
+        v6.exitDetections[v1] = _currentExitDetection
+    end
+    return v4, v12
 end
-local v_u_151 = {}
-function v_u_20.setGroup(p152, p153) -- name: setGroup
-	-- upvalues: (copy) v_u_151
-	local v154 = v_u_151[p152]
-	if not v154 then
-		v154 = {}
-		v_u_151[p152] = v154
-	end
-	v154.onlyEnterOnceExitedAll = true
-	v154._name = p152
-	v154._memberZones = {}
-	if typeof(p153) == "table" then
-		for v155, v156 in pairs(p153) do
-			v154[v155] = v156
-		end
-	end
-	return v154
+local u82 = {}
+function u41.setGroup(p1, p2) -- Line: 491 -- upvalues: u82 (val)
+    local v1 = u82[p1]
+    if not v1 then
+        u82[p1] = {}
+    end
+    v1.onlyEnterOnceExitedAll = true
+    v1._name = p1
+    v1._memberZones = {}
+    if typeof(p2) == "table" then
+        for k, v in pairs(p2) do
+            v1[k] = v
+        end
+    end
+    return v1
 end
-function v_u_20.getGroup(p157) -- name: getGroup
-	-- upvalues: (copy) v_u_151
-	return v_u_151[p157]
+function u41.getGroup(p1) -- Line: 515 -- upvalues: u82 (val)
+    return u82[p1]
 end
-local v_u_158 = nil
-local v_u_159 = string.format("ZonePlus%sContainer", v16:IsClient() and "Client" or "Server")
-function v_u_20.getWorkspaceContainer() -- name: getWorkspaceContainer
-	-- upvalues: (ref) v_u_158, (copy) v_u_159
-	local v160 = v_u_158 or workspace:FindFirstChild(v_u_159)
-	if not v160 then
-		v160 = Instance.new("Folder")
-		v160.Name = v_u_159
-		v160.Parent = workspace
-		v_u_158 = v160
-	end
-	return v160
+local u85 = nil
+if not (RunService:IsClient()) then
+    v1 = "Server"
+else
+    v1 = "Client"
 end
-return v_u_20
+local u97 = string.format("ZonePlus%sContainer", v1)
+function u41.getWorkspaceContainer() -- Line: 521 -- upvalues: u85 (ref), u97 (val)
+    local v1 = u85
+    if not v1 then
+        v1 = workspace:FindFirstChild(u97)
+    end
+    if not v1 then
+        v1 = Instance.new("Folder")
+        v1.Name = u97
+        v1.Parent = workspace
+        u85 = v1
+    end
+    return v1
+end
+return u41

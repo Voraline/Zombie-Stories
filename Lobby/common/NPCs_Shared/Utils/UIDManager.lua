@@ -1,8 +1,7 @@
-local v_u_1 = 0
+local u0 = 0
 return {
-	["GetUID"] = function(_) -- name: GetUID
-		-- upvalues: (ref) v_u_1
-		v_u_1 = v_u_1 % 65536 + 1
-		return v_u_1
-	end
+    GetUID = function(p1) -- Line: 7 -- upvalues: u0 (ref)
+        u0 = u0 % 65536 + 1
+        return u0
+    end,
 }

@@ -1,105 +1,112 @@
+local v1 = {
+    SystemAdd = "SystemAdd",
+    SystemRemove = "SystemRemove",
+    SystemReplace = "SystemReplace",
+    SystemError = "SystemError",
+    OuterSystemCall = "OuterSystemCall",
+    InnerSystemCall = "InnerSystemCall",
+    SystemCall = "SystemCall",
+    PhaseAdd = "PhaseAdd",
+    PhaseBegan = "PhaseBegan",
+}
 return {
-	["Hooks"] = {
-		["SystemAdd"] = "SystemAdd",
-		["SystemRemove"] = "SystemRemove",
-		["SystemReplace"] = "SystemReplace",
-		["SystemError"] = "SystemError",
-		["OuterSystemCall"] = "OuterSystemCall",
-		["InnerSystemCall"] = "InnerSystemCall",
-		["SystemCall"] = "SystemCall",
-		["PhaseAdd"] = "PhaseAdd",
-		["PhaseBegan"] = "PhaseBegan"
-	},
-	["systemAdd"] = function(p1, p2) -- name: systemAdd
-		local v3 = {
-			["scheduler"] = p1,
-			["system"] = p2
-		}
-		for _, v4 in p1._hooks[p1.Hooks.SystemAdd] do
-			local v5, v6 = pcall(v4, v3)
-			if not v5 then
-				warn("Unexpected error in hook:", v6)
-			end
-		end
-	end,
-	["systemRemove"] = function(p7, p8) -- name: systemRemove
-		local v9 = {
-			["scheduler"] = p7,
-			["system"] = p8
-		}
-		for _, v10 in p7._hooks[p7.Hooks.SystemRemove] do
-			local v11, v12 = pcall(v10, v9)
-			if not v11 then
-				warn("Unexpected error in hook:", v12)
-			end
-		end
-	end,
-	["systemReplace"] = function(p13, p14, p15) -- name: systemReplace
-		local v16 = {
-			["scheduler"] = p13,
-			["new"] = p15,
-			["old"] = p14
-		}
-		for _, v17 in p13._hooks[p13.Hooks.SystemReplace] do
-			local v18, v19 = pcall(v17, v16)
-			if not v18 then
-				warn("Unexpected error in hook:", v19)
-			end
-		end
-	end,
-	["systemCall"] = function(p20, p21, p22, p23) -- name: systemCall
-		local v24 = p20._hooks[p20.Hooks[p21]]
-		if v24 then
-			for _, v25 in v24 do
-				p23 = v25({
-					["scheduler"] = nil,
-					["system"] = nil,
-					["nextFn"] = nil,
-					["system"] = p22,
-					["nextFn"] = p23
-				})
-				if not p23 then
-					local v26, v27 = debug.info(v25, "sl")
-					warn((("%*:%*: Expected \'SystemCall\' hook to return a function"):format(v26, v27)))
-				end
-			end
-		end
-		p23()
-	end,
-	["systemError"] = function(p28, p29, p30) -- name: systemError
-		local v31 = p28._hooks[p28.Hooks.SystemError]
-		if v31 then
-			for _, v32 in v31 do
-				v32({
-					["scheduler"] = p28,
-					["system"] = p29,
-					["error"] = p30
-				})
-			end
-		end
-	end,
-	["phaseAdd"] = function(p33, p34) -- name: phaseAdd
-		local v35 = {
-			["scheduler"] = p33,
-			["phase"] = p34
-		}
-		for _, v36 in p33._hooks[p33.Hooks.PhaseAdd] do
-			local v37, v38 = pcall(v36, v35)
-			if not v37 then
-				warn("Unexpected error in hook:", v38)
-			end
-		end
-	end,
-	["phaseBegan"] = function(p39, p40) -- name: phaseBegan
-		local v41 = {
-			["scheduler"] = p39,
-			["phase"] = p40
-		}
-		for _, v42 in p39._hooks[p39.Hooks.PhaseBegan] do
-			local v43, v44 = pcall(v42, v41)
-			if not v43 then
-				warn("Unexpected error in hook:", v44)
-			end
-		end
-	end
+    Hooks = v1,
+    systemAdd = function(p1, p2) -- Line: 3
+        local v1, v2
+        local v3 = {scheduler = p1, system = p2}
+        local v4 = p1._hooks[p1.Hooks.SystemAdd]
+        local v5 = nil
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            v2, v1 = pcall(j, v3)
+            if not v2 then
+                warn("Unexpected error in hook:", v1)
+            end
+        end
+    end,
+    systemRemove = function(p1, p2) -- Line: 18
+        local v1, v2
+        local v3 = {scheduler = p1, system = p2}
+        local v4 = p1._hooks[p1.Hooks.SystemRemove]
+        local v5 = nil
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            v2, v1 = pcall(j, v3)
+            if not v2 then
+                warn("Unexpected error in hook:", v1)
+            end
+        end
+    end,
+    systemReplace = function(p1, p2, p3) -- Line: 33
+        local v1, v2
+        local v3 = {scheduler = p1, new = p3, old = p2}
+        local v4 = p1._hooks[p1.Hooks.SystemReplace]
+        local v5 = nil
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            v1, v2 = pcall(j, v3)
+            if not v1 then
+                warn("Unexpected error in hook:", v2)
+            end
+        end
+    end,
+    systemCall = function(p1, p2, p3, p4) -- Line: 49
+        local v1
+        local v2 = p1._hooks[p1.Hooks[p2]]
+        if not v2 then
+            v1 = p4
+        else
+            local v3, v4
+            local v5 = v2
+            local v6 = nil
+            local v7 = nil
+            v1 = p4
+            for i, j in v5, v6, v7 do
+                v4 = {system = p3, nextFn = v1}
+                v1 = j(v4)
+                if not v1 then
+                    v3, v4 = debug.info(j, "sl")
+                    warn((("%*:%*: Expected 'SystemCall' hook to return a function"):format(v3, v4)))
+                end
+            end
+        end
+        v1()
+    end,
+    systemError = function(p1, p2, p3) -- Line: 72
+        local v1 = p1._hooks[p1.Hooks.SystemError]
+        if v1 then
+            local v2 = v1
+            local v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                j({scheduler = p1, system = p2, error = p3})
+            end
+        end
+    end,
+    phaseAdd = function(p1, p2) -- Line: 91
+        local v1, v2
+        local v3 = {scheduler = p1, phase = p2}
+        local v4 = p1._hooks[p1.Hooks.PhaseAdd]
+        local v5 = nil
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            v2, v1 = pcall(j, v3)
+            if not v2 then
+                warn("Unexpected error in hook:", v1)
+            end
+        end
+    end,
+    phaseBegan = function(p1, p2) -- Line: 106
+        local v1, v2
+        local v3 = {scheduler = p1, phase = p2}
+        local v4 = p1._hooks[p1.Hooks.PhaseBegan]
+        local v5 = nil
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            v2, v1 = pcall(j, v3)
+            if not v2 then
+                warn("Unexpected error in hook:", v1)
+            end
+        end
+    end,
 }

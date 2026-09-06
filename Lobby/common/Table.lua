@@ -1,171 +1,177 @@
-local v_u_74 = {
-	["append"] = function(p1, p2) -- name: append
-		for _, v3 in pairs(p2) do
-			p1[#p1 + 1] = v3
-		end
-		return p1
-	end,
-	["merge"] = function(p4, p5) -- name: merge
-		local v6 = {}
-		for v7, v8 in pairs(p4) do
-			v6[v7] = v8
-		end
-		for v9, v10 in pairs(p5) do
-			v6[v9] = v10
-		end
-		return v6
-	end,
-	["reverse"] = function(p11) -- name: reverse
-		local v12 = {}
-		for v13 = #p11, 1, -1 do
-			local v14 = p11[v13]
-			table.insert(v12, v14)
-		end
-		return v12
-	end,
-	["values"] = function(p15) -- name: values
-		local v16 = {}
-		for _, v17 in pairs(p15) do
-			table.insert(v16, v17)
-		end
-		return v16
-	end,
-	["keys"] = function(p18) -- name: keys
-		local v19 = {}
-		for v20, _ in pairs(p18) do
-			table.insert(v19, v20)
-		end
-		return v19
-	end,
-	["mergeLists"] = function(p21, p22) -- name: mergeLists
-		local v23 = {}
-		for _, v24 in pairs(p21) do
-			table.insert(v23, v24)
-		end
-		for _, v25 in pairs(p22) do
-			table.insert(v23, v25)
-		end
-		return v23
-	end,
-	["swapKeyValue"] = function(p26) -- name: swapKeyValue
-		local v27 = {}
-		for v28, v29 in pairs(p26) do
-			v27[v29] = v28
-		end
-		return v27
-	end,
-	["toList"] = function(p30) -- name: toList
-		local v31 = {}
-		for _, v32 in pairs(p30) do
-			table.insert(v31, v32)
-		end
-		return v31
-	end,
-	["count"] = function(p33) -- name: count
-		local v34 = 0
-		for _, _ in pairs(p33) do
-			v34 = v34 + 1
-		end
-		return v34
-	end,
-	["copy"] = table.clone,
-	["deepCopy"] = function(p35, p36) -- name: deepCopy
-		-- upvalues: (copy) v_u_74
-		local v37 = p36 or {}
-		if v37[p35] then
-			return v37[p35]
-		end
-		if type(p35) ~= "table" then
-			return p35
-		end
-		local v38 = {}
-		v37[p35] = v38
-		for v39, v40 in pairs(p35) do
-			v38[v_u_74.deepCopy(v39, v37)] = v_u_74.deepCopy(v40, v37)
-		end
-		local v41 = v_u_74.deepCopy
-		local v42 = getmetatable(p35)
-		return setmetatable(v38, v41(v42, v37))
-	end,
-	["deepOverwrite"] = function(p43, p44) -- name: deepOverwrite
-		-- upvalues: (copy) v_u_74
-		for v45, v46 in pairs(p44) do
-			local v47 = p43[v45]
-			if type(v47) == "table" and type(v46) == "table" then
-				p43[v45] = v_u_74.deepOverwrite(p43[v45], v46)
-			else
-				p43[v45] = v46
-			end
-		end
-		return p43
-	end,
-	["getIndex"] = function(p48, p49) -- name: getIndex
-		local v50 = p49 ~= nil
-		assert(v50, "Needle cannot be nil")
-		for v51, v52 in pairs(p48) do
-			if p49 == v52 then
-				return v51
-			end
-		end
-		return nil
-	end,
-	["stringify"] = function(p53, p54, p55) -- name: stringify
-		-- upvalues: (copy) v_u_74
-		local v56 = p55 or tostring(p53)
-		local v57 = p54 or 0
-		for v58, v59 in pairs(p53) do
-			local v60 = "\n" .. string.rep("  ", v57) .. tostring(v58) .. ": "
-			if type(v59) == "table" then
-				local v61 = v56 .. v60
-				v56 = v_u_74.stringify(v59, v57 + 1, v61)
-			else
-				v56 = v56 .. v60 .. tostring(v59)
-			end
-		end
-		return v56
-	end,
-	["contains"] = function(p62, p63) -- name: contains
-		for _, v64 in pairs(p62) do
-			if v64 == p63 then
-				return true
-			end
-		end
-		return false
-	end,
-	["overwrite"] = function(p65, p66) -- name: overwrite
-		for v67, v68 in pairs(p66) do
-			p65[v67] = v68
-		end
-		return p65
-	end,
-	["take"] = function(p69, p70) -- name: take
-		local v71 = #p69
-		local v72 = {}
-		for v73 = 1, math.min(v71, p70) do
-			v72[v73] = p69[v73]
-		end
-		return v72
-	end
+local u0 = {
+    append = function(p1, p2) -- Line: 15
+        for k, v in pairs(p2) do
+            p1[#p1 + 1] = v
+        end
+        return p1
+    end,
+    merge = function(p1, p2) -- Line: 30
+        local v1 = {}
+        for k, v in pairs(p1) do
+            v1[k] = v
+        end
+        for k2, i in pairs(p2) do
+            v1[k2] = i
+        end
+        return v1
+    end,
+    reverse = function(p1) -- Line: 47
+        local v1 = {}
+        local v2 = 1
+        local v3 = -1
+        for i = #p1, v2, v3 do
+            table.insert(v1, p1[i])
+        end
+        return v1
+    end,
+    values = function(p1) -- Line: 61
+        local v1 = {}
+        for k, v in pairs(p1) do
+            table.insert(v1, v)
+        end
+        return v1
+    end,
+    keys = function(p1) -- Line: 75
+        local v1 = {}
+        for k, v in pairs(p1) do
+            table.insert(v1, k)
+        end
+        return v1
+    end,
+    mergeLists = function(p1, p2) -- Line: 90
+        local v1 = {}
+        for k, v in pairs(p1) do
+            table.insert(v1, v)
+        end
+        for k2, i in pairs(p2) do
+            table.insert(v1, i)
+        end
+        return v1
+    end,
+    swapKeyValue = function(p1) -- Line: 107
+        local v1 = {}
+        for k, v in pairs(p1) do
+            v1[v] = k
+        end
+        return v1
+    end,
+    toList = function(p1) -- Line: 121
+        local v1 = {}
+        for k, v in pairs(p1) do
+            table.insert(v1, v)
+        end
+        return v1
+    end,
+    count = function(p1) -- Line: 136
+        local v1 = 0
+        for k, v in pairs(p1) do
+            v1 = v1 + 1
+        end
+        return v1
+    end,
+    copy = table.clone,
 }
-local function v76(_, p75) -- name: errorOnIndex
-	error(("Bad index %q"):format((tostring(p75))), 2)
+function u0.deepCopy(p1, p2) -- Line: 161 -- upvalues: u0 (val)
+    local v1
+    local v2 = p2
+    if not v2 then
+        v2 = {}
+    end
+    local v3 = v2
+    if v3[p1] then
+        return v3[p1]
+    end
+    if type(p1) ~= "table" then
+        return p1
+    end
+    v2 = {}
+    v3[p1] = v2
+    for k, v in pairs(p1) do
+        v1 = u0.deepCopy(k, v3)
+        v2[v1] = u0.deepCopy(v, v3)
+    end
+    local v4 = getmetatable(p1)
+    return (setmetatable(v2, u0.deepCopy(v4, v3)))
 end
-local v_u_77 = {
-	["__index"] = v76,
-	["__newindex"] = v76
-}
-function v_u_74.readonly(p78) -- name: readonly
-	-- upvalues: (copy) v_u_77
-	local v79 = v_u_77
-	return setmetatable(p78, v79)
+function u0.deepOverwrite(p1, p2) -- Line: 185 -- upvalues: u0 (val)
+    local v1 = p1
+    for k, v in pairs(p2) do
+        if type(v1[k]) ~= "table" then
+            v1[k] = v
+        elseif type(v) == "table" then
+            v1[k] = u0.deepOverwrite(v1[k], v)
+        end
+    end
+    return v1
 end
-function v_u_74.deepReadonly(p80) -- name: deepReadonly
-	-- upvalues: (copy) v_u_74
-	for _, v81 in pairs(p80) do
-		if type(v81) == "table" then
-			v_u_74.deepReadonly(v81)
-		end
-	end
-	return v_u_74.readonly(p80)
+function u0.getIndex(p1, p2) -- Line: 203
+    local v1 = p2 ~= nil
+    assert(v1, "Needle cannot be nil")
+    for k, v in pairs(p1) do
+        if p2 == v then
+            return k
+        end
+    end
+    return nil
 end
-return v_u_74
+function u0.stringify(p1, p2, p3) -- Line: 222 -- upvalues: u0 (val)
+    local v1, v2, v3
+    local v4 = p3
+    if not v4 then
+        v4 = tostring(p1)
+    end
+    local v5 = v4
+    local v6 = p2 or 0
+    for k, v in pairs(p1) do
+        v1 = string.rep("  ", v6)
+        v2 = tostring(k)
+        v3 = "\n" .. v1 .. v2 .. ": "
+        if type(v) ~= "table" then
+            v5 = v5 .. v3 .. tostring(v)
+        else
+            v5 = v5 .. v3
+            v5 = u0.stringify(v, v6 + 1, v5)
+        end
+    end
+    return v5
+end
+function u0.contains(p1, p2) -- Line: 244
+    for k, v in pairs(p1) do
+        if v == p2 then
+            return true
+        end
+    end
+    return false
+end
+function u0.overwrite(p1, p2) -- Line: 261
+    for k, v in pairs(p2) do
+        p1[k] = v
+    end
+    return p1
+end
+function u0.take(p1, p2) -- Line: 278
+    local v1 = {}
+    local v2 = math.min(#p1, p2)
+    local v3 = 1
+    for i = 1, v2, v3 do
+        v1[i] = p1[i]
+    end
+    return v1
+end
+local function errorOnIndex(p1, p2) -- Line: 286
+    local v1 = ("Bad index %q"):format((tostring(p2)))
+    error(v1, 2)
+end
+local u19 = {__index = errorOnIndex, __newindex = errorOnIndex}
+function u0.readonly(p1) -- Line: 302 -- upvalues: u19 (val)
+    return (setmetatable(p1, u19))
+end
+function u0.deepReadonly(p1) -- Line: 312 -- upvalues: u0 (val)
+    for k, v in pairs(p1) do
+        if type(v) == "table" then
+            u0.deepReadonly(v)
+        end
+    end
+    return u0.readonly(p1)
+end
+return u0

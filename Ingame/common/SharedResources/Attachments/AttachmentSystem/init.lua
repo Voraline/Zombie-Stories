@@ -1,616 +1,949 @@
-local v1 = game:GetService("ReplicatedStorage")
-v1.common:WaitForChild("SharedResources"):WaitForChild("Attachments")
-local v2 = v1.common
-local v_u_3 = require("@self/PaletteSystem")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SharedResources = ReplicatedStorage.common:WaitForChild("SharedResources")
+SharedResources:WaitForChild("Attachments")
+local common = ReplicatedStorage.common
+local u17 = require("@self/PaletteSystem")
 require("@self/AttachmentsRoot")
-local v_u_4 = require(v2:WaitForChild("WepConfig"))
-local v_u_5 = require(v2:WaitForChild("Promise"))
-local v_u_6 = os.clock()
-local v_u_7 = {}
-local v_u_8 = Instance.new("Folder")
-local v_u_9 = {}
-local v19 = {
-	["DressWeapon"] = function(_, p10, p11, p12, p13, p14) -- name: DressWeapon
-		-- upvalues: (copy) v_u_9, (ref) v_u_6
-		if p12 then
-			local v15 = p12:FindFirstChild("Attachments")
-			if v15 then
-				v15:Destroy()
-			end
-			local v16 = p12:FindFirstChild("GlobalParts")
-			local v17 = v16 and v16:FindFirstChild("CustomPoints")
-			if v17 then
-				v17:Destroy()
-			end
-			Instance.new("Folder", p12).Name = "Attachments"
-			Instance.new("Folder", v16).Name = "CustomPoints"
-		end
-		table.clear(v_u_9)
-		local v18 = os.clock()
-		v_u_6 = v18
-		return processAttachmentQueue(p10:GetNodes(), p11, v18, p12, p13, p14)
-	end
+local WepConfig = require(common:WaitForChild("WepConfig"))
+local Promise = require(common:WaitForChild("Promise"))
+local u34 = os.clock()
+local u35 = {}
+local Folder = Instance.new("Folder")
+local u39 = {}
+local v1 = {
+    DressWeapon = function(p1, p2, p3, p4, p5, p6) -- Line: 37 -- upvalues: u39 (val), u34 (ref)
+        if p4 then
+            local Attachments = p4:FindFirstChild("Attachments")
+            if Attachments then
+                Attachments:Destroy()
+            end
+            local GlobalParts = p4:FindFirstChild("GlobalParts")
+            if GlobalParts then
+                local CustomPoints = GlobalParts:FindFirstChild("CustomPoints")
+                if CustomPoints then
+                    CustomPoints:Destroy()
+                end
+            end
+            local v1 = Instance.new("Folder", p4)
+            v1.Name = "Attachments"
+            local v2 = Instance.new("Folder", GlobalParts)
+            v2.Name = "CustomPoints"
+        end
+        table.clear(u39)
+        local v3 = os.clock()
+        u34 = v3
+        local Nodes = p2:GetNodes()
+        return processAttachmentQueue(Nodes, p3, v3, p4, p5, p6)
+    end,
 }
-function processAttachmentQueue(p_u_20, p_u_21, p_u_22, p_u_23, p_u_24, p_u_25) -- name: processAttachmentQueue
-	-- upvalues: (copy) v_u_5
-	return v_u_5.new(function(p_u_26, _, p27)
-		-- upvalues: (copy) p_u_20, (copy) p_u_21, (copy) p_u_22, (copy) p_u_23, (copy) p_u_24, (copy) p_u_25
-		local v_u_28 = {}
-		for v29, v30 in p_u_20 do
-			table.insert(v_u_28, {
-				["nodeID"] = nil,
-				["nodeData"] = nil,
-				["subNodePartsSnapshot"] = nil,
-				["depth"] = 0,
-				["nodeID"] = v29,
-				["nodeData"] = v30
-			})
-		end
-		local v_u_31 = 0
-		local v_u_32 = 1
-		local v_u_33 = false
-		local v_u_34 = false
-		local v_u_35 = false
-		p27(function()
-			-- upvalues: (ref) v_u_35
-			v_u_35 = true
-		end)
-		local function v_u_47()
-			-- upvalues: (ref) v_u_34, (ref) v_u_35, (ref) v_u_32, (copy) v_u_28, (ref) p_u_21, (ref) v_u_31, (ref) p_u_22, (ref) p_u_23, (ref) p_u_24, (ref) p_u_25, (ref) v_u_33, (copy) p_u_26, (ref) v_u_47
-			if v_u_34 then
-				return
-			end
-			v_u_34 = true
-			while true do
-				if v_u_35 or v_u_32 > #v_u_28 then
-					v_u_34 = false
-					return
-				end
-				local v_u_36 = v_u_28[v_u_32]
-				v_u_32 = v_u_32 + 1
-				local v_u_37 = v_u_36.nodeData.ConnectedAttachment
-				if v_u_37 then
-					if v_u_36.depth > 50 then
-						warn("[AttachmentSystem] Max attachment nesting depth (" .. 50 .. ") exceeded -- skipping further sub-attachments.")
-					else
-						local v38 = v_u_37:GetAttachmentData()
-						local v39 = nil
-						if v_u_36.subNodePartsSnapshot then
-							for _, v40 in v_u_36.subNodePartsSnapshot do
-								if v40.Name == p_u_21[v_u_36.nodeID].Name then
-									v39 = v40
-									break
-								end
-							end
-						end
-						v_u_31 = v_u_31 + 1
-						attachSingleNode(v_u_37, v38, p_u_21, p_u_22, p_u_23, p_u_21[v_u_36.nodeID].Name, v39, p_u_24, p_u_25, function()
-							-- upvalues: (ref) v_u_35
-							return v_u_35
-						end):andThen(function(p41, p42)
-							-- upvalues: (ref) v_u_35, (copy) v_u_37, (ref) v_u_28, (copy) v_u_36
-							if p41 and not v_u_35 then
-								for v43, v44 in v_u_37:GetNodes() do
-									local v45 = v_u_28
-									local v46 = {
-										["nodeID"] = v43,
-										["nodeData"] = v44,
-										["subNodePartsSnapshot"] = p42,
-										["depth"] = v_u_36.depth + 1
-									}
-									table.insert(v45, v46)
-								end
-							end
-						end):finally(function()
-							-- upvalues: (ref) v_u_31, (ref) v_u_33, (ref) v_u_32, (ref) v_u_28, (ref) p_u_26, (ref) v_u_35, (ref) v_u_47
-							v_u_31 = v_u_31 - 1
-							if v_u_33 and (v_u_31 <= 0 and v_u_32 > #v_u_28) then
-								p_u_26()
-							end
-							if not v_u_35 then
-								v_u_47()
-							end
-						end)
-					end
-				end
-			end
-		end
-		v_u_47()
-		v_u_33 = true
-		if v_u_33 and (v_u_31 <= 0 and #v_u_28 < v_u_32) then
-			p_u_26()
-		end
-	end)
+function processAttachmentQueue(p1, p2, p3, p4, p5, p6) -- Line: 101 -- upvalues: Promise (val)
+    return Promise.new(function(a1, a2, a3) -- Line: 102 -- upvalues: p1 (val), p2 (val), p3 (val), p4 (val), p5 (val), p6 (val)
+        local u27
+        local u3 = {}
+        local v1 = p1
+        local v2 = nil
+        local v3 = nil
+        for i, j in v1, v2, v3 do
+            table.insert(u3, {depth = 0, nodeID = i, nodeData = j})
+        end
+        local u14 = 0
+        local u15 = 1
+        local u16 = false
+        local u17 = false
+        local u18 = false
+        a3(function() -- Line: 127 -- upvalues: u18 (ref)
+            u18 = true
+        end)
+        local function tryResolve() -- Line: 131 -- upvalues: u18 (ref), u16 (ref), u14 (ref), u15 (ref), u3 (val), a1 (val)
+            if not u18 and u16 and u14 <= 0 and #u3 < u15 then
+                a1()
+            end
+        end
+        function u27() -- Line: 138 -- upvalues: u17 (ref), u18 (ref), u15 (ref), u3 (val), p2 (upval), u14 (ref), p3 (upval), p4 (upval), p5 (upval), p6 (upval), a2 (val), u16 (ref), a1 (val), u27 (ref)
+            local AttachmentData, subNodePartsSnapshot, v1, v2, v3, v4
+            if u17 then
+                return
+            end
+            u17 = true
+            while not u18 do
+                if u15 > #u3 then
+                    break
+                end
+                local u8 = u3[u15]
+                u15 = u15 + 1
+                local ConnectedAttachment = u8.nodeData.ConnectedAttachment
+                if ConnectedAttachment then
+                    if 50 >= u8.depth then
+                        AttachmentData = ConnectedAttachment:GetAttachmentData()
+                        v1 = nil
+                        if u8.subNodePartsSnapshot then
+                            subNodePartsSnapshot = u8.subNodePartsSnapshot
+                            v3 = nil
+                            v4 = nil
+                            for i, j in subNodePartsSnapshot, v3, v4 do
+                                if j.Name == p2[u8.nodeID].Name then
+                                    v1 = j
+                                    break
+                                end
+                            end
+                        end
+                        u14 = u14 + 1
+                        v2 = attachSingleNode(ConnectedAttachment, AttachmentData, p2, p3, p4, p2[u8.nodeID].Name, v1, p5, p6, function() -- Line: 207 -- upvalues: u18 (upval)
+                            return u18
+                        end)
+                        v2 = v2:andThen(function(p1, p2) -- Line: 211 -- upvalues: p4 (upval), u18 (upval), ConnectedAttachment (val), u3 (upval), u8 (val)
+                            if not p4 then
+                                if not u18 then
+                                    for i, j in ConnectedAttachment:GetNodes() do
+                                        table.insert(u3, {nodeID = i, nodeData = j, subNodePartsSnapshot = p2, depth = u8.depth + 1})
+                                    end
+                                end
+                            elseif not p1 then
+                            end
+                        end)
+                        v2 = v2:catch(function(p1) -- Line: 226 -- upvalues: u18 (upval), a2 (upval)
+                            u18 = true
+                            a2(p1)
+                        end)
+                        v2:finally(function() -- Line: 230 -- upvalues: u14 (upval), u18 (upval), u16 (upval), u15 (upval), u3 (upval), a1 (upval), u27 (upval), a2 (upval)
+                            u14 = u14 - 1
+                            if not u18 and u16 and u14 <= 0 and #u3 < u15 then
+                                a1()
+                            end
+                            if not u18 then
+                                local v1, v2
+                                v1, v2 = pcall(u27)
+                                if not v1 then
+                                    u18 = true
+                                    a2(v2)
+                                end
+                            end
+                        end)
+                    else
+                        warn("[AttachmentSystem] Max attachment nesting depth (" .. 50 .. ") exceeded -- skipping further sub-attachments.")
+                    end
+                end
+            end
+            u17 = false
+        end
+        u27()
+        u16 = true
+        if not u18 and u16 and u14 <= 0 and #u3 < u15 then
+            a1()
+        end
+    end)
 end
-function attachSingleNode(p_u_48, p_u_49, _, p_u_50, p_u_51, p_u_52, p_u_53, p_u_54, p_u_55, p_u_56) -- name: attachSingleNode
-	-- upvalues: (copy) v_u_5, (ref) v_u_6, (copy) v_u_9, (copy) v_u_4, (copy) v_u_3
-	if not p_u_49 then
-		return v_u_5.resolve()
-	end
-	local v_u_57
-	if p_u_51 then
-		v_u_57 = p_u_51.Attachments
-	else
-		v_u_57 = p_u_51
-	end
-	local v58, v_u_59 = getAttachmentFolder(p_u_49.Name):await()
-	if p_u_56 and p_u_56() then
-		return v_u_5.resolve()
-	end
-	if v58 then
-		return v_u_5.new(function(p60, _, _)
-			-- upvalues: (ref) v_u_6, (copy) p_u_50, (copy) p_u_55, (copy) p_u_56, (copy) p_u_51, (copy) p_u_49, (copy) v_u_59, (ref) p_u_53, (copy) p_u_52, (ref) v_u_9, (copy) p_u_48, (ref) v_u_4, (ref) v_u_3, (copy) v_u_57, (copy) p_u_54
-			if v_u_6 == p_u_50 or p_u_55 then
-				if p_u_56 and p_u_56() then
-					p60()
-				else
-					local v61
-					if p_u_51 then
-						v61 = GetReplacementModel(p_u_51):FindFirstChild(p_u_49.Name)
-					else
-						v61 = nil
-					end
-					if not v61 and (v_u_59 and v_u_59:FindFirstChildOfClass("Model")) then
-						v61 = v_u_59:FindFirstChildOfClass("Model"):Clone()
-					end
-					local v62 = nil
-					local v63 = nil
-					if p_u_51 and v61 then
-						if not v61.PrimaryPart then
-							v61.PrimaryPart = v61:FindFirstChild("AttachmentPoint") or v61:FindFirstChildOfClass("BasePart")
-							warn("No existing PrimaryPart for " .. v61.Name)
-						end
-						p_u_53 = p_u_53 or nil
-						local v64 = not p_u_53 and p_u_51:FindFirstChild("GlobalParts")
-						if v64 then
-							local v65 = v64:FindFirstChild("CustomPoints")
-							local v66 = v65
-							if v66 then
-								v66 = v65:FindFirstChild(p_u_52)
-							end
-							if not p_u_53 then
-								p_u_53 = v66 or p_u_51.GlobalParts.BasePoints:FindFirstChild(p_u_52)
-							end
-						end
-						if p_u_53 then
-							local v67 = v61:Clone()
-							local v68 = v67.PrimaryPart
-							for _, v69 in v67:GetDescendants() do
-								if v69:IsA("BasePart") then
-									v69.CastShadow = false
-									if v69 ~= v68 then
-										local v70 = Instance.new("WeldConstraint")
-										v70.Part0 = v68
-										v70.Part1 = v69
-										v70.Parent = v69
-										v69.Anchored = false
-									end
-								end
-							end
-							if p_u_49.BaseModule then
-								v62 = getAttachmentFolder(p_u_49.BaseModule):expect():FindFirstChildOfClass("Model"):Clone()
-								v67.Parent = v62
-								local v71 = Instance.new("Weld")
-								v71.Part0 = v62.SwingingPart
-								v71.Part1 = v67.PrimaryPart
-								v71.Parent = v67
-							else
-								v62 = v67
-							end
-							v_u_9[p_u_48] = script.Highlight:Clone()
-							v_u_9[p_u_48].Parent = v62
-							v62:ScaleTo(findScale(p_u_53, v62.PrimaryPart))
-							v62:PivotTo(p_u_53.CFrame)
-							local v72 = Instance.new("Weld")
-							v72.Part0 = v62.PrimaryPart
-							v72.Part1 = p_u_53
-							v72.Parent = v62
-							if not v_u_4:IsStock(p_u_51.Name) and v_u_59.Parent.Name ~= "Charm" then
-								v_u_3(p_u_51, v62)
-							end
-							v62.Parent = v_u_57
-							local v_u_73 = {
-								p_u_51,
-								p_u_53.Name,
-								p_u_49.Name,
-								v62
-							}
-							local v_u_74 = v_u_4:GetWeaponConfig(p_u_51.Name)
-							local v75 = not (v_u_74.AttachedAttachment and v_u_74.AttachedAttachment(unpack(v_u_73)) or v_u_74.AttachedAttachment)
-							if v75 then
-								v75 = not v_u_74.DontRunDefaultAttachedAttachment
-							end
-							if v75 then
-								AttachedAttachment(unpack(v_u_73))
-							end
-							if v_u_74.SkipAttachmentModel and v_u_74.SkipAttachmentModel[p_u_52] then
-								for _, v76 in v62:GetDescendants() do
-									if v76:IsA("BasePart") then
-										v76.Transparency = 1
-									end
-								end
-							end
-							local v77 = v62:FindFirstChild("CustomPoints")
-							if v77 then
-								local v78 = p_u_51:FindFirstChild("GlobalParts")
-								if v78 then
-									local v79 = v78:FindFirstChild("CustomPoints")
-									if v79 then
-										for _, v80 in v77:GetChildren() do
-											local v81 = Instance.new("Weld")
-											v81.Part0 = v62.PrimaryPart
-											v81.Part1 = v80
-											v81.C0 = v81.Part0.CFrame:Inverse() * v81.Part1.CFrame
-											v81.Parent = v80
-											v80.Parent = v79
-										end
-									end
-								end
-							end
-							local v_u_82 = nil
-							v_u_82 = v62.Destroying:Connect(function()
-								-- upvalues: (ref) v_u_82, (copy) v_u_74, (ref) v_u_73
-								v_u_82:Disconnect()
-								v_u_82 = nil
-								local v83
-								if v_u_74.DetachedAttachment then
-									local v84 = v_u_73
-									v83 = v_u_74.DetachedAttachment(unpack(v84))
-									if not v83 then
-										goto l2
-									end
-								else
-									::l2::
-									v83 = not v_u_74.DetachedAttachment
-									if v83 then
-										v83 = not v_u_74.DontRunDefaultDetachedAttachment
-									end
-								end
-								if v83 then
-									local v85 = v_u_73
-									DetachedAttachment(unpack(v85))
-								end
-								v_u_73 = nil
-							end)
-							v63 = v62:FindFirstChild("NodeParts")
-							if v63 then
-								v63 = v63:GetChildren()
-							end
-							v61 = v62
-						else
-							warn("NO VALID NODEPART TO WELD TO.")
-						end
-					elseif p_u_51 then
-						p_u_53 = p_u_53 or nil
-						local v86 = not p_u_53 and p_u_51:FindFirstChild("GlobalParts")
-						if v86 then
-							local v87 = v86:FindFirstChild("CustomPoints")
-							local v88 = v87
-							if v88 then
-								v88 = v87:FindFirstChild(p_u_52)
-							end
-							if not p_u_53 then
-								p_u_53 = v88 or p_u_51.GlobalParts.BasePoints:FindFirstChild(p_u_52)
-							end
-						end
-						local v_u_89 = v_u_4:GetWeaponConfig(p_u_51.Name)
-						if p_u_53 and v_u_89.AttachedAttachment then
-							local v_u_90 = { p_u_51, p_u_53.Name, p_u_49.Name }
-							local v91 = v_u_90
-							v_u_89.AttachedAttachment(unpack(v91))
-							local v_u_92 = nil
-							v_u_92 = v_u_57.Destroying:Connect(function()
-								-- upvalues: (ref) v_u_92, (copy) v_u_89, (ref) v_u_90
-								v_u_92:Disconnect()
-								v_u_92 = nil
-								local v93
-								if v_u_89.DetachedAttachment then
-									local v94 = v_u_90
-									v93 = v_u_89.DetachedAttachment(unpack(v94))
-									if not v93 then
-										goto l2
-									end
-								else
-									::l2::
-									v93 = not v_u_89.DetachedAttachment
-									if v93 then
-										v93 = not v_u_89.DontRunDefaultDetachedAttachment
-									end
-								end
-								if v93 then
-									local v95 = v_u_90
-									DetachedAttachment(unpack(v95))
-								end
-								v_u_90 = nil
-							end)
-						end
-					end
-					local v96
-					if v_u_59 then
-						getAttachmentFolder(v_u_59.Parent.Name .. "_Shared"):expect()
-						v96 = v_u_59:FindFirstChild("AttachmentModule")
-						if not v96 then
-							local v97 = getAttachmentFolder(v_u_59.Parent.Name .. "_Shared"):expect()
-							v96 = v97
-							if v96 then
-								v96 = v97:FindFirstChild("AttachmentModule")
-							end
-						end
-						if not v96 and p_u_49.SharedModule then
-							local v98 = getAttachmentFolder(p_u_49.SharedModule):expect()
-							v96 = v98
-							if v96 then
-								v96 = v98:FindFirstChild("AttachmentModule")
-							end
-						end
-					else
-						v96 = nil
-					end
-					local v_u_99
-					if p_u_54 then
-						v_u_99 = p_u_54(p_u_48, v62, v96, v_u_9)
-					else
-						v_u_99 = nil
-					end
-					if p_u_51 and (v96 and (v_u_99 and v_u_99.SettingChanges)) then
-						p_u_51:WaitForChild("KeyParts", 5)
-						local v_u_100 = p_u_51.KeyParts:FindFirstChild("Barrel")
-						if v_u_100 and v_u_99.SettingChanges.BarrelAttachment then
-							for _, v101 in v_u_100:GetChildren() do
-								if v101:IsA("Attachment") then
-									for _, v102 in v101:GetChildren() do
-										v102.Parent = v_u_99.SettingChanges.BarrelAttachment
-									end
-								else
-									v101.Parent = v_u_99.SettingChanges.BarrelAttachment
-								end
-							end
-							local v_u_103 = nil
-							v_u_103 = v61.Destroying:connect(function()
-								-- upvalues: (ref) v_u_103, (copy) v_u_100, (ref) v_u_99
-								v_u_103:Disconnect()
-								v_u_103 = nil
-								local v104 = v_u_100:FindFirstChildOfClass("Attachment")
-								for _, v105 in v_u_99.SettingChanges.BarrelAttachment:GetChildren() do
-									v105.Parent = v104 or v_u_100
-								end
-							end)
-						end
-					end
-					p60(v62, v63)
-				end
-			else
-				p60()
-				return
-			end
-		end)
-	end
-	warn("Failed to get folder for", p_u_49.Name)
-	return v_u_5.resolve()
+function attachSingleNode(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) -- Line: 275 -- upvalues: Promise (val), u34 (ref), u39 (val), WepConfig (val), u17 (val)
+    local u22, v1
+    if not p2 then
+        return Promise.resolve()
+    end
+    local Attachments = p5
+    if Attachments then
+        Attachments = p5.Attachments
+    end
+    v1, u22 = getAttachmentFolder(p2.Name):await()
+    if not p10 then
+        if v1 then
+            return Promise.new(function(a1, a2, p3) -- Line: 283 -- upvalues: p5 (val), u34 (upval), p4 (val), p9 (val), p10 (val), p2 (val), u22 (val), p7 (ref), p6 (val), u39 (upval), p1 (val), WepConfig (upval), u17 (upval), Attachments (val), p8 (val)
+                if not p5 then
+                    if not p10 then
+                        local AttachedAttachment, Children, GlobalParts, Name, v1, v2
+                        local v3 = if p5 then GetReplacementModel(p5):FindFirstChild(p2.Name) else nil
+                        if not v3 and u22 and u22:FindFirstChildOfClass("Model") then
+                            v3 = u22:FindFirstChildOfClass("Model"):Clone()
+                        end
+                        local v4 = nil
+                        local v5 = nil
+                        if not p5 then
+                            if p5 then
+                                p7 = p7 or nil
+                                if not p7 then
+                                    GlobalParts = "GlobalParts"
+                                    local GlobalParts_4 = p5:FindFirstChild(GlobalParts)
+                                    if GlobalParts_4 then
+                                        local CustomPoints_4 = GlobalParts_4:FindFirstChild("CustomPoints")
+                                        GlobalParts = CustomPoints_4
+                                        if GlobalParts then
+                                            GlobalParts = CustomPoints_4:FindFirstChild(p6)
+                                        end
+                                        v2 = GlobalParts
+                                        GlobalParts = p7
+                                        if not GlobalParts then
+                                            GlobalParts = v2
+                                            if not GlobalParts then
+                                                GlobalParts = p5.GlobalParts.BasePoints:FindFirstChild(p6)
+                                            end
+                                            p7 = GlobalParts
+                                        end
+                                    end
+                                end
+                                GlobalParts = p5.Name
+                                local WeaponConfig_2 = WepConfig:GetWeaponConfig(GlobalParts)
+                                if p7 and WeaponConfig_2.AttachedAttachment then
+                                    WeaponConfig_2.AttachedAttachment(unpack({p5, p7.Name, p2.Name}))
+                                    GlobalParts = nil
+                                end
+                            end
+                        elseif v3 then
+                            local PrimaryPart, v6
+                            if not v3.PrimaryPart then
+                                local AttachmentPoint = v3:FindFirstChild("AttachmentPoint")
+                                if not AttachmentPoint then
+                                    AttachmentPoint = v3:FindFirstChildOfClass("BasePart")
+                                end
+                                v3.PrimaryPart = AttachmentPoint
+                                warn("No existing PrimaryPart for " .. v3.Name)
+                            end
+                            p7 = p7 or nil
+                            if not p7 then
+                                local GlobalParts_2 = p5:FindFirstChild("GlobalParts")
+                                if GlobalParts_2 then
+                                    local CustomPoints = GlobalParts_2:FindFirstChild("CustomPoints")
+                                    v6 = CustomPoints
+                                    if v6 then
+                                        v6 = CustomPoints:FindFirstChild(p6)
+                                    end
+                                    v2 = v6
+                                    if not p7 then
+                                        v6 = v2
+                                        if not v6 then
+                                            v6 = p5.GlobalParts.BasePoints:FindFirstChild(p6)
+                                        end
+                                        p7 = v6
+                                    end
+                                end
+                            end
+                            if not p7 then
+                                warn("NO VALID NODEPART TO WELD TO.")
+                            else
+                                local WeldConstraint, v7
+                                v3 = v3:Clone()
+                                PrimaryPart = v3.PrimaryPart
+                                for i, j in v3:GetDescendants() do
+                                    if j:IsA("BasePart") then
+                                        j.CastShadow = false
+                                        if j ~= PrimaryPart then
+                                            WeldConstraint = Instance.new("WeldConstraint")
+                                            WeldConstraint.Part0 = PrimaryPart
+                                            WeldConstraint.Part1 = j
+                                            WeldConstraint.Parent = j
+                                            j.Anchored = false
+                                        end
+                                    end
+                                end
+                                if p2.BaseModule then
+                                    v6 = getAttachmentFolder(p2.BaseModule):expect():FindFirstChildOfClass("Model"):Clone()
+                                    v3.Parent = v6
+                                    local Weld = Instance.new("Weld")
+                                    Weld.Part0 = v6.SwingingPart
+                                    Weld.Part1 = v3.PrimaryPart
+                                    Weld.Parent = v3
+                                    v3 = v6
+                                end
+                                u39[p1] = script.Highlight:Clone()
+                                u39[p1].Parent = v3
+                                v3:ScaleTo(findScale(p7, v3.PrimaryPart))
+                                v3:PivotTo(p7.CFrame)
+                                local Weld_2 = Instance.new("Weld")
+                                Weld_2.Part0 = v3.PrimaryPart
+                                Weld_2.Part1 = p7
+                                Weld_2.Parent = v3
+                                local Name_2 = p5.Name
+                                if not (WepConfig:IsStock(Name_2)) and u22.Parent.Name ~= "Charm" then
+                                    u17(p5, v3)
+                                end
+                                v3.Parent = Attachments
+                                GlobalParts = {p5, p7.Name, p2.Name, v3}
+                                local WeaponConfig = WepConfig:GetWeaponConfig(p5.Name)
+                                if not WeaponConfig.AttachedAttachment then
+                                    v7 = not WeaponConfig.AttachedAttachment
+                                    if v7 then
+                                        v7 = not WeaponConfig.DontRunDefaultAttachedAttachment
+                                    end
+                                else
+                                    v7 = WeaponConfig.AttachedAttachment(unpack(GlobalParts))
+                                end
+                                if v7 then
+                                    AttachedAttachment(unpack(GlobalParts))
+                                end
+                                if WeaponConfig.SkipAttachmentModel and WeaponConfig.SkipAttachmentModel[p6] then
+                                    for k, n in v3:GetDescendants() do
+                                        if n:IsA("BasePart") then
+                                            n.Transparency = 1
+                                        end
+                                    end
+                                end
+                                local CustomPoints_2 = v3:FindFirstChild("CustomPoints")
+                                if CustomPoints_2 then
+                                    local GlobalParts_3 = p5:FindFirstChild("GlobalParts")
+                                    if GlobalParts_3 then
+                                        local CustomPoints_3 = GlobalParts_3:FindFirstChild("CustomPoints")
+                                        if CustomPoints_3 then
+                                            local Weld_3, v8
+                                            for m, i5 in CustomPoints_2:GetChildren() do
+                                                Weld_3 = Instance.new("Weld")
+                                                Weld_3.Part0 = v3.PrimaryPart
+                                                Weld_3.Part1 = i5
+                                                v8 = Weld_3.Part0.CFrame:Inverse()
+                                                Weld_3.C0 = v8 * Weld_3.Part1.CFrame
+                                                Weld_3.Parent = i5
+                                                i5.Parent = CustomPoints_3
+                                            end
+                                        end
+                                    end
+                                end
+                                Children = nil
+                                v4 = v3
+                                local NodeParts = v3:FindFirstChild("NodeParts")
+                                local Children_5 = NodeParts
+                                if Children_5 then
+                                    Children_5 = NodeParts:GetChildren()
+                                end
+                                v5 = Children_5
+                            end
+                        end
+                        local v9 = nil
+                        local u357 = u22
+                        if u357 then
+                            u357 = getAttachmentFolder(u22.Parent.Name .. "_Shared")
+                            u357:expect()
+                            GlobalParts = u22:FindFirstChild("AttachmentModule")
+                            v9 = GlobalParts
+                            if not v9 then
+                                GlobalParts = getAttachmentFolder(u22.Parent.Name .. "_Shared")
+                                GlobalParts = GlobalParts:expect()
+                                local AttachmentModule = GlobalParts
+                                if AttachmentModule then
+                                    AttachmentModule = GlobalParts:FindFirstChild("AttachmentModule")
+                                end
+                                v9 = AttachmentModule
+                            end
+                            if not v9 then
+                                GlobalParts = p2.SharedModule
+                                if GlobalParts then
+                                    GlobalParts = getAttachmentFolder(p2.SharedModule)
+                                    GlobalParts = GlobalParts:expect()
+                                    local AttachmentModule_2 = GlobalParts
+                                    if AttachmentModule_2 then
+                                        AttachmentModule_2 = GlobalParts:FindFirstChild("AttachmentModule")
+                                    end
+                                    v9 = AttachmentModule_2
+                                end
+                            end
+                        end
+                        u357 = nil
+                        GlobalParts = p8
+                        if GlobalParts then
+                            if not p5 then
+                                GlobalParts = v3
+                            else
+                                GlobalParts = v4
+                            end
+                            u357 = p8(p1, GlobalParts, v9, u39)
+                        end
+                        GlobalParts = p5
+                        if not GlobalParts then
+                            v1 = a1
+                        elseif not v9 then
+                            v1 = a1
+                        elseif not u357 then
+                            v1 = a1
+                        else
+                            GlobalParts = u357.SettingChanges
+                            if not GlobalParts then
+                                v1 = a1
+                            else
+                                p5:WaitForChild("KeyParts", 5)
+                                local Barrel = p5.KeyParts:FindFirstChild("Barrel")
+                                if not Barrel then
+                                    v1 = a1
+                                elseif not u357.SettingChanges.BarrelAttachment then
+                                    v1 = a1
+                                else
+                                    local Children_6, Children_7
+                                    Children_6, Children_7, Children = Barrel:GetChildren()
+                                    v1 = a1
+                                    for i6, i7 in Barrel:GetChildren() do
+                                        if i7:IsA("Attachment") then
+                                            for i8, i9 in i7:GetChildren() do
+                                                i9.Parent = u357.SettingChanges.BarrelAttachment
+                                            end
+                                        else
+                                            i7.Parent = u357.SettingChanges.BarrelAttachment
+                                        end
+                                    end
+                                    local u498 = nil
+                                end
+                            end
+                        end
+                        v1(v4, v5)
+                        return
+                    elseif p10() then
+                        a1()
+                        return
+                    end
+                elseif u34 ~= p4 and not p9 then
+                    a1()
+                    return
+                end
+            end)
+        end
+        warn("Failed to get folder for", p2.Name)
+        return Promise.resolve()
+    end
+    if p10() then
+        return Promise.resolve()
+    end
+    if v1 then
+        return Promise.new(function(a1, a2, p3) -- Line: 283 -- upvalues: p5 (val), u34 (upval), p4 (val), p9 (val), p10 (val), p2 (val), u22 (val), p7 (ref), p6 (val), u39 (upval), p1 (val), WepConfig (upval), u17 (upval), Attachments (val), p8 (val)
+            if not p5 then
+                if not p10 then
+                    local AttachedAttachment, Children, GlobalParts, Name, v1, v2
+                    local v3 = if p5 then GetReplacementModel(p5):FindFirstChild(p2.Name) else nil
+                    if not v3 and u22 and u22:FindFirstChildOfClass("Model") then
+                        v3 = u22:FindFirstChildOfClass("Model"):Clone()
+                    end
+                    local v4 = nil
+                    local v5 = nil
+                    if not p5 then
+                        if p5 then
+                            p7 = p7 or nil
+                            if not p7 then
+                                GlobalParts = "GlobalParts"
+                                local GlobalParts_4 = p5:FindFirstChild(GlobalParts)
+                                if GlobalParts_4 then
+                                    local CustomPoints_4 = GlobalParts_4:FindFirstChild("CustomPoints")
+                                    GlobalParts = CustomPoints_4
+                                    if GlobalParts then
+                                        GlobalParts = CustomPoints_4:FindFirstChild(p6)
+                                    end
+                                    v2 = GlobalParts
+                                    GlobalParts = p7
+                                    if not GlobalParts then
+                                        GlobalParts = v2
+                                        if not GlobalParts then
+                                            GlobalParts = p5.GlobalParts.BasePoints:FindFirstChild(p6)
+                                        end
+                                        p7 = GlobalParts
+                                    end
+                                end
+                            end
+                            GlobalParts = p5.Name
+                            local WeaponConfig_2 = WepConfig:GetWeaponConfig(GlobalParts)
+                            if p7 and WeaponConfig_2.AttachedAttachment then
+                                WeaponConfig_2.AttachedAttachment(unpack({p5, p7.Name, p2.Name}))
+                                GlobalParts = nil
+                            end
+                        end
+                    elseif v3 then
+                        local PrimaryPart, v6
+                        if not v3.PrimaryPart then
+                            local AttachmentPoint = v3:FindFirstChild("AttachmentPoint")
+                            if not AttachmentPoint then
+                                AttachmentPoint = v3:FindFirstChildOfClass("BasePart")
+                            end
+                            v3.PrimaryPart = AttachmentPoint
+                            warn("No existing PrimaryPart for " .. v3.Name)
+                        end
+                        p7 = p7 or nil
+                        if not p7 then
+                            local GlobalParts_2 = p5:FindFirstChild("GlobalParts")
+                            if GlobalParts_2 then
+                                local CustomPoints = GlobalParts_2:FindFirstChild("CustomPoints")
+                                v6 = CustomPoints
+                                if v6 then
+                                    v6 = CustomPoints:FindFirstChild(p6)
+                                end
+                                v2 = v6
+                                if not p7 then
+                                    v6 = v2
+                                    if not v6 then
+                                        v6 = p5.GlobalParts.BasePoints:FindFirstChild(p6)
+                                    end
+                                    p7 = v6
+                                end
+                            end
+                        end
+                        if not p7 then
+                            warn("NO VALID NODEPART TO WELD TO.")
+                        else
+                            local WeldConstraint, v7
+                            v3 = v3:Clone()
+                            PrimaryPart = v3.PrimaryPart
+                            for i, j in v3:GetDescendants() do
+                                if j:IsA("BasePart") then
+                                    j.CastShadow = false
+                                    if j ~= PrimaryPart then
+                                        WeldConstraint = Instance.new("WeldConstraint")
+                                        WeldConstraint.Part0 = PrimaryPart
+                                        WeldConstraint.Part1 = j
+                                        WeldConstraint.Parent = j
+                                        j.Anchored = false
+                                    end
+                                end
+                            end
+                            if p2.BaseModule then
+                                v6 = getAttachmentFolder(p2.BaseModule):expect():FindFirstChildOfClass("Model"):Clone()
+                                v3.Parent = v6
+                                local Weld = Instance.new("Weld")
+                                Weld.Part0 = v6.SwingingPart
+                                Weld.Part1 = v3.PrimaryPart
+                                Weld.Parent = v3
+                                v3 = v6
+                            end
+                            u39[p1] = script.Highlight:Clone()
+                            u39[p1].Parent = v3
+                            v3:ScaleTo(findScale(p7, v3.PrimaryPart))
+                            v3:PivotTo(p7.CFrame)
+                            local Weld_2 = Instance.new("Weld")
+                            Weld_2.Part0 = v3.PrimaryPart
+                            Weld_2.Part1 = p7
+                            Weld_2.Parent = v3
+                            local Name_2 = p5.Name
+                            if not (WepConfig:IsStock(Name_2)) and u22.Parent.Name ~= "Charm" then
+                                u17(p5, v3)
+                            end
+                            v3.Parent = Attachments
+                            GlobalParts = {p5, p7.Name, p2.Name, v3}
+                            local WeaponConfig = WepConfig:GetWeaponConfig(p5.Name)
+                            if not WeaponConfig.AttachedAttachment then
+                                v7 = not WeaponConfig.AttachedAttachment
+                                if v7 then
+                                    v7 = not WeaponConfig.DontRunDefaultAttachedAttachment
+                                end
+                            else
+                                v7 = WeaponConfig.AttachedAttachment(unpack(GlobalParts))
+                            end
+                            if v7 then
+                                AttachedAttachment(unpack(GlobalParts))
+                            end
+                            if WeaponConfig.SkipAttachmentModel and WeaponConfig.SkipAttachmentModel[p6] then
+                                for k, n in v3:GetDescendants() do
+                                    if n:IsA("BasePart") then
+                                        n.Transparency = 1
+                                    end
+                                end
+                            end
+                            local CustomPoints_2 = v3:FindFirstChild("CustomPoints")
+                            if CustomPoints_2 then
+                                local GlobalParts_3 = p5:FindFirstChild("GlobalParts")
+                                if GlobalParts_3 then
+                                    local CustomPoints_3 = GlobalParts_3:FindFirstChild("CustomPoints")
+                                    if CustomPoints_3 then
+                                        local Weld_3, v8
+                                        for m, i5 in CustomPoints_2:GetChildren() do
+                                            Weld_3 = Instance.new("Weld")
+                                            Weld_3.Part0 = v3.PrimaryPart
+                                            Weld_3.Part1 = i5
+                                            v8 = Weld_3.Part0.CFrame:Inverse()
+                                            Weld_3.C0 = v8 * Weld_3.Part1.CFrame
+                                            Weld_3.Parent = i5
+                                            i5.Parent = CustomPoints_3
+                                        end
+                                    end
+                                end
+                            end
+                            Children = nil
+                            v4 = v3
+                            local NodeParts = v3:FindFirstChild("NodeParts")
+                            local Children_5 = NodeParts
+                            if Children_5 then
+                                Children_5 = NodeParts:GetChildren()
+                            end
+                            v5 = Children_5
+                        end
+                    end
+                    local v9 = nil
+                    local u357 = u22
+                    if u357 then
+                        u357 = getAttachmentFolder(u22.Parent.Name .. "_Shared")
+                        u357:expect()
+                        GlobalParts = u22:FindFirstChild("AttachmentModule")
+                        v9 = GlobalParts
+                        if not v9 then
+                            GlobalParts = getAttachmentFolder(u22.Parent.Name .. "_Shared")
+                            GlobalParts = GlobalParts:expect()
+                            local AttachmentModule = GlobalParts
+                            if AttachmentModule then
+                                AttachmentModule = GlobalParts:FindFirstChild("AttachmentModule")
+                            end
+                            v9 = AttachmentModule
+                        end
+                        if not v9 then
+                            GlobalParts = p2.SharedModule
+                            if GlobalParts then
+                                GlobalParts = getAttachmentFolder(p2.SharedModule)
+                                GlobalParts = GlobalParts:expect()
+                                local AttachmentModule_2 = GlobalParts
+                                if AttachmentModule_2 then
+                                    AttachmentModule_2 = GlobalParts:FindFirstChild("AttachmentModule")
+                                end
+                                v9 = AttachmentModule_2
+                            end
+                        end
+                    end
+                    u357 = nil
+                    GlobalParts = p8
+                    if GlobalParts then
+                        if not p5 then
+                            GlobalParts = v3
+                        else
+                            GlobalParts = v4
+                        end
+                        u357 = p8(p1, GlobalParts, v9, u39)
+                    end
+                    GlobalParts = p5
+                    if not GlobalParts then
+                        v1 = a1
+                    elseif not v9 then
+                        v1 = a1
+                    elseif not u357 then
+                        v1 = a1
+                    else
+                        GlobalParts = u357.SettingChanges
+                        if not GlobalParts then
+                            v1 = a1
+                        else
+                            p5:WaitForChild("KeyParts", 5)
+                            local Barrel = p5.KeyParts:FindFirstChild("Barrel")
+                            if not Barrel then
+                                v1 = a1
+                            elseif not u357.SettingChanges.BarrelAttachment then
+                                v1 = a1
+                            else
+                                local Children_6, Children_7
+                                Children_6, Children_7, Children = Barrel:GetChildren()
+                                v1 = a1
+                                for i6, i7 in Barrel:GetChildren() do
+                                    if i7:IsA("Attachment") then
+                                        for i8, i9 in i7:GetChildren() do
+                                            i9.Parent = u357.SettingChanges.BarrelAttachment
+                                        end
+                                    else
+                                        i7.Parent = u357.SettingChanges.BarrelAttachment
+                                    end
+                                end
+                                local u498 = nil
+                            end
+                        end
+                    end
+                    v1(v4, v5)
+                    return
+                elseif p10() then
+                    a1()
+                    return
+                end
+            elseif u34 ~= p4 and not p9 then
+                a1()
+                return
+            end
+        end)
+    end
+    warn("Failed to get folder for", p2.Name)
+    return Promise.resolve()
 end
-function GetReplacementModel(p106) -- name: GetReplacementModel
-	-- upvalues: (copy) v_u_7, (copy) v_u_8
-	local v_u_107 = v_u_7[p106] or (p106:FindFirstChild("AttReplaceModels") or v_u_8)
-	if not v_u_7[p106] then
-		v_u_7[p106] = v_u_107
-		if v_u_107 ~= v_u_8 then
-			p106.Destroying:Connect(function()
-				-- upvalues: (copy) v_u_107
-				v_u_107:Destroy()
-			end)
-		end
-		v_u_107.Parent = nil
-	end
-	if not p106:FindFirstChild("Attachments") then
-		Instance.new("Folder", p106).Name = "Attachments"
-	end
-	return v_u_107
+function GetReplacementModel(p1) -- Line: 575 -- upvalues: u35 (val), Folder (val)
+    local AttReplaceModels = u35[p1]
+    if not AttReplaceModels then
+        AttReplaceModels = p1:FindFirstChild("AttReplaceModels")
+        if not AttReplaceModels then
+            AttReplaceModels = Folder
+        end
+    end
+    if not (u35[p1]) then
+        u35[p1] = AttReplaceModels
+        if AttReplaceModels ~= Folder then
+            p1.Destroying:Connect(function() -- Line: 580 -- upvalues: AttReplaceModels (val)
+                AttReplaceModels:Destroy()
+            end)
+        end
+        AttReplaceModels.Parent = nil
+    end
+    if not (p1:FindFirstChild("Attachments")) then
+        local v1 = Instance.new("Folder", p1)
+        v1.Name = "Attachments"
+    end
+    return AttReplaceModels
 end
-function AttachedAttachment(p108, p109, p110, p111, _) -- name: AttachedAttachment
-	local v112 = p108:FindFirstChild("Weapon")
-	if v112 then
-		local v113 = { v112:FindFirstChild(p109 .. "_Hide"), (v112:FindFirstChild(p109 .. "_Show")) }
-		for v114, v115 in pairs(v113) do
-			for _, v116 in pairs(v115:GetDescendants()) do
-				if v116:IsA("BasePart") or (v116:IsA("Texture") or v116:IsA("Decal")) then
-					v116.Transparency = v114 == 1 and 1 or 0
-				elseif v116:IsA("Beam") or (v116:IsA("ParticleEmitter") or v116:IsA("Trail")) then
-					v116.Enabled = false
-				end
-			end
-		end
-		for _, v117 in v112:GetChildren() do
-			if v117:IsA("Model") then
-				local v118 = v117:GetAttribute("VisibilityRule")
-				local v119 = v117:GetAttribute("VisibilityTarget")
-				if v118 and (v119 and v119 == p109) then
-					if v118 == "Hide" then
-						for _, v120 in v117:GetDescendants() do
-							if v120:IsA("BasePart") or (v120:IsA("Decal") or v120:IsA("Texture")) then
-								if v120:GetAttribute("VisibilityOrigTransparency") == nil then
-									v120:SetAttribute("VisibilityOrigTransparency", v120.Transparency)
-								end
-								v120.Transparency = 1
-							elseif v120:IsA("Beam") or v120:IsA("ParticleEmitter") then
-								if v120:GetAttribute("VisibilityOrigEnabled") == nil then
-									v120:SetAttribute("VisibilityOrigEnabled", v120.Enabled)
-								end
-								v120.Enabled = false
-							end
-						end
-					elseif v118 == "Show" then
-						for _, v121 in v117:GetDescendants() do
-							if v121:IsA("BasePart") or (v121:IsA("Decal") or v121:IsA("Texture")) then
-								v121.Transparency = v121:GetAttribute("VisibilityOrigTransparency") or 0
-							elseif v121:IsA("Beam") or v121:IsA("ParticleEmitter") then
-								local v122 = v121:GetAttribute("VisibilityOrigEnabled")
-								v121.Enabled = v122 == nil and true or v122
-							end
-						end
-					elseif v118 == "Replace" and v117:GetAttribute("ReplaceAttachment") == p110 then
-						if p111 and (p111.PrimaryPart and v117.PrimaryPart) then
-							local v123 = v117:GetAttribute("_ReplaceOffset") or CFrame.new()
-							v117.PrimaryPart.Anchored = false
-							local v124 = Instance.new("Weld")
-							v124.Name = "ReplaceNodeWeld"
-							v124.Part0 = v117.PrimaryPart
-							v124.Part1 = p111.PrimaryPart
-							v124.C1 = v123
-							v124.Parent = v117
-						end
-						if p111 then
-							for _, v125 in p111:GetDescendants() do
-								if v125:IsA("BasePart") or (v125:IsA("Decal") or v125:IsA("Texture")) then
-									v125:SetAttribute("ReplacedTransparency", v125.Transparency)
-									v125.Transparency = 1
-								elseif v125:IsA("Beam") or v125:IsA("ParticleEmitter") then
-									v125:SetAttribute("ReplacedEnabled", v125.Enabled)
-									v125.Enabled = false
-								end
-							end
-						end
-						for _, v126 in v117:GetDescendants() do
-							if v126:IsA("BasePart") or (v126:IsA("Decal") or v126:IsA("Texture")) then
-								v126.Transparency = v126:GetAttribute("VisibilityOrigTransparency") or 0
-							elseif v126:IsA("Beam") or v126:IsA("ParticleEmitter") then
-								local v127 = v126:GetAttribute("VisibilityOrigEnabled")
-								v126.Enabled = v127 == nil and true or v127
-							end
-						end
-						local v128 = p111 and p111:FindFirstChildWhichIsA("Highlight")
-						if v128 then
-							v128.Adornee = v117
-						end
-						local v129 = v117:FindFirstChild("AimPart", true)
-						if v129 and v129:IsA("BasePart") then
-							local v130 = p108:FindFirstChild("KeyParts")
-							if v130 then
-								v130 = v130:FindFirstChild("Aimpart")
-							end
-							if v130 then
-								v130:SetAttribute("OrigAimpartCFrame", v130.CFrame)
-								v130.CFrame = v129.CFrame
-							end
-						end
-					end
-				end
-			end
-		end
-	end
+function AttachedAttachment(p1, p2, p3, p4, p5) -- Line: 593
+    local Weapon = p1:FindFirstChild("Weapon")
+    if Weapon then
+        local AimPart, Aimpart, Attribute, Attribute_2, Attribute_3, Attribute_4, Attribute_5, Highlight, KeyParts, Weld, v1, v2, v3, v4, v5, v6
+        local v7 = Weapon:FindFirstChild(p2 .. "_Hide")
+        local v8 = Weapon:FindFirstChild(p2 .. "_Show")
+        local v9 = {v7, v8}
+        v2, v4, v6, v1 = p2, p3, p4, p1
+        for k, v in pairs(v9) do
+            for k2, i in pairs(v:GetDescendants()) do
+                if i:IsA("BasePart") then
+                    if k ~= 1 then
+                        v3 = 0
+                    else
+                        v3 = 1
+                    end
+                    i.Transparency = v3
+                elseif not (i:IsA("Texture")) and not (i:IsA("Decal")) then
+                    if i:IsA("Beam") then
+                        i.Enabled = false
+                    elseif not (i:IsA("ParticleEmitter")) and not (i:IsA("Trail")) then
+                    end
+                end
+            end
+        end
+        for j, k3 in Weapon:GetChildren() do
+            if k3:IsA("Model") then
+                Attribute = k3:GetAttribute("VisibilityRule")
+                Attribute_2 = k3:GetAttribute("VisibilityTarget")
+                if Attribute and Attribute_2 and Attribute_2 == v2 then
+                    if Attribute == "Hide" then
+                        for i9, i10 in k3:GetDescendants() do
+                            if i10:IsA("BasePart") then
+                                if i10:GetAttribute("VisibilityOrigTransparency") == nil then
+                                    i10:SetAttribute("VisibilityOrigTransparency", i10.Transparency)
+                                end
+                                i10.Transparency = 1
+                            elseif not (i10:IsA("Decal")) and not (i10:IsA("Texture")) then
+                                if i10:IsA("Beam") then
+                                    if i10:GetAttribute("VisibilityOrigEnabled") == nil then
+                                        i10:SetAttribute("VisibilityOrigEnabled", i10.Enabled)
+                                    end
+                                    i10.Enabled = false
+                                elseif not (i10:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                    elseif Attribute == "Show" then
+                        for i7, i8 in k3:GetDescendants() do
+                            if i8:IsA("BasePart") then
+                                i8.Transparency = i8:GetAttribute("VisibilityOrigTransparency") or 0
+                            elseif not (i8:IsA("Decal")) and not (i8:IsA("Texture")) then
+                                if i8:IsA("Beam") then
+                                    Attribute_3 = i8:GetAttribute("VisibilityOrigEnabled")
+                                    if Attribute_3 == nil then
+                                        v5 = true
+                                    else
+                                        v5 = Attribute_3
+                                    end
+                                    i8.Enabled = v5
+                                elseif not (i8:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                    elseif Attribute == "Replace" and k3:GetAttribute("ReplaceAttachment") == v4 then
+                        if v6 and v6.PrimaryPart and k3.PrimaryPart then
+                            Attribute_4 = k3:GetAttribute("_ReplaceOffset")
+                            if not Attribute_4 then
+                                Attribute_4 = CFrame.new()
+                            end
+                            k3.PrimaryPart.Anchored = false
+                            Weld = Instance.new("Weld")
+                            Weld.Name = "ReplaceNodeWeld"
+                            Weld.Part0 = k3.PrimaryPart
+                            Weld.Part1 = v6.PrimaryPart
+                            Weld.C1 = Attribute_4
+                            Weld.Parent = k3
+                        end
+                        if v6 then
+                            for n, m in v6:GetDescendants() do
+                                if m:IsA("BasePart") then
+                                    m:SetAttribute("ReplacedTransparency", m.Transparency)
+                                    m.Transparency = 1
+                                elseif not (m:IsA("Decal")) and not (m:IsA("Texture")) then
+                                    if m:IsA("Beam") then
+                                        m:SetAttribute("ReplacedEnabled", m.Enabled)
+                                        m.Enabled = false
+                                    elseif not (m:IsA("ParticleEmitter")) then
+                                    end
+                                end
+                            end
+                        end
+                        for i5, i6 in k3:GetDescendants() do
+                            if i6:IsA("BasePart") then
+                                i6.Transparency = i6:GetAttribute("VisibilityOrigTransparency") or 0
+                            elseif not (i6:IsA("Decal")) and not (i6:IsA("Texture")) then
+                                if i6:IsA("Beam") then
+                                    Attribute_5 = i6:GetAttribute("VisibilityOrigEnabled")
+                                    if Attribute_5 == nil then
+                                        v5 = true
+                                    else
+                                        v5 = Attribute_5
+                                    end
+                                    i6.Enabled = v5
+                                elseif not (i6:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                        if v6 then
+                            Highlight = v6:FindFirstChildWhichIsA("Highlight")
+                            if Highlight then
+                                Highlight.Adornee = k3
+                            end
+                        end
+                        AimPart = k3:FindFirstChild("AimPart", true)
+                        if AimPart and AimPart:IsA("BasePart") then
+                            KeyParts = v1:FindFirstChild("KeyParts")
+                            Aimpart = KeyParts
+                            if Aimpart then
+                                Aimpart = KeyParts:FindFirstChild("Aimpart")
+                            end
+                            if Aimpart then
+                                Aimpart:SetAttribute("OrigAimpartCFrame", Aimpart.CFrame)
+                                Aimpart.CFrame = AimPart.CFrame
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
-function DetachedAttachment(p131, p132, p133, p134, _) -- name: DetachedAttachment
-	local v135 = p131:FindFirstChild("Weapon")
-	if v135 then
-		local v136 = { v135:FindFirstChild(p132 .. "_Hide"), (v135:FindFirstChild(p132 .. "_Show")) }
-		for v137, v138 in pairs(v136) do
-			for _, v139 in pairs(v138:GetDescendants()) do
-				if v139:IsA("BasePart") or (v139:IsA("Texture") or v139:IsA("Decal")) then
-					v139.Transparency = v137 == 1 and (v139:GetAttribute("Transparency") or 0) or 1
-				end
-			end
-		end
-		for _, v140 in v135:GetChildren() do
-			if v140:IsA("Model") then
-				local v141 = v140:GetAttribute("VisibilityRule")
-				local v142 = v140:GetAttribute("VisibilityTarget")
-				if v141 and (v142 and v142 == p132) then
-					if v141 == "Hide" then
-						for _, v143 in v140:GetDescendants() do
-							if v143:IsA("BasePart") or (v143:IsA("Decal") or v143:IsA("Texture")) then
-								v143.Transparency = v143:GetAttribute("VisibilityOrigTransparency") or 0
-								v143:SetAttribute("VisibilityOrigTransparency", nil)
-							elseif v143:IsA("Beam") or v143:IsA("ParticleEmitter") then
-								local v144 = v143:GetAttribute("VisibilityOrigEnabled")
-								v143.Enabled = v144 == nil and true or v144
-								v143:SetAttribute("VisibilityOrigEnabled", nil)
-							end
-						end
-					elseif v141 == "Show" then
-						for _, v145 in v140:GetDescendants() do
-							if v145:IsA("BasePart") or (v145:IsA("Decal") or v145:IsA("Texture")) then
-								v145.Transparency = 1
-							elseif v145:IsA("Beam") or v145:IsA("ParticleEmitter") then
-								v145.Enabled = false
-							end
-						end
-					elseif v141 == "Replace" and v140:GetAttribute("ReplaceAttachment") == p133 then
-						local v146 = v140:FindFirstChild("ReplaceNodeWeld")
-						if v146 then
-							v146:Destroy()
-						end
-						if v140.PrimaryPart then
-							v140.PrimaryPart.Anchored = true
-						end
-						local v147 = p134 and p134:FindFirstChildWhichIsA("Highlight")
-						if v147 then
-							v147.Adornee = nil
-						end
-						for _, v148 in v140:GetDescendants() do
-							if v148:IsA("BasePart") or (v148:IsA("Decal") or v148:IsA("Texture")) then
-								v148.Transparency = 1
-							elseif v148:IsA("Beam") or v148:IsA("ParticleEmitter") then
-								v148.Enabled = false
-							end
-						end
-						if p134 then
-							for _, v149 in p134:GetDescendants() do
-								if v149:IsA("BasePart") or (v149:IsA("Decal") or v149:IsA("Texture")) then
-									local v150 = v149:GetAttribute("ReplacedTransparency")
-									if v150 ~= nil then
-										v149.Transparency = v150
-										v149:SetAttribute("ReplacedTransparency", nil)
-									end
-								elseif v149:IsA("Beam") or v149:IsA("ParticleEmitter") then
-									local v151 = v149:GetAttribute("ReplacedEnabled")
-									if v151 ~= nil then
-										v149.Enabled = v151
-										v149:SetAttribute("ReplacedEnabled", nil)
-									end
-								end
-							end
-						end
-						local v152 = p131:FindFirstChild("KeyParts")
-						if v152 then
-							v152 = v152:FindFirstChild("Aimpart")
-						end
-						if v152 then
-							local v153 = v152:GetAttribute("OrigAimpartCFrame")
-							if v153 then
-								v152.CFrame = v153
-								v152:SetAttribute("OrigAimpartCFrame", nil)
-							end
-						end
-					end
-				end
-			end
-		end
-	end
+function DetachedAttachment(p1, p2, p3, p4, p5) -- Line: 696
+    local Weapon = p1:FindFirstChild("Weapon")
+    if Weapon then
+        local Aimpart, Attribute, Attribute_2, Attribute_3, Attribute_4, Attribute_5, Attribute_6, Attribute_7, Highlight, KeyParts, ReplaceNodeWeld, v1, v2, v3, v4, v5
+        local v6 = Weapon:FindFirstChild(p2 .. "_Hide")
+        local v7 = Weapon:FindFirstChild(p2 .. "_Show")
+        local v8 = {v6, v7}
+        v2, v3, v5, v1 = p2, p3, p4, p1
+        for k, v in pairs(v8) do
+            for k2, i in pairs(v:GetDescendants()) do
+                if i:IsA("BasePart") then
+                    if k ~= 1 then
+                        Attribute_7 = 1
+                    else
+                        Attribute_7 = i:GetAttribute("Transparency")
+                        if not Attribute_7 then
+                            Attribute_7 = 0
+                        end
+                    end
+                    i.Transparency = Attribute_7
+                elseif not (i:IsA("Texture")) and not (i:IsA("Decal")) then
+                end
+            end
+        end
+        for j, k3 in Weapon:GetChildren() do
+            if k3:IsA("Model") then
+                Attribute = k3:GetAttribute("VisibilityRule")
+                Attribute_2 = k3:GetAttribute("VisibilityTarget")
+                if Attribute and Attribute_2 and Attribute_2 == v2 then
+                    if Attribute == "Hide" then
+                        for i9, i10 in k3:GetDescendants() do
+                            if i10:IsA("BasePart") then
+                                i10.Transparency = i10:GetAttribute("VisibilityOrigTransparency") or 0
+                                i10:SetAttribute("VisibilityOrigTransparency", nil)
+                            elseif not (i10:IsA("Decal")) and not (i10:IsA("Texture")) then
+                                if i10:IsA("Beam") then
+                                    Attribute_3 = i10:GetAttribute("VisibilityOrigEnabled")
+                                    if Attribute_3 == nil then
+                                        v4 = true
+                                    else
+                                        v4 = Attribute_3
+                                    end
+                                    i10.Enabled = v4
+                                    i10:SetAttribute("VisibilityOrigEnabled", nil)
+                                elseif not (i10:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                    elseif Attribute == "Show" then
+                        for i7, i8 in k3:GetDescendants() do
+                            if i8:IsA("BasePart") then
+                                i8.Transparency = 1
+                            elseif not (i8:IsA("Decal")) and not (i8:IsA("Texture")) then
+                                if i8:IsA("Beam") then
+                                    i8.Enabled = false
+                                elseif not (i8:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                    elseif Attribute == "Replace" and k3:GetAttribute("ReplaceAttachment") == v3 then
+                        ReplaceNodeWeld = k3:FindFirstChild("ReplaceNodeWeld")
+                        if ReplaceNodeWeld then
+                            ReplaceNodeWeld:Destroy()
+                        end
+                        if k3.PrimaryPart then
+                            k3.PrimaryPart.Anchored = true
+                        end
+                        if v5 then
+                            Highlight = v5:FindFirstChildWhichIsA("Highlight")
+                            if Highlight then
+                                Highlight.Adornee = nil
+                            end
+                        end
+                        for n, m in k3:GetDescendants() do
+                            if m:IsA("BasePart") then
+                                m.Transparency = 1
+                            elseif not (m:IsA("Decal")) and not (m:IsA("Texture")) then
+                                if m:IsA("Beam") then
+                                    m.Enabled = false
+                                elseif not (m:IsA("ParticleEmitter")) then
+                                end
+                            end
+                        end
+                        if v5 then
+                            for i5, i6 in v5:GetDescendants() do
+                                if i6:IsA("BasePart") then
+                                    Attribute_5 = i6:GetAttribute("ReplacedTransparency")
+                                    if Attribute_5 ~= nil then
+                                        i6.Transparency = Attribute_5
+                                        i6:SetAttribute("ReplacedTransparency", nil)
+                                    end
+                                elseif not (i6:IsA("Decal")) and not (i6:IsA("Texture")) then
+                                    if i6:IsA("Beam") then
+                                        Attribute_4 = i6:GetAttribute("ReplacedEnabled")
+                                        if Attribute_4 ~= nil then
+                                            i6.Enabled = Attribute_4
+                                            i6:SetAttribute("ReplacedEnabled", nil)
+                                        end
+                                    elseif not (i6:IsA("ParticleEmitter")) then
+                                    end
+                                end
+                            end
+                        end
+                        KeyParts = v1:FindFirstChild("KeyParts")
+                        Aimpart = KeyParts
+                        if Aimpart then
+                            Aimpart = KeyParts:FindFirstChild("Aimpart")
+                        end
+                        if Aimpart then
+                            Attribute_6 = Aimpart:GetAttribute("OrigAimpartCFrame")
+                            if Attribute_6 then
+                                Aimpart.CFrame = Attribute_6
+                                Aimpart:SetAttribute("OrigAimpartCFrame", nil)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
-function getAttachmentFolder(p_u_154) -- name: getAttachmentFolder
-	-- upvalues: (copy) v_u_5, (copy) v_u_4
-	return v_u_5.new(function(p155, _, _)
-		-- upvalues: (ref) v_u_4, (copy) p_u_154
-		p155(v_u_4:GetAttachmentFolder(p_u_154))
-	end)
+function getAttachmentFolder(p1) -- Line: 792 -- upvalues: Promise (val), WepConfig (val)
+    return Promise.new(function(a1, p2, p3) -- Line: 793 -- upvalues: WepConfig (upval), p1 (val)
+        a1(WepConfig:GetAttachmentFolder(p1))
+    end)
 end
-function findScale(p156, p157) -- name: findScale
-	return p156.Size.Magnitude / p157.Size.Magnitude
+function findScale(p1, p2) -- Line: 798
+    return p1.Size.Magnitude / p2.Size.Magnitude
 end
-function scaleModelWithJoints(p158, p159) -- name: scaleModelWithJoints
-	for _, v160 in ipairs(p158:GetDescendants()) do
-		if v160:IsA("BasePart") then
-			v160.Size = v160.Size * p159
-			local v161 = v160.Position - p158:GetPrimaryPartCFrame().p
-			local v162 = v160.CFrame - v160.Position
-			v160.CFrame = CFrame.new(p158:GetPrimaryPartCFrame().p + v161 * p159) * v162
-		elseif v160:IsA("JointInstance") then
-			local v163 = v160.C0.p * p159
-			local v164, v165, v166 = v160.C0:ToEulerAnglesXYZ()
-			local v167 = v160.C1.p * p159
-			local v168, v169, v170 = v160.C1:ToEulerAnglesXYZ()
-			v160.C0 = CFrame.new(v163) * CFrame.Angles(v164, v165, v166)
-			v160.C1 = CFrame.new(v167) * CFrame.Angles(v168, v169, v170)
-		end
-	end
+function scaleModelWithJoints(p1, p2) -- Line: 804
+    local v1, v2, v3, v4, v5, v6, v7, v8, v9
+    for i, v in ipairs(p1:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Size = v.Size * p2
+            v7 = v.Position - p1:GetPrimaryPartCFrame().p
+            v.CFrame = CFrame.new(p1:GetPrimaryPartCFrame().p + v7 * p2) * (v.CFrame - v.Position)
+        elseif v:IsA("JointInstance") then
+            v7 = v.C0.p * p2
+            v8, v9, v1 = v.C0:ToEulerAnglesXYZ()
+            v2 = v.C1.p * p2
+            v3, v4, v5 = v.C1:ToEulerAnglesXYZ()
+            v6 = CFrame.new(v7)
+            v.C0 = v6 * CFrame.Angles(v8, v9, v1)
+            v6 = CFrame.new(v2)
+            v.C1 = v6 * CFrame.Angles(v3, v4, v5)
+        end
+    end
 end
-return v19
+return v1

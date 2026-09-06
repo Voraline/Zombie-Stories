@@ -1,55 +1,48 @@
-local v_u_1 = require("../Shared/Util")
-local v_u_4 = v_u_1.MakeSequenceType({
-	["Prefixes"] = "# hexColor3 ! brickColor3",
-	["ValidateEach"] = nil,
-	["TransformEach"] = nil,
-	["Constructor"] = nil,
-	["Length"] = 3,
-	["ValidateEach"] = function(p2, p3) -- name: ValidateEach
-		if p2 == nil then
-			return false, ("Invalid or missing number at position %d in Color3 type."):format(p3)
-		elseif p2 < 0 or p2 > 255 then
-			return false, ("Number out of acceptable range 0-255 at position %d in Color3 type."):format(p3)
-		elseif p2 % 1 == 0 then
-			return true
-		else
-			return false, ("Number is not an integer at position %d in Color3 type."):format(p3)
-		end
-	end,
-	["TransformEach"] = tonumber,
-	["Constructor"] = Color3.fromRGB
+local u2 = require("../Shared/Util")
+local u8 = u2.MakeSequenceType({
+    Prefixes = "# hexColor3 ! brickColor3",
+    Length = 3,
+    ValidateEach = function(p1, p2) -- Line: 5
+        if p1 == nil then
+            return false, ("Invalid or missing number at position %d in Color3 type."):format(p2)
+        end
+        if p1 < 0 or 255 < p1 then
+            return false, ("Number out of acceptable range 0-255 at position %d in Color3 type."):format(p2)
+        end
+        if p1 % 1 ~= 0 then
+            return false, ("Number is not an integer at position %d in Color3 type."):format(p2)
+        end
+        return true
+    end,
+    TransformEach = tonumber,
+    Constructor = Color3.fromRGB,
 })
-local function v_u_6(p5) -- name: parseHexDigit
-	if #p5 == 1 then
-		p5 = p5 .. p5
-	end
-	return tonumber(p5, 16)
+local function parseHexDigit(p1) -- Line: 21
+    local v1
+    if #p1 ~= 1 then
+        v1 = p1
+    else
+        v1 = p1 .. p1
+    end
+    return (tonumber(v1, 16))
 end
-local v_u_15 = {
-	["Transform"] = function(p7) -- name: Transform
-		-- upvalues: (copy) v_u_1, (copy) v_u_6
-		local v8, v9, v10 = p7:match("^#?(%x%x?)(%x%x?)(%x%x?)$")
-		return v_u_1.Each(v_u_6, v8, v9, v10)
-	end,
-	["Validate"] = function(p11, p12, p13) -- name: Validate
-		local v14
-		if p11 == nil or p12 == nil then
-			v14 = false
-		else
-			v14 = p13 ~= nil
-		end
-		return v14, "Invalid hex color"
-	end,
-	["Parse"] = function(...) -- name: Parse
-		return Color3.fromRGB(...)
-	end
+local u10 = {
+    Transform = function(p1) -- Line: 30 -- upvalues: u2 (val), parseHexDigit (val)
+        local v1, v2, v3
+        v1, v2, v3 = p1:match("^#?(%x%x?)(%x%x?)(%x%x?)$")
+        return u2.Each(parseHexDigit, v1, v2, v3)
+    end,
+    Validate = function(p1, p2, p3) -- Line: 35
+        local v1 = if p1 ~= nil then if p2 ~= nil then p3 ~= nil else false else false
+        return v1, "Invalid hex color"
+    end,
+    Parse = function(...) -- Line: 39
+        return Color3.fromRGB(...)
+    end,
 }
-return function(p16)
-	-- upvalues: (copy) v_u_4, (copy) v_u_1, (copy) v_u_15
-	p16:RegisterType("color3", v_u_4)
-	p16:RegisterType("color3s", v_u_1.MakeListableType(v_u_4, {
-		["Prefixes"] = "# hexColor3s ! brickColor3s"
-	}))
-	p16:RegisterType("hexColor3", v_u_15)
-	p16:RegisterType("hexColor3s", v_u_1.MakeListableType(v_u_15))
+return function(p1) -- Line: 44 -- upvalues: u8 (val), u2 (val), u10 (val)
+    p1:RegisterType("color3", u8)
+    p1:RegisterType("color3s", u2.MakeListableType(u8, {Prefixes = "# hexColor3s ! brickColor3s"}))
+    p1:RegisterType("hexColor3", u10)
+    p1:RegisterType("hexColor3s", u2.MakeListableType(u10))
 end

@@ -1,212 +1,202 @@
 local v1 = {}
-local v_u_2 = false
-local v_u_3 = nil
-local v_u_4 = nil
-local v_u_5 = nil
-local v_u_6 = nil
-local v_u_7 = nil
-local v_u_8 = nil
-local v_u_9 = nil
-local v_u_10 = nil
-local v_u_11 = nil
-local v_u_12 = nil
-local v_u_13 = nil
-local v_u_14 = nil
-local v_u_15 = nil
-local v_u_16 = require("./OffHandChecks")
-local function v_u_20() -- name: lazyLoad
-	-- upvalues: (ref) v_u_15, (ref) v_u_12, (ref) v_u_13, (ref) v_u_14
-	local v17 = game:GetService("ReplicatedStorage")
-	if not v_u_15 then
-		v_u_15 = require(v17.common.RedEvents.Framework.FrameworkEvents).OffHandUse
-	end
-	if not v_u_12 then
-		local v18 = script.Parent.Parent.Parent
-		local v19 = v18.Parent:WaitForChild("Classes")
-		v_u_12 = require(v18.ViewmodelManager)
-		v_u_13 = require(v19.Viewmodel.ViewmodelUtils.FakeArmUtil)
-		v_u_14 = require(v17.common:WaitForChild("PlayerHandler"))
-	end
+local u1 = false
+local u2 = nil
+local u3 = nil
+local u4 = nil
+local u5 = nil
+local u6 = nil
+local u7 = nil
+local u8 = nil
+local u9 = nil
+local u10 = nil
+local u11 = nil
+local u12 = nil
+local u13 = nil
+local u14 = nil
+local u17 = require("./OffHandChecks")
+local function lazyLoad() -- Line: 32 -- upvalues: u14 (ref), u11 (ref), u12 (ref), u13 (ref)
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    if not u14 then
+        u14 = require(ReplicatedStorage.common.RedEvents.Framework.FrameworkEvents).OffHandUse
+    end
+    if u11 then
+        return
+    end
+    local Parent = script.Parent.Parent.Parent
+    local Classes = Parent.Parent:WaitForChild("Classes")
+    u11 = require(Parent.ViewmodelManager)
+    u12 = require(Classes.Viewmodel.ViewmodelUtils.FakeArmUtil)
+    u13 = require(ReplicatedStorage.common:WaitForChild("PlayerHandler"))
 end
-function v1.Init(_, p21) -- name: Init
-	-- upvalues: (ref) v_u_5, (ref) v_u_6, (ref) v_u_7, (ref) v_u_8, (ref) v_u_9, (ref) v_u_10, (ref) v_u_11
-	v_u_5 = p21.Inventory
-	v_u_6 = p21.CurrentWeaponGetter
-	v_u_7 = p21.AmmoChangedSignal
-	v_u_8 = p21.QuickSwapModule
-	v_u_9 = p21.DualWieldModule
-	v_u_10 = p21.SetSwappingDisabled
-	v_u_11 = p21.LPC
+function v1.Init(p1, p2) -- Line: 51 -- upvalues: u4 (ref), u5 (ref), u6 (ref), u7 (ref), u8 (ref), u9 (ref), u10 (ref)
+    u4 = p2.Inventory
+    u5 = p2.CurrentWeaponGetter
+    u6 = p2.AmmoChangedSignal
+    u7 = p2.QuickSwapModule
+    u8 = p2.DualWieldModule
+    u9 = p2.SetSwappingDisabled
+    u10 = p2.LPC
 end
-function v1.IsActive(_) -- name: IsActive
-	-- upvalues: (ref) v_u_2
-	return v_u_2
+function v1.IsActive(p1) -- Line: 61 -- upvalues: u1 (ref)
+    return u1
 end
-function v1.GetItem(_) -- name: GetItem
-	-- upvalues: (ref) v_u_3
-	return v_u_3
+function v1.GetItem(p1) -- Line: 65 -- upvalues: u2 (ref)
+    return u2
 end
-function v1.GetPrimaryWeapon(_) -- name: GetPrimaryWeapon
-	-- upvalues: (ref) v_u_4
-	return v_u_4
+function v1.GetPrimaryWeapon(p1) -- Line: 69 -- upvalues: u3 (ref)
+    return u3
 end
-function v1.UseItem(_, p22) -- name: UseItem
-	-- upvalues: (ref) v_u_2, (ref) v_u_9, (ref) v_u_5, (ref) v_u_6, (copy) v_u_16, (copy) v_u_20, (ref) v_u_8, (ref) v_u_4, (ref) v_u_3, (ref) v_u_10, (ref) v_u_12, (ref) v_u_13, (ref) v_u_7, (ref) v_u_11, (ref) v_u_14, (ref) v_u_15
-	if v_u_2 then
-		return false
-	end
-	if v_u_9 and v_u_9:IsActive() then
-		return false
-	end
-	local v23 = v_u_5[p22]
-	local v24 = v_u_6()
-	if not v_u_16.CanUseItem(v23, v24) then
-		return false
-	end
-	if not v_u_16.CanUseWithCurrentWeapon(v24) then
-		return false
-	end
-	v_u_20()
-	if v_u_8 and v_u_8:IsActive() then
-		v_u_8:Complete()
-		v24 = v_u_6()
-	end
-	v_u_4 = v24
-	v_u_3 = v23
-	v_u_2 = true
-	if v_u_10 then
-		v_u_10(true)
-	end
-	if v_u_4 then
-		if v_u_4.Viewmodel then
-			v_u_4.Viewmodel.ForceOneHanded = true
-			v_u_4.Viewmodel.RightArmOnly = true
-		end
-		v_u_12:SetArmRequest(v_u_4, "Right")
-	end
-	v_u_3.IsDualWieldLeft = true
-	v_u_3.IsEquipped = true
-	if v_u_3.Viewmodel then
-		v_u_3.Viewmodel.LeftArmOnly = true
-		v_u_3.Viewmodel:SetEnabled(true)
-	end
-	v_u_12:Equip(v_u_3, "Left", 20)
-	if v_u_3.Viewmodel and v_u_3.Viewmodel.Model then
-		v_u_13:SetArmOwner("Left", v_u_3.Viewmodel.Model)
-	end
-	task.delay(0.1, function()
-		-- upvalues: (ref) v_u_10, (ref) v_u_2
-		if v_u_10 and v_u_2 then
-			v_u_10(false)
-		end
-	end)
-	v_u_7:Fire(true)
-	if v_u_11 then
-		v_u_11.States.OffHandActive = true
-	end
-	local v25 = v_u_14:GetPlayerState(game.Players.LocalPlayer)
-	if v25 then
-		v25.OffHandActive = true
-		v25.OffHandEquipped = v_u_3.Config.WeaponId or (v_u_3.Name or false)
-		v25.OffHandWepId = v_u_3.WepId or false
-	end
-	if v_u_3.Config.Use then
-		if v_u_15 and v_u_3.WepId then
-			v_u_15:FireServer({
-				["WepId"] = v_u_3.WepId
-			})
-		end
-		task.defer(function()
-			-- upvalues: (ref) v_u_3
-			v_u_3.Config.Use(v_u_3.Config, v_u_3)
-		end)
-	end
-	return true
+function v1.UseItem(p1, p2) -- Line: 74 -- upvalues: u1 (ref), u8 (ref), u4 (ref), u5 (ref), u17 (val), lazyLoad (val), u7 (ref), u3 (ref), u2 (ref), u9 (ref), u11 (ref), u12 (ref), u6 (ref), u10 (ref), u13 (ref), u14 (ref)
+    if u1 then
+        return false
+    end
+    if not u8 then
+        local v1 = u4[p2]
+        local v2 = u5()
+        if not (u17.CanUseItem(v1, v2)) or not (u17.CanUseWithCurrentWeapon(v2)) then
+            return false
+        end
+        lazyLoad()
+        if u7 and u7:IsActive() then
+            u7:Complete()
+            v2 = u5()
+        end
+        u3 = v2
+        u2 = v1
+        u1 = true
+        if u9 then
+            u9(true)
+        end
+        if u3 then
+            if u3.Viewmodel then
+                u3.Viewmodel.ForceOneHanded = true
+                u3.Viewmodel.RightArmOnly = true
+            end
+            u11:SetArmRequest(u3, "Right")
+        end
+        u2.IsDualWieldLeft = true
+        u2.IsEquipped = true
+        if u2.Viewmodel then
+            u2.Viewmodel.LeftArmOnly = true
+            u2.Viewmodel:SetEnabled(true)
+        end
+        u11:Equip(u2, "Left", 20)
+        if u2.Viewmodel and u2.Viewmodel.Model then
+            u12:SetArmOwner("Left", u2.Viewmodel.Model)
+        end
+        task.delay(0.1, function() -- Line: 152 -- upvalues: u9 (upval), u1 (upval)
+            if u9 and u1 then
+                u9(false)
+            end
+        end)
+        u6:Fire(true)
+        if u10 then
+            u10.States.OffHandActive = true
+        end
+        local PlayerState = u13:GetPlayerState(game.Players.LocalPlayer)
+        if PlayerState then
+            PlayerState.OffHandActive = true
+            local WeaponId = u2.Config.WeaponId
+            if not WeaponId then
+                WeaponId = u2.Name
+                if not WeaponId then
+                    WeaponId = false
+                end
+            end
+            PlayerState.OffHandEquipped = WeaponId
+            PlayerState.OffHandWepId = u2.WepId or false
+        end
+        if u2.Config.Use then
+            if u14 and u2.WepId then
+                u14:FireServer({WepId = u2.WepId})
+            end
+            task.defer(function() -- Line: 180 -- upvalues: u2 (upval)
+                u2.Config.Use(u2.Config, u2)
+            end)
+        end
+        return true
+    elseif u8:IsActive() then
+        return false
+    end
 end
-function v1.Cancel(_) -- name: Cancel
-	-- upvalues: (ref) v_u_2, (copy) v_u_20, (ref) v_u_10, (ref) v_u_3, (ref) v_u_12, (ref) v_u_4, (ref) v_u_13, (ref) v_u_11, (ref) v_u_14, (ref) v_u_7
-	if not v_u_2 then
-		return false
-	end
-	v_u_20()
-	if v_u_10 then
-		v_u_10(false)
-	end
-	if v_u_3 then
-		local v26
-		if v_u_3.Config.CancelPreActivation then
-			v26 = v_u_3.Config.CancelPreActivation(v_u_3.Config, v_u_3)
-		else
-			v26 = false
-		end
-		v_u_3.IsDualWieldLeft = false
-		v_u_3.IsEquipped = false
-		if v_u_3.Viewmodel then
-			v_u_3.Viewmodel.LeftArmOnly = false
-			v_u_3.Viewmodel.ForceOneHanded = false
-			v_u_3.Viewmodel:SetEnabled(false)
-		end
-		v_u_12:Unequip(v_u_3)
-		v_u_3 = nil
-	end
-	if v_u_4 then
-		if v_u_4.Viewmodel then
-			v_u_4.Viewmodel.ForceOneHanded = false
-			v_u_4.Viewmodel.RightArmOnly = false
-			v_u_13:SetArmOwner("Left", v_u_4.Viewmodel.Model)
-		end
-		v_u_12:SetArmRequest(v_u_4, "Both")
-	end
-	v_u_2 = false
-	v_u_4 = nil
-	if v_u_11 then
-		v_u_11.States.OffHandActive = false
-	end
-	local v27 = v_u_14:GetPlayerState(game.Players.LocalPlayer)
-	if v27 then
-		v27.OffHandActive = false
-		v27.OffHandEquipped = false
-		v27.OffHandWepId = false
-	end
-	v_u_7:Fire(true)
-	return true
+function v1.Cancel(p1) -- Line: 189 -- upvalues: u1 (ref), lazyLoad (val), u9 (ref), u2 (ref), u11 (ref), u3 (ref), u12 (ref), u10 (ref), u13 (ref), u6 (ref)
+    if not u1 then
+        return false
+    end
+    lazyLoad()
+    if u9 then
+        u9(false)
+    end
+    if u2 then
+        local v1 = if u2.Config.CancelPreActivation then u2.Config.CancelPreActivation(u2.Config, u2) else false
+        u2.IsDualWieldLeft = false
+        u2.IsEquipped = false
+        if u2.Viewmodel then
+            u2.Viewmodel.LeftArmOnly = false
+            u2.Viewmodel.ForceOneHanded = false
+            u2.Viewmodel:SetEnabled(false)
+        end
+        u11:Unequip(u2)
+        u2 = nil
+    end
+    if u3 then
+        if u3.Viewmodel then
+            u3.Viewmodel.ForceOneHanded = false
+            u3.Viewmodel.RightArmOnly = false
+            u12:SetArmOwner("Left", u3.Viewmodel.Model)
+        end
+        u11:SetArmRequest(u3, "Both")
+    end
+    u1 = false
+    u3 = nil
+    if u10 then
+        u10.States.OffHandActive = false
+    end
+    local PlayerState = u13:GetPlayerState(game.Players.LocalPlayer)
+    if PlayerState then
+        PlayerState.OffHandActive = false
+        PlayerState.OffHandEquipped = false
+        PlayerState.OffHandWepId = false
+    end
+    u6:Fire(true)
+    return true
 end
-function v1.Complete(p28) -- name: Complete
-	return p28:Cancel()
+function v1:Complete() -- Line: 261
+    return self:Cancel()
 end
-function v1.Cleanup(_) -- name: Cleanup
-	-- upvalues: (ref) v_u_2, (copy) v_u_20, (ref) v_u_10, (ref) v_u_3, (ref) v_u_12, (ref) v_u_4, (ref) v_u_11, (ref) v_u_14
-	if v_u_2 then
-		v_u_20()
-		if v_u_10 then
-			v_u_10(false)
-		end
-		if v_u_3 then
-			v_u_3.IsDualWieldLeft = false
-			v_u_3.IsEquipped = false
-			if v_u_3.Viewmodel then
-				v_u_3.Viewmodel.LeftArmOnly = false
-				v_u_3.Viewmodel.ForceOneHanded = false
-				v_u_3.Viewmodel:SetEnabled(false)
-			end
-			v_u_12:Unequip(v_u_3)
-		end
-		if v_u_4 and v_u_4.Viewmodel then
-			v_u_4.Viewmodel.ForceOneHanded = false
-			v_u_4.Viewmodel.RightArmOnly = false
-		end
-		v_u_2 = false
-		v_u_3 = nil
-		v_u_4 = nil
-		if v_u_11 then
-			v_u_11.States.OffHandActive = false
-		end
-		local v29 = v_u_14:GetPlayerState(game.Players.LocalPlayer)
-		if v29 then
-			v29.OffHandActive = false
-			v29.OffHandEquipped = false
-			v29.OffHandWepId = false
-		end
-	end
+function v1.Cleanup(p1) -- Line: 266 -- upvalues: u1 (ref), lazyLoad (val), u9 (ref), u2 (ref), u11 (ref), u3 (ref), u10 (ref), u13 (ref)
+    if not u1 then
+        return
+    end
+    lazyLoad()
+    if u9 then
+        u9(false)
+    end
+    if u2 then
+        u2.IsDualWieldLeft = false
+        u2.IsEquipped = false
+        if u2.Viewmodel then
+            u2.Viewmodel.LeftArmOnly = false
+            u2.Viewmodel.ForceOneHanded = false
+            u2.Viewmodel:SetEnabled(false)
+        end
+        u11:Unequip(u2)
+    end
+    if u3 and u3.Viewmodel then
+        u3.Viewmodel.ForceOneHanded = false
+        u3.Viewmodel.RightArmOnly = false
+    end
+    u1 = false
+    u2 = nil
+    u3 = nil
+    if u10 then
+        u10.States.OffHandActive = false
+    end
+    local PlayerState = u13:GetPlayerState(game.Players.LocalPlayer)
+    if PlayerState then
+        PlayerState.OffHandActive = false
+        PlayerState.OffHandEquipped = false
+        PlayerState.OffHandWepId = false
+    end
 end
 return v1

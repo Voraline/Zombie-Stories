@@ -1,70 +1,67 @@
-local v_u_1 = game.Players.LocalPlayer
-local v_u_2 = v_u_1:WaitForChild("PlayerGui")
-local v_u_3 = {}
-local v_u_4 = script.Parent:WaitForChild("Overlay")
-v_u_4.Parent = v_u_2
+local LocalPlayer = game.Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local u7 = {}
+local Overlay = script.Parent:WaitForChild("Overlay")
+Overlay.Parent = PlayerGui
 game:GetService("ReplicatedStorage")
-local v_u_5 = game:GetService("TweenService")
-local v_u_6 = require("@game/ReplicatedStorage/common/PlayerHandler")
-v_u_3.MaxHP = 100
-local function v_u_10(p_u_7) -- name: OverlayHandler
-	-- upvalues: (copy) v_u_5, (copy) v_u_4, (copy) v_u_3, (copy) v_u_6, (copy) v_u_1
-	local v8 = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-	if p_u_7 <= 99 then
-		v_u_5:Create(v_u_4.HurtOverlay, v8, {
-			["ImageTransparency"] = p_u_7 / v_u_3.MaxHP
-		}):Play()
-	else
-		v_u_5:Create(v_u_4.HurtOverlay, v8, {
-			["ImageTransparency"] = 1
-		}):Play()
-	end
-	task.delay(8, function()
-		-- upvalues: (ref) v_u_6, (ref) v_u_1, (copy) p_u_7, (ref) v_u_5, (ref) v_u_4
-		local v9 = v_u_6:GetHealth(v_u_1) or 0
-		if v9 <= p_u_7 or (v9 == 100 or v9 == 0) then
-			v_u_5:Create(v_u_4.HurtOverlay, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-				["ImageTransparency"] = 1
-			}):Play()
-		end
-	end)
+local TweenService = game:GetService("TweenService")
+local u26 = require("@game/ReplicatedStorage/common/PlayerHandler")
+u7.MaxHP = 100
+local function OverlayHandler(p1) -- Line: 20 -- upvalues: TweenService (val), Overlay (val), u7 (val), u26 (val), LocalPlayer (val)
+    local v1 = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    if p1 > 99 then
+        TweenService:Create(Overlay.HurtOverlay, v1, {ImageTransparency = 1}):Play()
+    else
+        TweenService:Create(Overlay.HurtOverlay, v1, {ImageTransparency = p1 / u7.MaxHP}):Play()
+    end
+    task.delay(8, function() -- Line: 33 -- upvalues: u26 (upval), LocalPlayer (upval), p1 (val), TweenService (upval), Overlay (upval)
+        local v1
+        local v2 = u26:GetHealth(LocalPlayer) or 0
+        if v2 <= p1 then
+            v1 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+            TweenService:Create(Overlay.HurtOverlay, v1, {ImageTransparency = 1}):Play()
+        elseif v2 == 100 then
+            v1 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+            TweenService:Create(Overlay.HurtOverlay, v1, {ImageTransparency = 1}):Play()
+        elseif v2 == 0 then
+            v1 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+            TweenService:Create(Overlay.HurtOverlay, v1, {ImageTransparency = 1}):Play()
+        end
+    end)
 end
-function v_u_3.Healed(p11) -- name: Healed
-	-- upvalues: (copy) v_u_10, (copy) v_u_4, (copy) v_u_2, (copy) v_u_5
-	v_u_10(p11)
-	local v12 = v_u_4:Clone()
-	v12.HealOverlay.ImageTransparency = 0
-	v12.HealOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
-	v12.HurtOverlay:Destroy()
-	v12.Parent = v_u_2
-	v12.HealOverlay:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.75, true)
-	local v13 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	v_u_5:Create(v12.HealOverlay, v13, {
-		["ImageTransparency"] = 1
-	}):Play()
-	task.wait(1.1)
-	v12:Destroy()
+function u7.Healed(p1) -- Line: 43 -- upvalues: OverlayHandler (val), Overlay (val), PlayerGui (val), TweenService (val)
+    OverlayHandler(p1)
+    local v1 = Overlay:Clone()
+    v1.HealOverlay.ImageTransparency = 0
+    v1.HealOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
+    v1.HurtOverlay:Destroy()
+    v1.Parent = PlayerGui
+    local v2 = UDim2.new(1, 0, 1, 0)
+    v1.HealOverlay:TweenSize(v2, "Out", "Quad", 0.75, true)
+    local v3 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(v1.HealOverlay, v3, {ImageTransparency = 1}):Play()
+    task.wait(1.1)
+    v1:Destroy()
 end
-function v_u_3.DamageTaken(p14, p15) -- name: DamageTaken
-	-- upvalues: (copy) v_u_10, (copy) v_u_4, (copy) v_u_2, (copy) v_u_5
-	v_u_10(p14)
-	if p15 ~= "Bleed" then
-		local v16 = v_u_4:Clone()
-		v16.HurtOverlay.ImageTransparency = 0
-		v16.HurtOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
-		v_u_4.HurtOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
-		v16.HealOverlay:Destroy()
-		v16.Parent = v_u_2
-		v16.HurtOverlay:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.75, true)
-		v_u_4.HurtOverlay:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.75, true)
-		local v17 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		v_u_5:Create(v16.HurtOverlay, v17, {
-			["ImageTransparency"] = 1
-		}):Play()
-		local v18 = v16.sfx:GetChildren()
-		v18[math.random(1, #v18)]:Play()
-		task.wait(1.1)
-		v16:Destroy()
-	end
+function u7.DamageTaken(p1, p2) -- Line: 66 -- upvalues: OverlayHandler (val), Overlay (val), PlayerGui (val), TweenService (val)
+    OverlayHandler(p1)
+    if p2 ~= "Bleed" then
+        local v1 = Overlay:Clone()
+        v1.HurtOverlay.ImageTransparency = 0
+        v1.HurtOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
+        Overlay.HurtOverlay.Size = UDim2.new(1.2, 0, 1.2, 0)
+        v1.HealOverlay:Destroy()
+        v1.Parent = PlayerGui
+        local v2 = UDim2.new(1, 0, 1, 0)
+        v1.HurtOverlay:TweenSize(v2, "Out", "Quad", 0.75, true)
+        v2 = UDim2.new(1, 0, 1, 0)
+        Overlay.HurtOverlay:TweenSize(v2, "Out", "Quad", 0.75, true)
+        local v3 = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        TweenService:Create(v1.HurtOverlay, v3, {ImageTransparency = 1}):Play()
+        local Children = v1.sfx:GetChildren()
+        Children[math.random(1, #Children)]:Play()
+        task.wait(1.1)
+        v1:Destroy()
+    end
 end
-return v_u_3
+return u7

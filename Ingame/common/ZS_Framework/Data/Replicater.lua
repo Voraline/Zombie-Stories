@@ -1,113 +1,96 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v_u_2 = require("./PlayerDatabase")
-local v3 = require("@game/ReplicatedStorage/common/zap")
-local v_u_4 = require(v1.Packages.Fusion).peek
-local v_u_8 = {
-	["SplitPath"] = function(p5) -- name: SplitPath
-		local v6 = {}
-		for v7 in string.gmatch(p5, "[^.]+") do
-			table.insert(v6, v7)
-		end
-		return v6
-	end
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local u7 = require("./PlayerDatabase")
+local v1 = require("@game/ReplicatedStorage/common/zap")
+local peek = require(ReplicatedStorage.Packages.Fusion).peek
+local u16 = {
+    SplitPath = function(p1) -- Line: 11
+        local v1 = {}
+        for i in string.gmatch(p1, "[^.]+") do
+            table.insert(v1, i)
+        end
+        return v1
+    end,
 }
-local function v_u_14(p9) -- name: findPosition
-	-- upvalues: (copy) v_u_2, (copy) v_u_8
-	local v10 = p9:gsub("Public.", ""):gsub("Profile.", "")
-	local v11 = v_u_2
-	if v11 == nil then
-		return nil
-	end
-	local v12 = v_u_8.SplitPath(v10)
-	for _, v13 in ipairs(v12) do
-		if v11 == nil then
-			return nil
-		end
-		v11 = v11[v13]
-	end
-	return v11
+local function findPosition(p1) -- Line: 19 -- upvalues: u7 (val), u16 (val)
+    local v1 = p1:gsub("Public.", ""):gsub("Profile.", "")
+    local v2 = u7
+    if v2 == nil then
+        return nil
+    end
+    local v3 = u16.SplitPath(v1)
+    local v4 = v2
+    for i, v in ipairs(v3) do
+        if v4 == nil then
+            return nil
+        end
+        v4 = v4[v]
+    end
+    return v4
 end
-v3.UpdateValue.On(function(p15)
-	-- upvalues: (copy) v_u_14
-	local v16 = p15.path
-	local v17 = p15.value
-	local v18 = v_u_14(v16)
-	if v18 then
-		if v18.type == "State" then
-			v18:set(v17)
-		end
-	else
-		return
-	end
+v1.UpdateValue.On(function(p1) -- Line: 42 -- upvalues: findPosition (val)
+    local value = p1.value
+    local v1 = findPosition(p1.path)
+    if not v1 or v1.type ~= "State" then
+        return
+    end
+    v1:set(value)
 end)
-v3.RemoveIndex.On(function(p19)
-	-- upvalues: (copy) v_u_14, (copy) v_u_4
-	local v20 = p19.path
-	local v21 = p19.index
-	local v22 = v_u_14(v20)
-	if v22 then
-		if v22.type == "State" then
-			local v23 = v_u_4(v22)
-			table.remove(v23, v21)
-			v22:set(v23)
-		else
-			table.remove(v22, v21)
-		end
-	else
-		return
-	end
+v1.RemoveIndex.On(function(p1) -- Line: 59 -- upvalues: findPosition (val), peek (val)
+    local index = p1.index
+    local v1 = findPosition(p1.path)
+    if not v1 then
+        return
+    end
+    if v1.type ~= "State" then
+        table.remove(v1, index)
+        return
+    end
+    local v2 = peek(v1)
+    table.remove(v2, index)
+    v1:set(v2)
 end)
-v3.InsertIndex.On(function(p24)
-	-- upvalues: (copy) v_u_14, (copy) v_u_4
-	local v25 = p24.path
-	local v26 = p24.index
-	local v27 = p24.value
-	local v28 = v_u_14(v25)
-	if v28 then
-		if v28.type == "State" then
-			local v29 = v_u_4(v28)
-			table.insert(v29, v26, v27)
-			v28:set(v29)
-		else
-			table.insert(v28, v26, v27)
-		end
-	else
-		return
-	end
+v1.InsertIndex.On(function(p1) -- Line: 78 -- upvalues: findPosition (val), peek (val)
+    local index = p1.index
+    local value = p1.value
+    local v1 = findPosition(p1.path)
+    if not v1 then
+        return
+    end
+    if v1.type ~= "State" then
+        table.insert(v1, index, value)
+        return
+    end
+    local v2 = peek(v1)
+    table.insert(v2, index, value)
+    v1:set(v2)
 end)
-v3.InsertKey.On(function(p30)
-	-- upvalues: (copy) v_u_14, (copy) v_u_4
-	local v31 = p30.path
-	local v32 = p30.key
-	local v33 = p30.value
-	local v34 = v_u_14(v31)
-	if v34 then
-		if v34.type == "State" then
-			local v35 = v_u_4(v34)
-			v35[v32] = v33
-			v34:set(v35)
-		else
-			v34[v32] = v33
-		end
-	else
-		return
-	end
+v1.InsertKey.On(function(p1) -- Line: 98 -- upvalues: findPosition (val), peek (val)
+    local key = p1.key
+    local value = p1.value
+    local v1 = findPosition(p1.path)
+    if not v1 then
+        return
+    end
+    if v1.type ~= "State" then
+        v1[key] = value
+        return
+    end
+    local v2 = peek(v1)
+    v2[key] = value
+    v1:set(v2)
 end)
-v3.RemoveKey.On(function(p36)
-	-- upvalues: (copy) v_u_14, (copy) v_u_4
-	local v37 = p36.path
-	local v38 = p36.key
-	local v39 = v_u_14(v37)
-	if v39 then
-		if v39.type == "State" then
-			local v40 = v_u_4(v39)
-			v40[v38] = nil
-			v39:set(v40)
-		else
-			v39[v38] = nil
-		end
-	else
-		return
-	end
+v1.RemoveKey.On(function(p1) -- Line: 118 -- upvalues: findPosition (val), peek (val)
+    local key = p1.key
+    local v1 = findPosition(p1.path)
+    if not v1 then
+        return
+    end
+    if v1.type ~= "State" then
+        v1[key] = nil
+        return
+    end
+    local v2 = peek(v1)
+    v2[key] = nil
+    v1:set(v2)
 end)
-return v_u_8
+return u16

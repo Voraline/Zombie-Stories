@@ -1,311 +1,375 @@
-return function(p_u_1)
-	local v_u_2 = p_u_1:getInstance("ClickRegion")
-	local v_u_3 = Instance.new("CanvasGroup")
-	v_u_3.Name = "Caption"
-	v_u_3.AnchorPoint = Vector2.new(0.5, 0)
-	v_u_3.BackgroundTransparency = 1
-	v_u_3.BorderSizePixel = 0
-	v_u_3.GroupTransparency = 1
-	v_u_3.Position = UDim2.fromOffset(0, 0)
-	v_u_3.Visible = true
-	v_u_3.ZIndex = 30
-	v_u_3.Parent = v_u_2
-	local v_u_4 = Instance.new("Frame")
-	v_u_4.Name = "Box"
-	v_u_4.AutomaticSize = Enum.AutomaticSize.XY
-	v_u_4.BackgroundColor3 = Color3.fromRGB(101, 102, 104)
-	v_u_4.Position = UDim2.fromOffset(4, 7)
-	v_u_4.ZIndex = 12
-	v_u_4.Parent = v_u_3
-	local v5 = Instance.new("TextLabel")
-	v5.Name = "Header"
-	v5.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
-	v5.Text = "Caption"
-	v5.TextColor3 = Color3.fromRGB(255, 255, 255)
-	v5.TextSize = 14
-	v5.TextTruncate = Enum.TextTruncate.None
-	v5.TextWrapped = false
-	v5.TextXAlignment = Enum.TextXAlignment.Left
-	v5.AutomaticSize = Enum.AutomaticSize.X
-	v5.BackgroundTransparency = 1
-	v5.LayoutOrder = 1
-	v5.Size = UDim2.fromOffset(0, 16)
-	v5.ZIndex = 18
-	v5.Parent = v_u_4
-	local v6 = Instance.new("UIListLayout")
-	v6.Name = "Layout"
-	v6.Padding = UDim.new(0, 8)
-	v6.SortOrder = Enum.SortOrder.LayoutOrder
-	v6.Parent = v_u_4
-	local v7 = Instance.new("UICorner")
-	v7.Name = "CaptionCorner"
-	v7.Parent = v_u_4
-	local v8 = Instance.new("UIPadding")
-	v8.Name = "Padding"
-	v8.PaddingBottom = UDim.new(0, 12)
-	v8.PaddingLeft = UDim.new(0, 12)
-	v8.PaddingRight = UDim.new(0, 12)
-	v8.PaddingTop = UDim.new(0, 12)
-	v8.Parent = v_u_4
-	local v_u_9 = Instance.new("Frame")
-	v_u_9.Name = "Hotkeys"
-	v_u_9.AutomaticSize = Enum.AutomaticSize.Y
-	v_u_9.BackgroundTransparency = 1
-	v_u_9.LayoutOrder = 3
-	v_u_9.Size = UDim2.fromScale(1, 0)
-	v_u_9.Visible = false
-	v_u_9.Parent = v_u_4
-	local v10 = Instance.new("UIListLayout")
-	v10.Name = "Layout1"
-	v10.Padding = UDim.new(0, 6)
-	v10.FillDirection = Enum.FillDirection.Vertical
-	v10.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	v10.HorizontalFlex = Enum.UIFlexAlignment.None
-	v10.ItemLineAlignment = Enum.ItemLineAlignment.Automatic
-	v10.VerticalFlex = Enum.UIFlexAlignment.None
-	v10.SortOrder = Enum.SortOrder.LayoutOrder
-	v10.Parent = v_u_9
-	local v11 = Instance.new("ImageLabel")
-	v11.Name = "Key1"
-	v11.Image = "rbxasset://textures/ui/Controls/key_single.png"
-	v11.ImageTransparency = 0.7
-	v11.ScaleType = Enum.ScaleType.Slice
-	v11.SliceCenter = Rect.new(5, 5, 23, 24)
-	v11.AutomaticSize = Enum.AutomaticSize.X
-	v11.BackgroundTransparency = 1
-	v11.LayoutOrder = 1
-	v11.Size = UDim2.fromOffset(0, 30)
-	v11.ZIndex = 15
-	v11.Parent = v_u_9
-	local v12 = Instance.new("UIPadding")
-	v12.Name = "Inset"
-	v12.PaddingLeft = UDim.new(0, 8)
-	v12.PaddingRight = UDim.new(0, 8)
-	v12.Parent = v11
-	local v_u_13 = Instance.new("TextLabel")
-	v_u_13.AutoLocalize = false
-	v_u_13.Name = "LabelContent"
-	v_u_13.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
-	v_u_13.Text = ""
-	v_u_13.TextColor3 = Color3.fromRGB(189, 190, 190)
-	v_u_13.TextSize = 14
-	v_u_13.AutomaticSize = Enum.AutomaticSize.X
-	v_u_13.BackgroundTransparency = 1
-	v_u_13.Position = UDim2.fromOffset(0, -1)
-	v_u_13.Size = UDim2.fromScale(1, 1)
-	v_u_13.ZIndex = 16
-	v_u_13.Parent = v11
-	local v_u_14 = Instance.new("ImageLabel")
-	v_u_14.Name = "Caret"
-	v_u_14.Image = "rbxasset://LuaPackages/Packages/_Index/UIBlox/UIBlox/AppImageAtlas/img_set_1x_1.png"
-	v_u_14.ImageColor3 = Color3.fromRGB(101, 102, 104)
-	v_u_14.ImageRectOffset = Vector2.new(260, 440)
-	v_u_14.ImageRectSize = Vector2.new(16, 8)
-	v_u_14.AnchorPoint = Vector2.new(0, 0.5)
-	v_u_14.BackgroundTransparency = 1
-	v_u_14.Position = UDim2.new(0, 0, 0, 4)
-	v_u_14.Rotation = 180
-	v_u_14.Size = UDim2.fromOffset(16, 8)
-	v_u_14.ZIndex = 12
-	v_u_14.Parent = v_u_3
-	local v_u_15 = Instance.new("ImageLabel")
-	v_u_15.Name = "DropShadow"
-	v_u_15.Image = "rbxasset://LuaPackages/Packages/_Index/UIBlox/UIBlox/AppImageAtlas/img_set_1x_1.png"
-	v_u_15.ImageColor3 = Color3.fromRGB(0, 0, 0)
-	v_u_15.ImageRectOffset = Vector2.new(217, 486)
-	v_u_15.ImageRectSize = Vector2.new(25, 25)
-	v_u_15.ImageTransparency = 0.45
-	v_u_15.ScaleType = Enum.ScaleType.Slice
-	v_u_15.SliceCenter = Rect.new(12, 12, 13, 13)
-	v_u_15.BackgroundTransparency = 1
-	v_u_15.Position = UDim2.fromOffset(0, 5)
-	v_u_15.Size = UDim2.new(1, 0, 0, 48)
-	v_u_15.Parent = v_u_3
-	v_u_4:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-		-- upvalues: (copy) v_u_15, (copy) v_u_4
-		v_u_15.Size = UDim2.new(1, 0, 0, v_u_4.AbsoluteSize.Y + 8)
-	end)
-	local v16 = p_u_1.captionJanitor
-	local _, v_u_17 = p_u_1:clipOutside(v_u_3)
-	v_u_17.AutomaticSize = Enum.AutomaticSize.None
-	v16:add(v_u_3:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() -- name: matchSize
-		-- upvalues: (copy) v_u_3, (copy) v_u_17
-		local v18 = v_u_3.AbsoluteSize
-		v_u_17.Size = UDim2.fromOffset(v18.X, v18.Y)
-	end))
-	local v19 = v_u_3.AbsoluteSize
-	v_u_17.Size = UDim2.fromOffset(v19.X, v19.Y)
-	local v_u_20 = false
-	local v_u_21 = v_u_3.Box.Header
-	local v_u_22 = game:GetService("UserInputService")
-	local function v27(p23) -- name: updateHotkey
-		-- upvalues: (copy) v_u_22, (copy) v_u_3, (copy) p_u_1, (copy) v_u_21, (copy) v_u_13, (copy) v_u_9
-		local v24 = v_u_22.KeyboardEnabled
-		local v25 = v_u_3:GetAttribute("CaptionText") or ""
-		local v26 = v25 == "_hotkey_"
-		if v24 or not v26 then
-			v_u_21.Text = v25
-			v_u_21.Visible = not v26
-			if p23 then
-				v_u_13.Text = p23.Name
-				v_u_9.Visible = true
-			end
-			if not v24 then
-				v_u_9.Visible = false
-			end
-		else
-			p_u_1:setCaption()
-		end
-	end
-	v_u_3:GetAttributeChangedSignal("CaptionText"):Connect(v27)
-	local v28 = Enum.EasingStyle.Quad
-	local v_u_29 = TweenInfo.new(0.2, v28, Enum.EasingDirection.In)
-	local v_u_30 = TweenInfo.new(0.2, v28, Enum.EasingDirection.Out)
-	local v_u_31 = game:GetService("TweenService")
-	local v_u_32 = game:GetService("RunService")
-	local function v_u_47(p33) -- name: updatePosition
-		-- upvalues: (ref) v_u_20, (copy) v_u_14, (copy) v_u_3, (copy) v_u_2, (copy) v_u_17, (copy) v_u_29, (copy) v_u_30, (copy) v_u_31, (copy) v_u_32
-		if v_u_20 then
-			if p33 == nil then
-				p33 = v_u_20
-			end
-			local v34 = not p33
-			if v34 == nil then
-				v34 = v_u_20
-			end
-			local v35 = UDim2.new(0.5, 0, 1, v34 and 10 or 2)
-			local v36
-			if p33 == nil then
-				v36 = v_u_20
-			else
-				v36 = p33
-			end
-			local v37 = UDim2.new(0.5, 0, 1, v36 and 10 or 2)
-			if p33 then
-				local v38 = v_u_14.Position.Y.Offset
-				v_u_14.Position = UDim2.fromOffset(0, v38)
-				v_u_3.AutomaticSize = Enum.AutomaticSize.XY
-				v_u_3.Size = UDim2.fromOffset(32, 53)
-			else
-				local v39 = v_u_3.AbsoluteSize
-				v_u_3.AutomaticSize = Enum.AutomaticSize.Y
-				v_u_3.Size = UDim2.fromOffset(v39.X, v39.Y)
-			end
-			local v_u_40 = nil
-			local function v44() -- name: updateCaret
-				-- upvalues: (ref) v_u_2, (ref) v_u_3, (ref) v_u_14, (ref) v_u_40
-				local v41 = v_u_2.AbsolutePosition.X - v_u_3.AbsolutePosition.X + v_u_2.AbsoluteSize.X / 2 - v_u_14.AbsoluteSize.X / 2
-				local v42 = v_u_14.Position.Y.Offset
-				local v43 = UDim2.fromOffset(v41, v42)
-				if v_u_40 ~= v41 then
-					v_u_40 = v41
-					v_u_14.Position = UDim2.fromOffset(0, v42)
-					task.wait()
-				end
-				v_u_14.Position = v43
-			end
-			v_u_17.Position = v35
-			v44()
-			local v45 = v_u_31:Create(v_u_17, p33 and v_u_29 or v_u_30, {
-				["Position"] = v37
-			})
-			local v_u_46 = v_u_32.Heartbeat:Connect(v44)
-			v45:Play()
-			v45.Completed:Once(function()
-				-- upvalues: (copy) v_u_46
-				v_u_46:Disconnect()
-			end)
-		end
-	end
-	v16:add(v_u_2:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-		-- upvalues: (copy) v_u_47
-		v_u_47()
-	end))
-	v_u_47(false)
-	v16:add(p_u_1.toggleKeyAdded:Connect(v27))
-	for v48, _ in pairs(p_u_1.bindedToggleKeys) do
-		local v49 = v_u_22.KeyboardEnabled
-		local v50 = v_u_3:GetAttribute("CaptionText") or ""
-		local v51 = v50 == "_hotkey_"
-		if v49 or not v51 then
-			v_u_21.Text = v50
-			v_u_21.Visible = not v51
-			if v48 then
-				v_u_13.Text = v48.Name
-				v_u_9.Visible = true
-			end
-			if not v49 then
-				v_u_9.Visible = false
-			end
-		else
-			p_u_1:setCaption()
-		end
-		break
-	end
-	v16:add(p_u_1.fakeToggleKeyChanged:Connect(v27))
-	local v52 = p_u_1.fakeToggleKey
-	if v52 then
-		local v53 = v_u_22.KeyboardEnabled
-		local v54 = v_u_3:GetAttribute("CaptionText") or ""
-		local v55 = v54 == "_hotkey_"
-		if v53 or not v55 then
-			v_u_21.Text = v54
-			v_u_21.Visible = not v55
-			if v52 then
-				v_u_13.Text = v52.Name
-				v_u_9.Visible = true
-			end
-			if not v53 then
-				v_u_9.Visible = false
-			end
-		else
-			p_u_1:setCaption()
-		end
-	end
-	local function v_u_61(p56) -- name: setCaptionEnabled
-		-- upvalues: (ref) v_u_20, (copy) p_u_1, (copy) v_u_29, (copy) v_u_30, (copy) v_u_31, (copy) v_u_3, (copy) v_u_47, (copy) v_u_22, (copy) v_u_21, (copy) v_u_9
-		if v_u_20 == p56 then
-			return
-		else
-			local v57 = p_u_1.joinedFrame
-			if v57 and string.match(v57.Name, "Dropdown") then
-				p56 = false
-			end
-			v_u_20 = p56
-			v_u_31:Create(v_u_3, p56 and v_u_29 or v_u_30, {
-				["GroupTransparency"] = p56 and 0 or 1
-			}):Play()
-			v_u_47()
-			local v58 = v_u_22.KeyboardEnabled
-			local v59 = v_u_3:GetAttribute("CaptionText") or ""
-			local v60 = v59 == "_hotkey_"
-			if v58 or not v60 then
-				v_u_21.Text = v59
-				v_u_21.Visible = not v60
-				if not v58 then
-					v_u_9.Visible = false
-				end
-			else
-				p_u_1:setCaption()
-			end
-		end
-	end
-	local v_u_62 = require(p_u_1.iconModule)
-	v16:add(p_u_1.stateChanged:Connect(function(p63)
-		-- upvalues: (copy) v_u_62, (copy) p_u_1, (copy) v_u_61
-		if p63 == "Viewing" then
-			local v64 = v_u_62.captionLastClosedClock
-			local v65 = (v64 and os.clock() - v64 or 999) < 0.3 and 0 or 0.5
-			task.delay(v65, function()
-				-- upvalues: (ref) p_u_1, (ref) v_u_61
-				if p_u_1.activeState == "Viewing" then
-					v_u_61(true)
-				end
-			end)
-		else
-			v_u_62.captionLastClosedClock = os.clock()
-			v_u_61(false)
-		end
-	end))
-	return v_u_3
+return function(p1) -- Line: 1
+    local AbsoluteSize, KeyboardEnabled, u269, v1, v2
+    local u4 = p1:getInstance("ClickRegion")
+    local CanvasGroup = Instance.new("CanvasGroup")
+    CanvasGroup.Name = "Caption"
+    CanvasGroup.AnchorPoint = Vector2.new(0.5, 0)
+    CanvasGroup.BackgroundTransparency = 1
+    CanvasGroup.BorderSizePixel = 0
+    CanvasGroup.GroupTransparency = 1
+    CanvasGroup.Position = UDim2.fromOffset(0, 0)
+    CanvasGroup.Visible = true
+    CanvasGroup.ZIndex = 30
+    CanvasGroup.Parent = u4
+    local Frame = Instance.new("Frame")
+    Frame.Name = "Box"
+    Frame.AutomaticSize = Enum.AutomaticSize.XY
+    Frame.BackgroundColor3 = Color3.fromRGB(101, 102, 104)
+    Frame.Position = UDim2.fromOffset(4, 7)
+    Frame.ZIndex = 12
+    Frame.Parent = CanvasGroup
+    local TextLabel_2 = Instance.new("TextLabel")
+    TextLabel_2.Name = "Header"
+    TextLabel_2.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    TextLabel_2.Text = "Caption"
+    TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel_2.TextSize = 14
+    TextLabel_2.TextTruncate = Enum.TextTruncate.None
+    TextLabel_2.TextWrapped = false
+    TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+    TextLabel_2.AutomaticSize = Enum.AutomaticSize.X
+    TextLabel_2.BackgroundTransparency = 1
+    TextLabel_2.LayoutOrder = 1
+    TextLabel_2.Size = UDim2.fromOffset(0, 16)
+    TextLabel_2.ZIndex = 18
+    TextLabel_2.Parent = Frame
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Name = "Layout"
+    UIListLayout.Padding = UDim.new(0, 8)
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Parent = Frame
+    local UICorner = Instance.new("UICorner")
+    UICorner.Name = "CaptionCorner"
+    UICorner.Parent = Frame
+    local UIPadding = Instance.new("UIPadding")
+    UIPadding.Name = "Padding"
+    UIPadding.PaddingBottom = UDim.new(0, 12)
+    UIPadding.PaddingLeft = UDim.new(0, 12)
+    UIPadding.PaddingRight = UDim.new(0, 12)
+    UIPadding.PaddingTop = UDim.new(0, 12)
+    UIPadding.Parent = Frame
+    local Frame_2 = Instance.new("Frame")
+    Frame_2.Name = "Hotkeys"
+    Frame_2.AutomaticSize = Enum.AutomaticSize.Y
+    Frame_2.BackgroundTransparency = 1
+    Frame_2.LayoutOrder = 3
+    Frame_2.Size = UDim2.fromScale(1, 0)
+    Frame_2.Visible = false
+    Frame_2.Parent = Frame
+    local UIListLayout_2 = Instance.new("UIListLayout")
+    UIListLayout_2.Name = "Layout1"
+    UIListLayout_2.Padding = UDim.new(0, 6)
+    UIListLayout_2.FillDirection = Enum.FillDirection.Vertical
+    UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    UIListLayout_2.HorizontalFlex = Enum.UIFlexAlignment.None
+    UIListLayout_2.ItemLineAlignment = Enum.ItemLineAlignment.Automatic
+    UIListLayout_2.VerticalFlex = Enum.UIFlexAlignment.None
+    UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout_2.Parent = Frame_2
+    local ImageLabel_3 = Instance.new("ImageLabel")
+    ImageLabel_3.Name = "Key1"
+    ImageLabel_3.Image = "rbxasset://textures/ui/Controls/key_single.png"
+    ImageLabel_3.ImageTransparency = 0.7
+    ImageLabel_3.ScaleType = Enum.ScaleType.Slice
+    ImageLabel_3.SliceCenter = Rect.new(5, 5, 23, 24)
+    ImageLabel_3.AutomaticSize = Enum.AutomaticSize.X
+    ImageLabel_3.BackgroundTransparency = 1
+    ImageLabel_3.LayoutOrder = 1
+    ImageLabel_3.Size = UDim2.fromOffset(0, 30)
+    ImageLabel_3.ZIndex = 15
+    ImageLabel_3.Parent = Frame_2
+    local UIPadding_2 = Instance.new("UIPadding")
+    UIPadding_2.Name = "Inset"
+    UIPadding_2.PaddingLeft = UDim.new(0, 8)
+    UIPadding_2.PaddingRight = UDim.new(0, 8)
+    UIPadding_2.Parent = ImageLabel_3
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.AutoLocalize = false
+    TextLabel.Name = "LabelContent"
+    TextLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    TextLabel.Text = ""
+    TextLabel.TextColor3 = Color3.fromRGB(189, 190, 190)
+    TextLabel.TextSize = 14
+    TextLabel.AutomaticSize = Enum.AutomaticSize.X
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Position = UDim2.fromOffset(0, -1)
+    TextLabel.Size = UDim2.fromScale(1, 1)
+    TextLabel.ZIndex = 16
+    TextLabel.Parent = ImageLabel_3
+    local ImageLabel = Instance.new("ImageLabel")
+    ImageLabel.Name = "Caret"
+    ImageLabel.Image = "rbxasset://LuaPackages/Packages/_Index/UIBlox/UIBlox/AppImageAtlas/img_set_1x_1.png"
+    ImageLabel.ImageColor3 = Color3.fromRGB(101, 102, 104)
+    ImageLabel.ImageRectOffset = Vector2.new(260, 440)
+    ImageLabel.ImageRectSize = Vector2.new(16, 8)
+    ImageLabel.AnchorPoint = Vector2.new(0, 0.5)
+    ImageLabel.BackgroundTransparency = 1
+    ImageLabel.Position = UDim2.new(0, 0, 0, 4)
+    ImageLabel.Rotation = 180
+    ImageLabel.Size = UDim2.fromOffset(16, 8)
+    ImageLabel.ZIndex = 12
+    ImageLabel.Parent = CanvasGroup
+    local ImageLabel_2 = Instance.new("ImageLabel")
+    ImageLabel_2.Name = "DropShadow"
+    ImageLabel_2.Image = "rbxasset://LuaPackages/Packages/_Index/UIBlox/UIBlox/AppImageAtlas/img_set_1x_1.png"
+    ImageLabel_2.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    ImageLabel_2.ImageRectOffset = Vector2.new(217, 486)
+    ImageLabel_2.ImageRectSize = Vector2.new(25, 25)
+    ImageLabel_2.ImageTransparency = 0.45
+    ImageLabel_2.ScaleType = Enum.ScaleType.Slice
+    ImageLabel_2.SliceCenter = Rect.new(12, 12, 13, 13)
+    ImageLabel_2.BackgroundTransparency = 1
+    ImageLabel_2.Position = UDim2.fromOffset(0, 5)
+    ImageLabel_2.Size = UDim2.new(1, 0, 0, 48)
+    ImageLabel_2.Parent = CanvasGroup
+    local PropertyChangedSignal = Frame:GetPropertyChangedSignal("AbsoluteSize")
+    PropertyChangedSignal:Connect(function() -- Line: 147 -- upvalues: ImageLabel_2 (val), Frame (val)
+        ImageLabel_2.Size = UDim2.new(1, 0, 0, Frame.AbsoluteSize.Y + 8)
+    end)
+    local captionJanitor = p1.captionJanitor
+    _, u269 = p1:clipOutside(CanvasGroup)
+    u269.AutomaticSize = Enum.AutomaticSize.None
+    local PropertyChangedSignal_2 = CanvasGroup:GetPropertyChangedSignal("AbsoluteSize")
+    captionJanitor:add(PropertyChangedSignal_2:Connect(function() -- Line: 157 -- upvalues: CanvasGroup (val), u269 (val)
+        local AbsoluteSize = CanvasGroup.AbsoluteSize
+        u269.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
+    end))
+    AbsoluteSize = CanvasGroup.AbsoluteSize
+    u269.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
+    local u288 = false
+    local Header = CanvasGroup.Box.Header
+    local UserInputService = game:GetService("UserInputService")
+    local function updateHotkey(a1) -- Line: 170 -- upvalues: UserInputService (val), CanvasGroup (val), p1 (val), Header (val), TextLabel (val), Frame_2 (val)
+        local KeyboardEnabled = UserInputService.KeyboardEnabled
+        local v1 = CanvasGroup:GetAttribute("CaptionText") or ""
+        local v2 = v1 == "_hotkey_"
+        if KeyboardEnabled then
+            Header.Text = v1
+            Header.Visible = not v2
+            if a1 then
+                TextLabel.Text = a1.Name
+                Frame_2.Visible = true
+            end
+            if not KeyboardEnabled then
+                Frame_2.Visible = false
+            end
+            return
+        elseif v2 then
+            p1:setCaption()
+            return
+        end
+    end
+    local AttributeChangedSignal = CanvasGroup:GetAttributeChangedSignal("CaptionText")
+    AttributeChangedSignal:Connect(updateHotkey)
+    local Quad = Enum.EasingStyle.Quad
+    local u310 = TweenInfo.new(0.2, Quad, Enum.EasingDirection.In)
+    local u315 = TweenInfo.new(0.2, Quad, Enum.EasingDirection.Out)
+    local TweenService = game:GetService("TweenService")
+    local RunService = game:GetService("RunService")
+    local function getCaptionPosition(p1) -- Line: 196 -- upvalues: u288 (ref)
+        local v1, v2
+        if p1 == nil then
+            v1 = u288
+        else
+            v1 = p1
+        end
+        if not v1 then
+            v2 = 2
+        else
+            v2 = 10
+        end
+        return UDim2.new(0.5, 0, 1, v2)
+    end
+    local function updatePosition(p1) -- Line: 203 -- upvalues: u288 (ref), ImageLabel (val), CanvasGroup (val), u4 (val), u269 (val), u310 (val), u315 (val), TweenService (val), RunService (val)
+        local v1, v2, v3, v4
+        if not u288 then
+            return
+        end
+        if p1 == nil then
+            v1 = u288
+        else
+            v1 = p1
+        end
+        local v5 = not v1
+        if v5 == nil then
+            v2 = u288
+        else
+            v2 = v5
+        end
+        if not v2 then
+            v3 = 2
+        else
+            v3 = 10
+        end
+        if v1 == nil then
+            v2 = u288
+        else
+            v2 = v1
+        end
+        if not v2 then
+            v3 = 2
+        else
+            v3 = 10
+        end
+        v5 = UDim2.new(0.5, 0, 1, v3)
+        if not v1 then
+            local AbsoluteSize = CanvasGroup.AbsoluteSize
+            CanvasGroup.AutomaticSize = Enum.AutomaticSize.Y
+            CanvasGroup.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
+        else
+            ImageLabel.Position = UDim2.fromOffset(0, ImageLabel.Position.Y.Offset)
+            CanvasGroup.AutomaticSize = Enum.AutomaticSize.XY
+            CanvasGroup.Size = UDim2.fromOffset(32, 53)
+        end
+        local u61 = nil
+        local function updateCaret() -- Line: 232 -- upvalues: u4 (upval), CanvasGroup (upval), ImageLabel (upval), u61 (ref)
+            local v1 = u4.AbsolutePosition.X - CanvasGroup.AbsolutePosition.X + u4.AbsoluteSize.X / 2 - ImageLabel.AbsoluteSize.X / 2
+            local Offset = ImageLabel.Position.Y.Offset
+            local v2 = UDim2.fromOffset(v1, Offset)
+            if u61 ~= v1 then
+                u61 = v1
+                ImageLabel.Position = UDim2.fromOffset(0, Offset)
+                task.wait()
+            end
+            ImageLabel.Position = v2
+        end
+        u269.Position = UDim2.new(0.5, 0, 1, v3)
+        updateCaret()
+        if not v1 then
+            v4 = u315
+        else
+            v4 = u310
+            if not v4 then
+                v4 = u315
+            end
+        end
+        local v6 = TweenService:Create(u269, v4, {Position = v5})
+        local u90 = RunService.Heartbeat:Connect(updateCaret)
+        v6:Play()
+        v6.Completed:Once(function() -- Line: 255 -- upvalues: u90 (val)
+            u90:Disconnect()
+        end)
+    end
+    local PropertyChangedSignal_3 = u4:GetPropertyChangedSignal("AbsoluteSize")
+    captionJanitor:add(PropertyChangedSignal_3:Connect(function() -- Line: 260 -- upvalues: updatePosition (val)
+        updatePosition()
+    end))
+    updatePosition(false)
+    captionJanitor:add(p1.toggleKeyAdded:Connect(updateHotkey))
+    for k, v in pairs(p1.bindedToggleKeys) do
+        KeyboardEnabled = UserInputService.KeyboardEnabled
+        v1 = CanvasGroup:GetAttribute("CaptionText") or ""
+        v2 = v1 == "_hotkey_"
+        if not KeyboardEnabled and v2 then
+            p1:setCaption()
+            break
+        end
+        Header.Text = v1
+        Header.Visible = not v2
+        if k then
+            TextLabel.Text = k.Name
+            Frame_2.Visible = true
+        end
+        if KeyboardEnabled then
+            break
+        end
+        Frame_2.Visible = false
+        break
+    end
+    captionJanitor:add(p1.fakeToggleKeyChanged:Connect(updateHotkey))
+    local fakeToggleKey = p1.fakeToggleKey
+    if fakeToggleKey then
+        local KeyboardEnabled_2 = UserInputService.KeyboardEnabled
+        local v3 = CanvasGroup:GetAttribute("CaptionText") or ""
+        local v4 = v3 == "_hotkey_"
+        if KeyboardEnabled_2 then
+            Header.Text = v3
+            Header.Visible = not v4
+            if fakeToggleKey then
+                TextLabel.Text = fakeToggleKey.Name
+                Frame_2.Visible = true
+            end
+            if not KeyboardEnabled_2 then
+                Frame_2.Visible = false
+            end
+        elseif v4 then
+            p1:setCaption()
+        end
+    end
+    local function setCaptionEnabled(a1) -- Line: 276 -- upvalues: u288 (ref), p1 (val), u310 (val), u315 (val), TweenService (val), CanvasGroup (val), updatePosition (val), UserInputService (val), Header (val), Frame_2 (val)
+        local v1, v2, v3
+        if u288 == a1 then
+            return
+        end
+        local joinedFrame = p1.joinedFrame
+        if not joinedFrame then
+            v1 = a1
+        elseif not (string.match(joinedFrame.Name, "Dropdown")) then
+            v1 = a1
+        else
+            v1 = false
+        end
+        u288 = v1
+        if not v1 then
+            v2 = 1
+        else
+            v2 = 0
+        end
+        if not v1 then
+            v3 = u315
+        else
+            v3 = u310
+        end
+        TweenService:Create(CanvasGroup, v3, {GroupTransparency = v2}):Play()
+        updatePosition()
+        local KeyboardEnabled = UserInputService.KeyboardEnabled
+        local v4 = CanvasGroup:GetAttribute("CaptionText") or ""
+        local v5 = v4 == "_hotkey_"
+        if KeyboardEnabled then
+            Header.Text = v4
+            Header.Visible = not v5
+            if not KeyboardEnabled then
+                Frame_2.Visible = false
+            end
+            return
+        end
+        if v5 then
+            p1:setCaption()
+            return
+        end
+        Header.Text = v4
+        Header.Visible = not v5
+        if not KeyboardEnabled then
+            Frame_2.Visible = false
+        end
+    end
+    local iconModule = require(p1.iconModule)
+    captionJanitor:add(p1.stateChanged:Connect(function(a1) -- Line: 298 -- upvalues: iconModule (val), p1 (val), setCaptionEnabled (val)
+        local v1, v2
+        if a1 ~= "Viewing" then
+            iconModule.captionLastClosedClock = os.clock()
+            setCaptionEnabled(false)
+            return
+        end
+        local captionLastClosedClock = iconModule.captionLastClosedClock
+        if not captionLastClosedClock then
+            v1 = 999
+        else
+            v1 = os.clock() - captionLastClosedClock
+            if not v1 then
+                v1 = 999
+            end
+        end
+        if v1 >= 0.3 then
+            v2 = 0.5
+        else
+            v2 = 0
+        end
+        task.delay(v2, function() -- Line: 303 -- upvalues: p1 (upval), setCaptionEnabled (upval)
+            if p1.activeState == "Viewing" then
+                setCaptionEnabled(true)
+            end
+        end)
+    end))
+    return CanvasGroup
 end

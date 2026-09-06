@@ -1,47 +1,50 @@
-local v1 = game:GetService("ReplicatedFirst")
-local v2 = game:GetService("ReplicatedStorage")
-local v3 = game:GetService("ServerScriptService")
-local v4 = game:GetService("ServerStorage")
-local v_u_5 = {
-	script.Parent.Parent,
-	v1,
-	v2,
-	v3,
-	v4
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
+local u20 = {
+    script.Parent.Parent,
+    ReplicatedFirst,
+    ReplicatedStorage,
+    ServerScriptService,
+    ServerStorage,
 }
-return function() -- name: GetPromiseLibrary
-	-- upvalues: (copy) v_u_5
-	local v6 = script:FindFirstAncestorOfClass("Plugin")
-	if v6 then
-		local v7 = v6:QueryDescendants("ModuleScript#Promise")
-		local v8
-		if #v7 > 0 then
-			v8 = v7[1]
-		else
-			v8 = nil
-		end
-		if v8 then
-			return true, require(v8)
-		else
-			return false
-		end
-	else
-		local v9 = nil
-		for _, v10 in ipairs(v_u_5) do
-			local v11 = v10:QueryDescendants("ModuleScript#Promise")
-			if #v11 > 0 then
-				v9 = v11[1]
-			else
-				v9 = nil
-			end
-			if v9 then
-				break
-			end
-		end
-		if v9 then
-			return true, require(v9)
-		else
-			return false
-		end
-	end
+local function FindFirstDescendantWithNameAndClassName(p1, p2, p3) -- Line: 9
+    local v1 = p1:QueryDescendants(p3 .. "#" .. p2)
+    if 0 < #v1 then
+        return v1[1]
+    end
+    return nil
+end
+return function() -- Line: 17 -- upvalues: u20 (val)
+    local v1, v2
+    local v3 = script:FindFirstAncestorOfClass("Plugin")
+    if v3 then
+        local v4 = v3:QueryDescendants("ModuleScript#Promise")
+        if 0 >= #v4 then
+            v1 = nil
+        else
+            v1 = v4[1]
+        end
+        if v1 then
+            return true, require(v1)
+        end
+        return false
+    end
+    v1 = nil
+    for i, v in ipairs(u20) do
+        v2 = v:QueryDescendants("ModuleScript#Promise")
+        if 0 >= #v2 then
+            v1 = nil
+        else
+            v1 = v2[1]
+        end
+        if v1 then
+            break
+        end
+    end
+    if v1 then
+        return true, require(v1)
+    end
+    return false
 end

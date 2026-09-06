@@ -1,61 +1,59 @@
-local v1 = game:GetService("ReplicatedStorage")
-local _ = v1.common
-local v2 = v1.common.RedEvents
-local v_u_3 = require(v1.Packages.Fusion)
-local v_u_4 = require(v1.common.skillTree.SkillTreeData)
-local v_u_5 = require(v2.Framework.FrameworkEvents).MeleeSwing
-function roundVector(p6, p7) -- name: roundVector
-	local v8 = p6.X
-	local v9 = string.format
-	local v10 = "%." .. (p7 or 0) .. "f"
-	local v11 = tonumber(v9(v10, v8))
-	local v12 = p6.Y
-	local v13 = string.format
-	local v14 = "%." .. (p7 or 0) .. "f"
-	local v15 = tonumber(v13(v14, v12))
-	local v16 = p6.Z
-	local v17 = string.format
-	local v18 = "%." .. (p7 or 0) .. "f"
-	return v11, v15, tonumber(v17(v18, v16))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local SkillTreeData = require(ReplicatedStorage.common.skillTree.SkillTreeData)
+local MeleeSwing = require(ReplicatedStorage.common.RedEvents.Framework.FrameworkEvents).MeleeSwing
+local function round(p1, p2) -- Line: 16
+    local v1 = "%." .. (p2 or 0) .. "f"
+    return (tonumber(string.format(v1, p1)))
+end
+function roundVector(p1, p2) -- Line: 19
+    local v1 = tonumber(string.format("%." .. (p2 or 0) .. "f", p1.X))
+    local v2 = tonumber(string.format("%." .. (p2 or 0) .. "f", p1.Y))
+    local v3 = "%." .. (p2 or 0) .. "f"
+    return v1, v2, (tonumber(string.format(v3, p1.Z)))
 end
 return {
-	["Shoot"] = function(p19) -- name: Shoot
-		-- upvalues: (copy) v_u_3, (copy) v_u_4, (copy) v_u_5
-		if p19.SwingCombo then
-			p19.SwingCombo = p19.SwingCombo + 1
-		else
-			p19.SwingCombo = 1
-		end
-		if p19.PreviouslyPlayed then
-			p19.Viewmodel:StopAnimation(p19.PreviouslyPlayed)
-		end
-		local v20 = p19.Config
-		local v21 = v20.SwingAnimationTimeScale or 1
-		local v22 = v_u_3.peek(v_u_4.MeleeSwingSpeedMult) or 1
-		local v23 = v21 * v22
-		if p19.DoCharging and (p19.PrimaryAttackStart and os.clock() >= p19.PrimaryAttackStart + (p19.Config.ChargeTime or 9999)) then
-			local v24 = (v20.HeavySwingAnimationTimeScale or 1) * v22
-			local v25 = p19.PreviouslyPlayed == "Swing1" and "HeavySwing2" or "HeavySwing"
-			p19.PreviouslyPlayed = v25
-			p19.Viewmodel:PlayAnimation(v25, 0, 1, v24)
-			p19.DoingHeavy = true
-		elseif p19.SwingCombo and p19.Viewmodel.Animations["Swing" .. p19.SwingCombo] then
-			p19.Viewmodel:StopAnimation("HeavySwing")
-			p19.Viewmodel:StopAnimation("HeavySwing2")
-			p19.Viewmodel:StopAnimation("Swing1")
-			p19.Viewmodel:StopAnimation("Swing2")
-			p19.Viewmodel:PlayAnimation("Swing" .. p19.SwingCombo, 0.1, 1, v23)
-			p19.PreviouslyPlayed = "Swing" .. p19.SwingCombo
-		else
-			p19.SwingCombo = 1
-			p19.Viewmodel:PlayAnimation("Swing1", nil, nil, v23)
-			p19.PreviouslyPlayed = "Swing1"
-		end
-		v_u_5:FireServer({ p19.Slot, p19.DoingHeavy, game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0) })
-	end,
-	["NewMelee"] = function(p26) -- name: NewMelee
-		p26.Config.FireMode = { "Melee" }
-		p26.Config.AmmoPerShot = 0
-		p26.Config.Ammo = 0
-	end
+    Shoot = function(p1) -- Line: 26 -- upvalues: Fusion (val), SkillTreeData (val), MeleeSwing (val)
+        if p1.SwingCombo then
+            p1.SwingCombo = p1.SwingCombo + 1
+        else
+            p1.SwingCombo = 1
+        end
+        if p1.PreviouslyPlayed then
+            p1.Viewmodel:StopAnimation(p1.PreviouslyPlayed)
+        end
+        local Config = p1.Config
+        local v1 = Config.SwingAnimationTimeScale or 1
+        local v2 = Fusion.peek(SkillTreeData.MeleeSwingSpeedMult) or 1
+        v1 = v1 * v2
+        if not p1.DoCharging then
+            if not p1.SwingCombo then
+                p1.SwingCombo = 1
+                p1.Viewmodel:PlayAnimation("Swing1", nil, nil, v1)
+                p1.PreviouslyPlayed = "Swing1"
+            elseif not (p1.Viewmodel.Animations["Swing" .. p1.SwingCombo]) then
+                p1.SwingCombo = 1
+                p1.Viewmodel:PlayAnimation("Swing1", nil, nil, v1)
+                p1.PreviouslyPlayed = "Swing1"
+            else
+                p1.Viewmodel:StopAnimation("HeavySwing")
+                p1.Viewmodel:StopAnimation("HeavySwing2")
+                p1.Viewmodel:StopAnimation("Swing1")
+                p1.Viewmodel:StopAnimation("Swing2")
+                p1.Viewmodel:PlayAnimation("Swing" .. p1.SwingCombo, 0.1, 1, v1)
+                p1.PreviouslyPlayed = "Swing" .. p1.SwingCombo
+            end
+        elseif p1.PrimaryAttackStart and p1.PrimaryAttackStart + (p1.Config.ChargeTime or 9999) <= os.clock() then
+            local v3 = if p1.PreviouslyPlayed == "Swing1" then "HeavySwing2" else "HeavySwing"
+            p1.PreviouslyPlayed = v3
+            p1.Viewmodel:PlayAnimation(v3, 0, 1, (Config.HeavySwingAnimationTimeScale or 1) * v2)
+            p1.DoingHeavy = true
+        end
+        MeleeSwing:FireServer({p1.Slot, p1.DoingHeavy, game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0)})
+    end,
+    NewMelee = function(p1) -- Line: 71
+        p1.Config.FireMode = {"Melee"}
+        p1.Config.AmmoPerShot = 0
+        p1.Config.Ammo = 0
+    end,
 }

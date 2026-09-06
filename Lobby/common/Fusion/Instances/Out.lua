@@ -1,35 +1,30 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Logging.logError)
-local v_u_3 = require(v1.Utility.xtypeof)
-return function(p_u_4) -- name: Out
-	-- upvalues: (copy) v_u_2, (copy) v_u_3
-	return {
-		["type"] = "SpecialKey",
-		["kind"] = "Out",
-		["stage"] = "observer",
-		["apply"] = function(_, p_u_5, p_u_6, p7) -- name: apply
-			-- upvalues: (copy) p_u_4, (ref) v_u_2, (ref) v_u_3
-			local v8, v9 = pcall(p_u_6.GetPropertyChangedSignal, p_u_6, p_u_4)
-			if v8 then
-				if v_u_3(p_u_5) == "State" and p_u_5.kind == "Value" then
-					p_u_5:set(p_u_6[p_u_4])
-					local function v10()
-						-- upvalues: (copy) p_u_5, (copy) p_u_6, (ref) p_u_4
-						p_u_5:set(p_u_6[p_u_4])
-					end
-					table.insert(p7, v9:Connect(v10))
-					table.insert(p7, function()
-						-- upvalues: (copy) p_u_5
-						p_u_5:set(nil)
-					end)
-				else
-					v_u_2("invalidOutType")
-				end
-			else
-				v_u_2("invalidOutProperty", nil, p_u_6.ClassName, p_u_4)
-				return
-			end
-		end
-	}
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local logError = require(Parent.Logging.logError)
+local xtypeof = require(Parent.Utility.xtypeof)
+return function(p1) -- Line: 13 -- upvalues: logError (val), xtypeof (val)
+    return {
+        type = "SpecialKey",
+        kind = "Out",
+        stage = "observer",
+        apply = function(a1, p2, p3, p4) -- Line: 19 -- upvalues: p1 (val), logError (upval), xtypeof (upval)
+            local v1, v2
+            v1, v2 = pcall(p3.GetPropertyChangedSignal, p3, p1)
+            if not v1 then
+                logError("invalidOutProperty", nil, p3.ClassName, p1)
+                return
+            end
+            if xtypeof(p2) ~= "State" or p2.kind ~= "Value" then
+                logError("invalidOutType")
+                return
+            end
+            p2:set(p3[p1])
+            table.insert(p4, v2:Connect(function() -- Line: 29 -- upvalues: p2 (val), p3 (val), p1 (upval)
+                p2:set(p3[p1])
+            end))
+            table.insert(p4, function() -- Line: 33 -- upvalues: p2 (val)
+                p2:set(nil)
+            end)
+        end,
+    }
 end

@@ -1,35 +1,38 @@
 local v1 = {}
-local v_u_2 = nil
-local v_u_3 = game:GetService("RunService")
-function v1.setupWorldModel(_) -- name: setupWorldModel
-	-- upvalues: (ref) v_u_2, (copy) v_u_3
-	if v_u_2 then
-		return v_u_2
-	end
-	local v4 = v_u_3:IsClient() and "ReplicatedStorage" or "ServerStorage"
-	v_u_2 = Instance.new("WorldModel")
-	v_u_2.Name = "ZonePlusWorldModel"
-	v_u_2.Parent = game:GetService(v4)
-	return v_u_2
+local u1 = nil
+local RunService = game:GetService("RunService")
+function v1.setupWorldModel(p1) -- Line: 8 -- upvalues: u1 (ref), RunService (val)
+    local v1
+    if u1 then
+        return u1
+    end
+    if not (RunService:IsClient()) then
+        v1 = "ServerStorage"
+    else
+        v1 = "ReplicatedStorage"
+    end
+    u1 = Instance.new("WorldModel")
+    u1.Name = "ZonePlusWorldModel"
+    u1.Parent = game:GetService(v1)
+    return u1
 end
-function v1._getCombinedResults(_, p5, ...) -- name: _getCombinedResults
-	-- upvalues: (ref) v_u_2
-	local v6 = workspace[p5](workspace, ...)
-	if v_u_2 then
-		local v7 = v_u_2[p5](v_u_2, ...)
-		for _, v8 in pairs(v7) do
-			table.insert(v6, v8)
-		end
-	end
-	return v6
+function v1._getCombinedResults(p1, p2, ...) -- Line: 22 -- upvalues: u1 (ref)
+    local v1 = workspace[p2](workspace, ...)
+    if u1 then
+        local v2 = u1[p2](u1, ...)
+        for k, v in pairs(v2) do
+            table.insert(v1, v)
+        end
+    end
+    return v1
 end
-function v1.GetPartBoundsInBox(p9, p10, p11, p12) -- name: GetPartBoundsInBox
-	return p9:_getCombinedResults("GetPartBoundsInBox", p10, p11, p12)
+function v1.GetPartBoundsInBox(p1, p2, p3, p4) -- Line: 33
+    return p1:_getCombinedResults("GetPartBoundsInBox", p2, p3, p4)
 end
-function v1.GetPartBoundsInRadius(p13, p14, p15, p16) -- name: GetPartBoundsInRadius
-	return p13:_getCombinedResults("GetPartBoundsInRadius", p14, p15, p16)
+function v1.GetPartBoundsInRadius(p1, p2, p3, p4) -- Line: 37
+    return p1:_getCombinedResults("GetPartBoundsInRadius", p2, p3, p4)
 end
-function v1.GetPartsInPart(p17, p18, p19) -- name: GetPartsInPart
-	return p17:_getCombinedResults("GetPartsInPart", p18, p19)
+function v1.GetPartsInPart(p1, p2, p3) -- Line: 41
+    return p1:_getCombinedResults("GetPartsInPart", p2, p3)
 end
 return v1

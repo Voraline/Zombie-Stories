@@ -1,73 +1,61 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.State.For)
-local v_u_4 = require(v1.State.Value)
-local v_u_5 = require(v1.State.Computed)
-require(v1.State.For.ForTypes)
-local v_u_6 = require(v1.Logging.parseError)
-local v_u_7 = require(v1.Memory.doCleanup)
-local v_u_13 = {
-	["__index"] = {
-		["roamKeys"] = false,
-		["roamValues"] = false,
-		["invalidateInputKey"] = nil,
-		["invalidateInputValue"] = nil,
-		["useOutputPair"] = nil,
-		["invalidateInputKey"] = function(p8) -- name: invalidateInputKey
-			p8._inputKeyState:set(p8.inputKey)
-		end,
-		["invalidateInputValue"] = function(p9) -- name: invalidateInputValue
-			p9._inputValueState:set(p9.inputValue)
-		end,
-		["useOutputPair"] = function(p10, p11) -- name: useOutputPair
-			local v12 = p11(p10._outputPairState)
-			return v12.key, v12.value
-		end
-	}
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local For = require(Parent.State.For)
+local Value = require(Parent.State.Value)
+local Computed = require(Parent.State.Computed)
+require(Parent.State.For.ForTypes)
+local parseError = require(Parent.Logging.parseError)
+local doCleanup = require(Parent.Memory.doCleanup)
+local u34 = {
+    __index = {
+        roamKeys = false,
+        roamValues = false,
+        invalidateInputKey = function(p1) -- Line: 33
+            p1._inputKeyState:set(p1.inputKey)
+        end,
+        invalidateInputValue = function(p1) -- Line: 36
+            p1._inputValueState:set(p1.inputValue)
+        end,
+        useOutputPair = function(p1, p2) -- Line: 39
+            local v1 = p2(p1._outputPairState)
+            return v1.key, v1.value
+        end,
+    },
 }
-local function v_u_27(p14, p15, p16, p17) -- name: SubObject
-	-- upvalues: (copy) v_u_4, (copy) v_u_5, (copy) v_u_6, (copy) v_u_2, (copy) v_u_7, (copy) v_u_13
-	local v_u_18 = {
-		["maybeScope"] = p14,
-		["inputKey"] = p15,
-		["inputValue"] = p16,
-		["_inputKeyState"] = v_u_4(p14, p15),
-		["_inputValueState"] = v_u_4(p14, p16),
-		["_processor"] = p17
-	}
-	v_u_18._outputPairState = v_u_5(p14, function(p19, p20)
-		-- upvalues: (copy) v_u_18, (ref) v_u_6, (ref) v_u_2, (ref) v_u_7
-		local v21 = p19(v_u_18._inputKeyState)
-		local v22 = p19(v_u_18._inputValueState)
-		local v23, v24, v25 = xpcall(v_u_18._processor, v_u_6, p19, p20, v21, v22)
-		if v23 then
-			return {
-				["key"] = v24,
-				["value"] = v25
-			}
-		end
-		v24.context = ("while processing key %* and value %*"):format(tostring(v22), (tostring(v22)))
-		v_u_2.logErrorNonFatal("callbackError", v24)
-		v_u_7(p20)
-		table.clear(p20)
-		return {
-			["key"] = nil,
-			["value"] = nil
-		}
-	end)
-	local v26 = v_u_13
-	return setmetatable(v_u_18, v26)
+local function SubObject(p1, p2, p3, p4) -- Line: 46 -- upvalues: Value (val), Computed (val), parseError (val), External (val), doCleanup (val), u34 (val)
+    local u4 = {
+        maybeScope = p1,
+        inputKey = p2,
+        inputValue = p3,
+        _inputKeyState = Value(p1, p2),
+        _inputValueState = Value(p1, p3),
+        _processor = p4,
+    }
+    u4._outputPairState = Computed(p1, function(p1, p2) -- Line: 59 -- upvalues: u4 (val), parseError (upval), External (upval), doCleanup (upval)
+        local v1, v2, v3
+        local v4 = p1(u4._inputKeyState)
+        local v5 = p1(u4._inputValueState)
+        v1, v2, v3 = xpcall(u4._processor, parseError, p1, p2, v4, v5)
+        if v1 then
+            return {key = v2, value = v3}
+        end
+        local v6 = tostring(v5)
+        v2.context = ("while processing key %* and value %*"):format(v6, (tostring(v5)))
+        External.logErrorNonFatal("callbackError", v2)
+        doCleanup(p2)
+        table.clear(p2)
+        return {}
+    end)
+    return (setmetatable(u4, u34))
 end
-return function(p28, p29, p_u_30, p31) -- name: ForPairs
-	-- upvalues: (copy) v_u_2, (copy) v_u_3, (copy) v_u_27
-	if typeof(p29) == "function" then
-		v_u_2.logError("scopeMissing", nil, "ForPairs", "myScope:ForPairs(inputTable, function(scope, use, key, value) ... end)")
-	elseif p31 ~= nil then
-		v_u_2.logWarn("destructorRedundant", "ForPairs")
-	end
-	return v_u_3(p28, p29, function(p32, p33, p34)
-		-- upvalues: (ref) v_u_27, (copy) p_u_30
-		return v_u_27(p32, p33, p34, p_u_30)
-	end)
+return function(p1, p2, p3, p4) -- Line: 77 -- upvalues: External (val), For (val), SubObject (val)
+    if typeof(p2) == "function" then
+        External.logError("scopeMissing", nil, "ForPairs", "myScope:ForPairs(inputTable, function(scope, use, key, value) ... end)")
+    elseif p4 ~= nil then
+        External.logWarn("destructorRedundant", "ForPairs")
+    end
+    return For(p1, p2, function(p1, p2, a3) -- Line: 91 -- upvalues: SubObject (upval), p3 (val)
+        return (SubObject(p1, p2, a3, p3))
+    end)
 end

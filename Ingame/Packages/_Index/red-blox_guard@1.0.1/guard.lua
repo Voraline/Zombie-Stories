@@ -1,209 +1,201 @@
 return {
-	["Any"] = function(p1)
-		return p1
-	end,
-	["Boolean"] = function(p2)
-		local v3 = type(p2) == "boolean"
-		assert(v3)
-		return p2
-	end,
-	["Thread"] = function(p4)
-		local v5 = type(p4) == "thread"
-		assert(v5)
-		return p4
-	end,
-	["Nil"] = function(p6)
-		local v7 = p6 == nil
-		assert(v7)
-		return p6
-	end,
-	["Number"] = function(p8)
-		local v9 = type(p8) == "number"
-		assert(v9)
-		local v10 = p8 == p8
-		assert(v10)
-		return p8
-	end,
-	["String"] = function(p11)
-		local v12 = type(p11) == "string"
-		assert(v12)
-		return p11
-	end,
-	["Optional"] = function(p_u_13) -- name: Optional
-		return function(p14)
-			-- upvalues: (copy) p_u_13
-			if p14 == nil then
-				return nil
-			else
-				return p_u_13(p14)
-			end
-		end
-	end,
-	["Literal"] = function(p_u_15) -- name: Literal
-		return function(p16)
-			-- upvalues: (copy) p_u_15
-			local v17 = p16 == p_u_15
-			assert(v17)
-			return p16
-		end
-	end,
-	["Or"] = function(p_u_18, p_u_19) -- name: Or
-		return function(p20)
-			-- upvalues: (copy) p_u_18, (copy) p_u_19
-			if pcall(p_u_18, p20) then
-				return p20
-			end
-			if pcall(p_u_19, p20) then
-				return p20
-			end
-			error("Union check failed")
-		end
-	end,
-	["And"] = function(p_u_21, p_u_22) -- name: And
-		return function(p23)
-			-- upvalues: (copy) p_u_21, (copy) p_u_22
-			if not pcall(p_u_21, p23) then
-				error("Intersection check failed")
-			end
-			if not pcall(p_u_22, p23) then
-				error("Intersection check failed")
-			end
-			return p23
-		end
-	end,
-	["Map"] = function(p_u_24, p_u_25) -- name: Map
-		return function(p26)
-			-- upvalues: (copy) p_u_24, (copy) p_u_25
-			local v27 = type(p26) == "table"
-			assert(v27)
-			for v28, v29 in p26 do
-				p_u_24(v28)
-				p_u_25(v29)
-			end
-			return p26
-		end
-	end,
-	["Set"] = function(p_u_30) -- name: Set
-		local v_u_31 = true
-		local function v_u_34(p32)
-			-- upvalues: (copy) v_u_31
-			local v33 = p32 == v_u_31
-			assert(v33)
-			return p32
-		end
-		return function(p35)
-			-- upvalues: (copy) p_u_30, (copy) v_u_34
-			local v36 = type(p35) == "table"
-			assert(v36)
-			for v37, v38 in p35 do
-				p_u_30(v37)
-				v_u_34(v38)
-			end
-			return p35
-		end
-	end,
-	["List"] = function(p_u_39) -- name: List
-		return function(p40)
-			-- upvalues: (copy) p_u_39
-			local v41 = type(p40) == "table"
-			assert(v41)
-			for v42 = 1, table.maxn(p40) do
-				p_u_39(p40[v42])
-			end
-			return p40
-		end
-	end,
-	["Integer"] = function(p43)
-		local v44 = type(p43) == "number"
-		assert(v44)
-		local v45 = p43 % 1 == 0
-		assert(v45)
-		return p43
-	end,
-	["NumberMin"] = function(p_u_46) -- name: NumberMin
-		return function(p47)
-			-- upvalues: (copy) p_u_46
-			local v48 = type(p47) == "number"
-			assert(v48)
-			local v49 = p_u_46 <= p47
-			assert(v49)
-			return p47
-		end
-	end,
-	["NumberMax"] = function(p_u_50) -- name: NumberMax
-		return function(p51)
-			-- upvalues: (copy) p_u_50
-			local v52 = type(p51) == "number"
-			assert(v52)
-			local v53 = p51 <= p_u_50
-			assert(v53)
-			return p51
-		end
-	end,
-	["NumberMinMax"] = function(p_u_54, p_u_55) -- name: NumberMinMax
-		return function(p56)
-			-- upvalues: (copy) p_u_54, (copy) p_u_55
-			local v57 = type(p56) == "number"
-			assert(v57)
-			local v58 = p_u_54 < p56
-			assert(v58)
-			local v59 = p56 < p_u_55
-			assert(v59)
-			return p56
-		end
-	end,
-	["CFrame"] = function(p60)
-		local v61 = typeof(p60) == "CFrame"
-		assert(v61)
-		local v62 = p60 == p60
-		assert(v62)
-		return p60
-	end,
-	["Color3"] = function(p63)
-		local v64 = typeof(p63) == "Color3"
-		assert(v64)
-		local v65 = p63 == p63
-		assert(v65)
-		return p63
-	end,
-	["DateTime"] = function(p66)
-		local v67 = typeof(p66) == "DateTime"
-		assert(v67)
-		return p66
-	end,
-	["Instance"] = function(p68)
-		local v69 = typeof(p68) == "Instance"
-		assert(v69)
-		return p68
-	end,
-	["Vector2"] = function(p70)
-		local v71 = typeof(p70) == "Vector2"
-		assert(v71)
-		local v72 = p70 == p70
-		assert(v72)
-		return p70
-	end,
-	["Vector2int16"] = function(p73)
-		local v74 = typeof(p73) == "Vector2int16"
-		assert(v74)
-		return p73
-	end,
-	["Vector3"] = function(p75)
-		local v76 = typeof(p75) == "Vector3"
-		assert(v76)
-		local v77 = p75 == p75
-		assert(v77)
-		return p75
-	end,
-	["Vector3int16"] = function(p78)
-		local v79 = typeof(p78) == "Vector3int16"
-		assert(v79)
-		return p78
-	end,
-	["Check"] = function(p_u_80) -- name: Check
-		return function(p81)
-			-- upvalues: (copy) p_u_80
-			return pcall(p_u_80, p81)
-		end
-	end
+    Any = function(p1) -- Line: 5
+        return p1
+    end,
+    Boolean = function(p1) -- Line: 9
+        local v1 = type(p1) == "boolean"
+        assert(v1)
+        return p1
+    end,
+    Thread = function(p1) -- Line: 15
+        local v1 = type(p1) == "thread"
+        assert(v1)
+        return p1
+    end,
+    Nil = function(p1) -- Line: 21
+        local v1 = p1 == nil
+        assert(v1)
+        return p1
+    end,
+    Number = function(p1) -- Line: 27
+        local v1 = type(p1) == "number"
+        assert(v1)
+        v1 = p1 == p1
+        assert(v1)
+        return p1
+    end,
+    String = function(p1) -- Line: 34
+        local v1 = type(p1) == "string"
+        assert(v1)
+        return p1
+    end,
+    Optional = function(p1) -- Line: 80
+        return function(a1) -- Line: 81 -- upvalues: p1 (val)
+            if a1 == nil then
+                return nil
+            end
+            return p1(a1)
+        end
+    end,
+    Literal = function(p1) -- Line: 90
+        return function(a1) -- Line: 91 -- upvalues: p1 (val)
+            local v1 = a1 == p1
+            assert(v1)
+            return a1
+        end
+    end,
+    Or = function(p1, p2) -- Line: 42
+        return function(a1) -- Line: 43 -- upvalues: p1 (val), p2 (val)
+            if pcall(p1, a1) or pcall(p2, a1) then
+                return a1
+            end
+            error("Union check failed")
+        end
+    end,
+    And = function(p1, p2) -- Line: 60
+        return function(a1) -- Line: 61 -- upvalues: p1 (val), p2 (val)
+            if not (pcall(p1, a1)) then
+                error("Intersection check failed")
+            end
+            if not (pcall(p2, a1)) then
+                error("Intersection check failed")
+            end
+            return a1
+        end
+    end,
+    Map = function(p1, p2) -- Line: 98
+        return function(a1) -- Line: 99 -- upvalues: p1 (val), p2 (val)
+            local v1 = type(a1) == "table"
+            assert(v1)
+            local v2 = a1
+            v1 = nil
+            local v3 = nil
+            for i, j in v2, v1, v3 do
+                p1(i)
+                p2(j)
+            end
+            return a1
+        end
+    end,
+    Set = function(p1) -- Line: 111
+        local u1 = true
+        local function u2(p1) -- Line: 91 -- upvalues: u1 (val)
+            local v1 = p1 == u1
+            assert(v1)
+            return p1
+        end
+        return function(a1) -- Line: 99 -- upvalues: p1 (val), u2 (val)
+            local v1 = type(a1) == "table"
+            assert(v1)
+            local v2 = a1
+            v1 = nil
+            local v3 = nil
+            for i, j in v2, v1, v3 do
+                p1(i)
+                u2(j)
+            end
+            return a1
+        end
+    end,
+    List = function(p1) -- Line: 115
+        return function(a1) -- Line: 116 -- upvalues: p1 (val)
+            local v1 = type(a1) == "table"
+            assert(v1)
+            local v2 = table.maxn(a1)
+            v1 = 1
+            for i = 1, v2, v1 do
+                p1(a1[i])
+            end
+            return a1
+        end
+    end,
+    Integer = function(p1) -- Line: 129
+        local v1 = type(p1) == "number"
+        assert(v1)
+        v1 = p1 % 1 == 0
+        assert(v1)
+        return p1
+    end,
+    NumberMin = function(p1) -- Line: 136
+        return function(a1) -- Line: 137 -- upvalues: p1 (val)
+            local v1 = type(a1) == "number"
+            assert(v1)
+            v1 = p1 <= a1
+            assert(v1)
+            return a1
+        end
+    end,
+    NumberMax = function(p1) -- Line: 145
+        return function(a1) -- Line: 146 -- upvalues: p1 (val)
+            local v1 = type(a1) == "number"
+            assert(v1)
+            v1 = a1 <= p1
+            assert(v1)
+            return a1
+        end
+    end,
+    NumberMinMax = function(p1, p2) -- Line: 154
+        return function(a1) -- Line: 155 -- upvalues: p1 (val), p2 (val)
+            local v1 = type(a1) == "number"
+            assert(v1)
+            v1 = p1 < a1
+            assert(v1)
+            v1 = a1 < p2
+            assert(v1)
+            return a1
+        end
+    end,
+    CFrame = function(p1) -- Line: 166
+        local v1 = typeof(p1) == "CFrame"
+        assert(v1)
+        v1 = p1 == p1
+        assert(v1)
+        return p1
+    end,
+    Color3 = function(p1) -- Line: 173
+        local v1 = typeof(p1) == "Color3"
+        assert(v1)
+        v1 = p1 == p1
+        assert(v1)
+        return p1
+    end,
+    DateTime = function(p1) -- Line: 180
+        local v1 = typeof(p1) == "DateTime"
+        assert(v1)
+        return p1
+    end,
+    Instance = function(p1) -- Line: 186
+        local v1 = typeof(p1) == "Instance"
+        assert(v1)
+        return p1
+    end,
+    Vector2 = function(p1) -- Line: 192
+        local v1 = typeof(p1) == "Vector2"
+        assert(v1)
+        v1 = p1 == p1
+        assert(v1)
+        return p1
+    end,
+    Vector2int16 = function(p1) -- Line: 199
+        local v1 = typeof(p1) == "Vector2int16"
+        assert(v1)
+        return p1
+    end,
+    Vector3 = function(p1) -- Line: 205
+        local v1 = typeof(p1) == "Vector3"
+        assert(v1)
+        v1 = p1 == p1
+        assert(v1)
+        return p1
+    end,
+    Vector3int16 = function(p1) -- Line: 212
+        local v1 = typeof(p1) == "Vector3int16"
+        assert(v1)
+        return p1
+    end,
+    Check = function(p1) -- Line: 220
+        return function(a1) -- Line: 221 -- upvalues: p1 (val)
+            return pcall(p1, a1)
+        end
+    end,
 }

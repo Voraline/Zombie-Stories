@@ -1,137 +1,160 @@
-local v_u_1 = require(script:WaitForChild("Table"))
-local v_u_2 = {}
-v_u_2.__index = v_u_2
-v_u_2.__type = "PartCache"
-local v_u_3 = CFrame.new(0, 1000000000, 0)
-function v_u_2.new(p4, p5, p6) -- name: new
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-	local v7 = p5 or 5
-	local v8 = p6 or workspace
-	local v9 = v7 > 0
-	assert(v9, "PrecreatedParts can not be negative!")
-	if v7 ~= 0 == false then
-		warn("PrecreatedParts is 0! This may have adverse effects when initially using the cache.")
-	end
-	if p4.Archivable == false then
-		warn("The template\'s Archivable property has been set to false, which prevents it from being cloned. It will temporarily be set to true.")
-	end
-	local v10 = p4.Archivable
-	p4.Archivable = true
-	local v11 = p4:Clone()
-	p4.Archivable = v10
-	local v12 = {
-		["Open"] = nil,
-		["InUse"] = nil,
-		["CurrentCacheParent"] = nil,
-		["Template"] = nil,
-		["ExpansionSize"] = 10,
-		["Open"] = {},
-		["InUse"] = {},
-		["CurrentCacheParent"] = v8,
-		["Template"] = v11
-	}
-	local v13 = v_u_2
-	setmetatable(v12, v13)
-	for _ = 1, v7 do
-		local v14 = v_u_1.insert
-		local v15 = v12.Open
-		local v16 = v12.CurrentCacheParent
-		local v17 = v11:Clone()
-		v17.CFrame = v_u_3
-		v17.Anchored = true
-		v17.Parent = v16
-		v14(v15, v17)
-	end
-	v12.Template.Parent = nil
-	return v12
+local Table = require(script:WaitForChild("Table"))
+local u7 = {}
+u7.__index = u7
+u7.__type = "PartCache"
+local u13 = CFrame.new(0, 1000000000, 0)
+local function assertwarn(p1, p2) -- Line: 60
+    if p1 == false then
+        warn(p2)
+    end
 end
-function v_u_2.GetPart(p18) -- name: GetPart
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-	local v19 = getmetatable(p18) == v_u_2
-	assert(v19, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("GetPart", "PartCache.new"))
-	if #p18.Open == 0 then
-		for _ = 1, p18.ExpansionSize do
-			local v20 = v_u_1.insert
-			local v21 = p18.Open
-			local v22 = p18.Template
-			local v23 = p18.CurrentCacheParent
-			local v24 = v22:Clone()
-			v24.CFrame = v_u_3
-			v24.Anchored = true
-			v24.Parent = v23
-			v20(v21, v24)
-		end
-	end
-	local v25 = p18.Open[#p18.Open]
-	p18.Open[#p18.Open] = nil
-	v_u_1.insert(p18.InUse, v25)
-	return v25
+local function MakeFromTemplate(p1, p2) -- Line: 67 -- upvalues: u13 (val)
+    local v1 = p1:Clone()
+    v1.CFrame = u13
+    v1.Anchored = true
+    v1.Parent = p2
+    return v1
 end
-function v_u_2.ReturnPart(p26, p27) -- name: ReturnPart
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-	local v28 = getmetatable(p26) == v_u_2
-	assert(v28, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("ReturnPart", "PartCache.new"))
-	local v29 = v_u_1.indexOf(p26.InUse, p27)
-	if v29 == nil then
-		error("Attempted to return part \"" .. p27.Name .. "\" (" .. p27:GetFullName() .. ") to the cache, but it\'s not in-use! Did you call this on the wrong part?")
-	else
-		v_u_1.remove(p26.InUse, v29)
-		v_u_1.insert(p26.Open, p27)
-		p27.CFrame = v_u_3
-		p27.Anchored = true
-	end
+function u7.new(p1, p2, p3) -- Line: 77 -- upvalues: u7 (val), Table (val), u13 (val)
+    local Archivable, v1
+    local v2 = p2 or 5
+    local v3 = p3
+    if not v3 then
+        v3 = workspace
+    end
+    local v4 = 0 < v2
+    assert(v4, "PrecreatedParts can not be negative!")
+    local v5 = v2 ~= 0
+    if not v5 then
+        warn("PrecreatedParts is 0! This may have adverse effects when initially using the cache.")
+    end
+    if p1.Archivable == false then
+        warn("The template's Archivable property has been set to false, which prevents it from being cloned. It will temporarily be set to true.")
+    end
+    Archivable = p1.Archivable
+    p1.Archivable = true
+    p1.Archivable = Archivable
+    local v6 = p1:Clone()
+    local v7 = {
+        ExpansionSize = 10,
+        Open = {},
+        InUse = {},
+        CurrentCacheParent = v3,
+        Template = v6,
+    }
+    setmetatable(v7, u7)
+    local v8 = v2
+    local v9 = 1
+    for i = 1, v8, v9 do
+        v1 = v6:Clone()
+        v1.CFrame = u13
+        v1.Anchored = true
+        v1.Parent = v7.CurrentCacheParent
+        Table.insert(v7.Open, v1)
+    end
+    v7.Template.Parent = nil
+    return v7
 end
-function v_u_2.SetCacheParent(p30, p31) -- name: SetCacheParent
-	-- upvalues: (copy) v_u_2
-	local v32 = getmetatable(p30) == v_u_2
-	assert(v32, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("SetCacheParent", "PartCache.new"))
-	local v33 = p31:IsDescendantOf(workspace) or p31 == workspace
-	assert(v33, "Cache parent is not a descendant of Workspace! Parts should be kept where they will remain in the visible world.")
-	p30.CurrentCacheParent = p31
-	for v34 = 1, #p30.Open do
-		p30.Open[v34].Parent = p31
-	end
-	for v35 = 1, #p30.InUse do
-		p30.InUse[v35].Parent = p31
-	end
+function u7.GetPart(p1) -- Line: 115 -- upvalues: u7 (val), Table (val), u13 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u7
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("GetPart", "PartCache.new"))
+    if #p1.Open == 0 then
+        local v3
+        local ExpansionSize = p1.ExpansionSize
+        v2 = 1
+        for i = 1, ExpansionSize, v2 do
+            v3 = p1.Template:Clone()
+            v3.CFrame = u13
+            v3.Anchored = true
+            v3.Parent = p1.CurrentCacheParent
+            Table.insert(p1.Open, v3)
+        end
+    end
+    local v4 = p1.Open[#p1.Open]
+    p1.Open[#p1.Open] = nil
+    Table.insert(p1.InUse, v4)
+    return v4
 end
-function v_u_2.Expand(p36, p37) -- name: Expand
-	-- upvalues: (copy) v_u_2, (copy) v_u_1, (copy) v_u_3
-	local v38 = getmetatable(p36) == v_u_2
-	assert(v38, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Expand", "PartCache.new"))
-	if p37 == nil then
-		p37 = p36.ExpansionSize
-	end
-	for _ = 1, p37 do
-		local v39 = v_u_1.insert
-		local v40 = p36.Open
-		local v41 = p36.Template
-		local v42 = p36.CurrentCacheParent
-		local v43 = v41:Clone()
-		v43.CFrame = v_u_3
-		v43.Anchored = true
-		v43.Parent = v42
-		v39(v40, v43)
-	end
+function u7.ReturnPart(p1, p2) -- Line: 131 -- upvalues: u7 (val), Table (val), u13 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u7
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("ReturnPart", "PartCache.new"))
+    local v3 = Table.indexOf(p1.InUse, p2)
+    if v3 == nil then
+        local Name = p2.Name
+        local FullName = p2:GetFullName()
+        error("Attempted to return part \"" .. Name .. "\" (" .. FullName .. ") to the cache, but it's not in-use! Did you call this on the wrong part?")
+        return
+    end
+    Table.remove(p1.InUse, v3)
+    Table.insert(p1.Open, p2)
+    p2.CFrame = u13
+    p2.Anchored = true
 end
-function v_u_2.Dispose(p44) -- name: Dispose
-	-- upvalues: (copy) v_u_2
-	local v45 = getmetatable(p44) == v_u_2
-	assert(v45, ("Cannot statically invoke method \'%s\' - It is an instance method. Call it on an instance of this class created via %s"):format("Dispose", "PartCache.new"))
-	for v46 = 1, #p44.Open do
-		p44.Open[v46]:Destroy()
-	end
-	for v47 = 1, #p44.InUse do
-		p44.InUse[v47]:Destroy()
-	end
-	p44.Template:Destroy()
-	p44.Open = {}
-	p44.InUse = {}
-	p44.CurrentCacheParent = nil
-	p44.GetPart = nil
-	p44.ReturnPart = nil
-	p44.SetCacheParent = nil
-	p44.Expand = nil
-	p44.Dispose = nil
+function u7.SetCacheParent(p1, p2) -- Line: 146 -- upvalues: u7 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u7
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("SetCacheParent", "PartCache.new"))
+    v2 = p2:IsDescendantOf(workspace)
+    if not v2 then
+        v2 = p2 == workspace
+    end
+    assert(v2, "Cache parent is not a descendant of Workspace! Parts should be kept where they will remain in the visible world.")
+    p1.CurrentCacheParent = p2
+    local v3 = #p1.Open
+    v2 = 1
+    for i = 1, v3, v2 do
+        p1.Open[i].Parent = p2
+    end
+    v3 = #p1.InUse
+    v2 = 1
+    for j = 1, v3, v2 do
+        p1.InUse[j].Parent = p2
+    end
 end
-return v_u_2
+function u7.Expand(p1, p2) -- Line: 160 -- upvalues: u7 (val), Table (val), u13 (val)
+    local ExpansionSize, v1
+    local v2 = getmetatable(p1)
+    local v3 = v2 == u7
+    assert(v3, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Expand", "PartCache.new"))
+    if p2 ~= nil then
+        ExpansionSize = p2
+    else
+        ExpansionSize = p1.ExpansionSize
+    end
+    local v4 = ExpansionSize
+    v3 = 1
+    for i = 1, v4, v3 do
+        v1 = p1.Template:Clone()
+        v1.CFrame = u13
+        v1.Anchored = true
+        v1.Parent = p1.CurrentCacheParent
+        Table.insert(p1.Open, v1)
+    end
+end
+function u7.Dispose(p1) -- Line: 172 -- upvalues: u7 (val)
+    local v1 = getmetatable(p1)
+    local v2 = v1 == u7
+    assert(v2, ("Cannot statically invoke method '%s' - It is an instance method. Call it on an instance of this class created via %s"):format("Dispose", "PartCache.new"))
+    local v3 = #p1.Open
+    v2 = 1
+    for i = 1, v3, v2 do
+        p1.Open[i]:Destroy()
+    end
+    v3 = #p1.InUse
+    v2 = 1
+    for j = 1, v3, v2 do
+        p1.InUse[j]:Destroy()
+    end
+    p1.Template:Destroy()
+    p1.Open = {}
+    p1.InUse = {}
+    p1.CurrentCacheParent = nil
+    p1.GetPart = nil
+    p1.ReturnPart = nil
+    p1.SetCacheParent = nil
+    p1.Expand = nil
+    p1.Dispose = nil
+end
+return u7

@@ -1,190 +1,243 @@
 workspace:WaitForChild("Ignore")
-local v_u_1 = game:GetService("TweenService")
-local v_u_2 = nil
-local v_u_3 = nil
-local v_u_4 = nil
-local v_u_50 = {
-	["Arms"] = nil,
-	["ArmOwners"] = {
-		["Left"] = nil,
-		["Right"] = nil
-	},
-	["Hide"] = function(p5, p6) -- name: Hide
-		-- upvalues: (ref) v_u_2, (copy) v_u_1
-		if v_u_2 then
-			local v7 = p5.ArmOwners.Left == p6
-			local v8 = p5.ArmOwners.Right == p6
-			local v9 = p6.PrimaryPart.CFrame:ToObjectSpace(v_u_2.LeftShoulder.Part0.CFrame)
-			if v7 then
-				v_u_2.LeftWeld.Enabled = false
-				local v10 = v_u_2.LeftShoulderC0
-				v_u_2.LeftShoulder.C0 = v_u_2.LeftShoulder.Part0.CFrame:Inverse() * p6.PrimaryPart.CFrame * v9
-				local v11 = v_u_2.LeftShoulder.Part0.CFrame:toWorldSpace(CFrame.new(v_u_2.LeftShoulder.C0.Position))
-				v_u_2.LeftShoulder.C0 = v_u_2.LeftShoulder.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
-				local v12 = CFrame.lookAt(v11.Position, v_u_2.LeftShoulder.Part0.CFrame.Position, v_u_2.Left.CFrame.UpVector) * CFrame.Angles(1.5707963267948966, 0, 0)
-				v_u_2.LeftShoulder.C0 = v_u_2.LeftShoulder.Part0.CFrame:toObjectSpace(v12)
-				v_u_2.LeftShoulder.Enabled = true
-				v_u_1:Create(v_u_2.LeftShoulder, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-					["C0"] = v10
-				}):Play()
-				p5.ArmOwners.Left = nil
-			end
-			if v8 then
-				v_u_2.RightWeld.Enabled = false
-				local v13 = v_u_2.RightShoulderC0
-				v_u_2.RightShoulder.C0 = v_u_2.RightShoulder.Part0.CFrame:Inverse() * p6.PrimaryPart.CFrame * v9
-				local v14 = v_u_2.RightShoulder.Part0.CFrame:toWorldSpace(CFrame.new(v_u_2.RightShoulder.C0.Position))
-				v_u_2.RightShoulder.C0 = v_u_2.RightShoulder.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
-				local v15 = CFrame.lookAt(v14.Position, v_u_2.RightShoulder.Part0.CFrame.Position, v_u_2.Right.CFrame.UpVector) * CFrame.Angles(1.5707963267948966, 0, 0)
-				v_u_2.RightShoulder.C0 = v_u_2.RightShoulder.Part0.CFrame:toObjectSpace(v15)
-				v_u_2.RightShoulder.Enabled = true
-				v_u_1:Create(v_u_2.RightShoulder, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-					["C0"] = v13
-				}):Play()
-				p5.ArmOwners.Right = nil
-			end
-		end
-	end,
-	["Show"] = function(p16, p17) -- name: Show
-		-- upvalues: (ref) v_u_3, (ref) v_u_4, (ref) v_u_2, (copy) v_u_50
-		v_u_3 = p17
-		local v18 = p17["Left Arm"]
-		local v19 = v18.Size.Y > 3
-		local v20 = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-		if v20 ~= v_u_4 then
-			v_u_4 = v20
-			if v_u_2 then
-				v_u_2.LeftWeld:Destroy()
-				v_u_2.RightWeld:Destroy()
-				v_u_2.LeftShoulder.Enabled = true
-				v_u_2.RightShoulder.Enabled = true
-				v_u_2 = nil
-				v_u_50.Arms = nil
-			end
-			p16.ArmOwners.Left = nil
-			p16.ArmOwners.Right = nil
-		end
-		if v_u_3 ~= p17 then
-			return
-		end
-		if not v_u_2 then
-			local v21 = v_u_4:WaitForChild("Left Arm", 5)
-			if not v21 then
-				return
-			end
-			local v22 = v_u_4:WaitForChild("Right Arm", 5)
-			if not v22 then
-				return
-			end
-			local v23 = v_u_4:WaitForChild("Torso", 5)
-			if not v23 then
-				return
-			end
-			local v24 = v23:WaitForChild("Left Shoulder", 5)
-			local v25 = v23:WaitForChild("Right Shoulder", 5)
-			if v_u_3 ~= p17 or not (v_u_4.Parent and (v24 and v25)) then
-				return
-			end
-			local v26 = {}
-			local v27 = Instance.new("Motor6D")
-			v27.Part1 = v21
-			v27.Parent = v21
-			local v28 = Instance.new("Motor6D")
-			v28.Part1 = v22
-			v28.Parent = v22
-			v26.LeftWeld = v27
-			v26.RightWeld = v28
-			v26.LeftShoulder = v24
-			v26.RightShoulder = v25
-			v26.LeftShoulderC0 = v24.C0
-			v26.RightShoulderC0 = v25.C0
-			v26.Left = v21
-			v26.Right = v22
-			v_u_2 = v26
-		end
-		for _, v29 in v18.Parent:QueryDescendants("Motor6D") do
-			if v29.Part1 == v18 then
-				v_u_2.OGLArmWeld = v29
-				break
-			end
-		end
-		v_u_2.LeftShoulder.Enabled = false
-		v_u_2.RightShoulder.Enabled = false
-		v_u_2.LeftWeld.Enabled = true
-		v_u_2.RightWeld.Enabled = true
-		v_u_2.LeftWeld.Part0 = v18
-		v_u_2.RightWeld.Part0 = p17:WaitForChild("Right Arm")
-		v_u_2.MoveCF = v19
-		v_u_2.LeftWeld.C1 = v19 and CFrame.new(0, 1, 0) or CFrame.new()
-		v_u_2.RightWeld.C1 = v19 and CFrame.new(0, 1, 0) or CFrame.new()
-		v_u_50.Arms = v_u_2
-		p16.ArmOwners.Left = p17
-		p16.ArmOwners.Right = p17
-		return v_u_2
-	end,
-	["SetArmOwner"] = function(p30, p31, p32) -- name: SetArmOwner
-		-- upvalues: (ref) v_u_2
-		if v_u_2 then
-			p30.ArmOwners[p31] = p32
-			if p31 == "Left" then
-				local v33 = p32:FindFirstChild("Left Arm") or p32:FindFirstChild("Left Arm", true)
-				if v33 then
-					v_u_2.LeftWeld.Part0 = v33
-					local v34 = v33.Size.Y > 3
-					v_u_2.LeftWeld.C1 = v34 and CFrame.new(0, 1, 0) or CFrame.new()
-					return
-				end
-			else
-				local v35 = p31 == "Right" and (p32:FindFirstChild("Right Arm") or p32:FindFirstChild("Right Arm", true))
-				if v35 then
-					v_u_2.RightWeld.Part0 = v35
-					local v36 = v35.Size.Y > 3
-					v_u_2.RightWeld.C1 = v36 and CFrame.new(0, 1, 0) or CFrame.new()
-				end
-			end
-		end
-	end,
-	["OwnsArm"] = function(p37, p38, p39) -- name: OwnsArm
-		return p37.ArmOwners[p39] == p38
-	end,
-	["GetArmOwner"] = function(p40, p41) -- name: GetArmOwner
-		return p40.ArmOwners[p41]
-	end,
-	["ReleaseArm"] = function(p42, p43) -- name: ReleaseArm
-		p42.ArmOwners[p43] = nil
-	end,
-	["ShowForArms"] = function(p44, p45, p46, p47) -- name: ShowForArms
-		-- upvalues: (ref) v_u_2, (ref) v_u_4, (copy) v_u_50
-		if v_u_2 and game.Players.LocalPlayer.Character ~= v_u_4 then
-			v_u_2 = nil
-			v_u_50.Arms = nil
-		end
-		if not v_u_2 then
-			p44:Show(p45)
-			if not p46 then
-				p44.ArmOwners.Left = nil
-			end
-			if not p47 then
-				p44.ArmOwners.Right = nil
-			end
-			return v_u_2
-		end
-		if p46 then
-			p44:SetArmOwner("Left", p45)
-			local v48 = p45:FindFirstChild("Left Arm") or p45:FindFirstChild("Left Arm", true)
-			if v48 then
-				for _, v49 in v48.Parent:QueryDescendants("Motor6D") do
-					if v49.Part1 == v48 then
-						v_u_2.OGLArmWeld = v49
-						break
-					end
-				end
-			end
-		end
-		if p47 then
-			p44:SetArmOwner("Right", p45)
-		end
-		return v_u_2
-	end
-}
-return v_u_50
+local TweenService = game:GetService("TweenService")
+local u10 = nil
+local u11 = nil
+local u12 = nil
+local u13 = {Arms = nil}
+local v1 = {}
+u13.ArmOwners = v1
+function u13.Hide(p1, p2) -- Line: 21 -- upvalues: u10 (ref), TweenService (val)
+    if u10 then
+        local v1, v2, v3, v4, v5
+        local v6 = p1.ArmOwners.Left == p2
+        local v7 = p1.ArmOwners.Right == p2
+        local v8 = p2.PrimaryPart.CFrame:ToObjectSpace(u10.LeftShoulder.Part0.CFrame)
+        if v6 then
+            u10.LeftWeld.Enabled = false
+            v5 = u10.LeftShoulder.Part0.CFrame:Inverse()
+            u10.LeftShoulder.C0 = v5 * p2.PrimaryPart.CFrame * v8
+            v2 = u10.LeftShoulder.Part0.CFrame:toWorldSpace(CFrame.new(u10.LeftShoulder.C0.Position))
+            u10.LeftShoulder.C0 = u10.LeftShoulder.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
+            v4 = CFrame.lookAt(v2.Position, u10.LeftShoulder.Part0.CFrame.Position, u10.Left.CFrame.UpVector)
+            v3 = v4 * CFrame.Angles(1.5707963267948966, 0, 0)
+            u10.LeftShoulder.C0 = u10.LeftShoulder.Part0.CFrame:toObjectSpace(v3)
+            u10.LeftShoulder.Enabled = true
+            v1 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            TweenService:Create(u10.LeftShoulder, v1, {C0 = u10.LeftShoulderC0}):Play()
+            p1.ArmOwners.Left = nil
+        end
+        if v7 then
+            u10.RightWeld.Enabled = false
+            v5 = u10.RightShoulder.Part0.CFrame:Inverse()
+            u10.RightShoulder.C0 = v5 * p2.PrimaryPart.CFrame * v8
+            v2 = u10.RightShoulder.Part0.CFrame:toWorldSpace(CFrame.new(u10.RightShoulder.C0.Position))
+            u10.RightShoulder.C0 = u10.RightShoulder.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
+            v4 = CFrame.lookAt(v2.Position, u10.RightShoulder.Part0.CFrame.Position, u10.Right.CFrame.UpVector)
+            v3 = v4 * CFrame.Angles(1.5707963267948966, 0, 0)
+            u10.RightShoulder.C0 = u10.RightShoulder.Part0.CFrame:toObjectSpace(v3)
+            u10.RightShoulder.Enabled = true
+            v1 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            TweenService:Create(u10.RightShoulder, v1, {C0 = u10.RightShoulderC0}):Play()
+            p1.ArmOwners.Right = nil
+        end
+    end
+end
+function u13:Show(p2) -- Line: 71 -- upvalues: u11 (ref), u12 (ref), u10 (ref), u13 (val)
+    local v1
+    u11 = p2
+    local v2 = p2["Left Arm"]
+    local v3 = 3 < v2.Size.Y
+    local Character = game.Players.LocalPlayer.Character
+    if not Character then
+        Character = game.Players.LocalPlayer.CharacterAdded:Wait()
+    end
+    if Character ~= u12 then
+        u12 = Character
+        if u10 then
+            u10.LeftWeld:Destroy()
+            u10.RightWeld:Destroy()
+            u10.LeftShoulder.Enabled = true
+            u10.RightShoulder.Enabled = true
+            u10 = nil
+            u13.Arms = nil
+        end
+        self.ArmOwners.Left = nil
+        self.ArmOwners.Right = nil
+    end
+    if u11 ~= p2 then
+        return
+    end
+    if u10 then
+        for i, j in v2.Parent:QueryDescendants("Motor6D") do
+            if j.Part1 == v2 then
+                u10.OGLArmWeld = j
+                break
+            end
+        end
+        u10.LeftShoulder.Enabled = false
+        u10.RightShoulder.Enabled = false
+        u10.LeftWeld.Enabled = true
+        u10.RightWeld.Enabled = true
+        u10.LeftWeld.Part0 = v2
+        u10.RightWeld.Part0 = p2:WaitForChild("Right Arm")
+        u10.MoveCF = v3
+        local LeftWeld = u10.LeftWeld
+        if not v3 then
+            v1 = CFrame.new()
+        else
+            v1 = CFrame.new(0, 1, 0)
+        end
+        LeftWeld.C1 = v1
+        local RightWeld = u10.RightWeld
+        if not v3 then
+            v1 = CFrame.new()
+        else
+            v1 = CFrame.new(0, 1, 0)
+            if not v1 then
+                v1 = CFrame.new()
+            end
+        end
+        RightWeld.C1 = v1
+        u13.Arms = u10
+        self.ArmOwners.Left = p2
+        self.ArmOwners.Right = p2
+        return u10
+    else
+        local v4 = u12:WaitForChild("Left Arm", 5)
+        if not v4 then
+            return
+        end
+        v1 = u12:WaitForChild("Right Arm", 5)
+        if not v1 then
+            return
+        end
+        local Torso = u12:WaitForChild("Torso", 5)
+        if not Torso then
+            return
+        end
+        local v5 = Torso:WaitForChild("Left Shoulder", 5)
+        local v6 = Torso:WaitForChild("Right Shoulder", 5)
+        if u11 ~= p2 then
+            return
+        elseif not u12.Parent then
+            return
+        elseif not v5 then
+            return
+        else
+            if not v6 then
+                return
+            end
+            local v7 = {}
+            local Motor6D = Instance.new("Motor6D")
+            Motor6D.Part1 = v4
+            Motor6D.Parent = v4
+            local Motor6D_2 = Instance.new("Motor6D")
+            Motor6D_2.Part1 = v1
+            Motor6D_2.Parent = v1
+            v7.LeftWeld = Motor6D
+            v7.RightWeld = Motor6D_2
+            v7.LeftShoulder = v5
+            v7.RightShoulder = v6
+            v7.LeftShoulderC0 = v5.C0
+            v7.RightShoulderC0 = v6.C0
+            v7.Left = v4
+            v7.Right = v1
+            u10 = v7
+        end
+    end
+end
+function u13:SetArmOwner(p2, p3) -- Line: 159 -- upvalues: u10 (ref)
+    local v1, v2, v3
+    if not u10 then
+        return
+    end
+    self.ArmOwners[p2] = p3
+    if p2 == "Left" then
+        v1 = p3:FindFirstChild("Left Arm")
+        if not v1 then
+            v1 = p3:FindFirstChild("Left Arm", true)
+        end
+        if not v1 then
+            return
+        end
+        u10.LeftWeld.Part0 = v1
+        v2 = 3 < v1.Size.Y
+        local LeftWeld = u10.LeftWeld
+        if not v2 then
+            v3 = CFrame.new()
+        else
+            v3 = CFrame.new(0, 1, 0)
+            if not v3 then
+                v3 = CFrame.new()
+            end
+        end
+        LeftWeld.C1 = v3
+        return
+    end
+    if p2 == "Right" then
+        v1 = p3:FindFirstChild("Right Arm")
+        if not v1 then
+            v1 = p3:FindFirstChild("Right Arm", true)
+        end
+        if v1 then
+            u10.RightWeld.Part0 = v1
+            v2 = 3 < v1.Size.Y
+            local RightWeld = u10.RightWeld
+            if not v2 then
+                v3 = CFrame.new()
+            else
+                v3 = CFrame.new(0, 1, 0)
+                if not v3 then
+                    v3 = CFrame.new()
+                end
+            end
+            RightWeld.C1 = v3
+        end
+    end
+end
+function u13.OwnsArm(p1, p2, p3) -- Line: 187
+    local v1 = p1.ArmOwners[p3] == p2
+    return v1
+end
+function u13.GetArmOwner(p1, p2) -- Line: 194
+    return p1.ArmOwners[p2]
+end
+function u13.ReleaseArm(p1, p2) -- Line: 200
+    p1.ArmOwners[p2] = nil
+end
+function u13.ShowForArms(p1, p2, p3, p4) -- Line: 208 -- upvalues: u10 (ref), u12 (ref), u13 (val)
+    if u10 and game.Players.LocalPlayer.Character ~= u12 then
+        u10 = nil
+        u13.Arms = nil
+    end
+    if not u10 then
+        p1:Show(p2)
+        if not p3 then
+            p1.ArmOwners.Left = nil
+        end
+        if not p4 then
+            p1.ArmOwners.Right = nil
+        end
+        return u10
+    end
+    if p3 then
+        p1:SetArmOwner("Left", p2)
+        local v1 = p2:FindFirstChild("Left Arm")
+        if not v1 then
+            v1 = p2:FindFirstChild("Left Arm", true)
+        end
+        if v1 then
+            for i, j in v1.Parent:QueryDescendants("Motor6D") do
+                if j.Part1 == v1 then
+                    u10.OGLArmWeld = j
+                    break
+                end
+            end
+        end
+    end
+    if p4 then
+        p1:SetArmOwner("Right", p2)
+    end
+    return u10
+end
+return u13

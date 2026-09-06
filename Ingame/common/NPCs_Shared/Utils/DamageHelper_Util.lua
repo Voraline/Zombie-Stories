@@ -1,73 +1,75 @@
-local v_u_1 = {}
-local v_u_2 = {}
-local function v_u_8(p3) -- name: deepCopy
-	-- upvalues: (copy) v_u_8
-	local v4 = {}
-	for v5, v7 in pairs(p3) do
-		if type(v7) == "table" then
-			local v7 = v_u_8(v7)
-		end
-		v4[v5] = v7
-	end
-	return v4
+local deepCopy
+local u0 = {}
+local u1 = {}
+function deepCopy(p1) -- Line: 6 -- upvalues: deepCopy (val)
+    local v1 = {}
+    for k, v in pairs(p1) do
+        if type(v) == "table" then
+            v = deepCopy(v)
+        end
+        v1[k] = v
+    end
+    return v1
 end
 return {
-	["GetHPList"] = function(_, p9) -- name: GetHPList
-		-- upvalues: (copy) v_u_2
-		if not v_u_2[p9] then
-			local v10 = {}
-			for _, v11 in p9:GetChildren() do
-				if v11:IsA("BasePart") and v11.CanQuery then
-					local v12 = v11:GetAttribute("uid")
-					assert(v12, "uid doesn\'t exist!")
-					v10[v11:GetAttribute("uid")] = true
-				end
-			end
-			v_u_2[p9] = v10
-		end
-		return v_u_2[p9]
-	end,
-	["GetArmorHPList"] = function(_, p13) -- name: GetArmorHPList
-		-- upvalues: (copy) v_u_1, (copy) v_u_8
-		if not v_u_1[p13] then
-			local v14 = {
-				["HPDir"] = {}
-			}
-			if p13:FindFirstChild("Hitboxes") and p13.Hitboxes:FindFirstChild("Armor") then
-				for _, v15 in p13.Hitboxes.Armor:GetChildren() do
-					if not v15:GetAttribute("ArmorHealth") then
-						warn(v15, "does not have a set armor health. Setting to 25")
-						v15:SetAttribute("ArmorHealth", 25)
-					end
-					if not v15:GetAttribute("ArmorLevel") then
-						warn(v15, "does not have a set armor level. Setting to 1")
-						v15:SetAttribute("ArmorLevel", 1)
-					end
-					local v16 = v14.HPDir
-					local v17 = {
-						["HP"] = v15:GetAttribute("ArmorHealth"),
-						["Lvl"] = v15:GetAttribute("ArmorLevel")
-					}
-					table.insert(v16, v17)
-					local v18 = #v14.HPDir
-					for _, v19 in v15:GetChildren() do
-						local v20 = v19:GetAttribute("uid")
-						assert(v20, "uid doesn\'t exist!")
-						v14[v19:GetAttribute("uid")] = { v18, v15.Name }
-					end
-				end
-			end
-			v_u_1[p13] = v14
-		end
-		return v_u_8(v_u_1[p13])
-	end,
-	["GenUIDTable"] = function(_, p21) -- name: GenUIDTable
-		local v22 = {}
-		for _, v23 in p21:GetDescendants() do
-			if v23:GetAttribute("uid") then
-				v22[v23:GetAttribute("uid")] = v23
-			end
-		end
-		return v22
-	end
+    GetHPList = function(p1, p2) -- Line: 20 -- upvalues: u1 (val)
+        if not (u1[p2]) then
+            local Attribute, Attribute_2
+            local v1 = {}
+            for i, j in p2:GetChildren() do
+                if j:IsA("BasePart") and j.CanQuery then
+                    Attribute = j:GetAttribute("uid")
+                    assert(Attribute, "uid doesn't exist!")
+                    Attribute_2 = j:GetAttribute("uid")
+                    v1[Attribute_2] = true
+                end
+            end
+            u1[p2] = v1
+        end
+        return u1[p2]
+    end,
+    GetArmorHPList = function(p1, p2) -- Line: 35 -- upvalues: u0 (val), deepCopy (val)
+        local v1
+        if u0[p2] then
+            v1 = p2
+        else
+            local v2 = {HPDir = {}}
+            if not (p2:FindFirstChild("Hitboxes")) then
+                v1 = p2
+            elseif not (p2.Hitboxes:FindFirstChild("Armor")) then
+                v1 = p2
+            else
+                local Attribute, Attribute_2
+                v1 = p2
+                for i, j in p2.Hitboxes.Armor:GetChildren() do
+                    if not (j:GetAttribute("ArmorHealth")) then
+                        warn(j, "does not have a set armor health. Setting to 25")
+                        j:SetAttribute("ArmorHealth", 25)
+                    end
+                    if not (j:GetAttribute("ArmorLevel")) then
+                        warn(j, "does not have a set armor level. Setting to 1")
+                        j:SetAttribute("ArmorLevel", 1)
+                    end
+                    table.insert(v2.HPDir, {HP = j:GetAttribute("ArmorHealth"), Lvl = j:GetAttribute("ArmorLevel")})
+                    for k, n in j:GetChildren() do
+                        Attribute = n:GetAttribute("uid")
+                        assert(Attribute, "uid doesn't exist!")
+                        Attribute_2 = n:GetAttribute("uid")
+                        v2[Attribute_2] = {#v2.HPDir, j.Name}
+                    end
+                end
+            end
+            u0[v1] = v2
+        end
+        return (deepCopy(u0[v1]))
+    end,
+    GenUIDTable = function(p1, p2) -- Line: 62
+        local v1 = {}
+        for i, j in p2:GetDescendants() do
+            if j:GetAttribute("uid") then
+                v1[j:GetAttribute("uid")] = j
+            end
+        end
+        return v1
+    end,
 }

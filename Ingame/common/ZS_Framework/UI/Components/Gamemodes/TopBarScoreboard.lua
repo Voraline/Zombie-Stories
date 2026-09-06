@@ -1,124 +1,103 @@
-return function(p_u_1)
-	local v2 = p_u_1.scope
-	local v17 = v2:ForPairs(p_u_1.PlayerList, function(_, p3, p4, p_u_5)
-		local v6 = p3:New("Frame")
-		local v8 = {
-			["Size"] = UDim2.new(0.2, 0, 1, 0),
-			["BackgroundColor3"] = Color3.new(0.180392, 0.180392, 0.180392),
-			["LayoutOrder"] = p3:Computed(function(p7)
-				-- upvalues: (copy) p_u_5
-				return p7(p_u_5.Score) * -1
-			end),
-			["Visible"] = p_u_5.Visible
-		}
-		local v9 = p3.Children
-		local v10 = {}
-		local v11 = p3:New("TextLabel")({
-			["Size"] = nil,
-			["Position"] = nil,
-			["AnchorPoint"] = nil,
-			["BackgroundTransparency"] = 1,
-			["Text"] = nil,
-			["TextColor3"] = nil,
-			["Font"] = nil,
-			["TextScaled"] = true,
-			["ZIndex"] = 2,
-			["Size"] = UDim2.new(0.8, 0, 0.2, 0),
-			["Position"] = UDim2.new(0.5, 0, 0.1, 0),
-			["AnchorPoint"] = Vector2.new(0.5, 0),
-			["Text"] = p_u_5.Name,
-			["TextColor3"] = Color3.fromRGB(255, 255, 255),
-			["Font"] = Enum.Font.GothamBlack
-		})
-		local v12 = p3:New("TextLabel")({
-			["Size"] = nil,
-			["Position"] = nil,
-			["AnchorPoint"] = nil,
-			["BackgroundTransparency"] = 1,
-			["Text"] = nil,
-			["TextColor3"] = nil,
-			["Font"] = nil,
-			["TextScaled"] = true,
-			["ZIndex"] = 2,
-			["Size"] = UDim2.new(0.8, 0, 0.2, 0),
-			["Position"] = UDim2.new(0.5, 0, 0.9, 0),
-			["AnchorPoint"] = Vector2.new(0.5, 1),
-			["Text"] = p_u_5.Score,
-			["TextColor3"] = Color3.fromRGB(255, 255, 255),
-			["Font"] = Enum.Font.GothamBold
-		})
-		local v13 = p3:New("UICorner")({
-			["CornerRadius"] = UDim.new(0.1, 0)
-		})
-		local v14 = p3:New("UIAspectRatioConstraint")({
-			["AspectRatio"] = 1
-		})
-		local v15 = p3:New("ImageLabel")
-		local v16 = {
-			["Size"] = UDim2.new(0.9, 0, 0.9, 0),
-			["Position"] = UDim2.new(0.5, 0, 0.5, 0),
-			["AnchorPoint"] = Vector2.new(0.5, 0.5),
-			["Image"] = p_u_5.Headshot,
-			["BackgroundColor3"] = Color3.new(0.078431, 0.078431, 0.078431),
-			[p3.Children] = { p3:New("UICorner")({
-					["CornerRadius"] = UDim.new(0.1, 0)
-				}) }
-		}
-		__set_list(v10, 1, {v11, v12, v13, v14, v15(v16)})
-		v8[v9] = v10
-		return p4, v6(v8)
-	end)
-	local v_u_18 = v2:Value(UDim2.new(0.5, 0, -1, 0))
-	task.delay(0.25, function()
-		-- upvalues: (copy) v_u_18
-		v_u_18:set(UDim2.new(0.5, 0, 0, 0))
-	end)
-	local v19 = v2:New("Frame")
-	local v20 = {
-		["Size"] = UDim2.new(0.45, 0, 0.15, 0),
-		["Position"] = v2:Tween(v_u_18, TweenInfo.new(0.25)),
-		["AnchorPoint"] = Vector2.new(0.5, 0),
-		["BackgroundTransparency"] = 1
-	}
-	local v21 = v2.Children
-	local v22 = {}
-	local v27 = v2:New("TextLabel")({
-		["Size"] = nil,
-		["Position"] = nil,
-		["AnchorPoint"] = nil,
-		["BackgroundColor3"] = nil,
-		["BackgroundTransparency"] = 0,
-		["Text"] = nil,
-		["TextColor3"] = nil,
-		["Font"] = nil,
-		["TextScaled"] = true,
-		["Size"] = UDim2.new(0.125, 0, 0.3, 0),
-		["Position"] = UDim2.new(0.5, 0, -0.05, 0),
-		["AnchorPoint"] = Vector2.new(0.5, 1),
-		["BackgroundColor3"] = Color3.new(0.113725, 0.113725, 0.113725),
-		["Text"] = v2:Computed(function(p23)
-			-- upvalues: (copy) p_u_1
-			local v24 = p23(p_u_1.TimeLeft)
-			local v25 = string.format
-			local v26 = v24 / 60
-			return v25("%02d:%02d", math.floor(v26), v24 % 60)
-		end),
-		["TextColor3"] = Color3.fromRGB(255, 255, 255),
-		["Font"] = Enum.Font.GothamBlack
-	})
-	local v28 = v2:New("Frame")
-	local v29 = {
-		["Size"] = UDim2.new(1, 0, 1, 0),
-		["BackgroundTransparency"] = 1,
-		[v2.Children] = { v17, v2:New("UIListLayout")({
-				["SortOrder"] = Enum.SortOrder.LayoutOrder,
-				["Padding"] = UDim.new(0.05, 0),
-				["FillDirection"] = Enum.FillDirection.Horizontal,
-				["HorizontalAlignment"] = Enum.HorizontalAlignment.Center,
-				["VerticalAlignment"] = Enum.VerticalAlignment.Center
-			}) }
-	}
-	__set_list(v22, 1, {v27, v28(v29)})
-	v20[v21] = v22
-	return v19(v20)
+return function(p1) -- Line: 7
+    local Children, Children_2, v1, v2, v3, v4, v5, v6
+    local scope = p1.scope
+    local v7 = scope:ForPairs(p1.PlayerList, function(p1, p2, p3, p4) -- Line: 10
+        local v1 = p2:New("Frame")
+        local v2 = {Size = UDim2.new(0.2, 0, 1, 0), BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392), LayoutOrder = p2:Computed(function(p1) -- Line: 14 -- upvalues: p4 (val)
+            return p1(p4.Score) * -1
+        end), Visible = p4.Visible}
+        local Children = p2.Children
+        local v3 = {}
+        local v4 = p2:New("TextLabel")
+        v4 = v4({
+            BackgroundTransparency = 1,
+            TextScaled = true,
+            ZIndex = 2,
+            Size = UDim2.new(0.8, 0, 0.2, 0),
+            Position = UDim2.new(0.5, 0, 0.1, 0),
+            AnchorPoint = Vector2.new(0.5, 0),
+            Text = p4.Name,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            Font = Enum.Font.GothamBlack,
+        })
+        local v5 = p2:New("TextLabel")
+        v5 = v5({
+            BackgroundTransparency = 1,
+            TextScaled = true,
+            ZIndex = 2,
+            Size = UDim2.new(0.8, 0, 0.2, 0),
+            Position = UDim2.new(0.5, 0, 0.9, 0),
+            AnchorPoint = Vector2.new(0.5, 1),
+            Text = p4.Score,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            Font = Enum.Font.GothamBold,
+        })
+        local v6 = p2:New("UICorner")
+        v6 = v6({CornerRadius = UDim.new(0.1, 0)})
+        local v7 = p2:New("UIAspectRatioConstraint")
+        v7 = v7({AspectRatio = 1})
+        local v8 = p2:New("ImageLabel")
+        local v9 = {
+            Size = UDim2.new(0.9, 0, 0.9, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Image = p4.Headshot,
+            BackgroundColor3 = Color3.new(0.078431, 0.078431, 0.078431),
+        }
+        local Children_2 = p2.Children
+        local v10 = {}
+        local v11 = p2:New("UICorner")
+        v10[1] = v11({CornerRadius = UDim.new(0.1, 0)})
+        v9[Children_2] = v10
+        v3[1] = v4
+        v3[2] = v5
+        v3[3] = v6
+        v3[4] = v7
+        v3[5] = v8(v9)
+        v2[Children] = v3
+        return p3, v1(v2)
+    end)
+    local u15 = scope:Value(UDim2.new(0.5, 0, -1, 0))
+    task.delay(0.25, function() -- Line: 69 -- upvalues: u15 (val)
+        u15:set(UDim2.new(0.5, 0, 0, 0))
+    end)
+    local v8 = scope:New("Frame")
+    v4 = {Size = UDim2.new(0.45, 0, 0.15, 0), Position = scope:Tween(u15, TweenInfo.new(0.25)), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1}
+    Children = scope.Children
+    local v9 = {}
+    v5 = scope:New("TextLabel")
+    v5 = v5({
+        BackgroundTransparency = 0,
+        TextScaled = true,
+        Size = UDim2.new(0.125, 0, 0.3, 0),
+        Position = UDim2.new(0.5, 0, -0.05, 0),
+        AnchorPoint = Vector2.new(0.5, 1),
+        BackgroundColor3 = Color3.new(0.113725, 0.113725, 0.113725),
+        Text = scope:Computed(function(a1) -- Line: 86 -- upvalues: p1 (val)
+            local v1 = a1(p1.TimeLeft)
+            local v2 = math.floor(v1 / 60)
+            return string.format("%02d:%02d", v2, v1 % 60)
+        end),
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBlack,
+    })
+    v6 = scope:New("Frame")
+    v1 = {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1}
+    Children_2 = scope.Children
+    v2 = {}
+    v3 = scope:New("UIListLayout")
+    local v10 = {
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(0.05, 0),
+        FillDirection = Enum.FillDirection.Horizontal,
+        HorizontalAlignment = Enum.HorizontalAlignment.Center,
+        VerticalAlignment = Enum.VerticalAlignment.Center,
+    }
+    v2[1] = v7
+    v2[2] = v3(v10)
+    v1[Children_2] = v2
+    v9[1] = v5
+    v9[2] = v6(v1)
+    v4[Children] = v9
+    return v8(v4)
 end

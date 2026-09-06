@@ -1,133 +1,143 @@
-local v_u_1 = {}
-v_u_1.__index = v_u_1
-local v_u_2 = Vector3.new
-local v_u_3 = math.noise
-v_u_1.CameraShakeState = {
-	["FadingIn"] = 0,
-	["FadingOut"] = 1,
-	["Sustained"] = 2,
-	["Inactive"] = 3
-}
-function v_u_1.new(p4, p5, p6, p7) -- name: new
-	-- upvalues: (copy) v_u_2, (copy) v_u_1
-	local v8 = p6 == nil and 0 or p6
-	local v9 = p7 == nil and 0 or p7
-	local v10 = type(p4) == "number"
-	assert(v10, "Magnitude must be a number")
-	local v11 = type(p5) == "number"
-	assert(v11, "Roughness must be a number")
-	local v12 = type(v8) == "number"
-	assert(v12, "FadeInTime must be a number")
-	local v13 = type(v9) == "number"
-	assert(v13, "FadeOutTime must be a number")
-	local v14 = {
-		["Magnitude"] = nil,
-		["Roughness"] = nil,
-		["PositionInfluence"] = nil,
-		["RotationInfluence"] = nil,
-		["DeleteOnInactive"] = true,
-		["roughMod"] = 1,
-		["magnMod"] = 1,
-		["fadeOutDuration"] = nil,
-		["fadeInDuration"] = nil,
-		["sustain"] = nil,
-		["currentFadeTime"] = nil,
-		["tick"] = nil,
-		["_camShakeInstance"] = true,
-		["Magnitude"] = p4,
-		["Roughness"] = p5,
-		["PositionInfluence"] = v_u_2(),
-		["RotationInfluence"] = v_u_2(),
-		["fadeOutDuration"] = v9,
-		["fadeInDuration"] = v8,
-		["sustain"] = v8 > 0,
-		["currentFadeTime"] = v8 > 0 and 0 or 1,
-		["tick"] = Random.new():NextNumber(-100, 100)
-	}
-	local v15 = v_u_1
-	return setmetatable(v14, v15)
+local u0 = {}
+u0.__index = u0
+local new = Vector3.new
+local noise = math.noise
+local v1 = {FadingIn = 0, FadingOut = 1, Sustained = 2, Inactive = 3}
+u0.CameraShakeState = v1
+function u0.new(p1, p2, p3, p4) -- Line: 28 -- upvalues: new (val), u0 (val)
+    local v1, v2
+    if p3 ~= nil then
+        v1 = p3
+    else
+        v1 = 0
+    end
+    if p4 ~= nil then
+        v2 = p4
+    else
+        v2 = 0
+    end
+    local v3 = type(p1) == "number"
+    assert(v3, "Magnitude must be a number")
+    v3 = type(p2) == "number"
+    assert(v3, "Roughness must be a number")
+    v3 = type(v1) == "number"
+    assert(v3, "FadeInTime must be a number")
+    v3 = type(v2) == "number"
+    assert(v3, "FadeOutTime must be a number")
+    v3 = {
+        DeleteOnInactive = true,
+        roughMod = 1,
+        magnMod = 1,
+        _camShakeInstance = true,
+        Magnitude = p1,
+        Roughness = p2,
+        PositionInfluence = new(),
+        RotationInfluence = new(),
+        fadeOutDuration = v2,
+        fadeInDuration = v1,
+    }
+    local v4 = 0 < v1
+    v3.sustain = v4
+    if 0 >= v1 then
+        v4 = 1
+    else
+        v4 = 0
+    end
+    v3.currentFadeTime = v4
+    v3.tick = Random.new():NextNumber(-100, 100)
+    return (setmetatable(v3, u0))
 end
-function v_u_1.UpdateShake(p16, p17) -- name: UpdateShake
-	-- upvalues: (copy) v_u_3, (copy) v_u_2
-	local v18 = p16.tick
-	local v19 = p16.currentFadeTime
-	local v20 = v_u_2(v_u_3(v18, 0) * 0.5, v_u_3(0, v18) * 0.5, v_u_3(v18, v18) * 0.5)
-	if p16.fadeInDuration > 0 and p16.sustain then
-		if v19 < 1 then
-			v19 = v19 + p17 / p16.fadeInDuration
-		elseif p16.fadeOutDuration > 0 then
-			p16.sustain = false
-		end
-	end
-	if not p16.sustain then
-		v19 = v19 - p17 / p16.fadeOutDuration
-	end
-	if p16.sustain then
-		p16.tick = v18 + p17 * p16.Roughness * p16.roughMod
-	else
-		p16.tick = v18 + p17 * p16.Roughness * p16.roughMod * v19
-	end
-	p16.currentFadeTime = v19
-	return v20 * p16.Magnitude * p16.magnMod * v19
+function u0.UpdateShake(p1, p2) -- Line: 59 -- upvalues: noise (val), new (val)
+    local tick = p1.tick
+    local currentFadeTime = p1.currentFadeTime
+    local v1 = noise(tick, 0) * 0.5
+    local v2 = noise(0, tick) * 0.5
+    local v3 = new(v1, v2, noise(tick, tick) * 0.5)
+    if 0 < p1.fadeInDuration and p1.sustain then
+        if currentFadeTime < 1 then
+            currentFadeTime = currentFadeTime + p2 / p1.fadeInDuration
+        elseif 0 < p1.fadeOutDuration then
+            p1.sustain = false
+        end
+    end
+    if not p1.sustain then
+        currentFadeTime = currentFadeTime - p2 / p1.fadeOutDuration
+    end
+    if not p1.sustain then
+        p1.tick = tick + p2 * p1.Roughness * p1.roughMod * currentFadeTime
+    else
+        p1.tick = tick + p2 * p1.Roughness * p1.roughMod
+    end
+    p1.currentFadeTime = currentFadeTime
+    return v3 * p1.Magnitude * p1.magnMod * currentFadeTime
 end
-function v_u_1.StartFadeOut(p21, p22) -- name: StartFadeOut
-	if p22 == 0 then
-		p21.currentFadeTime = 0
-	end
-	p21.fadeOutDuration = p22
-	p21.fadeInDuration = 0
-	p21.sustain = false
+function u0.StartFadeOut(p1, p2) -- Line: 95
+    if p2 == 0 then
+        p1.currentFadeTime = 0
+    end
+    p1.fadeOutDuration = p2
+    p1.fadeInDuration = 0
+    p1.sustain = false
 end
-function v_u_1.StartFadeIn(p23, p24) -- name: StartFadeIn
-	if p24 == 0 then
-		p23.currentFadeTime = 1
-	end
-	p23.fadeInDuration = p24 or p23.fadeInDuration
-	p23.fadeOutDuration = 0
-	p23.sustain = true
+function u0.StartFadeIn(p1, p2) -- Line: 105
+    if p2 == 0 then
+        p1.currentFadeTime = 1
+    end
+    local fadeInDuration = p2
+    if not fadeInDuration then
+        fadeInDuration = p1.fadeInDuration
+    end
+    p1.fadeInDuration = fadeInDuration
+    p1.fadeOutDuration = 0
+    p1.sustain = true
 end
-function v_u_1.GetScaleRoughness(p25) -- name: GetScaleRoughness
-	return p25.roughMod
+function u0.GetScaleRoughness(p1) -- Line: 115
+    return p1.roughMod
 end
-function v_u_1.SetScaleRoughness(p26, p27) -- name: SetScaleRoughness
-	p26.roughMod = p27
+function u0.SetScaleRoughness(p1, p2) -- Line: 120
+    p1.roughMod = p2
 end
-function v_u_1.GetScaleMagnitude(p28) -- name: GetScaleMagnitude
-	return p28.magnMod
+function u0.GetScaleMagnitude(p1) -- Line: 125
+    return p1.magnMod
 end
-function v_u_1.SetScaleMagnitude(p29, p30) -- name: SetScaleMagnitude
-	p29.magnMod = p30
+function u0.SetScaleMagnitude(p1, p2) -- Line: 130
+    p1.magnMod = p2
 end
-function v_u_1.GetNormalizedFadeTime(p31) -- name: GetNormalizedFadeTime
-	return p31.currentFadeTime
+function u0.GetNormalizedFadeTime(p1) -- Line: 135
+    return p1.currentFadeTime
 end
-function v_u_1.IsShaking(p32) -- name: IsShaking
-	return p32.currentFadeTime > 0 and true or p32.sustain
+function u0:IsShaking() -- Line: 140
+    local sustain
+    sustain = if 0 >= self.currentFadeTime then self.sustain else true
+    return sustain
 end
-function v_u_1.IsFadingOut(p33) -- name: IsFadingOut
-	local v34 = not p33.sustain
-	if v34 then
-		v34 = p33.currentFadeTime > 0
-	end
-	return v34
+function u0:IsFadingOut() -- Line: 145
+    local v1 = not self.sustain
+    if v1 then
+        v1 = 0 < self.currentFadeTime
+    end
+    return v1
 end
-function v_u_1.IsFadingIn(p35) -- name: IsFadingIn
-	local v36 = p35.currentFadeTime < 1 and p35.sustain
-	if v36 then
-		v36 = p35.fadeInDuration > 0
-	end
-	return v36
+function u0:IsFadingIn() -- Line: 150
+    local sustain = false
+    if self.currentFadeTime < 1 then
+        sustain = self.sustain
+        if sustain then
+            sustain = 0 < self.fadeInDuration
+        end
+    end
+    return sustain
 end
-function v_u_1.GetState(p37) -- name: GetState
-	-- upvalues: (copy) v_u_1
-	if p37:IsFadingIn() then
-		return v_u_1.CameraShakeState.FadingIn
-	elseif p37:IsFadingOut() then
-		return v_u_1.CameraShakeState.FadingOut
-	elseif p37:IsShaking() then
-		return v_u_1.CameraShakeState.Sustained
-	else
-		return v_u_1.CameraShakeState.Inactive
-	end
+function u0.GetState(p1) -- Line: 155 -- upvalues: u0 (val)
+    if p1:IsFadingIn() then
+        return u0.CameraShakeState.FadingIn
+    end
+    if p1:IsFadingOut() then
+        return u0.CameraShakeState.FadingOut
+    end
+    if p1:IsShaking() then
+        return u0.CameraShakeState.Sustained
+    end
+    return u0.CameraShakeState.Inactive
 end
-return v_u_1
+return u0

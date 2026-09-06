@@ -1,371 +1,458 @@
-local v1 = nil
-local v2 = _VERSION or ""
-local v3
-if (tonumber(v2:match("[%d.]*$")) or 0) < 5.3 then
-	local v4
-	v4, v3 = pcall(require, "compat53.module")
-	if not v4 then
-		v3 = v1
-	end
+local countCycles, math, processRecursive, string, table, u160, v1, v2
+local v3 = nil
+local v4 = tonumber((_VERSION or ""):match("[%d.]*$")) or 0
+if v4 < 5.3 then
+    v4, v2 = pcall(require, "compat53.module")
+    if v4 then
+        v3 = v2
+    end
+end
+if not v3 then
+    math = math
 else
-	v3 = v1
+    math = v3.math
 end
-local v_u_5 = v3 and v3.math or math
-local v6 = v3 and v3.string or string
-local v_u_7 = v3 and v3.table or table
-local v_u_8 = {
-	["Options"] = {},
-	["_VERSION"] = "inspect.lua 3.1.0",
-	["_URL"] = "http://github.com/kikito/inspect.lua",
-	["_DESCRIPTION"] = "human-readable representations of tables",
-	["_LICENSE"] = "  MIT LICENSE\n\n  Copyright (c) 2022 Enrique Garc\195\173a Cota\n\n  Permission is hereby granted, free of charge, to any person obtaining a\n  copy of this software and associated documentation files (the\n  \"Software\"), to deal in the Software without restriction, including\n  without limitation the rights to use, copy, modify, merge, publish,\n  distribute, sublicense, and/or sell copies of the Software, and to\n  permit persons to whom the Software is furnished to do so, subject to\n  the following conditions:\n\n  The above copyright notice and this permission notice shall be included\n  in all copies or substantial portions of the Software.\n\n  THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\n  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\n  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\n  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
-	["KEY"] = setmetatable({}, {
-		["__tostring"] = function() -- name: __tostring
-			return "inspect.KEY"
-		end
-	}),
-	["METATABLE"] = setmetatable({}, {
-		["__tostring"] = function() -- name: __tostring
-			return "inspect.METATABLE"
-		end
-	})
-}
-local v_u_9 = tostring
-local v_u_10 = v6.rep
-local v_u_11 = v6.match
-local v12 = v6.char
-local v_u_13 = v6.gsub
-local v_u_14 = v6.format
-local v_u_17 = not rawget and function(p15, p16)
-	return p15[p16]
-end or rawget
-local v_u_18 = {
-	["\7"] = "\\a",
-	["\8"] = "\\b",
-	["\f"] = "\\f",
-	["\n"] = "\\n",
-	["\r"] = "\\r",
-	["\t"] = "\\t",
-	["\11"] = "\\v",
-	["\127"] = "\\127"
-}
-local v_u_19 = {
-	["\127"] = "\127"
-}
-for v20 = 0, 31 do
-	local v21 = v12(v20)
-	if not v_u_18[v21] then
-		v_u_18[v21] = "\\" .. v20
-		v_u_19[v21] = v_u_14("\\%03d", v20)
-	end
+if not v3 then
+    string = string
+else
+    string = v3.string
 end
-local v_u_22 = {
-	["and"] = true,
-	["break"] = true,
-	["do"] = true,
-	["else"] = true,
-	["elseif"] = true,
-	["end"] = true,
-	["false"] = true,
-	["for"] = true,
-	["function"] = true,
-	["goto"] = true,
-	["if"] = true,
-	["in"] = true,
-	["local"] = true,
-	["nil"] = true,
-	["not"] = true,
-	["or"] = true,
-	["repeat"] = true,
-	["return"] = true,
-	["then"] = true,
-	["true"] = true,
-	["until"] = true,
-	["while"] = true
-}
-local v_u_23 = v_u_5.floor
-local v_u_24 = {
-	["number"] = 1,
-	["boolean"] = 2,
-	["string"] = 3,
-	["table"] = 4,
-	["function"] = 5,
-	["userdata"] = 6,
-	["thread"] = 7
-}
-local function v_u_31(p25, p26) -- name: sortKeys
-	-- upvalues: (copy) v_u_24
-	local v27 = type(p25)
-	local v28 = type(p26)
-	if v27 == v28 and (v27 == "string" or v27 == "number") then
-		return p25 < p26
-	end
-	local v29 = v_u_24[v27] or 100
-	local v30 = v_u_24[v28] or 100
-	return v29 == v30 and v27 < v28 and true or v29 < v30
+if not v3 then
+    table = table
+else
+    table = v3.table
 end
-local function v_u_39(p32) -- name: getKeys
-	-- upvalues: (ref) v_u_17, (copy) v_u_23, (copy) v_u_7, (copy) v_u_31
-	local v33 = 1
-	while v_u_17(p32, v33) ~= nil do
-		v33 = v33 + 1
-	end
-	local v34 = v33 - 1
-	local v35 = 0
-	local v36 = {}
-	for v37 in next, p32 do
-		local v38
-		if type(v37) == "number" and (v_u_23(v37) == v37 and v37 >= 1) then
-			v38 = v37 <= v34
-		else
-			v38 = false
-		end
-		if not v38 then
-			v35 = v35 + 1
-			v36[v35] = v37
-		end
-	end
-	v_u_7.sort(v36, v_u_31)
-	return v36, v35, v34
-end
-local function v_u_44(p40, p41) -- name: countCycles
-	-- upvalues: (copy) v_u_44
-	if type(p40) == "table" then
-		if p41[p40] then
-			p41[p40] = p41[p40] + 1
-			return
-		end
-		p41[p40] = 1
-		for v42, v43 in next, p40 do
-			v_u_44(v42, p41)
-			v_u_44(v43, p41)
-		end
-		v_u_44(getmetatable(p40), p41)
-	end
-end
-local function v_u_74(p45, p46, p47, p48) -- name: processRecursive
-	-- upvalues: (copy) v_u_74, (copy) v_u_8
-	if p46 == nil then
-		return nil
-	end
-	if p48[p46] then
-		return p48[p46]
-	end
-	local v49 = p45(p46, p47)
-	local v50
-	if type(v49) == "table" then
-		v50 = {}
-		p48[p46] = v50
-		for v51, v52 in next, v49 do
-			local v53 = v_u_74
-			local v54 = v_u_8.KEY
-			local v55 = #p47
-			local v56 = p45
-			local v57 = v51
-			local v58 = {}
-			for v59 = 1, v55 do
-				v58[v59] = p47[v59]
-			end
-			v58[v55 + 1] = v51
-			v58[v55 + 2] = v54
-			local v60 = v53(p45, v57, v58, p48)
-			if v60 == nil then
-				p45 = v56
-			else
-				local v61 = v_u_74
-				local v62 = #p47
-				local v63 = v56
-				local v64 = v60
-				local v65 = {}
-				for v66 = 1, v62 do
-					v65[v66] = p47[v66]
-				end
-				v65[v62 + 1] = v64
-				v65[v62 + 2] = nil
-				v50[v60] = v61(v63, v52, v65, p48)
-				p45 = v56
-			end
-		end
-		local v67 = v_u_74
-		local v68 = getmetatable(v49)
-		local v69 = v_u_8.METATABLE
-		local v70 = #p47
-		local v71 = {}
-		for v72 = 1, v70 do
-			v71[v72] = p47[v72]
-		end
-		v71[v70 + 1] = v69
-		v71[v70 + 2] = nil
-		local v73 = v67(p45, v68, v71, p48)
-		if type(v73) ~= "table" then
-			v73 = nil
-		end
-		setmetatable(v50, v73)
-	else
-		v50 = v49
-	end
-	return v50
-end
-local v75 = {}
-local v_u_76 = {
-	["__index"] = v75
-}
-function v75.getId(p77, p78) -- name: getId
-	-- upvalues: (copy) v_u_9
-	local v79 = p77.ids[p78]
-	local v80 = p77.ids
-	if not v79 then
-		local v81 = type(p78)
-		v79 = (v80[v81] or 0) + 1
-		v80[p78] = v79
-		v80[v81] = v79
-	end
-	return v_u_9(v79)
-end
-function v75.putValue(p82, p83) -- name: putValue
-	-- upvalues: (copy) v_u_13, (copy) v_u_19, (copy) v_u_18, (copy) v_u_11, (copy) v_u_9, (copy) v_u_8, (copy) v_u_14, (copy) v_u_39, (copy) v_u_10, (copy) v_u_22
-	local v84 = p82.buf
-	local v85 = type(p83)
-	if v85 == "string" then
-		local v86 = v_u_13(v_u_13(v_u_13(p83, "\\", "\\\\"), "(%c)%f[0-9]", v_u_19), "%c", v_u_18)
-		local v87
-		if v_u_11(v86, "\"") and not v_u_11(v86, "\'") then
-			v87 = "\'" .. v86 .. "\'"
-		else
-			v87 = "\"" .. v_u_13(v86, "\"", "\\\"") .. "\""
-		end
-		v84.n = v84.n + 1
-		v84[v84.n] = v87
-		return
-	elseif v85 == "number" or (v85 == "boolean" or (v85 == "nil" or (v85 == "cdata" or v85 == "ctype"))) then
-		local v88 = v_u_9(p83)
-		v84.n = v84.n + 1
-		v84[v84.n] = v88
-		return
-	elseif v85 == "table" and not p82.ids[p83] then
-		if p83 == v_u_8.KEY or p83 == v_u_8.METATABLE then
-			local v89 = v_u_9(p83)
-			v84.n = v84.n + 1
-			v84[v84.n] = v89
-			return
-		elseif p82.level >= p82.depth then
-			v84.n = v84.n + 1
-			v84[v84.n] = "{...}"
-		else
-			if p82.cycles[p83] > 1 then
-				local v90 = v_u_14("<%d>", p82:getId(p83))
-				v84.n = v84.n + 1
-				v84[v84.n] = v90
-			end
-			local v91, v92, v93 = v_u_39(p83)
-			v84.n = v84.n + 1
-			v84[v84.n] = "{"
-			p82.level = p82.level + 1
-			for v94 = 1, v93 + v92 do
-				if v94 > 1 then
-					v84.n = v84.n + 1
-					v84[v84.n] = ","
-				end
-				if v94 <= v93 then
-					v84.n = v84.n + 1
-					v84[v84.n] = " "
-					p82:putValue(p83[v94])
-				else
-					local v95 = v91[v94 - v93]
-					local v96 = p82.buf
-					local v97 = p82.newline .. v_u_10(p82.indent, p82.level)
-					v96.n = v96.n + 1
-					v96[v96.n] = v97
-					local v98 = type(v95) == "string" and (v95:match("^[_%a][_%a%d]*$") and true or false)
-					if v98 then
-						v98 = not v_u_22[v95]
-					end
-					if v98 then
-						v84.n = v84.n + 1
-						v84[v84.n] = v95
-					else
-						v84.n = v84.n + 1
-						v84[v84.n] = "["
-						p82:putValue(v95)
-						v84.n = v84.n + 1
-						v84[v84.n] = "]"
-					end
-					v84.n = v84.n + 1
-					v84[v84.n] = " = "
-					p82:putValue(p83[v95])
-				end
-			end
-			local v99 = getmetatable(p83)
-			if type(v99) == "table" then
-				if v93 + v92 > 0 then
-					v84.n = v84.n + 1
-					v84[v84.n] = ","
-				end
-				local v100 = p82.buf
-				local v101 = p82.newline .. v_u_10(p82.indent, p82.level)
-				v100.n = v100.n + 1
-				v100[v100.n] = v101
-				v84.n = v84.n + 1
-				v84[v84.n] = "<metatable> = "
-				p82:putValue(v99)
-			end
-			p82.level = p82.level - 1
-			if v92 > 0 or type(v99) == "table" then
-				local v102 = p82.buf
-				local v103 = p82.newline .. v_u_10(p82.indent, p82.level)
-				v102.n = v102.n + 1
-				v102[v102.n] = v103
-			elseif v93 > 0 then
-				v84.n = v84.n + 1
-				v84[v84.n] = " "
-			end
-			v84.n = v84.n + 1
-			v84[v84.n] = "}"
-		end
-	else
-		local v104 = v_u_14("<%s %d>", v85, p82:getId(p83))
-		v84.n = v84.n + 1
-		v84[v84.n] = v104
-		return
-	end
-end
-function v_u_8.inspect(p105, p106) -- name: inspect
-	-- upvalues: (copy) v_u_5, (copy) v_u_74, (copy) v_u_44, (copy) v_u_76, (copy) v_u_7
-	local v107 = p106 or {}
-	local v108 = v107.depth or v_u_5.huge
-	local v109 = v107.newline or "\n"
-	local v110 = v107.indent or "  "
-	local v111 = v107.process
-	if v111 then
-		p105 = v_u_74(v111, p105, {}, {})
-	end
-	local v112 = {}
-	v_u_44(p105, v112)
-	local v113 = v_u_76
-	local v114 = setmetatable({
-		["buf"] = nil,
-		["ids"] = nil,
-		["cycles"] = nil,
-		["depth"] = nil,
-		["level"] = 0,
-		["newline"] = nil,
-		["indent"] = nil,
-		["buf"] = {
-			["n"] = 0
-		},
-		["ids"] = {},
-		["cycles"] = v112,
-		["depth"] = v108,
-		["newline"] = v109,
-		["indent"] = v110
-	}, v113)
-	v114:putValue(p105)
-	return v_u_7.concat(v114.buf)
-end
-setmetatable(v_u_8, {
-	["__call"] = function(_, p115, p116) -- name: __call
-		-- upvalues: (copy) v_u_8
-		return v_u_8.inspect(p115, p116)
-	end
+local u172 = {}
+local v5 = {}
+u172.Options = v5
+u172._VERSION = "inspect.lua 3.1.0"
+u172._URL = "http://github.com/kikito/inspect.lua"
+u172._DESCRIPTION = "human-readable representations of tables"
+u172._LICENSE = "  MIT LICENSE\n\n  Copyright (c) 2022 Enrique García Cota\n\n  Permission is hereby granted, free of charge, to any person obtaining a\n  copy of this software and associated documentation files (the\n  \"Software\"), to deal in the Software without restriction, including\n  without limitation the rights to use, copy, modify, merge, publish,\n  distribute, sublicense, and/or sell copies of the Software, and to\n  permit persons to whom the Software is furnished to do so, subject to\n  the following conditions:\n\n  The above copyright notice and this permission notice shall be included\n  in all copies or substantial portions of the Software.\n\n  THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\n  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\n  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\n  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"
+u172.KEY = setmetatable({}, {
+    __tostring = function() -- Line: 47
+        return "inspect.KEY"
+    end,
 })
-return v_u_8
+local v6 = {}
+u172.METATABLE = setmetatable(v6, {
+    __tostring = function() -- Line: 48
+        return "inspect.METATABLE"
+    end,
+})
+local u185 = tostring
+local rep = string.rep
+local match = string.match
+local char = string.char
+local gsub = string.gsub
+local format = string.format
+if not rawget then
+    function u160(p1, p2) -- Line: 61
+        return p1[p2]
+    end
+else
+    u160 = rawget
+end
+local function rawpairs(p1) -- Line: 64
+    return next, p1, nil
+end
+local function smartQuote(p1) -- Line: 70 -- upvalues: match (val), gsub (val)
+    local v1
+    if not (match(p1, "\"")) then
+        v1 = gsub(p1, "\"", "\\\"")
+        return "\"" .. v1 .. "\""
+    end
+    if not (match(p1, "'")) then
+        return "'" .. p1 .. "'"
+    end
+    v1 = gsub(p1, "\"", "\\\"")
+    return "\"" .. v1 .. "\""
+end
+local u104 = {}
+u104["\007"] = "\\a"
+u104["\008"] = "\\b"
+u104["\012"] = "\\f"
+u104["\n"] = "\\n"
+u104["\r"] = "\\r"
+u104["\t"] = "\\t"
+u104["\011"] = "\\v"
+u104["\127"] = "\\127"
+local u105 = {}
+u105["\127"] = "\127"
+local v7 = 31
+local v8 = 1
+for i = 0, v7, v8 do
+    v1 = char(i)
+    if not (u104[v1]) then
+        u104[v1] = "\\" .. i
+        u105[v1] = format("\\%03d", i)
+    end
+end
+local function escape(p1) -- Line: 91 -- upvalues: gsub (val), u105 (val), u104 (val)
+    local v1 = gsub(p1, "\\", "\\\\")
+    local v2 = gsub(v1, "(%c)%f[0-9]", u105)
+    return (gsub(v2, "%c", u104))
+end
+local u112 = {}
+u112["and"] = true
+u112["break"] = true
+u112["do"] = true
+u112["else"] = true
+u112["elseif"] = true
+u112["end"] = true
+u112["false"] = true
+u112["for"] = true
+u112["function"] = true
+u112.goto = true
+u112["if"] = true
+u112["in"] = true
+u112["local"] = true
+u112["nil"] = true
+u112["not"] = true
+u112["or"] = true
+u112["repeat"] = true
+u112["return"] = true
+u112["then"] = true
+u112["true"] = true
+u112["until"] = true
+u112["while"] = true
+local function isIdentifier(p1) -- Line: 122 -- upvalues: u112 (val)
+    local v1 = false
+    if type(p1) == "string" then
+        v1 = not not p1:match("^[_%a][_%a%d]*$")
+        if v1 then
+            v1 = not u112[p1]
+        end
+    end
+    return v1
+end
+local floor = math.floor
+local function isSequenceKey(p1, p2) -- Line: 129 -- upvalues: floor (val)
+    local v1 = if type(p1) == "number" then if floor(p1) == p1 then if 1 <= p1 then p1 <= p2 else false else false else false
+    return v1
+end
+local u147 = {number = 1, boolean = 2, string = 3, table = 4}
+u147["function"] = 5
+u147.userdata = 6
+u147.thread = 7
+local function sortKeys(p1, p2) -- Line: 141 -- upvalues: u147 (val)
+    local v1
+    local v2 = type(p1)
+    local v3 = type(p2)
+    if v2 ~= v3 then
+        local v4
+        v1 = u147[v2] or 100
+        local v5 = u147[v3] or 100
+        if v1 ~= v5 then
+            v4 = v1 < v5
+        else
+            v4 = if v2 >= v3 then v1 < v5 else true
+        end
+        return v4
+    elseif v2 == "string" then
+        v1 = p1 < p2
+        return v1
+    elseif v2 == "number" then
+        v1 = p1 < p2
+        return v1
+    end
+end
+local function getKeys(p1) -- Line: 156 -- upvalues: u160 (ref), floor (val), table (val), sortKeys (val)
+    local v1
+    local v2 = 1
+    while u160(p1, v2) ~= nil do
+        v2 = v2 + 1
+    end
+    v2 = v2 - 1
+    local v3 = {}
+    local v4 = 0
+    local v5 = next
+    local v6 = p1
+    local v7 = nil
+    for i in v5, v6, v7 do
+        v1 = if type(i) == "number" then if floor(i) == i then if 1 <= i then i <= v2 else false else false else false
+        if not v1 then
+            v4 = v4 + 1
+            v3[v4] = i
+        end
+    end
+    table.sort(v3, sortKeys)
+    return v3, v4, v2
+end
+function countCycles(p1, p2) -- Line: 175 -- upvalues: countCycles (val)
+    if type(p1) ~= "table" then
+        return
+    end
+    if p2[p1] then
+        p2[p1] = p2[p1] + 1
+        return
+    end
+    p2[p1] = 1
+    local v1 = next
+    local v2 = p1
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        countCycles(i, p2)
+        countCycles(j, p2)
+    end
+    v2 = getmetatable(p1)
+    countCycles(v2, p2)
+end
+local function makePath(p1, p2, p3) -- Line: 190
+    local v1 = {}
+    local v2 = #p1
+    local v3 = v2
+    local v4 = 1
+    for i = 1, v3, v4 do
+        v1[i] = p1[i]
+    end
+    v1[v2 + 1] = p2
+    v1[v2 + 2] = p3
+    return v1
+end
+function processRecursive(p1, p2, p3, p4) -- Line: 202 -- upvalues: processRecursive (val), u172 (val)
+    if p2 == nil then
+        return nil
+    end
+    if p4[p2] then
+        return p4[p2]
+    end
+    local v1 = p1(p2, p3)
+    if type(v1) == "table" then
+        local KEY, v2, v3, v4, v5, v6, v7, v8, v9
+        local v10 = {}
+        p4[p2] = v10
+        local v11 = next
+        local v12 = v1
+        local v13 = nil
+        v2, v6, v8 = p1, p3, p4
+        for i, j in v11, v12, v13 do
+            KEY = u172.KEY
+            v3 = {}
+            v4 = #v6
+            v5 = v4
+            v7 = 1
+            for k = 1, v5, v7 do
+                v3[k] = v6[k]
+            end
+            v3[v4 + 1] = i
+            v3[v4 + 2] = KEY
+            v9 = processRecursive(v2, i, v3, v8)
+            if v9 ~= nil then
+                v3 = {}
+                v4 = #v6
+                v5 = v4
+                v7 = 1
+                for n = 1, v5, v7 do
+                    v3[n] = v6[n]
+                end
+                v3[v4 + 1] = v9
+                v3[v4 + 2] = nil
+                v10[v9] = processRecursive(v2, j, v3, v8)
+            end
+        end
+        v13 = getmetatable(v1)
+        local METATABLE = u172.METATABLE
+        local v14 = {}
+        local v15 = #v6
+        local v16 = v15
+        local v17 = 1
+        for m = 1, v16, v17 do
+            v14[m] = v6[m]
+        end
+        v14[v15 + 1] = METATABLE
+        v14[v15 + 2] = nil
+        v11 = processRecursive(v2, v13, v14, v8)
+        if type(v11) ~= "table" then
+            v11 = nil
+        end
+        setmetatable(v10, v11)
+        v1 = v10
+    end
+    return v1
+end
+local function puts(p1, p2) -- Line: 230
+    p1.n = p1.n + 1
+    p1[p1.n] = p2
+end
+local v9 = {}
+local u175 = {__index = v9}
+local function tabify(p1) -- Line: 250 -- upvalues: rep (val)
+    local buf = p1.buf
+    local v1 = p1.newline .. rep(p1.indent, p1.level)
+    buf.n = buf.n + 1
+    buf[buf.n] = v1
+end
+function v9:getId(p2) -- Line: 254 -- upvalues: u185 (val)
+    local v1 = self.ids[p2]
+    local ids = self.ids
+    if not v1 then
+        local v2 = type(p2)
+        v1 = (ids[v2] or 0) + 1
+        ids[p2] = v1
+        ids[v2] = v1
+    end
+    return (u185(v1))
+end
+function v9:putValue(p2) -- Line: 265 -- upvalues: gsub (val), u105 (val), u104 (val), match (val), u185 (val), u172 (val), format (val), getKeys (val), rep (val), u112 (val)
+    local buf_2, buf_4, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10
+    local buf = self.buf
+    local v11 = type(p2)
+    if v11 == "string" then
+        v9 = gsub(p2, "\\", "\\\\")
+        v8 = gsub(v9, "(%c)%f[0-9]", u105)
+        v7 = gsub(v8, "%c", u104)
+        if not (match(v7, "\"")) then
+            v9 = gsub(v7, "\"", "\\\"")
+            v6 = "\"" .. v9 .. "\""
+        elseif match(v7, "'") then
+            v9 = gsub(v7, "\"", "\\\"")
+            v6 = "\"" .. v9 .. "\""
+        else
+            v6 = "'" .. v7 .. "'"
+        end
+        buf.n = buf.n + 1
+        buf[buf.n] = v6
+        return
+    end
+    if v11 == "number" or v11 == "boolean" or v11 == "nil" or v11 == "cdata" or v11 == "ctype" then
+        v6 = u185(p2)
+        buf.n = buf.n + 1
+        buf[buf.n] = v6
+        return
+    end
+    if v11 ~= "table" or self.ids[p2] then
+        v6 = format("<%s %d>", v11, self:getId(p2))
+        buf.n = buf.n + 1
+        buf[buf.n] = v6
+        return
+    end
+    if p2 == u172.KEY or p2 == u172.METATABLE then
+        v6 = u185(p2)
+        buf.n = buf.n + 1
+        buf[buf.n] = v6
+        return
+    end
+    if self.depth <= self.level then
+        buf.n = buf.n + 1
+        buf[buf.n] = "{...}"
+        return
+    end
+    v6 = self.cycles[p2]
+    if 1 < v6 then
+        v6 = format("<%d>", self:getId(p2))
+        buf.n = buf.n + 1
+        buf[buf.n] = v6
+    end
+    v6, v7, v8 = getKeys(p2)
+    buf.n = buf.n + 1
+    buf[buf.n] = "{"
+    self.level = self.level + 1
+    v9 = v8 + v7
+    local v12 = 1
+    for i = 1, v9, v12 do
+        if 1 < i then
+            buf.n = buf.n + 1
+            buf[buf.n] = ","
+        end
+        if i > v8 then
+            v3 = v6[i - v8]
+            buf_2 = v1.buf
+            v5 = v1.newline .. rep(v1.indent, v1.level)
+            buf_2.n = buf_2.n + 1
+            buf_2[buf_2.n] = v5
+            v4 = false
+            if type(v3) == "string" then
+                v4 = not not v3:match("^[_%a][_%a%d]*$")
+                if v4 then
+                    v4 = not u112[v3]
+                end
+            end
+            if not v4 then
+                buf.n = buf.n + 1
+                buf[buf.n] = "["
+                v1:putValue(v3)
+                buf.n = buf.n + 1
+                buf[buf.n] = "]"
+            else
+                buf.n = buf.n + 1
+                buf[buf.n] = v3
+            end
+            buf.n = buf.n + 1
+            buf[buf.n] = " = "
+            v1:putValue(v2[v3])
+        else
+            buf.n = buf.n + 1
+            buf[buf.n] = " "
+            v1:putValue(v2[i])
+        end
+    end
+    v9 = getmetatable(v2)
+    if type(v9) == "table" then
+        if 0 < v8 + v7 then
+            buf.n = buf.n + 1
+            buf[buf.n] = ","
+        end
+        local buf_3 = v1.buf
+        v10 = v1.newline .. rep(v1.indent, v1.level)
+        buf_3.n = buf_3.n + 1
+        buf_3[buf_3.n] = v10
+        buf.n = buf.n + 1
+        buf[buf.n] = "<metatable> = "
+        v1:putValue(v9)
+    end
+    v1.level = v1.level - 1
+    if 0 < v7 then
+        buf_4 = v1.buf
+        v10 = v1.newline .. rep(v1.indent, v1.level)
+        buf_4.n = buf_4.n + 1
+        buf_4[buf_4.n] = v10
+    elseif type(v9) == "table" then
+        buf_4 = v1.buf
+        v10 = v1.newline .. rep(v1.indent, v1.level)
+        buf_4.n = buf_4.n + 1
+        buf_4[buf_4.n] = v10
+    elseif 0 < v8 then
+        buf.n = buf.n + 1
+        buf[buf.n] = " "
+    end
+    buf.n = buf.n + 1
+    buf[buf.n] = "}"
+end
+function u172.inspect(p1, p2) -- Line: 335 -- upvalues: math (val), processRecursive (val), countCycles (val), u175 (val), table (val)
+    local v1
+    local v2 = p2
+    if not v2 then
+        v2 = {}
+    end
+    local v3 = v2
+    local depth = v3.depth
+    if not depth then
+        depth = math.huge
+    end
+    local process = v3.process
+    if not process then
+        v1 = p1
+    else
+        v1 = processRecursive(process, p1, {}, {})
+    end
+    local v4 = {}
+    countCycles(v1, v4)
+    local v5 = setmetatable({
+        level = 0,
+        buf = {n = 0},
+        ids = {},
+        cycles = v4,
+        depth = depth,
+        newline = v3.newline or "\n",
+        indent = v3.indent or "  ",
+    }, u175)
+    v5:putValue(v1)
+    return table.concat(v5.buf)
+end
+setmetatable(u172, {
+    __call = function(p1, p2, p3) -- Line: 366 -- upvalues: u172 (val)
+        return u172.inspect(p2, p3)
+    end,
+})
+return u172

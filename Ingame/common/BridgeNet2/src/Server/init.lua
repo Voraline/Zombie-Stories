@@ -1,36 +1,29 @@
 require("./Types")
-local v_u_1 = require("@self/PlayerContainers")
-local v_u_2 = require("@self/ServerBridge")
-local v_u_3 = require("@self/ServerIdentifiers")
-local v_u_4 = require("@self/ServerProcess")
+local u5 = require("@self/PlayerContainers")
+local u8 = require("@self/ServerBridge")
+local u11 = require("@self/ServerIdentifiers")
+local u14 = require("@self/ServerProcess")
 return {
-	["start"] = function() -- name: start
-		-- upvalues: (copy) v_u_4, (copy) v_u_3
-		v_u_4.start()
-		v_u_3.start()
-	end,
-	["makeBridge"] = function(p5) -- name: makeBridge
-		-- upvalues: (copy) v_u_2
-		return v_u_2(p5)
-	end,
-	["ser"] = function(p6) -- name: ser
-		-- upvalues: (copy) v_u_3
-		return v_u_3.ser(p6)
-	end,
-	["deser"] = function(p7) -- name: deser
-		-- upvalues: (copy) v_u_3
-		return v_u_3.deser(p7)
-	end,
-	["makeIdentifier"] = function(p8) -- name: makeIdentifier
-		-- upvalues: (copy) v_u_3
-		return v_u_3.ref(p8)
-	end,
-	["playerContainers"] = function() -- name: playerContainers
-		-- upvalues: (copy) v_u_1
-		return v_u_1
-	end,
-	["invalidPlayerhandler"] = function(p9) -- name: invalidPlayerhandler
-		-- upvalues: (copy) v_u_4
-		v_u_4.setInvalidPlayerFunction(p9)
-	end
+    start = function() -- Line: 10 -- upvalues: u14 (val), u11 (val)
+        u14.start()
+        u11.start()
+    end,
+    makeBridge = function(p1) -- Line: 15 -- upvalues: u8 (val)
+        return u8(p1)
+    end,
+    ser = function(p1) -- Line: 19 -- upvalues: u11 (val)
+        return u11.ser(p1)
+    end,
+    deser = function(p1) -- Line: 23 -- upvalues: u11 (val)
+        return u11.deser(p1)
+    end,
+    makeIdentifier = function(p1) -- Line: 27 -- upvalues: u11 (val)
+        return u11.ref(p1)
+    end,
+    playerContainers = function() -- Line: 31 -- upvalues: u5 (val)
+        return u5
+    end,
+    invalidPlayerhandler = function(p1) -- Line: 35 -- upvalues: u14 (val)
+        u14.setInvalidPlayerFunction(p1)
+    end,
 }

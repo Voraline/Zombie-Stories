@@ -1,43 +1,29 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Dependencies.useDependency)
-local v_u_3 = require(v1.Dependencies.initDependency)
-local v_u_4 = require(v1.Dependencies.updateAll)
-local v_u_5 = require(v1.Utility.isSimilar)
-local v6 = {}
-local v_u_7 = {
-	["__index"] = v6
-}
-local v_u_8 = {
-	["__mode"] = "k"
-}
-function v6.get(p9, p10) -- name: get
-	-- upvalues: (copy) v_u_2
-	if p10 ~= false then
-		v_u_2(p9)
-	end
-	return p9._value
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local useDependency = require(Parent.Dependencies.useDependency)
+local initDependency = require(Parent.Dependencies.initDependency)
+local updateAll = require(Parent.Dependencies.updateAll)
+local isSimilar = require(Parent.Utility.isSimilar)
+local v1 = {}
+local u23 = {__index = v1}
+local u24 = {__mode = "k"}
+function v1.get(p1, p2) -- Line: 25 -- upvalues: useDependency (val)
+    if p2 ~= false then
+        useDependency(p1)
+    end
+    return p1._value
 end
-function v6.set(p11, p12, p13) -- name: set
-	-- upvalues: (copy) v_u_5, (copy) v_u_4
-	if p13 or not v_u_5(p11._value, p12) then
-		p11._value = p12
-		v_u_4(p11)
-	end
+function v1.set(p1, p2, p3) -- Line: 39 -- upvalues: isSimilar (val), updateAll (val)
+    if p3 then
+        p1._value = p2
+        updateAll(p1)
+    elseif not (isSimilar(p1._value, p2)) then
+        p1._value = p2
+        updateAll(p1)
+    end
 end
-return function(p14) -- name: Value
-	-- upvalues: (copy) v_u_8, (copy) v_u_7, (copy) v_u_3
-	local v15 = {
-		["type"] = "State",
-		["kind"] = "Value",
-		["dependentSet"] = nil,
-		["_value"] = nil
-	}
-	local v16 = v_u_8
-	v15.dependentSet = setmetatable({}, v16)
-	v15._value = p14
-	local v17 = v_u_7
-	local v18 = setmetatable(v15, v17)
-	v_u_3(v18)
-	return v18
+return function(p1) -- Line: 47 -- upvalues: u24 (val), u23 (val), initDependency (val)
+    local v1 = setmetatable({type = "State", kind = "Value", dependentSet = setmetatable({}, u24), _value = p1}, u23)
+    initDependency(v1)
+    return v1
 end

@@ -1,85 +1,67 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Memory.checkLifetime)
-local v_u_3 = require(v1.Graph.depend)
-local v_u_4 = require(v1.Graph.change)
-local v_u_5 = require(v1.State.peek)
-local v_u_6 = require(v1.Utility.nicknames)
-local v7 = {
-	["type"] = "State",
-	["kind"] = "Stopwatch",
-	["timeliness"] = "lazy"
-}
-local v_u_8 = table.freeze({
-	["__index"] = v7
-})
-function v7.zero(p9) -- name: zero
-	-- upvalues: (copy) v_u_5, (copy) v_u_4
-	local v10 = v_u_5(p9._timer)
-	if v10 ~= p9._measureTimeSince then
-		p9._measureTimeSince = v10
-		p9._EXTREMELY_DANGEROUS_usedAsValue = 0
-		v_u_4(p9)
-	end
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local checkLifetime = require(Parent.Memory.checkLifetime)
+local depend = require(Parent.Graph.depend)
+local change = require(Parent.Graph.change)
+local peek = require(Parent.State.peek)
+local nicknames = require(Parent.Utility.nicknames)
+local v1 = {type = "State", kind = "Stopwatch", timeliness = "lazy"}
+local u32 = table.freeze({__index = v1})
+function v1.zero(p1) -- Line: 81 -- upvalues: peek (val), change (val)
+    local v1 = peek(p1._timer)
+    if v1 ~= p1._measureTimeSince then
+        p1._measureTimeSince = v1
+        p1._EXTREMELY_DANGEROUS_usedAsValue = 0
+        change(p1)
+    end
 end
-function v7.pause(p11) -- name: pause
-	-- upvalues: (copy) v_u_4
-	if p11._playing == true then
-		p11._playing = false
-		v_u_4(p11)
-	end
+function v1.pause(p1) -- Line: 92 -- upvalues: change (val)
+    if p1._playing == true then
+        p1._playing = false
+        change(p1)
+    end
 end
-function v7.unpause(p12) -- name: unpause
-	-- upvalues: (copy) v_u_5, (copy) v_u_4
-	if p12._playing == false then
-		p12._playing = true
-		p12._measureTimeSince = v_u_5(p12._timer) - p12._EXTREMELY_DANGEROUS_usedAsValue
-		v_u_4(p12)
-	end
+function v1.unpause(p1) -- Line: 101 -- upvalues: peek (val), change (val)
+    if p1._playing == false then
+        p1._playing = true
+        local v1 = peek(p1._timer)
+        p1._measureTimeSince = v1 - p1._EXTREMELY_DANGEROUS_usedAsValue
+        change(p1)
+    end
 end
-function v7._evaluate(p13) -- name: _evaluate
-	-- upvalues: (copy) v_u_3, (copy) v_u_5
-	if not p13._playing then
-		return false
-	end
-	v_u_3(p13, p13._timer)
-	local v14 = v_u_5(p13._timer)
-	local v15 = p13._EXTREMELY_DANGEROUS_usedAsValue
-	local v16 = v14 - p13._measureTimeSince
-	p13._EXTREMELY_DANGEROUS_usedAsValue = v16
-	return v15 ~= v16
+function v1._evaluate(p1) -- Line: 111 -- upvalues: depend (val), peek (val)
+    if not p1._playing then
+        return false
+    end
+    depend(p1, p1._timer)
+    local v1 = peek(p1._timer)
+    local _EXTREMELY_DANGEROUS_usedAsValue = p1._EXTREMELY_DANGEROUS_usedAsValue
+    local v2 = v1 - p1._measureTimeSince
+    p1._EXTREMELY_DANGEROUS_usedAsValue = v2
+    local v3 = _EXTREMELY_DANGEROUS_usedAsValue ~= v2
+    return v3
 end
-table.freeze(v7)
-return function(p17, p18) -- name: Stopwatch
-	-- upvalues: (copy) v_u_8, (copy) v_u_6, (copy) v_u_2, (copy) v_u_3
-	local v19 = {
-		["awake"] = true,
-		["createdAt"] = nil,
-		["dependencySet"] = nil,
-		["dependentSet"] = nil,
-		["lastChange"] = nil,
-		["scope"] = nil,
-		["validity"] = "invalid",
-		["_EXTREMELY_DANGEROUS_usedAsValue"] = 0,
-		["_measureTimeSince"] = 0,
-		["_playing"] = false,
-		["_timer"] = nil,
-		["createdAt"] = os.clock(),
-		["dependencySet"] = {},
-		["dependentSet"] = {},
-		["scope"] = p17,
-		["_timer"] = p18
-	}
-	local v20 = v_u_8
-	local v_u_21 = setmetatable(v19, v20)
-	local function v22()
-		-- upvalues: (copy) v_u_21
-		v_u_21.scope = nil
-	end
-	v_u_21.oldestTask = v22
-	v_u_6[v_u_21.oldestTask] = "Stopwatch"
-	table.insert(p17, v22)
-	v_u_2.bOutlivesA(p17, v_u_21.oldestTask, p18.scope, p18.oldestTask, v_u_2.formatters.parameter, "timer")
-	v_u_3(v_u_21, p18)
-	return v_u_21
+table.freeze(v1)
+return function(p1, p2) -- Line: 44 -- upvalues: u32 (val), nicknames (val), checkLifetime (val), depend (val)
+    local u9 = setmetatable({
+        awake = true,
+        validity = "invalid",
+        _EXTREMELY_DANGEROUS_usedAsValue = 0,
+        _measureTimeSince = 0,
+        _playing = false,
+        createdAt = os.clock(),
+        dependencySet = {},
+        dependentSet = {},
+        scope = p1,
+        _timer = p2,
+    }, u32)
+    local function v1() -- Line: 65 -- upvalues: u9 (val)
+        u9.scope = nil
+    end
+    u9.oldestTask = v1
+    nicknames[u9.oldestTask] = "Stopwatch"
+    table.insert(p1, v1)
+    checkLifetime.bOutlivesA(p1, u9.oldestTask, p2.scope, p2.oldestTask, checkLifetime.formatters.parameter, "timer")
+    depend(u9, p2)
+    return u9
 end

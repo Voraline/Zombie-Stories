@@ -1,33 +1,57 @@
-local v1 = {}
-local v_u_2 = {
-	["__index"] = v1
-}
-function v1.new(p3, p4, p5, p6, p7, p8) -- name: new
-	-- upvalues: (copy) v_u_2
-	local v9 = v_u_2
-	return setmetatable({
-		["position"] = p3,
-		["velocity"] = p4,
-		["target"] = p5,
-		["stiffness"] = p6,
-		["damping"] = p7,
-		["precision"] = p8
-	}, v9)
+local function absDist(p1) -- Line: 1
+    local magnitude
+    if type(p1) ~= "number" then
+        magnitude = p1.magnitude
+    else
+        magnitude = math.abs(p1)
+        if not magnitude then
+            magnitude = p1.magnitude
+        end
+    end
+    return magnitude
 end
-function v1.update(p10, p11) -- name: update
-	local v12 = p10.position - p10.target
-	local v13 = -p10.stiffness * v12 + -p10.damping * p10.velocity
-	local v14 = p10.velocity + v13 * p11
-	local v15 = p10.position + v14
-	if (type(v14) == "number" and math.abs(v14) or v14.magnitude) < p10.precision then
-		local v16 = p10.target - v15
-		if (type(v16) == "number" and math.abs(v16) or v16.magnitude) < p10.precision then
-			p10.position = p10.target
-			p10.velocity = p10.velocity - p10.velocity
-			return
-		end
-	end
-	p10.position = v15
-	p10.velocity = v14
+local v1 = {}
+local u2 = {__index = v1}
+function v1.new(p1, p2, p3, p4, p5, p6) -- Line: 10 -- upvalues: u2 (val)
+    local v1 = {
+        position = p1,
+        velocity = p2,
+        target = p3,
+        stiffness = p4,
+        damping = p5,
+        precision = p6,
+    }
+    return (setmetatable(v1, u2))
+end
+function v1.update(p1, p2) -- Line: 25
+    local magnitude, magnitude_2
+    local v1 = p1.velocity + (-p1.stiffness * (p1.position - p1.target) + -p1.damping * p1.velocity) * p2
+    local v2 = p1.position + v1
+    if type(v1) ~= "number" then
+        magnitude = v1.magnitude
+    else
+        magnitude = math.abs(v1)
+    end
+    if magnitude >= p1.precision then
+        p1.position = v2
+        p1.velocity = v1
+        return
+    end
+    local v3 = p1.target - v2
+    if type(v3) ~= "number" then
+        magnitude_2 = v3.magnitude
+    else
+        magnitude_2 = math.abs(v3)
+        if not magnitude_2 then
+            magnitude_2 = v3.magnitude
+        end
+    end
+    if magnitude_2 < p1.precision then
+        p1.position = p1.target
+        p1.velocity = p1.velocity - p1.velocity
+        return
+    end
+    p1.position = v2
+    p1.velocity = v1
 end
 return v1

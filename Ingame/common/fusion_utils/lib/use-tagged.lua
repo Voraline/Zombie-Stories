@@ -1,25 +1,24 @@
-local v_u_1 = game:GetService("CollectionService")
+local CollectionService = game:GetService("CollectionService")
 require("./types/fusion")
-local v_u_2 = require(script.Parent.utils["lock-value"])
-local v_u_3 = require(script.Parent["use-event-listener"])
-return function(p4, p5) -- name: useTagged
-	-- upvalues: (copy) v_u_1, (copy) v_u_3, (copy) v_u_2
-	local v_u_6 = p4.peek
-	local v_u_7 = p4:Value(v_u_1:GetTagged(p5))
-	v_u_3(p4, v_u_1:GetInstanceAddedSignal(p5), function(p8)
-		-- upvalues: (copy) v_u_6, (copy) v_u_7
-		local v9 = table.clone(v_u_6(v_u_7))
-		table.insert(v9, p8)
-		v_u_7:set(v9)
-	end)
-	v_u_3(p4, v_u_1:GetInstanceRemovedSignal(p5), function(p10)
-		-- upvalues: (copy) v_u_6, (copy) v_u_7
-		local v11 = table.clone(v_u_6(v_u_7))
-		local v12 = table.find(v11, p10)
-		if v12 then
-			table.remove(v11, v12)
-		end
-		v_u_7:set(v11)
-	end)
-	return v_u_2(v_u_7)
+local u13 = require(script.Parent.utils["lock-value"])
+local u18 = require(script.Parent["use-event-listener"])
+return function(p1, p2) -- Line: 13 -- upvalues: CollectionService (val), u18 (val), u13 (val)
+    local peek = p1.peek
+    local u10 = p1:Value(CollectionService:GetTagged(p2))
+    local InstanceAddedSignal = CollectionService:GetInstanceAddedSignal(p2)
+    u18(p1, InstanceAddedSignal, function(p1) -- Line: 17 -- upvalues: peek (val), u10 (val)
+        local v1 = table.clone(peek(u10))
+        table.insert(v1, p1)
+        u10:set(v1)
+    end)
+    local InstanceRemovedSignal = CollectionService:GetInstanceRemovedSignal(p2)
+    u18(p1, InstanceRemovedSignal, function(p1) -- Line: 23 -- upvalues: peek (val), u10 (val)
+        local v1 = table.clone(peek(u10))
+        local v2 = table.find(v1, p1)
+        if v2 then
+            table.remove(v1, v2)
+        end
+        u10:set(v1)
+    end)
+    return u13(u10)
 end

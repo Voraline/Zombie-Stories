@@ -1,32 +1,29 @@
-local v1 = game:GetService("ReplicatedStorage")
-local _ = require(v1.Packages.Fusion).peek
-local v2 = require("@game/ReplicatedStorage/common/zap")
-local v_u_3 = require("./PlayerDatabase")
-local v_u_4 = v_u_3.Scope
-local v_u_5 = {}
-local function v_u_10(p6) -- name: deepCopy
-	-- upvalues: (copy) v_u_5, (copy) v_u_4, (copy) v_u_10
-	local v7 = {}
-	for v8, v9 in pairs(p6) do
-		if type(v9) == "table" then
-			if typeof(v8) == "string" and (v8:match("Table") or v_u_5[v8]) then
-				v7[v8] = v_u_4:Value(v_u_10(v9))
-			else
-				v7[v8] = v_u_10(v9)
-			end
-		else
-			v7[v8] = v_u_4:Value(v9)
-		end
-	end
-	return v7
+local deepCopy
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local v1 = require("@game/ReplicatedStorage/common/zap")
+local u15 = require("./PlayerDatabase")
+local Scope = u15.Scope
+local u18 = {}
+function deepCopy(p1) -- Line: 14 -- upvalues: u18 (val), Scope (val), deepCopy (val)
+    local v1 = {}
+    for k, v in pairs(p1) do
+        if type(v) ~= "table" then
+            v1[k] = Scope:Value(v)
+        elseif typeof(k) ~= "string" then
+            v1[k] = deepCopy(v)
+        elseif k:match("Table") then
+            v1[k] = Scope:Value(deepCopy(v))
+        elseif not (u18[k]) then
+        end
+    end
+    return v1
 end
-v2.InitUser.On(function(p11)
-	-- upvalues: (copy) v_u_3, (copy) v_u_10
-	print(p11.Data, p11.State)
-	v_u_3.Data = v_u_10(p11.Data)
-	v_u_3.State = v_u_10(p11.State)
-	v_u_3.Game = v_u_10(p11.Game)
-	require("./Replicater")
-	v_u_3.Loaded:set(true)
+v1.InitUser.On(function(p1) -- Line: 30 -- upvalues: u15 (val), deepCopy (val)
+    print(p1.Data, p1.State)
+    u15.Data = deepCopy(p1.Data)
+    u15.State = deepCopy(p1.State)
+    u15.Game = deepCopy(p1.Game)
+    require("./Replicater")
+    u15.Loaded:set(true)
 end)
 return {}

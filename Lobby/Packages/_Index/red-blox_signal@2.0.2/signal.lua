@@ -1,66 +1,52 @@
-local v_u_1 = require(script.Parent.Spawn)
-local v_u_2 = {}
-v_u_2.__index = v_u_2
-local function v_u_6(p3, p4) -- name: Disconnect
-	if p3.Root == p4 then
-		p3.Root = p4.Next
-	else
-		local v5 = p3.Root
-		while v5 do
-			if v5.Next == p4 then
-				v5.Next = p4.Next
-				return
-			end
-			v5 = v5.Next
-		end
-	end
+local Spawn = require(script.Parent.Spawn)
+local u5 = {}
+u5.__index = u5
+local function Disconnect(p1, p2) -- Line: 23
+    local Root
+    if p1.Root == p2 then
+        p1.Root = p2.Next
+        return
+    end
+    Root = p1.Root
+    while Root do
+        if Root.Next == p2 then
+            Root.Next = p2.Next
+            return
+        end
+        Root = Root.Next
+    end
 end
-function v_u_2.Connect(p_u_7, p8) -- name: Connect
-	-- upvalues: (copy) v_u_6
-	local v_u_9 = {
-		["Next"] = p_u_7.Root,
-		["Callback"] = p8
-	}
-	p_u_7.Root = v_u_9
-	return function()
-		-- upvalues: (ref) v_u_6, (copy) p_u_7, (copy) v_u_9
-		v_u_6(p_u_7, v_u_9)
-	end
+function u5:Connect(p2) -- Line: 40 -- upvalues: Disconnect (val)
+    local u2 = {Next = self.Root, Callback = p2}
+    self.Root = u2
+    return function() -- Line: 48 -- upvalues: Disconnect (upval), self (val), u2 (val)
+        Disconnect(self, u2)
+    end
 end
-function v_u_2.Wait(p10) -- name: Wait
-	local v_u_11 = coroutine.running()
-	local v_u_12 = nil
-	v_u_12 = p10:Connect(function(...)
-		-- upvalues: (ref) v_u_12, (copy) v_u_11
-		v_u_12()
-		coroutine.resume(v_u_11, ...)
-	end)
-	return coroutine.yield()
+function u5.Wait(p1) -- Line: 53
+    local u2 = coroutine.running()
+    local u3 = nil
+    return coroutine.yield()
 end
-function v_u_2.Once(p13, p_u_14) -- name: Once
-	local v_u_15 = nil
-	v_u_15 = p13:Connect(function(...)
-		-- upvalues: (ref) v_u_15, (copy) p_u_14
-		v_u_15()
-		p_u_14(...)
-	end)
-	return v_u_15
+function u5.Once(p1, p2) -- Line: 65
+    local u2 = nil
+    u2 = p1:Connect(function(...) -- Line: 68 -- upvalues: u2 (ref), p2 (val)
+        u2()
+        p2(...)
+    end)
+    return u2
 end
-function v_u_2.Fire(p16, ...) -- name: Fire
-	-- upvalues: (copy) v_u_1
-	local v17 = p16.Root
-	while v17 do
-		v_u_1(v17.Callback, ...)
-		v17 = v17.Next
-	end
+function u5.Fire(p1, ...) -- Line: 76 -- upvalues: Spawn (val)
+    local Root = p1.Root
+    while Root do
+        Spawn(Root.Callback, ...)
+        Root = Root.Next
+    end
 end
-function v_u_2.DisconnectAll(p18) -- name: DisconnectAll
-	p18.Root = nil
+function u5.DisconnectAll(p1) -- Line: 85
+    p1.Root = nil
 end
-return function()
-	-- upvalues: (copy) v_u_2
-	local v19 = v_u_2
-	return setmetatable({
-		["Root"] = nil
-	}, v19)
+return function() -- Line: 89 -- upvalues: u5 (val)
+    local v1 = {}
+    return (setmetatable(v1, u5))
 end

@@ -1,52 +1,58 @@
-return {
-	["fromLinear"] = function(p1) -- name: fromLinear
-		local v2 = Color3.new
-		local v3 = p1.R
-		local v4
-		if v3 >= 0.04045 then
-			v4 = ((v3 + 0.055) / 1.055) ^ 2.4
-		else
-			v4 = v3 / 12.92
-		end
-		local v5 = p1.G
-		local v6
-		if v5 >= 0.04045 then
-			v6 = ((v5 + 0.055) / 1.055) ^ 2.4
-		else
-			v6 = v5 / 12.92
-		end
-		local v7 = p1.B
-		local v8
-		if v7 >= 0.04045 then
-			v8 = ((v7 + 0.055) / 1.055) ^ 2.4
-		else
-			v8 = v7 / 12.92
-		end
-		return v2(v4, v6, v8)
-	end,
-	["toLinear"] = function(p9) -- name: toLinear
-		local v10 = Color3.new
-		local v11 = p9.R
-		local v12
-		if v11 >= 0.0031308 then
-			v12 = v11 ^ 0.4166666666666667 * 1.055 - 0.055
-		else
-			v12 = v11 * 12.92
-		end
-		local v13 = p9.G
-		local v14
-		if v13 >= 0.0031308 then
-			v14 = v13 ^ 0.4166666666666667 * 1.055 - 0.055
-		else
-			v14 = v13 * 12.92
-		end
-		local v15 = p9.B
-		local v16
-		if v15 >= 0.0031308 then
-			v16 = v15 ^ 0.4166666666666667 * 1.055 - 0.055
-		else
-			v16 = v15 * 12.92
-		end
-		return v10(v12, v14, v16)
-	end
-}
+local v1 = {}
+local function transform(p1) -- Line: 18
+    if 0.04045 <= p1 then
+        return ((p1 + 0.055) / 1.055) ^ 2.4
+    end
+    return p1 / 12.92
+end
+local function inverse(p1) -- Line: 28
+    if 0.0031308 <= p1 then
+        return p1 ^ 0.4166666666666667 * 1.055 - 0.055
+    end
+    return p1 * 12.92
+end
+function v1.fromLinear(p1) -- Line: 37
+    local v1, v2, v3
+    local R = p1.R
+    if 0.04045 > R then
+        v1 = R / 12.92
+    else
+        v1 = ((R + 0.055) / 1.055) ^ 2.4
+    end
+    local G = p1.G
+    if 0.04045 > G then
+        v2 = G / 12.92
+    else
+        v2 = ((G + 0.055) / 1.055) ^ 2.4
+    end
+    local B = p1.B
+    if 0.04045 > B then
+        v3 = B / 12.92
+    else
+        v3 = ((B + 0.055) / 1.055) ^ 2.4
+    end
+    return Color3.new(v1, v2, v3)
+end
+function v1.toLinear(p1) -- Line: 47
+    local v1, v2, v3
+    local R = p1.R
+    if 0.0031308 > R then
+        v1 = R * 12.92
+    else
+        v1 = R ^ 0.4166666666666667 * 1.055 - 0.055
+    end
+    local G = p1.G
+    if 0.0031308 > G then
+        v2 = G * 12.92
+    else
+        v2 = G ^ 0.4166666666666667 * 1.055 - 0.055
+    end
+    local B = p1.B
+    if 0.0031308 > B then
+        v3 = B * 12.92
+    else
+        v3 = B ^ 0.4166666666666667 * 1.055 - 0.055
+    end
+    return Color3.new(v1, v2, v3)
+end
+return v1

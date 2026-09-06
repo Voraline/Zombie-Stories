@@ -1,88 +1,86 @@
-local v_u_1 = game:GetService("ReplicatedStorage")
-local v_u_2 = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 require("../Types")
-local v_u_3 = require("../Utilities/Output")
-local v_u_4 = nil
-local v_u_5 = {}
-local v_u_6 = {}
-local v_u_7 = {}
-local v_u_25 = {
-	["start"] = function() -- name: start
-		-- upvalues: (ref) v_u_4, (copy) v_u_1, (copy) v_u_5, (copy) v_u_6, (copy) v_u_7, (copy) v_u_25
-		v_u_4 = v_u_1:WaitForChild("identifierStorage")
-		for v8, v9 in v_u_4:GetAttributes() do
-			v_u_5[v8] = v9
-			v_u_6[v9] = v8
-		end
-		v_u_4.AttributeChanged:Connect(function(p10)
-			-- upvalues: (ref) v_u_4, (ref) v_u_7, (ref) v_u_5, (ref) v_u_6
-			local v11 = v_u_4:GetAttribute(p10)
-			if v11 then
-				local v12 = v_u_7[p10]
-				if v12 then
-					for v13 in v12 do
-						task.spawn(v13, v11)
-					end
-					v_u_7[p10] = nil
-				end
-				v_u_5[p10] = v11
-				v_u_6[v11] = p10
-			else
-				local v14 = v_u_5[p10]
-				v_u_5[p10] = nil
-				v_u_6[v14] = nil
-			end
-		end)
-		v_u_25.ref("NIL_VALUE")
-	end,
-	["ref"] = function(p15, p16) -- name: ref
-		-- upvalues: (copy) v_u_3, (copy) v_u_2, (copy) v_u_5, (copy) v_u_6, (copy) v_u_7
-		v_u_3.typecheck("string", "ReferenceIdentifier", "identifierName", p15)
-		if v_u_2:IsStudio() then
-			v_u_5[p15] = p15
-			v_u_6[p15] = p15
-			return p15
-		end
-		if p16 ~= nil then
-			v_u_3.typecheck("number", "ReferenceIdentifier", "maxWaitTime", p16)
-		end
-		local v17 = p16 or 1
-		local v18 = v_u_5[p15]
-		if v18 then
-			return v18
-		end
-		local v_u_19 = coroutine.running()
-		local v_u_20 = v_u_7[p15]
-		if v_u_20 then
-			v_u_20[v_u_19] = true
-		else
-			v_u_20 = {
-				[v_u_19] = true
-			}
-			v_u_7[p15] = v_u_20
-		end
-		local v21 = task.delay(v17, function()
-			-- upvalues: (ref) v_u_20, (copy) v_u_19
-			v_u_20[v_u_19] = nil
-			task.spawn(v_u_19, nil)
-		end)
-		local v22 = coroutine.yield()
-		if v22 == nil then
-			v_u_3.fatal((("reached max wait time for identifier %*, broke yield. Did you forget to implement it on the server?"):format(p15)))
-		else
-			task.cancel(v21)
-		end
-		return v22
-	end,
-	["deser"] = function(p23) -- name: deser
-		-- upvalues: (copy) v_u_3, (copy) v_u_6
-		v_u_3.fatalAssert(typeof(p23) == "string", string.format("Deserialize takes string, got %*", (typeof(p23))))
-		return v_u_6[p23]
-	end,
-	["ser"] = function(p24) -- name: ser
-		-- upvalues: (copy) v_u_3, (copy) v_u_5
-		v_u_3.fatalAssert(typeof(p24) == "string", string.format("Serialize takes string, got %*", (typeof(p24))))
-		return v_u_5[p24]
-	end
-}
-return v_u_25
+local u15 = require("../Utilities/Output")
+local u16 = nil
+local u17 = {}
+local u18 = {}
+local u19 = {}
+local u20 = {}
+function u20.start() -- Line: 15 -- upvalues: u16 (ref), ReplicatedStorage (val), u17 (val), u18 (val), u19 (val), u20 (val)
+    u16 = ReplicatedStorage:WaitForChild("identifierStorage")
+    for i, j in u16:GetAttributes() do
+        u17[i] = j
+        u18[j] = i
+    end
+    u16.AttributeChanged:Connect(function(p1) -- Line: 26 -- upvalues: u16 (upval), u19 (upval), u17 (upval), u18 (upval)
+        local v1
+        local Attribute = u16:GetAttribute(p1)
+        if not Attribute then
+            v1 = u17[p1]
+            u17[p1] = nil
+            u18[v1] = nil
+            return
+        end
+        v1 = u19[p1]
+        if v1 then
+            local v2 = v1
+            local v3 = nil
+            local v4 = nil
+            for i in v2, v3, v4 do
+                task.spawn(i, Attribute)
+            end
+            u19[p1] = nil
+        end
+        u17[p1] = Attribute
+        u18[Attribute] = p1
+    end)
+    u20.ref("NIL_VALUE")
+end
+function u20.ref(p1, p2) -- Line: 55 -- upvalues: u15 (val), RunService (val), u17 (val), u18 (val), u19 (val)
+    local v1
+    u15.typecheck("string", "ReferenceIdentifier", "identifierName", p1)
+    if RunService:IsStudio() then
+        u17[p1] = p1
+        u18[p1] = p1
+        return p1
+    end
+    if p2 ~= nil then
+        u15.typecheck("number", "ReferenceIdentifier", "maxWaitTime", p2)
+    end
+    local v2 = u17[p1]
+    if v2 then
+        return v2
+    end
+    local u28 = coroutine.running()
+    local u34 = u19[p1]
+    if not u34 then
+        v1 = {}
+        v1[u28] = true
+        u19[p1] = v1
+    else
+        u34[u28] = true
+    end
+    v1 = task.delay(p2 or 1, function() -- Line: 85 -- upvalues: u34 (ref), u28 (val)
+        u34[u28] = nil
+        task.spawn(u28, nil)
+    end)
+    local v3 = coroutine.yield()
+    if v3 ~= nil then
+        task.cancel(v1)
+    else
+        u15.fatal((("reached max wait time for identifier %*, broke yield. Did you forget to implement it on the server?"):format(p1)))
+    end
+    return v3
+end
+function u20.deser(p1) -- Line: 105 -- upvalues: u15 (val), u18 (val)
+    local v1 = typeof(p1) == "string"
+    u15.fatalAssert(v1, string.format("Deserialize takes string, got %*", (typeof(p1))))
+    return u18[p1]
+end
+function u20.ser(p1) -- Line: 113 -- upvalues: u15 (val), u17 (val)
+    local v1 = typeof(p1) == "string"
+    u15.fatalAssert(v1, string.format("Serialize takes string, got %*", (typeof(p1))))
+    return u17[p1]
+end
+return u20

@@ -1,101 +1,90 @@
 game:GetService("TweenService")
-local v1 = script:WaitForChild("BossHealth")
-local v_u_2 = v1:WaitForChild("MainFrame")
-local v_u_3 = v_u_2:WaitForChild("Template")
-local v4 = game.ReplicatedStorage.common
+local BossHealth = script:WaitForChild("BossHealth")
+local MainFrame = BossHealth:WaitForChild("MainFrame")
+local Template = MainFrame:WaitForChild("Template")
 require(game.ReplicatedStorage.common:WaitForChild("HUDService"))
-local v_u_5 = require(v4:WaitForChild("NPCRegistry"))
-local v_u_6 = require("@game/ReplicatedStorage/common/NPCs_Shared/Utils/StatusEffect_Util")
-local v_u_7 = Color3.fromRGB(255, 120, 120)
-local v_u_8 = Color3.fromRGB(255, 162, 2)
-local v_u_9 = Color3.fromRGB(120, 255, 120)
-v1.Parent = game.Players.LocalPlayer.PlayerGui
-local v_u_30 = {
-	["IsShowing"] = false,
-	["Show"] = function(_) -- name: Show
-		-- upvalues: (copy) v_u_30, (copy) v_u_2
-		v_u_30.IsShowing = true
-		v_u_2:TweenPosition(UDim2.new(0.5, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
-	end,
-	["Hide"] = function(_) -- name: Hide
-		-- upvalues: (copy) v_u_30, (copy) v_u_2
-		v_u_30.IsShowing = false
-		v_u_2:TweenPosition(UDim2.new(0.5, 0, -0.5, -36), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
-	end,
-	["AddBoss"] = function(_, p10, p_u_11) -- name: AddBoss
-		-- upvalues: (copy) v_u_5, (copy) v_u_3, (copy) v_u_2, (copy) v_u_6, (copy) v_u_9, (copy) v_u_8, (copy) v_u_7
-		local v_u_12 = v_u_5:WaitForNPC(p10)
-		if v_u_12 ~= nil then
-			task.defer(function()
-				-- upvalues: (copy) v_u_12, (ref) p_u_11, (ref) v_u_3, (ref) v_u_2, (ref) v_u_6, (ref) v_u_9, (ref) v_u_8, (ref) v_u_7
-				if (v_u_12.new ~= nil or v_u_12.IsCompat) and not v_u_12.IsDead then
-					local v13
-					if p_u_11 == nil then
-						v13 = v_u_12.Name
-					else
-						v13 = p_u_11
-					end
-					p_u_11 = v13
-					local v_u_14 = v_u_12.MaxHP
-					local v_u_15 = v_u_3:Clone()
-					local v_u_16 = v_u_15:WaitForChild("HealthBar"):WaitForChild("Bar")
-					local v_u_17 = v_u_15:WaitForChild("Status")
-					v_u_15.Visible = true
-					v_u_15.NameLabel.Text = p_u_11
-					v_u_15.Parent = v_u_2
-					if v_u_12.CurrentEffects then
-						for _, v18 in v_u_12.CurrentEffects() do
-							v_u_6.GetIconLabel(v18).Parent = v_u_17
-						end
-					end
-					local function v22(p19) -- name: updateHealth
-						-- upvalues: (copy) v_u_14, (copy) v_u_16, (ref) v_u_9, (ref) v_u_8, (ref) v_u_7
-						local v20 = p19 / v_u_14
-						local v21 = math.max(v20, 0)
-						v_u_16:TweenSize(UDim2.new(v21, 0, 1, 0), nil, nil, 0.25, true)
-						if v21 > 0.6 then
-							v_u_16.BackgroundColor3 = v_u_9
-							return
-						elseif v21 > 0.3 then
-							v_u_16.BackgroundColor3 = v_u_8
-						else
-							v_u_16.BackgroundColor3 = v_u_7
-						end
-					end
-					local function v25(p23, p24) -- name: updateStatus
-						-- upvalues: (copy) v_u_17, (ref) v_u_6
-						if p23 == "Apply" then
-							if v_u_17:FindFirstChild(p24._Name) then
-								v_u_17[p24._Name]:Destroy()
-							end
-							v_u_6.GetIconLabel(p24).Parent = v_u_17
-						else
-							local _ = p23 == "Remove"
-						end
-					end
-					local v_u_26 = v_u_12.HealthChanged:Connect(v22)
-					local v_u_27 = v_u_12.StatusUpdated:Connect(v25)
-					v22(v_u_12.HP)
-					local v_u_28 = nil
-					local v_u_29 = nil
-					v_u_29 = v_u_12.Died:Connect(function()
-						-- upvalues: (copy) v_u_26, (ref) v_u_29, (ref) v_u_28, (copy) v_u_15, (copy) v_u_27
-						v_u_26:Disconnect()
-						v_u_29:Disconnect()
-						v_u_28:Disconnect()
-						v_u_15:Destroy()
-						v_u_27:Disconnect()
-					end)
-					v_u_28 = v_u_12.Destroyed:Connect(function()
-						-- upvalues: (copy) v_u_26, (ref) v_u_29, (ref) v_u_28, (copy) v_u_15
-						v_u_26:Disconnect()
-						v_u_29:Disconnect()
-						v_u_28:Disconnect()
-						v_u_15:Destroy()
-					end)
-				end
-			end)
-		end
-	end
-}
-return v_u_30
+local NPCRegistry = require(game.ReplicatedStorage.common:WaitForChild("NPCRegistry"))
+local u38 = require("@game/ReplicatedStorage/common/NPCs_Shared/Utils/StatusEffect_Util")
+local u43 = Color3.fromRGB(255, 120, 120)
+local u48 = Color3.fromRGB(255, 162, 2)
+local u53 = Color3.fromRGB(120, 255, 120)
+BossHealth.Parent = game.Players.LocalPlayer.PlayerGui
+local u58 = {IsShowing = false}
+function u58.Show(p1) -- Line: 27 -- upvalues: u58 (val), MainFrame (val)
+    u58.IsShowing = true
+    local v1 = UDim2.new(0.5, 0, 0, 0)
+    MainFrame:TweenPosition(v1, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+end
+function u58.Hide(p1) -- Line: 33 -- upvalues: u58 (val), MainFrame (val)
+    u58.IsShowing = false
+    local v1 = UDim2.new(0.5, 0, -0.5, -36)
+    MainFrame:TweenPosition(v1, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+end
+function u58.AddBoss(p1, p2, p3) -- Line: 39 -- upvalues: NPCRegistry (val), Template (val), MainFrame (val), u38 (val), u53 (val), u48 (val), u43 (val)
+    local u7 = NPCRegistry:WaitForNPC(p2)
+    if u7 ~= nil then
+        task.defer(function() -- Line: 42 -- upvalues: u7 (val), p3 (ref), Template (upval), MainFrame (upval), u38 (upval), u53 (upval), u48 (upval), u43 (upval)
+            if u7.new ~= nil then
+                if not u7.IsDead then
+                    local Name
+                    if p3 == nil then
+                        Name = u7.Name
+                    else
+                        Name = p3
+                    end
+                    p3 = Name
+                    local MaxHP = u7.MaxHP
+                    local u16 = Template:Clone()
+                    local HealthBar = u16:WaitForChild("HealthBar")
+                    local Bar = HealthBar:WaitForChild("Bar")
+                    local Status = u16:WaitForChild("Status")
+                    u16.Visible = true
+                    u16.NameLabel.Text = p3
+                    u16.Parent = MainFrame
+                    if u7.CurrentEffects then
+                        for i, j in u7.CurrentEffects() do
+                            u38.GetIconLabel(j).Parent = Status
+                        end
+                    end
+                    local function updateHealth(p1) -- Line: 63 -- upvalues: MaxHP (val), Bar (val), u53 (upval), u48 (upval), u43 (upval)
+                        local v1 = math.max(p1 / MaxHP, 0)
+                        local v2 = UDim2.new(v1, 0, 1, 0)
+                        Bar:TweenSize(v2, nil, nil, 0.25, true)
+                        if 0.6 < v1 then
+                            Bar.BackgroundColor3 = u53
+                            return
+                        end
+                        if 0.3 < v1 then
+                            Bar.BackgroundColor3 = u48
+                            return
+                        end
+                        Bar.BackgroundColor3 = u43
+                    end
+                    local u64 = u7.HealthChanged:Connect(updateHealth)
+                    local u70 = u7.StatusUpdated:Connect(function(p1, p2) -- Line: 74 -- upvalues: Status (val), u38 (upval)
+                        if p1 ~= "Apply" then
+                            return
+                        end
+                        if Status:FindFirstChild(p2._Name) then
+                            Status[p2._Name]:Destroy()
+                        end
+                        local v1 = u38.GetIconLabel(p2)
+                        v1.Parent = Status
+                    end)
+                    updateHealth(u7.HP)
+                    local u75 = nil
+                    local u76 = nil
+                    u76 = u7.Died:Connect(function() -- Line: 93 -- upvalues: u64 (val), u76 (ref), u75 (ref), u16 (val), u70 (val)
+                        u64:Disconnect()
+                        u76:Disconnect()
+                        u75:Disconnect()
+                        u16:Destroy()
+                        u70:Disconnect()
+                    end)
+                end
+            elseif not u7.IsCompat then
+            end
+        end)
+    end
+end
+return u58

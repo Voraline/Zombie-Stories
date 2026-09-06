@@ -1,71 +1,72 @@
-local v_u_1 = game:GetService("RunService")
-local v_u_2 = {}
-v_u_2.__index = v_u_2
-function v_u_2.new(p3, p4, p5) -- name: new
-	-- upvalues: (copy) v_u_2, (copy) v_u_1
-	local v6 = v_u_2
-	local v_u_7 = setmetatable({}, v6)
-	v_u_7.Instance = p3
-	local v8
-	if p5 then
-		v8 = p5.Velocity
-	else
-		v8 = p5
-	end
-	v_u_7.Velocity = v8
-	v_u_7.AngularDisplacement = 0
-	v_u_7.CollisionIgnoreList = p4 or {}
-	v_u_7.Parameters = p5 or {}
-	local v9 = v_u_7.CollisionIgnoreList
-	table.insert(v9, p3)
-	v_u_1.Heartbeat:Connect(function(p10)
-		-- upvalues: (copy) v_u_7
-		v_u_7:step(p10)
-	end)
-	return v_u_7
+local RunService = game:GetService("RunService")
+local u5 = {}
+u5.__index = u5
+function u5.new(p1, p2, p3) -- Line: 21 -- upvalues: u5 (val), RunService (val)
+    local u6 = setmetatable({}, u5)
+    u6.Instance = p1
+    local Velocity = p3
+    if Velocity then
+        Velocity = p3.Velocity
+    end
+    u6.Velocity = Velocity
+    u6.AngularDisplacement = 0
+    local v1 = p2
+    if not v1 then
+        v1 = {}
+    end
+    u6.CollisionIgnoreList = v1
+    v1 = p3
+    if not v1 then
+        v1 = {}
+    end
+    u6.Parameters = v1
+    table.insert(u6.CollisionIgnoreList, p1)
+    RunService.Heartbeat:Connect(function(p1) -- Line: 36 -- upvalues: u6 (val)
+        u6:step(p1)
+    end)
+    return u6
 end
-function v_u_2.reflect(p11, p12) -- name: reflect
-	local v13 = p11.Parameters.Direction
-	p11.Velocity = p11.Velocity / 2
-	return v13 - 2 * v13:Dot(p12) * p12
+function u5:reflect(p2) -- Line: 42
+    local Direction = self.Parameters.Direction
+    self.Velocity = self.Velocity / 2
+    return Direction - 2 * Direction:Dot(p2) * p2
 end
-function v_u_2.detectCollision(p14, p15) -- name: detectCollision
-	local v16 = RaycastParams.new()
-	v16.FilterDescendantsInstances = p14.CollisionIgnoreList
-	v16.FilterType = Enum.RaycastFilterType.Blacklist
-	local v17 = workspace:Raycast(p14.Instance.Position + p14.Parameters.Direction * p14.Instance.Size.Y / 2, p14.Parameters.Direction * p14.Velocity * p15, v16)
-	if not v17 then
-		local v18 = workspace
-		local v19 = p14.Instance.Position
-		local v20 = -p14.Instance.Size.Y / 2
-		v17 = v18:Raycast(v19, Vector3.new(0, v20, 0), v16)
-	end
-	if v17 and v17.Instance then
-		return v17.Instance, v17.Position, v17.Normal
-	end
+function u5:detectCollision(p2) -- Line: 55
+    local v1 = RaycastParams.new()
+    v1.FilterDescendantsInstances = self.CollisionIgnoreList
+    v1.FilterType = Enum.RaycastFilterType.Blacklist
+    local v2 = workspace:Raycast(self.Instance.Position + self.Parameters.Direction * self.Instance.Size.Y / 2, self.Parameters.Direction * self.Velocity * p2, v1)
+    if not v2 then
+        local v3 = Vector3.new(0, -self.Instance.Size.Y / 2, 0)
+        v2 = workspace:Raycast(self.Instance.Position, v3, v1)
+    end
+    if not v2 then
+        return
+    end
+    if v2.Instance then
+        return v2.Instance, v2.Position, v2.Normal
+    end
 end
-function v_u_2.applyGravity(p21, p22) -- name: applyGravity
-	local v23 = p21.Parameters.Mass * workspace.Gravity * p21.Parameters.GravityRate * p22
-	p21.AngularDisplacement = p21.AngularDisplacement - v23
+function u5:applyGravity(p2) -- Line: 79
+    self.AngularDisplacement = self.AngularDisplacement - self.Parameters.Mass * workspace.Gravity * self.Parameters.GravityRate * p2
 end
-function v_u_2.step(p24, p25) -- name: step
-	local _ = p24.Instance.Position
-	if p24.Velocity > 5 then
-		local v26, _, v27 = p24:detectCollision(p25)
-		if v26 then
-			p24.Instance.CFrame = CFrame.new(p24.Instance.Position, p24.Instance.Position + p24:reflect(v27))
-		else
-			p24:applyGravity(p25)
-		end
-		p24.Instance.CFrame = p24.Instance.CFrame * CFrame.new(0, 0, -p24.Velocity * p25)
-		if p24.Instance.CFrame.LookVector.Y > -0.95 then
-			local v28 = p24.Instance
-			local v29 = p24.Instance.CFrame
-			local v30 = CFrame.Angles
-			local v31 = p24.AngularDisplacement
-			v28.CFrame = v29 * v30(math.rad(v31), 0, 0)
-		end
-	end
+function u5:step(p2) -- Line: 90
+    local Instance, v1, v2
+    if self.Velocity <= 5 then
+        return
+    end
+    v1, _, v2 = self:detectCollision(p2)
+    if not v1 then
+        self:applyGravity(p2)
+    else
+        Instance = self.Instance
+        Instance.CFrame = CFrame.new(self.Instance.Position, self.Instance.Position + self:reflect(v2))
+    end
+    self.Instance.CFrame = self.Instance.CFrame * CFrame.new(0, 0, -self.Velocity * p2)
+    if -0.95 < self.Instance.CFrame.LookVector.Y then
+        local v3 = math.rad(self.AngularDisplacement)
+        self.Instance.CFrame = self.Instance.CFrame * CFrame.Angles(v3, 0, 0)
+    end
 end
-function v_u_2.__init(_) -- name: __init end
-return v_u_2
+function u5.__init(p1) end
+return u5

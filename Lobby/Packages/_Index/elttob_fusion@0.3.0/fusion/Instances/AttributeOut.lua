@@ -1,37 +1,31 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Memory.checkLifetime)
-local v_u_4 = require(v1.State.castToState)
-local v_u_5 = {}
-return function(p_u_6) -- name: AttributeOut
-	-- upvalues: (copy) v_u_5, (copy) v_u_4, (copy) v_u_2, (copy) v_u_3
-	local v7 = v_u_5[p_u_6]
-	if v7 == nil then
-		v7 = {
-			["type"] = "SpecialKey",
-			["kind"] = "AttributeOut",
-			["stage"] = "observer",
-			["apply"] = nil,
-			["apply"] = function(_, p8, p_u_9, p_u_10) -- name: apply
-				-- upvalues: (copy) p_u_6, (ref) v_u_4, (ref) v_u_2, (ref) v_u_3
-				local v11 = p_u_10:GetAttributeChangedSignal(p_u_6)
-				if not v_u_4(p_u_9) then
-					v_u_2.logError("invalidAttributeOutType")
-				end
-				if p_u_9.kind ~= "Value" then
-					v_u_2.logError("invalidAttributeOutType")
-				end
-				v_u_3.bOutlivesA(p8, p_u_10, p_u_9.scope, p_u_9.oldestTask, v_u_3.formatters.attributeOutputsTo, p_u_6)
-				p_u_9:set(p_u_10:GetAttribute(p_u_6))
-				local function v12()
-					-- upvalues: (copy) p_u_9, (copy) p_u_10, (ref) p_u_6
-					p_u_9:set(p_u_10:GetAttribute(p_u_6))
-				end
-				table.insert(p8, v11:Connect(v12))
-			end
-		}
-		v_u_5[p_u_6] = v7
-	end
-	return v7
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local checkLifetime = require(Parent.Memory.checkLifetime)
+local castToState = require(Parent.State.castToState)
+local u17 = {}
+return function(p1) -- Line: 21 -- upvalues: u17 (val), castToState (val), External (val), checkLifetime (val)
+    local v1 = u17[p1]
+    if v1 == nil then
+        u17[p1] = {
+            type = "SpecialKey",
+            kind = "AttributeOut",
+            stage = "observer",
+            apply = function(a1, p2, p3, p4) -- Line: 30 -- upvalues: p1 (val), castToState (upval), External (upval), checkLifetime (upval)
+                local AttributeChangedSignal = p4:GetAttributeChangedSignal(p1)
+                if not (castToState(p3)) then
+                    External.logError("invalidAttributeOutType")
+                end
+                if p3.kind ~= "Value" then
+                    External.logError("invalidAttributeOutType")
+                end
+                checkLifetime.bOutlivesA(p2, p4, p3.scope, p3.oldestTask, checkLifetime.formatters.attributeOutputsTo, p1)
+                p3:set(p4:GetAttribute(p1))
+                table.insert(p2, AttributeChangedSignal:Connect(function() -- Line: 53 -- upvalues: p3 (val), p4 (val), p1 (upval)
+                    p3:set(p4:GetAttribute(p1))
+                end))
+            end,
+        }
+    end
+    return v1
 end

@@ -1,88 +1,44 @@
-return {
-	{ "Selection", "Size", UDim2.new(1, -6, 1, -5) },
-	{ "Selection", "Position", UDim2.new(0, 3, 0, 3) },
-	{
-		"Widget",
-		"MinimumWidth",
-		32,
-		"Deselected"
-	},
-	{
-		"Widget",
-		"MinimumHeight",
-		32,
-		"Deselected"
-	},
-	{
-		"Widget",
-		"BorderSize",
-		0,
-		"Deselected"
-	},
-	{
-		"IconCorners",
-		"CornerRadius",
-		UDim.new(0, 9),
-		"Deselected"
-	},
-	{
-		"IconButton",
-		"BackgroundTransparency",
-		0.5,
-		"Deselected"
-	},
-	{
-		"IconLabel",
-		"TextSize",
-		14,
-		"Deselected"
-	},
-	{
-		"Dropdown",
-		"BackgroundTransparency",
-		0.5,
-		"Deselected"
-	},
-	{
-		"Notice",
-		"Position",
-		UDim2.new(1, -12, 0, -3),
-		"Deselected"
-	},
-	{
-		"Notice",
-		"Size",
-		UDim2.new(0, 15, 0, 15),
-		"Deselected"
-	},
-	{
-		"NoticeLabel",
-		"TextSize",
-		11,
-		"Deselected"
-	},
-	{
-		"IconSpot",
-		"BackgroundColor3",
-		Color3.fromRGB(0, 0, 0),
-		"Selected"
-	},
-	{
-		"IconSpot",
-		"BackgroundTransparency",
-		0.702,
-		"Selected"
-	},
-	{
-		"IconSpotGradient",
-		"Enabled",
-		false,
-		"Selected"
-	},
-	{
-		"IconOverlay",
-		"BackgroundTransparency",
-		0.97,
-		"Selected"
-	}
-}
+local v1 = {}
+local v2 = {"Selection", "Size", UDim2.new(1, -6, 1, -5)}
+local v3 = {"Selection", "Position", UDim2.new(0, 3, 0, 3)}
+local v4 = {}
+local v5 = UDim.new(0, 9)
+v4[1] = "IconCorners"
+v4[2] = "CornerRadius"
+v4[3] = v5
+v4[4] = "Deselected"
+local v6 = {}
+local v7 = UDim2.new(1, -12, 0, -3)
+v6[1] = "Notice"
+v6[2] = "Position"
+v6[3] = v7
+v6[4] = "Deselected"
+local v8 = {}
+local v9 = UDim2.new(0, 15, 0, 15)
+v8[1] = "Notice"
+v8[2] = "Size"
+v8[3] = v9
+v8[4] = "Deselected"
+v7 = {}
+local v10 = Color3.fromRGB(0, 0, 0)
+v7[1] = "IconSpot"
+v7[2] = "BackgroundColor3"
+v7[3] = v10
+v7[4] = "Selected"
+v1[1] = v2
+v1[2] = v3
+v1[3] = {"Widget", "MinimumWidth", 32, "Deselected"}
+v1[4] = {"Widget", "MinimumHeight", 32, "Deselected"}
+v1[5] = {"Widget", "BorderSize", 0, "Deselected"}
+v1[6] = v4
+v1[7] = {"IconButton", "BackgroundTransparency", 0.5, "Deselected"}
+v1[8] = {"IconLabel", "TextSize", 14, "Deselected"}
+v1[9] = {"Dropdown", "BackgroundTransparency", 0.5, "Deselected"}
+v1[10] = v6
+v1[11] = v8
+v1[12] = {"NoticeLabel", "TextSize", 11, "Deselected"}
+v1[13] = v7
+v1[14] = {"IconSpot", "BackgroundTransparency", 0.702, "Selected"}
+v1[15] = {"IconSpotGradient", "Enabled", false, "Selected"}
+v1[16] = {"IconOverlay", "BackgroundTransparency", 0.97, "Selected"}
+return v1

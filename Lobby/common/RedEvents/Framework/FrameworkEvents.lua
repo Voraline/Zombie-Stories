@@ -1,64 +1,63 @@
-local v1 = require(game.ReplicatedStorage.Packages.Red)
-local v_u_2 = require(game.ReplicatedStorage.Packages.Guard)
-local v_u_3 = v_u_2.Or(v_u_2.String, v_u_2.List(v_u_2.String))
+local Red = require(game.ReplicatedStorage.Packages.Red)
+local Guard = require(game.ReplicatedStorage.Packages.Guard)
+local u17 = Guard.Or(Guard.String, Guard.List(Guard.String))
 return {
-	["CustomHit"] = v1.SharedEvent("CustomHit", function(p4)
-		return p4
-	end),
-	["PreloadWeapon"] = v1.SharedEvent("PreloadWeapon", function(p5)
-		-- upvalues: (copy) v_u_3
-		return v_u_3(p5)
-	end),
-	["UpdateAmmo"] = v1.SharedEvent("UpdateAmmo", function(p6)
-		return p6
-	end),
-	["Reloading"] = v1.SharedEvent("Reloading", function(p7)
-		return p7
-	end),
-	["CancelReload"] = v1.Function("CancelReload", function(p8)
-		return p8
-	end),
-	["ReloadingFunction"] = v1.Function("ReloadingFunction", function(p9)
-		return p9
-	end, function(p10)
-		return p10
-	end),
-	["SetLoadout"] = v1.SharedEvent("SetLoadout", function(p11)
-		return p11
-	end),
-	["RequestLoadout"] = v1.Function("RequestLoadout", function() end, function(p12)
-		return p12
-	end),
-	["RequestPendingTeleport"] = v1.Function("RequestPendingTeleport", function() end, function(p13)
-		return p13
-	end),
-	["RollbackHP"] = v1.SharedEvent("RollbackHP", function(p14)
-		return p14
-	end),
-	["LookAngle"] = v1.SharedEvent("LookAngle", function(p15)
-		return p15
-	end),
-	["Shoot"] = v1.SharedEvent("Shoot", function(p16)
-		return p16
-	end),
-	["MeleeSwing"] = v1.SharedEvent("MeleeSwing", function(p17)
-		return p17
-	end),
-	["MeleeReg"] = v1.SharedEvent("MeleeReg", function(p18)
-		return p18
-	end),
-	["HitReplication"] = v1.SharedEvent("HitReplication", function(p19)
-		return p19
-	end),
-	["Equipped"] = v1.SharedEvent("Equipped", function(p20)
-		-- upvalues: (copy) v_u_2
-		return v_u_2.Optional(v_u_2.Or(v_u_2.String, v_u_2.Number))(p20)
-	end),
-	["CharacterLoaded"] = v1.SharedEvent("CharacterLoaded", function() end),
-	["WeaponUse"] = v1.SharedEvent("WeaponUse", function(p21)
-		return p21
-	end),
-	["OffHandUse"] = v1.SharedEvent("OffHandUse", function(p22)
-		return p22
-	end)
+    CustomHit = Red.SharedEvent("CustomHit", function(p1) -- Line: 7
+        return p1
+    end),
+    PreloadWeapon = Red.SharedEvent("PreloadWeapon", function(p1) -- Line: 11 -- upvalues: u17 (val)
+        return u17(p1)
+    end),
+    UpdateAmmo = Red.SharedEvent("UpdateAmmo", function(p1) -- Line: 15
+        return p1
+    end),
+    Reloading = Red.SharedEvent("Reloading", function(p1) -- Line: 19
+        return p1
+    end),
+    CancelReload = Red.Function("CancelReload", function(p1) -- Line: 23
+        return p1
+    end),
+    ReloadingFunction = Red.Function("ReloadingFunction", function(p1) -- Line: 27
+        return p1
+    end, function(p1) -- Line: 29
+        return p1
+    end),
+    SetLoadout = Red.SharedEvent("SetLoadout", function(p1) -- Line: 33
+        return p1
+    end),
+    RequestLoadout = Red.Function("RequestLoadout", function() end, function(p1) -- Line: 39
+        return p1
+    end),
+    RequestPendingTeleport = Red.Function("RequestPendingTeleport", function() end, function(p1) -- Line: 45
+        return p1
+    end),
+    RollbackHP = Red.SharedEvent("RollbackHP", function(p1) -- Line: 49
+        return p1
+    end),
+    LookAngle = Red.SharedEvent("LookAngle", function(p1) -- Line: 53
+        return p1
+    end),
+    Shoot = Red.SharedEvent("Shoot", function(p1) -- Line: 57
+        return p1
+    end),
+    MeleeSwing = Red.SharedEvent("MeleeSwing", function(p1) -- Line: 61
+        return p1
+    end),
+    MeleeReg = Red.SharedEvent("MeleeReg", function(p1) -- Line: 65
+        return p1
+    end),
+    HitReplication = Red.SharedEvent("HitReplication", function(p1) -- Line: 69
+        return p1
+    end),
+    Equipped = Red.SharedEvent("Equipped", function(p1) -- Line: 73 -- upvalues: Guard (val)
+        local v1 = Guard.Optional(Guard.Or(Guard.String, Guard.Number))
+        return v1(p1)
+    end),
+    CharacterLoaded = Red.SharedEvent("CharacterLoaded", function() end),
+    WeaponUse = Red.SharedEvent("WeaponUse", function(p1) -- Line: 81
+        return p1
+    end),
+    OffHandUse = Red.SharedEvent("OffHandUse", function(p1) -- Line: 85
+        return p1
+    end),
 }

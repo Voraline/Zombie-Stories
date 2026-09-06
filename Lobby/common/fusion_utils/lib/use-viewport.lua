@@ -1,26 +1,25 @@
-local v1 = game:GetService("ReplicatedStorage")
-local v2 = require(v1.Packages.Fusion)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
 require(script.Parent.utils["lock-value"])
-local v3 = require(script.Parent["use-camera"])
-local v_u_4 = v2.scoped(v2)
-local v_u_5 = v3()
-local v_u_6 = v_u_4:Value(Vector2.zero)
+local v1 = require(script.Parent["use-camera"])
+local u22 = Fusion.scoped(Fusion)
+local u24 = v1()
+local u28 = u22:Value(Vector2.zero)
 onViewportChanged = nil
-local function v8() -- name: setupHook
-	-- upvalues: (copy) v_u_4, (copy) v_u_5, (copy) v_u_6
-	local v_u_7 = v_u_4.peek(v_u_5)
-	if onViewportChanged then
-		onViewportChanged:Disconnect()
-	end
-	onViewportChanged = v_u_7:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-		-- upvalues: (ref) v_u_6, (copy) v_u_7
-		v_u_6:set(v_u_7.ViewportSize)
-	end)
-	v_u_6:set(v_u_7.ViewportSize)
+local function setupHook() -- Line: 18 -- upvalues: u22 (val), u24 (val), u28 (val)
+    local u3 = u22.peek(u24)
+    if onViewportChanged then
+        onViewportChanged:Disconnect()
+    end
+    local PropertyChangedSignal = u3:GetPropertyChangedSignal("ViewportSize")
+    onViewportChanged = PropertyChangedSignal:Connect(function() -- Line: 23 -- upvalues: u28 (upval), u3 (val)
+        u28:set(u3.ViewportSize)
+    end)
+    u28:set(u3.ViewportSize)
 end
-v8()
-v_u_4:Observer(v_u_5):onChange(v8)
-return function()
-	-- upvalues: (copy) v_u_6
-	return v_u_6
+setupHook()
+local v2 = u22:Observer(u24)
+v2:onChange(setupHook)
+return function() -- Line: 32 -- upvalues: u28 (val)
+    return u28
 end

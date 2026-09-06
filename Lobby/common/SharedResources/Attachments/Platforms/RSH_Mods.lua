@@ -1,75 +1,50 @@
-local v1 = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
-local v2 = {
-	{
-		["Name"] = "Charm",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	{
-		["Name"] = "Sticker",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	},
-	{
-		["Name"] = "Sticker 2",
-		["PotentialAttachments"] = nil,
-		["PotentialAttachments"] = {}
-	}
+local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
+local v1 = {
+    {Name = "Charm", PotentialAttachments = {}},
+    {Name = "Sticker", PotentialAttachments = {}},
+    {Name = "Sticker 2", PotentialAttachments = {}},
 }
-local v3 = require("../Extensions/Charm")
-v2[1].PotentialAttachments = v3.PotentialAttachments
-local v4 = require("../Extensions/Sticker")
-v2[2].PotentialAttachments = v4.PotentialAttachments
-v2[3].PotentialAttachments = v4.PotentialAttachments
-v2[4] = {
-	["Name"] = "Perk",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = { v1.AP, v1.RSH_MoreMags }
+local v2 = require("../Extensions/Charm")
+v1[1].PotentialAttachments = v2.PotentialAttachments
+local v3 = require("../Extensions/Sticker")
+v1[2].PotentialAttachments = v3.PotentialAttachments
+v1[3].PotentialAttachments = v3.PotentialAttachments
+v1[4] = {
+    Name = "Perk",
+    PotentialAttachments = {AttachmentProperties.AP, AttachmentProperties.RSH_MoreMags},
 }
-v2[5] = {
-	["Name"] = "Optic",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = { v1["Mini Red Dot"] }
+v1[5] = {
+    Name = "Optic",
+    PotentialAttachments = {AttachmentProperties["Mini Red Dot"]},
 }
-v2[6] = {
-	["Name"] = "Muzzle",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = {
-		v1["Light Suppressor"],
-		v1["Osprey Suppressor"],
-		v1["Pistol Muzzle Brake"],
-		v1["Pistol Compensator"]
-	}
+v1[6] = {
+    Name = "Muzzle",
+    PotentialAttachments = {AttachmentProperties["Light Suppressor"], AttachmentProperties["Osprey Suppressor"], AttachmentProperties["Pistol Muzzle Brake"], AttachmentProperties["Pistol Compensator"]},
 }
-v2[7] = {
-	["Name"] = "Bottom Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = {
-		v1["Angled Grip"],
-		v1["Vertical Grip"],
-		v1["Stubby Grip"],
-		v1["Skeleton Grip"],
-		v1["Folding Grip"],
-		v1["RK-1 Grip"]
-	}
+v1[7] = {
+    Name = "Bottom Rail",
+    PotentialAttachments = {
+        AttachmentProperties["Angled Grip"],
+        AttachmentProperties["Vertical Grip"],
+        AttachmentProperties["Stubby Grip"],
+        AttachmentProperties["Skeleton Grip"],
+        AttachmentProperties["Folding Grip"],
+        AttachmentProperties["RK-1 Grip"],
+    },
 }
-v2[8] = {
-	["Name"] = "Misc Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = { v1["Green Laser"], v1["Small Flashlight"] }
+v1[8] = {
+    Name = "Misc Rail",
+    PotentialAttachments = {AttachmentProperties["Green Laser"], AttachmentProperties["Small Flashlight"]},
 }
-v2[9] = {
-	["Name"] = "Top Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = v2[5].PotentialAttachments
+v1[9] = {Name = "Top Rail", PotentialAttachments = v1[5].PotentialAttachments}
+v1[10] = {
+    Name = "Pistol Rail",
+    PotentialAttachments = {AttachmentProperties["Small Flashlight"]},
 }
-v2[10] = {
-	["Name"] = "Pistol Rail",
-	["PotentialAttachments"] = nil,
-	["PotentialAttachments"] = { v1["Small Flashlight"] }
-}
-for _, v5 in v2[8].PotentialAttachments do
-	local v6 = v2[7].PotentialAttachments
-	table.insert(v6, v5)
+local PotentialAttachments = v1[8].PotentialAttachments
+local v4 = nil
+local v5 = nil
+for i, j in PotentialAttachments, v4, v5 do
+    table.insert(v1[7].PotentialAttachments, j)
 end
-return v2
+return v1

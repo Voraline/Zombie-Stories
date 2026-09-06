@@ -1,5 +1,1 @@
-return {
-	["FetchFormData"] = "FetchFormData",
-	["SubmitFormData"] = "SubmitFormData",
-	["FilterText"] = "FilterText"
-}
+return {FetchFormData = "FetchFormData", SubmitFormData = "SubmitFormData", FilterText = "FilterText"}

@@ -1,26 +1,24 @@
-local v_u_1 = require("../Shared/Util")
-local v_u_2 = Enum.UserInputType:GetEnumItems()
-for _, v3 in pairs(Enum.KeyCode:GetEnumItems()) do
-	v_u_2[#v_u_2 + 1] = v3
+local u2 = require("../Shared/Util")
+local EnumItems = Enum.UserInputType:GetEnumItems()
+for k, v in pairs(Enum.KeyCode:GetEnumItems()) do
+    EnumItems[#EnumItems + 1] = v
 end
-local v_u_8 = {
-	["Transform"] = function(p4) -- name: Transform
-		-- upvalues: (copy) v_u_1, (copy) v_u_2
-		return v_u_1.MakeFuzzyFinder(v_u_2)(p4)
-	end,
-	["Validate"] = function(p5) -- name: Validate
-		return #p5 > 0
-	end,
-	["Autocomplete"] = function(p6) -- name: Autocomplete
-		-- upvalues: (copy) v_u_1
-		return v_u_1.GetNames(p6)
-	end,
-	["Parse"] = function(p7) -- name: Parse
-		return p7[1]
-	end
+local u22 = {
+    Transform = function(p1) -- Line: 10 -- upvalues: u2 (val), EnumItems (val)
+        return u2.MakeFuzzyFinder(EnumItems)(p1)
+    end,
+    Validate = function(p1) -- Line: 16
+        local v1 = 0 < #p1
+        return v1
+    end,
+    Autocomplete = function(p1) -- Line: 20 -- upvalues: u2 (val)
+        return u2.GetNames(p1)
+    end,
+    Parse = function(p1) -- Line: 24
+        return p1[1]
+    end,
 }
-return function(p9)
-	-- upvalues: (copy) v_u_8, (copy) v_u_1
-	p9:RegisterType("userInput", v_u_8)
-	p9:RegisterType("userInputs", v_u_1.MakeListableType(v_u_8))
+return function(p1) -- Line: 29 -- upvalues: u22 (val), u2 (val)
+    p1:RegisterType("userInput", u22)
+    p1:RegisterType("userInputs", u2.MakeListableType(u22))
 end

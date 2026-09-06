@@ -1,5 +1,5 @@
-local v1 = require(game.ReplicatedStorage.Packages.Red)
+local Red = require(game.ReplicatedStorage.Packages.Red)
 require(game.ReplicatedStorage.Packages.Guard)
-return v1.SharedSignalEvent("CheckpointLoaded", function(p2)
-	return p2
+return Red.SharedSignalEvent("CheckpointLoaded", function(p1) -- Line: 4
+    return p1
 end)

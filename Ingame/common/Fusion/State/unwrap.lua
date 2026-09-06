@@ -1,11 +1,9 @@
-local v1 = script.Parent.Parent
-require(v1.PubTypes)
-local v_u_2 = require(v1.Utility.xtypeof)
-return function(p3, p4) -- name: unwrap
-	-- upvalues: (copy) v_u_2
-	if v_u_2(p3) == "State" then
-		return p3:get(p4)
-	else
-		return p3
-	end
+local Parent = script.Parent.Parent
+require(Parent.PubTypes)
+local xtypeof = require(Parent.Utility.xtypeof)
+return function(p1, p2) -- Line: 11 -- upvalues: xtypeof (val)
+    if xtypeof(p1) == "State" then
+        return (p1:get(p2))
+    end
+    return p1
 end

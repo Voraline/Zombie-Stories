@@ -1,70 +1,81 @@
-local v1 = game:GetService("RunService")
-local v_u_2 = game:GetService("HttpService")
-local v3 = game.ReplicatedStorage.common.RedEvents
-local v_u_4 = v1:IsClient()
-local v_u_5 = v1:IsServer()
-local v_u_6 = require(v3.Framework.GetAttachmentData)
-local v7 = {}
-local v_u_8 = {}
-local v_u_9 = {}
-local v_u_10 = 0
-function v7.GenerateUID(_) -- name: GenerateUID
-	-- upvalues: (copy) v_u_4, (ref) v_u_10
-	if not v_u_4 then
-		v_u_10 = v_u_10 + 1
-		return v_u_10
-	end
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local u17 = RunService:IsClient()
+local u20 = RunService:IsServer()
+local GetAttachmentData = require(game.ReplicatedStorage.common.RedEvents.Framework.GetAttachmentData)
+local u25 = {}
+local u26 = {}
+local u27 = {}
+local u28 = 0
+function u25.GenerateUID(p1) -- Line: 15 -- upvalues: u17 (val), u28 (ref)
+    if u17 then
+        return
+    end
+    u28 = u28 + 1
+    return u28
 end
-function v7.RegisterGun(p11, p12, p13) -- name: RegisterGun
-	-- upvalues: (copy) v_u_9, (copy) v_u_8
-	local v14 = p11:GenerateUID()
-	if not v_u_9[p13] then
-		v_u_9[p13] = {}
-	end
-	local v15 = v_u_9[p13]
-	table.insert(v15, v14)
-	v_u_8[tostring(v14)] = p12
-	return v14
+function u25.RegisterGun(p1, p2, p3) -- Line: 21 -- upvalues: u27 (val), u26 (val)
+    local v1 = p1:GenerateUID()
+    if not (u27[p3]) then
+        u27[p3] = {}
+    end
+    table.insert(u27[p3], v1)
+    u26[tostring(v1)] = p2
+    return v1
 end
-function v7.RetrieveAttachmentData(_, p16, p17) -- name: RetrieveAttachmentData
-	-- upvalues: (copy) v_u_5, (copy) v_u_8, (copy) v_u_9, (copy) v_u_6, (copy) v_u_2
-	if v_u_5 then
-		return v_u_8[tostring(p16)]
-	end
-	if not v_u_9[p17] then
-		v_u_9[p17] = {}
-	end
-	if not v_u_8[tostring(p16)] then
-		local v18, v19 = v_u_6:Call(p16):Await()
-		if v18 then
-			local v20 = not v19 and {} or v_u_2:JSONDecode(v19[1])
-			v_u_8[tostring(p16)] = v20
-			local v21 = v_u_9[p17]
-			table.insert(v21, p16)
-		else
-			error("Failed to retrieve attachment data")
-		end
-	end
-	return v_u_8[tostring(p16)]
+function u25.RetrieveAttachmentData(p1, p2, p3) -- Line: 31 -- upvalues: u20 (val), u26 (val), u27 (val), GetAttachmentData (val), HttpService (val)
+    if u20 then
+        return u26[tostring(p2)]
+    end
+    if not (u27[p3]) then
+        u27[p3] = {}
+    end
+    if not (u26[tostring(p2)]) then
+        local v1, v2
+        v1, v2 = GetAttachmentData:Call(p2):Await()
+        if not v1 then
+            error("Failed to retrieve attachment data")
+        else
+            if not v2 then
+                v2 = {}
+            else
+                v2 = HttpService:JSONDecode(v2[1])
+            end
+            u26[tostring(p2)] = v2
+            table.insert(u27[p3], p2)
+        end
+    end
+    return u26[tostring(p2)]
 end
-function v7.RemoveGunData(_, p22) -- name: RemoveGunData
-	-- upvalues: (copy) v_u_8
-	v_u_8[p22] = nil
+function u25.RemoveGunData(p1, p2) -- Line: 59 -- upvalues: u26 (val)
+    local v1 = tostring(p2)
+    u26[v1] = nil
 end
-if v_u_5 then
-	v_u_6:SetCallback(function(_, p23)
-		-- upvalues: (copy) v_u_2, (copy) v_u_8
-		return p23 and { v_u_2:JSONEncode(v_u_8[tostring(p23)]) } or nil
-	end)
-	game.Players.PlayerRemoving:Connect(function(p24)
-		-- upvalues: (copy) v_u_9, (copy) v_u_8
-		if v_u_9[p24] then
-			for _, v25 in v_u_9[p24] do
-				v_u_8[v25] = nil
-			end
-			table.clear(v_u_9[p24])
-			v_u_9[p24] = nil
-		end
-	end)
+function u25.ReleasePlayerGuns(p1, p2) -- Line: 63 -- upvalues: u27 (val), u26 (val)
+    local v1
+    local v2 = u27[p2]
+    if not v2 then
+        return
+    end
+    for i, v in ipairs(v2) do
+        v1 = tostring(v)
+        u26[v1] = nil
+    end
+    table.clear(v2)
 end
-return v7
+if u20 then
+    GetAttachmentData:SetCallback(function(p1, p2) -- Line: 75 -- upvalues: HttpService (val), u26 (val)
+        if not p2 then
+            return nil
+        end
+        local v1 = tostring(p2)
+        return {HttpService:JSONEncode(u26[v1])}
+    end)
+    game.Players.PlayerRemoving:Connect(function(p1) -- Line: 83 -- upvalues: u27 (val), u25 (val)
+        if u27[p1] then
+            u25:ReleasePlayerGuns(p1)
+            u27[p1] = nil
+        end
+    end)
+end
+return u25

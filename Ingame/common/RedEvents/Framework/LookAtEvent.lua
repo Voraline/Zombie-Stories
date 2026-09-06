@@ -1,7 +1,6 @@
-local v1 = require(game.ReplicatedStorage.Packages.Red)
-local v2 = require(game.ReplicatedStorage.Packages.Guard)
-local v_u_3 = v2.Or(v2.Vector3, v2.Or(v2.Instance, v2.String))
-return v1.SharedEvent("LookAt", function(p4)
-	-- upvalues: (copy) v_u_3
-	return v_u_3(p4)
+local Red = require(game.ReplicatedStorage.Packages.Red)
+local Guard = require(game.ReplicatedStorage.Packages.Guard)
+local u18 = Guard.Or(Guard.Vector3, Guard.Or(Guard.Instance, Guard.String))
+return Red.SharedEvent("LookAt", function(p1) -- Line: 6 -- upvalues: u18 (val)
+    return u18(p1)
 end)

@@ -1,21 +1,20 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.Logging.messages)
-return function(p3, p4, ...) -- name: logError
-	-- upvalues: (copy) v_u_2
-	local v5
-	if v_u_2[p3] == nil then
-		p3 = "unknownMessage"
-		v5 = v_u_2[p3]
-	else
-		v5 = v_u_2[p3]
-	end
-	local v6
-	if p4 == nil then
-		v6 = string.format("[Fusion] " .. v5 .. "\n(ID: " .. p3 .. ")", ...)
-	else
-		local v7 = v5:gsub("ERROR_MESSAGE", p4.message)
-		v6 = string.format("[Fusion] " .. v7 .. "\n(ID: " .. p3 .. ")\n---- Stack trace ----\n" .. p4.trace, ...)
-	end
-	error(v6:gsub("\n", "\n    "), 0)
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local messages = require(Parent.Logging.messages)
+return function(p1, p2, ...) -- Line: 11 -- upvalues: messages (val)
+    local v1, v2, v3
+    if messages[p1] == nil then
+        v2 = messages.unknownMessage
+    else
+        v2 = messages[p1]
+        v1 = p1
+    end
+    if p2 ~= nil then
+        v2 = v2:gsub("ERROR_MESSAGE", p2.message)
+        v3 = string.format("[Fusion] " .. v2 .. "\n(ID: " .. v1 .. ")\n---- Stack trace ----\n" .. p2.trace, ...)
+    else
+        v3 = string.format("[Fusion] " .. v2 .. "\n(ID: " .. v1 .. ")", ...)
+    end
+    local v4 = v3:gsub("\n", "\n    ")
+    error(v4, 0)
 end

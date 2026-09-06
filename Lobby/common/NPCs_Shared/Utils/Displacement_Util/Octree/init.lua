@@ -1,104 +1,93 @@
-local v_u_1 = require("@self/OctreeRegionUtil")
-local v_u_2 = require("@self/OctreeNode")
-local v_u_3 = {
-	["ClassName"] = "Octree"
-}
-v_u_3.__index = v_u_3
-function v_u_3.new() -- name: new
-	-- upvalues: (copy) v_u_3
-	local v4 = v_u_3
-	local v5 = setmetatable({}, v4)
-	v5._maxRegionSize = { 512, 512, 512 }
-	v5._maxDepth = 4
-	v5._regionHashMap = {}
-	return v5
+local u2 = require("@self/OctreeRegionUtil")
+local u5 = require("@self/OctreeNode")
+local u6 = {ClassName = "Octree"}
+u6.__index = u6
+function u6.new() -- Line: 57 -- upvalues: u6 (val)
+    local v1 = setmetatable({}, u6)
+    v1._maxRegionSize = {512, 512, 512}
+    v1._maxDepth = 4
+    v1._regionHashMap = {}
+    return v1
 end
-function v_u_3.GetAllNodes(p6) -- name: GetAllNodes
-	local v7 = {}
-	for _, v8 in pairs(p6._regionHashMap) do
-		for _, v9 in pairs(v8) do
-			for v10, _ in pairs(v9.nodes) do
-				v7[#v7 + 1] = v10
-			end
-		end
-	end
-	return v7
+function u6.GetAllNodes(p1) -- Line: 85
+    local v1 = {}
+    for k, v in pairs(p1._regionHashMap) do
+        for k2, i in pairs(v) do
+            for k3, j in pairs(i.nodes) do
+                v1[#v1 + 1] = k3
+            end
+        end
+    end
+    return v1
 end
-function v_u_3.CreateNode(p11, p12, p13) -- name: CreateNode
-	-- upvalues: (copy) v_u_2
-	local v14 = typeof(p12) == "Vector3"
-	assert(v14, "Bad position value")
-	assert(p13, "Bad object value")
-	local v15 = v_u_2.new(p11, p13)
-	v15:SetPosition(p12)
-	return v15
+function u6.CreateNode(p1, p2, p3) -- Line: 117 -- upvalues: u5 (val)
+    local v1 = typeof(p2) == "Vector3"
+    assert(v1, "Bad position value")
+    assert(p3, "Bad object value")
+    local v2 = u5.new(p1, p3)
+    v2:SetPosition(p2)
+    return v2
 end
-function v_u_3.RadiusSearch(p16, p17, p18) -- name: RadiusSearch
-	local v19 = typeof(p17) == "Vector3"
-	assert(v19, "Bad position")
-	local v20 = type(p18) == "number"
-	assert(v20, "Bad radius")
-	return p16:_radiusSearch(p17.x, p17.y, p17.z, p18)
+function u6.RadiusSearch(p1, p2, p3) -- Line: 145
+    local v1 = typeof(p2) == "Vector3"
+    assert(v1, "Bad position")
+    v1 = type(p3) == "number"
+    assert(v1, "Bad radius")
+    return p1:_radiusSearch(p2.x, p2.y, p2.z, p3)
 end
-function v_u_3.KNearestNeighborsSearch(p21, p22, p23, p24) -- name: KNearestNeighborsSearch
-	local v25 = typeof(p22) == "Vector3"
-	assert(v25, "Bad position")
-	local v26 = type(p24) == "number"
-	assert(v26, "Bad radius")
-	local v27, v28 = p21:_radiusSearch(p22.x, p22.y, p22.z, p24)
-	local v29 = {}
-	for v30, v31 in pairs(v28) do
-		table.insert(v29, {
-			["dist2"] = v31,
-			["index"] = v30
-		})
-	end
-	table.sort(v29, function(p32, p33)
-		return p32.dist2 < p33.dist2
-	end)
-	local v34 = #v29
-	local v35 = {}
-	local v36 = {}
-	for v37 = 1, math.min(v34, p23) do
-		local v38 = v29[v37]
-		v35[#v35 + 1] = v38.dist2
-		v36[#v36 + 1] = v27[v38.index]
-	end
-	return v36, v35
+function u6.KNearestNeighborsSearch(p1, p2, p3, p4) -- Line: 165
+    local v1, v2, v3
+    local v4 = typeof(p2) == "Vector3"
+    assert(v4, "Bad position")
+    v4 = type(p4) == "number"
+    assert(v4, "Bad radius")
+    v2, v3 = p1:_radiusSearch(p2.x, p2.y, p2.z, p4)
+    local v5 = {}
+    for k, v in pairs(v3) do
+        table.insert(v5, {dist2 = v, index = k})
+    end
+    table.sort(v5, function(p1, p2) -- Line: 180
+        local v1 = p1.dist2 < p2.dist2
+        return v1
+    end)
+    local v6 = {}
+    local v7 = {}
+    local v8 = math.min(#v5, p3)
+    local v9 = 1
+    for i = 1, v8, v9 do
+        v1 = v5[i]
+        v7[#v7 + 1] = v1.dist2
+        v6[#v6 + 1] = v2[v1.index]
+    end
+    return v6, v7
 end
-function v_u_3.GetOrCreateLowestSubRegion(p39, p40, p41, p42) -- name: GetOrCreateLowestSubRegion
-	-- upvalues: (copy) v_u_1
-	local v43 = p39:_getOrCreateRegion(p40, p41, p42)
-	return v_u_1.getOrCreateSubRegionAtDepth(v43, p40, p41, p42, p39._maxDepth)
+function u6.GetOrCreateLowestSubRegion(p1, p2, p3, p4) -- Line: 204 -- upvalues: u2 (val)
+    local v1 = p1:_getOrCreateRegion(p2, p3, p4)
+    return u2.getOrCreateSubRegionAtDepth(v1, p2, p3, p4, p1._maxDepth)
 end
-function v_u_3._radiusSearch(p44, p45, p46, p47, p48) -- name: _radiusSearch
-	-- upvalues: (copy) v_u_1
-	local v49 = p44._maxRegionSize[1]
-	local v50 = v_u_1.getSearchRadiusSquared(p48, v49, 1e-9)
-	local v51 = {}
-	local v52 = {}
-	for _, v53 in pairs(p44._regionHashMap) do
-		for _, v54 in pairs(v53) do
-			local v55 = v54.position
-			local v56 = v55[1]
-			local v57 = v55[2]
-			local v58 = v55[3]
-			local v59 = p45 - v56
-			local v60 = p46 - v57
-			local v61 = p47 - v58
-			if v59 * v59 + v60 * v60 + v61 * v61 <= v50 then
-				v_u_1.getNeighborsWithinRadius(v54, p48, p45, p46, p47, v51, v52, p44._maxDepth)
-			end
-		end
-	end
-	return v51, v52
+function u6:_radiusSearch(p2, p3, p4, p5) -- Line: 209 -- upvalues: u2 (val)
+    local position, v1, v2, v3, v4
+    local v5 = {}
+    local v6 = {}
+    local v7 = u2.getSearchRadiusSquared(p5, self._maxRegionSize[1], 1e-09)
+    for k, v in pairs(self._regionHashMap) do
+        for k2, i in pairs(v) do
+            position = i.position
+            v1 = v8 - position[1]
+            v2 = v9 - position[2]
+            v3 = v10 - position[3]
+            v4 = v1 * v1 + v2 * v2
+            if v4 + v3 * v3 <= v7 then
+                u2.getNeighborsWithinRadius(i, v11, v8, v9, v10, v5, v6, v12._maxDepth)
+            end
+        end
+    end
+    return v5, v6
 end
-function v_u_3._getRegion(p62, p63, p64, p65) -- name: _getRegion
-	-- upvalues: (copy) v_u_1
-	return v_u_1.findRegion(p62._regionHashMap, p62._maxRegionSize, p63, p64, p65)
+function u6._getRegion(p1, p2, p3, p4) -- Line: 233 -- upvalues: u2 (val)
+    return u2.findRegion(p1._regionHashMap, p1._maxRegionSize, p2, p3, p4)
 end
-function v_u_3._getOrCreateRegion(p66, p67, p68, p69) -- name: _getOrCreateRegion
-	-- upvalues: (copy) v_u_1
-	return v_u_1.getOrCreateRegion(p66._regionHashMap, p66._maxRegionSize, p67, p68, p69)
+function u6:_getOrCreateRegion(p2, p3, p4) -- Line: 237 -- upvalues: u2 (val)
+    return u2.getOrCreateRegion(self._regionHashMap, self._maxRegionSize, p2, p3, p4)
 end
-return v_u_3
+return u6

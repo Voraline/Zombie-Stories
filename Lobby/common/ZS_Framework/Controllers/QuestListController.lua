@@ -1,43 +1,50 @@
 game:GetService("ReplicatedStorage")
 game:GetService("Players")
-local v1 = game:GetService("ReplicatedStorage").common.ZS_Framework
-local v_u_2 = require(v1:WaitForChild("Data"):WaitForChild("PlayerDatabase"))
-local v3 = require("@game/ReplicatedStorage/common/zap")
-v3.InitQuests.On(function(p4)
-	-- upvalues: (copy) v_u_2
-	for v5, v6 in p4 do
-		if v5 == "Daily" then
-			v6.LayoutOrder = 1
-		elseif v5 == "Weekly" then
-			v6.LayoutOrder = 2
-		elseif v5 == "Monthly" then
-			v6.LayoutOrder = 3
-		else
-			v6.LayoutOrder = 100
-		end
-	end
-	v_u_2.QuestList = p4
+local Data = game:GetService("ReplicatedStorage").common.ZS_Framework:WaitForChild("Data")
+local PlayerDatabase = require(Data:WaitForChild("PlayerDatabase"))
+local v1 = require("@game/ReplicatedStorage/common/zap")
+v1.InitQuests.On(function(p1) -- Line: 12 -- upvalues: PlayerDatabase (val)
+    local v1 = p1
+    local v2 = nil
+    local v3 = nil
+    for i, j in v1, v2, v3 do
+        if i == "Daily" then
+            j.LayoutOrder = 1
+        elseif i == "Weekly" then
+            j.LayoutOrder = 2
+        elseif i ~= "Monthly" then
+            j.LayoutOrder = 100
+        else
+            j.LayoutOrder = 3
+        end
+    end
+    PlayerDatabase.QuestList = p1
 end)
-v3.UpdateQuestCategory.On(function(p7)
-	-- upvalues: (copy) v_u_2
-	v_u_2.QuestList[p7.Category] = p7.Quests
-	local v8 = p7.Category == "Daily" and 1 or (p7.Category == "Weekly" and 2 or (p7.Category == "Monthly" and 3 or 10))
-	v_u_2.QuestList[p7.Category].LayoutOrder = v8
+v1.UpdateQuestCategory.On(function(p1) -- Line: 30 -- upvalues: PlayerDatabase (val)
+    PlayerDatabase.QuestList[p1.Category] = p1.Quests
+    local v1 = 10
+    if p1.Category == "Daily" then
+        v1 = 1
+    elseif p1.Category == "Weekly" then
+        v1 = 2
+    elseif p1.Category == "Monthly" then
+        v1 = 3
+    end
+    PlayerDatabase.QuestList[p1.Category].LayoutOrder = v1
 end)
-v3.UpdateQuestProgress.On(function(p9)
-	-- upvalues: (copy) v_u_2
-	local v10 = v_u_2.QuestList[p9.Category]
-	if v10 then
-		local v11 = v10.List[p9.QuestKey]
-		if v11 then
-			v11.Progress.Current = p9.Progress
-			if v11.Progress.Current >= v11.Progress.Goal then
-				v11.IsCompleted = true
-				v_u_2.Signals.BannerMessage:Fire(p9.Category .. " Quest Completed!", v11.Title, 1)
-			end
-		end
-	else
-		return
-	end
+v1.UpdateQuestProgress.On(function(p1) -- Line: 45 -- upvalues: PlayerDatabase (val)
+    local v1 = PlayerDatabase.QuestList[p1.Category]
+    if not v1 then
+        return
+    end
+    local v2 = v1.List[p1.QuestKey]
+    if not v2 then
+        return
+    end
+    v2.Progress.Current = p1.Progress
+    if v2.Progress.Goal <= v2.Progress.Current then
+        v2.IsCompleted = true
+        PlayerDatabase.Signals.BannerMessage:Fire(p1.Category .. " Quest Completed!", v2.Title, 1)
+    end
 end)
 return {}

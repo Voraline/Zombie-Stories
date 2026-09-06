@@ -1,101 +1,81 @@
-local v1 = script.Parent.Parent
-require(v1.Types)
-local v_u_2 = require(v1.External)
-local v_u_3 = require(v1.Logging.parseError)
-local v_u_4 = require(v1.Utility.isSimilar)
-local v_u_5 = require(v1.Utility.never)
-local v_u_6 = require(v1.Graph.depend)
-local v_u_7 = require(v1.State.castToState)
-local v_u_8 = require(v1.State.peek)
-local v_u_9 = require(v1.Memory.doCleanup)
-local v_u_10 = require(v1.Memory.deriveScope)
-local v_u_11 = require(v1.Memory.checkLifetime)
-local v_u_12 = require(v1.Memory.scopePool)
-local v_u_13 = require(v1.Utility.nicknames)
-local v14 = {
-	["type"] = "State",
-	["kind"] = "Computed",
-	["timeliness"] = "lazy"
-}
-local v_u_15 = table.freeze({
-	["__index"] = v14
-})
-function v14.get(_) -- name: get
-	-- upvalues: (copy) v_u_2, (copy) v_u_5
-	v_u_2.logError("stateGetWasRemoved")
-	return v_u_5()
+local Parent = script.Parent.Parent
+require(Parent.Types)
+local External = require(Parent.External)
+local parseError = require(Parent.Logging.parseError)
+local isSimilar = require(Parent.Utility.isSimilar)
+local never = require(Parent.Utility.never)
+local depend = require(Parent.Graph.depend)
+local castToState = require(Parent.State.castToState)
+local peek = require(Parent.State.peek)
+local doCleanup = require(Parent.Memory.doCleanup)
+local deriveScope = require(Parent.Memory.deriveScope)
+local checkLifetime = require(Parent.Memory.checkLifetime)
+local scopePool = require(Parent.Memory.scopePool)
+local nicknames = require(Parent.Utility.nicknames)
+local v1 = {type = "State", kind = "Computed", timeliness = "lazy"}
+local u59 = table.freeze({__index = v1})
+function v1.get(p1) -- Line: 86 -- upvalues: External (val), never (val)
+    External.logError("stateGetWasRemoved")
+    return never()
 end
-function v14._evaluate(p_u_16) -- name: _evaluate
-	-- upvalues: (copy) v_u_10, (copy) v_u_7, (copy) v_u_11, (copy) v_u_6, (copy) v_u_8, (copy) v_u_3, (copy) v_u_12, (copy) v_u_4, (copy) v_u_9, (copy) v_u_2
-	if p_u_16.scope == nil then
-		return false
-	end
-	local v_u_17 = p_u_16.scope
-	local v18 = v_u_10(v_u_17)
-	local function v21(p19) -- name: use
-		-- upvalues: (ref) v_u_7, (ref) v_u_11, (copy) v_u_17, (copy) p_u_16, (ref) v_u_6, (ref) v_u_8
-		local v20 = v_u_7(p19)
-		if v20 ~= nil then
-			v_u_11.bOutlivesA(v_u_17, p_u_16.oldestTask, v20.scope, v20.oldestTask, v_u_11.formatters.useFunction)
-			v_u_6(p_u_16, v20)
-		end
-		return v_u_8(p19)
-	end
-	local v22, v23 = xpcall(p_u_16._processor, v_u_3, v21, v18)
-	local v24 = v_u_12.giveIfEmpty(v18)
-	if not v22 then
-		if v24 ~= nil then
-			v_u_9(v24)
-		end
-		v_u_2.logErrorNonFatal("callbackError", v23)
-		return false
-	end
-	local v25 = v_u_4(p_u_16._EXTREMELY_DANGEROUS_usedAsValue, v23)
-	if p_u_16._innerScope ~= nil then
-		v_u_9(p_u_16._innerScope)
-	end
-	p_u_16._innerScope = v24
-	p_u_16._EXTREMELY_DANGEROUS_usedAsValue = v23
-	return not v25
+function v1._evaluate(p1) -- Line: 93 -- upvalues: deriveScope (val), castToState (val), checkLifetime (val), depend (val), peek (val), parseError (val), scopePool (val), isSimilar (val), doCleanup (val), External (val)
+    local scope, v1, v2
+    if p1.scope == nil then
+        return false
+    end
+    scope = p1.scope
+    local v3 = deriveScope(scope)
+    v1, v2 = xpcall(p1._processor, parseError, function(a1) -- Line: 101 -- upvalues: castToState (upval), checkLifetime (upval), scope (val), p1 (val), depend (upval), peek (upval)
+        local v1 = castToState(a1)
+        if v1 ~= nil then
+            checkLifetime.bOutlivesA(scope, p1.oldestTask, v1.scope, v1.oldestTask, checkLifetime.formatters.useFunction)
+            depend(p1, v1)
+        end
+        return peek(a1)
+    end, v3)
+    local v4 = scopePool.giveIfEmpty(v3)
+    if not v1 then
+        if v4 ~= nil then
+            doCleanup(v4)
+        end
+        External.logErrorNonFatal("callbackError", v2)
+        return false
+    end
+    local v5 = isSimilar(p1._EXTREMELY_DANGEROUS_usedAsValue, v2)
+    if p1._innerScope ~= nil then
+        doCleanup(p1._innerScope)
+    end
+    p1._innerScope = v4
+    p1._EXTREMELY_DANGEROUS_usedAsValue = v2
+    return not v5
 end
-table.freeze(v14)
-return function(p26, p27, p28) -- name: Computed
-	-- upvalues: (copy) v_u_2, (copy) v_u_15, (copy) v_u_9, (copy) v_u_13
-	local v29 = os.clock()
-	if typeof(p26) == "function" then
-		v_u_2.logError("scopeMissing", nil, "Computeds", "myScope:Computed(function(use, scope) ... end)")
-	elseif p28 ~= nil then
-		v_u_2.logWarn("destructorRedundant", "Computed")
-	end
-	local v30 = v_u_15
-	local v_u_31 = setmetatable({
-		["createdAt"] = nil,
-		["dependencySet"] = nil,
-		["dependentSet"] = nil,
-		["lastChange"] = nil,
-		["scope"] = nil,
-		["validity"] = "invalid",
-		["_EXTREMELY_DANGEROUS_usedAsValue"] = nil,
-		["_innerScope"] = nil,
-		["_processor"] = nil,
-		["createdAt"] = v29,
-		["dependencySet"] = {},
-		["dependentSet"] = {},
-		["scope"] = p26,
-		["_processor"] = p27
-	}, v30)
-	local function v33()
-		-- upvalues: (copy) v_u_31, (ref) v_u_9
-		v_u_31.scope = nil
-		for v32 in pairs(v_u_31.dependencySet) do
-			v32.dependentSet[v_u_31] = nil
-		end
-		if v_u_31._innerScope ~= nil then
-			v_u_9(v_u_31._innerScope)
-		end
-	end
-	v_u_31.oldestTask = v33
-	v_u_13[v_u_31.oldestTask] = "Computed"
-	table.insert(p26, v33)
-	return v_u_31
+table.freeze(v1)
+return function(p1, p2, p3) -- Line: 46 -- upvalues: External (val), u59 (val), doCleanup (val), nicknames (val)
+    local v1 = os.clock()
+    if typeof(p1) == "function" then
+        External.logError("scopeMissing", nil, "Computeds", "myScope:Computed(function(use, scope) ... end)")
+    elseif p3 ~= nil then
+        External.logWarn("destructorRedundant", "Computed")
+    end
+    local u28 = setmetatable({
+        validity = "invalid",
+        createdAt = v1,
+        dependencySet = {},
+        dependentSet = {},
+        scope = p1,
+        _processor = p2,
+    }, u59)
+    local function v2() -- Line: 71 -- upvalues: u28 (val), doCleanup (upval)
+        u28.scope = nil
+        for k in pairs(u28.dependencySet) do
+            k.dependentSet[u28] = nil
+        end
+        if u28._innerScope ~= nil then
+            doCleanup(u28._innerScope)
+        end
+    end
+    u28.oldestTask = v2
+    nicknames[u28.oldestTask] = "Computed"
+    table.insert(p1, v2)
+    return u28
 end

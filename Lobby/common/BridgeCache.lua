@@ -1,20 +1,15 @@
-local v1 = game.ReplicatedStorage.common
-local v_u_2 = require(v1:WaitForChild("BridgeNet2"))
-local v_u_7 = {
-	["_cache"] = {},
-	["GetBridge"] = function(p3) -- name: GetBridge
-		-- upvalues: (copy) v_u_7, (copy) v_u_2
-		local v4 = v_u_7._cache[p3]
-		if v4 then
-			return v4
-		end
-		local v5 = v_u_2.ReferenceBridge(p3)
-		v_u_7._cache[p3] = v5
-		return v5
-	end,
-	["ReferenceBridge"] = function(p6) -- name: ReferenceBridge
-		-- upvalues: (copy) v_u_2
-		return v_u_2.ReferenceBridge(p6)
-	end
-}
-return v_u_7
+local BridgeNet2 = require(game.ReplicatedStorage.common:WaitForChild("BridgeNet2"))
+local u9 = {_cache = {}}
+function u9.GetBridge(p1) -- Line: 11 -- upvalues: u9 (val), BridgeNet2 (val)
+    local v1 = u9._cache[p1]
+    if v1 then
+        return v1
+    end
+    local v2 = BridgeNet2.ReferenceBridge(p1)
+    u9._cache[p1] = v2
+    return v2
+end
+function u9.ReferenceBridge(p1) -- Line: 22 -- upvalues: BridgeNet2 (val)
+    return BridgeNet2.ReferenceBridge(p1)
+end
+return u9
