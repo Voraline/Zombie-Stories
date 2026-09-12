@@ -50,7 +50,11 @@ v7 = {
     AccentColor = Color3.fromRGB(255, 93, 93),
 }
 v8 = {}
-v9 = {Name = "Pimila Laboratories", UsesFuture = false, Descripton = "Unaware of what happened in the Pimila Laboratories, you went on to rescue survivors, and find out what happened."}
+v9 = {
+    Name = "Pimila Laboratories",
+    UsesFuture = false,
+    Descripton = "Unaware of what happened in the Pimila Laboratories, you went on to rescue survivors, and find out what happened.",
+}
 if not v5 then
     v1 = 9809970281
 else
@@ -70,7 +74,11 @@ v7 = {
     AccentColor = Color3.fromRGB(115, 145, 255),
 }
 v8 = {}
-v9 = {Name = "Sublevel Corridors", UsesFuture = true, Descripton = "A covert experiment that spiraled out of control. Sealed off decades ago, rumored to be ground zero of the infection"}
+v9 = {
+    Name = "Sublevel Corridors",
+    UsesFuture = true,
+    Descripton = "A covert experiment that spiraled out of control. Sealed off decades ago, rumored to be ground zero of the infection",
+}
 if not v5 then
     v1 = 93216590442021
 else
@@ -90,7 +98,12 @@ v7 = {
     AccentColor = Color3.fromRGB(255, 213, 79),
 }
 v8 = {}
-v9 = {Name = "20 Floors", UsesFuture = false, Descripton = "Reach the top of the tower.\nMade by Nooooooo", Thumb = "rbxassetid://5899895057"}
+v9 = {
+    Name = "20 Floors",
+    UsesFuture = false,
+    Descripton = "Reach the top of the tower.\nMade by Nooooooo",
+    Thumb = "rbxassetid://5899895057",
+}
 if not v5 then
     v1 = 7037790867
 else
@@ -98,7 +111,12 @@ else
 end
 v9.AssetId = v1
 v9.Difficulties = {Easy = true, Medium = true, Hard = true}
-v1 = {Name = "Wild Holiday", UsesFuture = true, Descripton = "After evacuating from the SS BUILD, the survivors find themselves in a mysterious village.", Thumb = "rbxassetid://8357828922"}
+v1 = {
+    Name = "Wild Holiday",
+    UsesFuture = true,
+    Descripton = "After evacuating from the SS BUILD, the survivors find themselves in a mysterious village.",
+    Thumb = "rbxassetid://8357828922",
+}
 if not v5 then
     v2 = 8145465526
 else

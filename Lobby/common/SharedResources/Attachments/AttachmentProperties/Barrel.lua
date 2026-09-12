@@ -1,31 +1,31 @@
-local v1 = {}
-v1["Light AK Barrel"] = {
-    ID = "B0",
-    UnlockLevel = 15,
-    Alias = "Light Barrel",
-    Image = "rbxassetid://9173132164",
-    Description = "A lighter barrel",
-    Sort = 0,
-    Pros = {"Faster ADS Speed", "Faster Movement Speed"},
-    Cons = {"Increased Vertical Recoil"},
+return {
+    ["Light AK Barrel"] = {
+        ID = "B0",
+        UnlockLevel = 15,
+        Alias = "Light Barrel",
+        Image = "rbxassetid://9173132164",
+        Description = "A lighter barrel",
+        Sort = 0,
+        Pros = {"Faster ADS Speed", "Faster Movement Speed"},
+        Cons = {"Increased Vertical Recoil"},
+    },
+    ["Wingman AK Barrel"] = {
+        ID = "B1",
+        UnlockLevel = 15,
+        Alias = "Wingman Barrel",
+        Image = "rbxassetid://9173132164",
+        Description = "An even shorter, lighter barrel",
+        Sort = 0,
+        Pros = {"Faster ADS Speed", "Faster Movement Speed"},
+        Cons = {"Increased Vertical Recoil"},
+    },
+    ["P90 Extended Barrel"] = {
+        ID = "B2",
+        UnlockLevel = 10,
+        Alias = "Extended Barrel",
+        Image = "rbxassetid://82282612105498",
+        Description = "A longer, heavier barrel",
+        Pros = {"Increased Damage [5%]", "Reduced Recoil [5%]"},
+        Cons = {"Decreased Aim Speed [5%]", "Decreased Handling Speed [10%]"},
+    },
 }
-v1["Wingman AK Barrel"] = {
-    ID = "B1",
-    UnlockLevel = 15,
-    Alias = "Wingman Barrel",
-    Image = "rbxassetid://9173132164",
-    Description = "An even shorter, lighter barrel",
-    Sort = 0,
-    Pros = {"Faster ADS Speed", "Faster Movement Speed"},
-    Cons = {"Increased Vertical Recoil"},
-}
-v1["P90 Extended Barrel"] = {
-    ID = "B2",
-    UnlockLevel = 10,
-    Alias = "Extended Barrel",
-    Image = "rbxassetid://82282612105498",
-    Description = "A longer, heavier barrel",
-    Pros = {"Increased Damage [5%]", "Reduced Recoil [5%]"},
-    Cons = {"Decreased Aim Speed [5%]", "Decreased Handling Speed [10%]"},
-}
-return v1

@@ -1,11 +1,10 @@
-local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
 local v1 = {
     {Name = "Charm", PotentialAttachments = {}},
     {Name = "Sticker", PotentialAttachments = {}},
     {Name = "Sticker 2", PotentialAttachments = {}},
     {
         Name = "Perk",
-        PotentialAttachments = {AttachmentProperties.Hatchet_ArmorBreaker},
+        PotentialAttachments = {(require(script.Parent.Parent:WaitForChild("AttachmentProperties"))).Hatchet_ArmorBreaker},
     },
 }
 local v2 = require("../Extensions/Charm")

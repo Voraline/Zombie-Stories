@@ -1,205 +1,195 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local Children = (require(ReplicatedStorage.Packages.Fusion)).Children
 local u17 = require("../../../SharedComponents/WheelFrame")
 local u20 = require("../../../SharedComponents/CanvasFrame")
 local u23 = require("./ChargeAttackIndicator")
 return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val), u23 (val), Players (val)
     local scope = p1.scope
-    local u11 = scope:Spring(scope:Computed(function(a1) -- Line: 44 -- upvalues: p1 (val)
-        return (1 - a1(p1.percentage)) * 360
-    end), 25, 1)
-    local v1 = scope:Spring(scope:Computed(function(a1) -- Line: 52 -- upvalues: p1 (val)
-        local v1 = a1(p1.placement)
-        local v2 = a1(p1.isMobile)
-        local v3 = a1(p1.customPosition)
-        local v4 = a1(p1.dynamicStaminaEnabled)
-        if not v2 then
-            if not v2 then
-                if v1 == "center" then
-                    return UDim2.fromScale(0.1, 0.1)
-                end
-                return UDim2.fromScale(0.15, 0.15)
-            end
-            if not v4 then
-                return UDim2.fromScale(0.15, 0.15)
-            end
-            if v1 == "center" then
-                return UDim2.fromScale(0.1, 0.1)
-            end
-            return UDim2.fromScale(0.15, 0.15)
-        elseif v3 then
+    local v1 = scope:Computed(function(p1_2) -- Line: 44 -- upvalues: p1 (val)
+        return (1 - p1_2(p1.percentage)) * 360
+    end)
+    local u11 = scope:Spring(v1, 25, 1)
+    local v2 = scope:Computed(function(p1_2) -- Line: 52 -- upvalues: p1 (val)
+        local v1 = p1_2(p1.placement)
+        local v2 = p1_2(p1.isMobile)
+        local v3 = p1_2(p1.customPosition)
+        local v4 = p1_2(p1.dynamicStaminaEnabled)
+        if v2 and v3 then
             return UDim2.fromScale(0.15, 0.15)
         end
-    end), 10, 1)
-    local v2 = scope:Spring(scope:Computed(function(a1) -- Line: 77 -- upvalues: p1 (val)
-        local v1 = a1(p1.placement)
-        local v2 = a1(p1.isMobile)
-        local v3 = a1(p1.customPosition)
-        local v4 = a1(p1.dynamicStaminaEnabled)
-        if not v2 then
-            if not v2 then
-                if v1 == "center" then
-                    return Vector2.new(0, 0)
-                end
-                if v2 then
-                    return Vector2.new(1, 0)
-                end
-                return Vector2.new(1, 1)
-            end
-            if not v4 then
-                return Vector2.new(1, 0)
-            end
-            if v1 == "center" then
-                return Vector2.new(0, 0)
-            end
-            if v2 then
-                return Vector2.new(1, 0)
-            end
-            return Vector2.new(1, 1)
-        elseif v3 then
+        if v2 and not v4 then
+            return UDim2.fromScale(0.15, 0.15)
+        end
+        if v1 == "center" then
+            return UDim2.fromScale(0.1, 0.1)
+        end
+        return UDim2.fromScale(0.15, 0.15)
+    end)
+    local v3 = scope:Spring(v2, 10, 1)
+    local v4 = scope:Computed(function(p1_2) -- Line: 77 -- upvalues: p1 (val)
+        local v1 = p1_2(p1.placement)
+        local v2 = p1_2(p1.isMobile)
+        local v3 = p1_2(p1.customPosition)
+        local v4 = p1_2(p1.dynamicStaminaEnabled)
+        if v2 and v3 then
             return Vector2.new(0.5, 0.5)
         end
-    end), 8, 1)
-    local v3 = scope:Spring(scope:Computed(function(a1) -- Line: 103 -- upvalues: p1 (val)
-        local v1 = a1(p1.placement)
-        local v2 = a1(p1.isMobile)
-        local v3 = a1(p1.customPosition)
-        local v4 = a1(p1.dynamicStaminaEnabled)
-        if not v2 then
-            local v5, v6
-            if not v2 then
-                if v1 == "center" then
-                    return UDim2.new(0.5, 0, 0.5, 0)
-                end
-                if v2 then
-                    v5 = a1(p1.objectiveListSizeY)
-                    v6 = a1(p1.ammoHudWidth)
-                    return UDim2.new(0.99, -v6, -0.02, 90 + v5)
-                end
-                return UDim2.new(1, 0, 0.86, 0)
-            end
-            if not v4 then
-                v5 = a1(p1.objectiveListSizeY)
-                v6 = a1(p1.ammoHudWidth)
-                return UDim2.new(0.99, -v6, -0.02, 90 + v5)
-            end
-            if v1 == "center" then
-                return UDim2.new(0.5, 0, 0.5, 0)
-            end
-            if not v2 then
-                return UDim2.new(1, 0, 0.86, 0)
-            end
-            v5 = a1(p1.objectiveListSizeY)
-            v6 = a1(p1.ammoHudWidth)
-            return UDim2.new(0.99, -v6, -0.02, 90 + v5)
-        elseif v3 then
-            if not v4 then
-                return v3
-            end
-            if v1 == "center" then
-                return UDim2.new(0.5, 0, 0.5, 0)
-            end
-            return v3
+        if v2 and not v4 then
+            return Vector2.new(1, 0)
         end
-    end), 8, 1)
-    local v4 = scope:Computed(function(a1) -- Line: 147 -- upvalues: p1 (val)
-        local v1 = a1(p1.decreaseStartTheta)
-        local v2 = v1 < 180
-        return v2
+        if v1 == "center" then
+            return Vector2.new(0, 0)
+        end
+        if v2 then
+            return Vector2.new(1, 0)
+        end
+        return Vector2.new(1, 1)
     end)
-    local v5 = scope:Computed(function(p1) -- Line: 151 -- upvalues: u11 (val)
-        local v1 = p1(u11)
-        local v2 = 180 <= v1
-        return v2
+    local v5 = scope:Spring(v4, 8, 1)
+    local v6 = scope:Computed(function(p1_2) -- Line: 103 -- upvalues: p1 (val)
+        local v1, v2
+        local v3 = p1_2(p1.placement)
+        local v4 = p1_2(p1.isMobile)
+        local v5 = p1_2(p1.customPosition)
+        local v6 = p1_2(p1.dynamicStaminaEnabled)
+        if v4 and v5 then
+            if not v6 then
+                return v5
+            end
+            if v3 == "center" then
+                return UDim2.new(0.5, 0, 0.5, 0)
+            end
+            return v5
+        end
+        if v4 and not v6 then
+            v1 = p1_2(p1.objectiveListSizeY)
+            v2 = p1_2(p1.ammoHudWidth)
+            return UDim2.new(0.99, -v2, -0.02, 90 + v1)
+        end
+        if v3 == "center" then
+            return UDim2.new(0.5, 0, 0.5, 0)
+        end
+        if not v4 then
+            return UDim2.new(1, 0, 0.86, 0)
+        end
+        v1 = p1_2(p1.objectiveListSizeY)
+        v2 = p1_2(p1.ammoHudWidth)
+        return UDim2.new(0.99, -v2, -0.02, 90 + v1)
     end)
-    local v6 = scope:Computed(function(a1) -- Line: 155 -- upvalues: p1 (val)
-        return (math.min(a1(p1.decreaseStartTheta), 270))
+    local v7 = scope:Spring(v6, 8, 1)
+    local v8 = scope:Computed(function(p1_2) -- Line: 147 -- upvalues: p1 (val)
+        local v1 = (p1_2(p1.decreaseStartTheta)) < 180
+        return v1
     end)
-    local v7 = scope:Computed(function(a1) -- Line: 160 -- upvalues: p1 (val)
-        return (math.max(a1(p1.decreaseStartTheta), 179))
+    local v9 = scope:Computed(function(p1) -- Line: 151 -- upvalues: u11 (val)
+        local v1 = 180 <= (p1(u11))
+        return v1
     end)
-    local v8 = scope:Computed(function(a1) -- Line: 165 -- upvalues: p1 (val), u11 (val)
-        local v1
-        local v2 = a1(p1.decreaseStartTheta)
-        local v3 = a1(u11)
-        local v4 = math.min(v3 - v2, 180 - v2)
-        if 180 >= v3 then
-            v1 = 0
-        elseif 170 >= v2 then
-            v1 = 0
+    local v10 = scope:Computed(function(p1_2) -- Line: 155 -- upvalues: p1 (val)
+        local v1 = p1
+        local decreaseStartTheta = v1.decreaseStartTheta
+        local v2 = p1_2(decreaseStartTheta)
+        return (math.min(v2, 270))
+    end)
+    local v11 = scope:Computed(function(p1_2) -- Line: 160 -- upvalues: p1 (val)
+        local v1 = p1
+        local decreaseStartTheta = v1.decreaseStartTheta
+        local v2 = p1_2(decreaseStartTheta)
+        return (math.max(v2, 179))
+    end)
+    local v12 = scope:Computed(function(p1_2) -- Line: 165 -- upvalues: p1 (val), u11 (val)
+        local v1 = p1_2(p1.decreaseStartTheta)
+        local v2 = p1_2(u11)
+        local v3 = v2 - v1
+        local v4 = 180 - v1
+        local v5 = math.min(v3, v4)
+        if not (180 < v2) or not (170 < v1) then
+            v3 = 0
         else
-            v1 = 90
+            v3 = 90
         end
-        return (math.max(v4, v1))
+        return (math.max(v5, v3))
     end)
-    local v9 = scope:Computed(function(a1) -- Line: 173 -- upvalues: p1 (val), u11 (val)
+    local v13 = scope:Computed(function(p1_2) -- Line: 173 -- upvalues: p1 (val), u11 (val)
         local v1
-        local v2 = a1(p1.decreaseStartTheta)
-        if 340 > v2 then
+        local v2 = p1_2(p1.decreaseStartTheta)
+        local v3 = p1_2(u11) - math.max(v2, 179)
+        if not (340 <= v2) then
             v1 = 0
         else
             v1 = 45
-        end
-        return (math.max(a1(u11) - math.max(v2, 179), v1))
-    end)
-    local v10 = scope:Computed(function(a1) -- Line: 182 -- upvalues: p1 (val)
-        return a1(p1.requiredFlashActive)
-    end)
-    local u73 = scope:Computed(function(a1) -- Line: 187 -- upvalues: p1 (val)
-        return (1 - a1(p1.requiredAmount) / 100) * 360
-    end)
-    local v11 = scope:Computed(function(p1) -- Line: 192 -- upvalues: u73 (val)
-        local v1 = p1(u73)
-        local v2 = v1 < 180
-        return v2
-    end)
-    local v12 = scope:Computed(function(p1) -- Line: 196
-        return true
-    end)
-    local v13 = scope:Computed(function(p1) -- Line: 200 -- upvalues: u73 (val)
-        return (math.min(p1(u73), 270))
-    end)
-    local v14 = scope:Computed(function(p1) -- Line: 205 -- upvalues: u73 (val)
-        return (math.max(p1(u73), 179))
-    end)
-    local v15 = scope:Computed(function(p1) -- Line: 210 -- upvalues: u73 (val)
-        local v1
-        local v2 = p1(u73)
-        local v3 = math.min(360 - v2, 180 - v2)
-        if 170 >= v2 then
-            v1 = 0
-        else
-            v1 = 90
         end
         return (math.max(v3, v1))
     end)
-    local v16 = scope:Computed(function(p1) -- Line: 218 -- upvalues: u73 (val)
+    local v14 = scope:Computed(function(p1_2) -- Line: 182 -- upvalues: p1 (val)
+        return p1_2(p1.requiredFlashActive)
+    end)
+    local u73 = scope:Computed(function(p1_2) -- Line: 187 -- upvalues: p1 (val)
+        return (1 - p1_2(p1.requiredAmount) / 100) * 360
+    end)
+    local v15 = scope:Computed(function(p1) -- Line: 192 -- upvalues: u73 (val)
+        local v1 = (p1(u73)) < 180
+        return v1
+    end)
+    local v16 = scope:Computed(function(p1) -- Line: 196
+        return true
+    end)
+    local v17 = scope:Computed(function(p1) -- Line: 200 -- upvalues: u73 (val)
+        local v1 = u73
+        local v2 = p1(v1)
+        return (math.min(v2, 270))
+    end)
+    local v18 = scope:Computed(function(p1) -- Line: 205 -- upvalues: u73 (val)
+        local v1 = u73
+        local v2 = p1(v1)
+        return (math.max(v2, 179))
+    end)
+    local v19 = scope:Computed(function(p1) -- Line: 210 -- upvalues: u73 (val)
+        local v1 = p1(u73)
+        local v2 = 360 - v1
+        local v3 = 180 - v1
+        local v4 = math.min(v2, v3)
+        if not (170 < v1) then
+            v2 = 0
+        else
+            v2 = 90
+        end
+        return (math.max(v4, v2))
+    end)
+    local v20 = scope:Computed(function(p1) -- Line: 218 -- upvalues: u73 (val)
         local v1
         local v2 = p1(u73)
-        if 340 > v2 then
+        local v3 = 360 - math.max(v2, 179)
+        if not (340 <= v2) then
             v1 = 0
         else
             v1 = 45
         end
-        return (math.max(360 - math.max(v2, 179), v1))
+        return (math.max(v3, v1))
     end)
-    local u103 = scope:Spring(p1.decreaseLeftTransparency, 12, 1)
-    local u109 = scope:Spring(p1.decreaseRightTransparency, 12, 1)
-    local v17 = scope:Computed(function(a1) -- Line: 232 -- upvalues: p1 (val), u103 (val), u109 (val)
-        local v1 = a1(p1.isDecreasing)
-        local v2 = a1(u103)
-        local v3 = a1(u109)
+    local decreaseLeftTransparency = p1.decreaseLeftTransparency
+    local u103 = scope:Spring(decreaseLeftTransparency, 12, 1)
+    local decreaseRightTransparency = p1.decreaseRightTransparency
+    local u109 = scope:Spring(decreaseRightTransparency, 12, 1)
+    local v21 = scope:Computed(function(p1_2) -- Line: 232 -- upvalues: p1 (val), u103 (val), u109 (val)
+        local v1 = p1_2(p1.isDecreasing)
+        local v2 = p1_2(u103)
+        local v3 = p1_2(u109)
         local v4 = v1
         if not v4 then
-            v4 = if v2 >= 0.99 then v3 < 0.99 else true
+            v4 = true
+            if not (v2 < 0.99) then
+                v4 = v3 < 0.99
+            end
         end
         return v4
     end)
-    local v18 = scope:Spring(p1.requiredLeftTransparency, 8, 1)
-    local v19 = scope:Spring(p1.requiredRightTransparency, 8, 1)
-    local v20 = scope:New("ImageLabel")
-    v20 = v20({
+    local requiredLeftTransparency = p1.requiredLeftTransparency
+    local v22 = scope:Spring(requiredLeftTransparency, 8, 1)
+    local requiredRightTransparency = p1.requiredRightTransparency
+    local v23 = scope:Spring(requiredRightTransparency, 8, 1)
+    local v24 = scope:New("ImageLabel")({
         Name = "BlueGlowImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://12799025064",
@@ -209,22 +199,21 @@ return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Size = UDim2.fromScale(1, 1),
     })
-    local v21 = scope:New("Frame")
-    local v22 = {
+    local v25 = scope:New("Frame")
+    local v26 = {
         Name = "MainFrame",
-        AnchorPoint = v2,
+        AnchorPoint = v5,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
-        Position = v3,
-        Size = v1,
+        Position = v7,
+        Size = v3,
         SizeConstraint = Enum.SizeConstraint.RelativeYY,
     }
-    local v23 = {}
-    local v24 = scope:New("UIScale")
-    v24 = v24({Name = "UIScale", Scale = p1.uiScale})
-    local v25 = scope:New("ImageLabel")
-    v25 = v25({
+    local v27 = Children
+    local v28 = {}
+    local v29 = scope:New("UIScale")({Name = "UIScale", Scale = p1.uiScale})
+    local v30 = scope:New("ImageLabel")({
         Name = "MarkerImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://12799024330",
@@ -235,8 +224,7 @@ return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val
         ImageColor3 = Color3.fromRGB(9, 39, 65),
         Size = UDim2.fromScale(1, 1),
     })
-    local v26 = scope:New("ImageLabel")
-    v26 = v26({
+    local v31 = scope:New("ImageLabel")({
         Name = "WheelBackImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://13676717187",
@@ -248,72 +236,80 @@ return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val
         Position = UDim2.fromOffset(1, 0),
         Size = UDim2.new(1, -1, 1, 0),
     })
-    local v27 = u17({isLeft = true, scope = scope, rotation = u11})
-    local v28 = u17({isLeft = false, scope = scope, rotation = u11})
-    local v29 = scope:New("Frame")
-    local v30 = {
+    local v32 = u17
+    v32 = v32({isLeft = true, scope = scope, rotation = u11})
+    local v33 = u17
+    v33 = v33({isLeft = false, scope = scope, rotation = u11})
+    local v34 = scope:New("Frame")
+    local v35 = {
         Name = "DecreaseFrame",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Size = UDim2.fromScale(1, 1),
-        Visible = v17,
+        Visible = v21,
     }
-    local v31 = {}
-    local v32 = u20({
+    local v36 = Children
+    local v37 = {}
+    local v38 = u20
+    v38 = v38({
         isLeft = true,
         scope = scope,
-        visible = v5,
+        visible = v9,
         groupTransparency = u103,
-        rotation = v7,
-        gradientRotation = v9,
+        rotation = v11,
+        gradientRotation = v13,
     })
-    v31[1] = v32
-    v31[2] = u20({
+    local v39 = u20
+    v37[1] = v38
+    v37[2] = v39({
         isLeft = false,
         scope = scope,
-        visible = v4,
+        visible = v8,
         groupTransparency = u109,
-        rotation = v6,
-        gradientRotation = v8,
+        rotation = v10,
+        gradientRotation = v12,
     })
-    v30[Children] = v31
-    v29 = v29(v30)
-    v30 = scope:New("Frame")
-    local v33 = {
+    v35[v36] = v37
+    v34 = v34(v35)
+    v35 = scope:New("Frame")
+    v36 = {
         Name = "RequiredFrame",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Size = UDim2.fromScale(1, 1),
-        Visible = v10,
+        Visible = v14,
         ZIndex = 3,
     }
-    v32 = {}
-    local v34 = u20({
+    v37 = Children
+    v38 = {}
+    v39 = u20
+    v39 = v39({
         isLeft = true,
         scope = scope,
-        visible = v12,
-        groupTransparency = v18,
+        visible = v16,
+        groupTransparency = v22,
         groupColor3 = Color3.fromRGB(255, 106, 106),
-        rotation = v14,
-        gradientRotation = v16,
+        rotation = v18,
+        gradientRotation = v20,
     })
-    local v35 = {
+    local v40 = u20
+    local v41 = {
         isLeft = false,
         scope = scope,
-        visible = v11,
-        groupTransparency = v19,
+        visible = v15,
+        groupTransparency = v23,
         groupColor3 = Color3.fromRGB(255, 106, 106),
-        rotation = v13,
-        gradientRotation = v15,
+        rotation = v17,
+        gradientRotation = v19,
     }
-    v32[1] = v34
-    v32[2] = u20(v35)
-    v33[Children] = v32
-    v30 = v30(v33)
-    v33 = scope:New("TextLabel")
-    v31 = {
+    v38[1] = v39
+    v38[2] = v40(v41)
+    v36[v37] = v38
+    v35 = v35(v36)
+    v36 = scope:New("TextLabel")
+    v37 = {
         Name = "StaminaLabel",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -329,26 +325,25 @@ return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val
         TextSize = 14,
         TextWrapped = true,
     }
-    v34 = {}
-    local v36 = scope:New("UIStroke")
-    v34[1] = v36({Name = "UIStroke", Thickness = 3, Transparency = 0.8})
-    v31[Children] = v34
-    v33 = v33(v31)
-    v32 = {scope = scope, showReady = p1.showChargeReady}
-    v23[1] = v24
-    v23[2] = v25
-    v23[3] = v26
-    v23[4] = v27
-    v23[5] = v28
-    v23[6] = v20
-    v23[7] = v29
-    v23[8] = v30
-    v23[9] = v33
-    v23[10] = u23(v32)
-    v22[Children] = v23
-    v21 = v21(v22)
-    v22 = scope:New("ScreenGui")
-    local v37 = {
+    v38 = Children
+    v37[v38] = {scope:New("UIStroke")({Name = "UIStroke", Thickness = 3, Transparency = 0.8})}
+    v36 = v36(v37)
+    v37 = u23
+    v38 = {scope = scope, showReady = p1.showChargeReady}
+    v28[1] = v29
+    v28[2] = v30
+    v28[3] = v31
+    v28[4] = v32
+    v28[5] = v33
+    v28[6] = v24
+    v28[7] = v34
+    v28[8] = v35
+    v28[9] = v36
+    v28[10] = v37(v38)
+    v26[v27] = v28
+    v25 = v25(v26)
+    v26 = scope:New("ScreenGui")
+    v27 = {
         Name = "StaminaUI",
         Parent = Players.LocalPlayer:WaitForChild("PlayerGui"),
         IgnoreGuiInset = true,
@@ -356,7 +351,8 @@ return function(p1) -- Line: 40 -- upvalues: Children (val), u17 (val), u20 (val
         ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     }
-    v37[Children] = {v21}
-    v22 = v22(v37)
-    return {screenGui = v22, blueGlowImage = v20, mainFrame = v21}
+    v28 = Children
+    v27[v28] = {v25}
+    v26 = v26(v27)
+    return {screenGui = v26, blueGlowImage = v24, mainFrame = v25}
 end

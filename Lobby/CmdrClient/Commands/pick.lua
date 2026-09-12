@@ -4,7 +4,11 @@ return {
     Group = "DefaultUtil",
     Aliases = {},
     Args = {
-        {Type = "integer", Name = "Index to pick", Description = "The index of the item you want to pick"},
+        {
+            Type = "integer",
+            Name = "Index to pick",
+            Description = "The index of the item you want to pick",
+        },
         {Type = "string", Name = "CSV", Description = "The comma-separated list"},
     },
     Run = function(p1, p2, p3) -- Line: 19

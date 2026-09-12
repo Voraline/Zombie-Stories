@@ -17,10 +17,14 @@ local v4 = {
     BorderSizePixel = 0,
 }
 local v5 = {}
-local v6 = u22:New("UISizeConstraint")
-v6 = v6({MinSize = Vector2.new(300, 0), MaxSize = Vector2.new(520, 10000)})
+local v6 = u22:New("UISizeConstraint")({MinSize = Vector2.new(300, 0), MaxSize = Vector2.new(520, 10000)})
 local v7 = u22:New("UIListLayout")
-local v8 = {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Center, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8)}
+local v8 = {
+    FillDirection = Enum.FillDirection.Vertical,
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    Padding = UDim.new(0, 8),
+}
 v5[1] = v6
 v5[2] = v7(v8)
 v4[Children] = v5
@@ -37,6 +41,7 @@ v5[Children] = {u76}
 v4(v5)
 local u90 = {}
 local u91 = 0
+
 local function removeActive(p1) -- Line: 69 -- upvalues: u90 (val)
     local v1 = u90
     local v2 = nil
@@ -48,6 +53,7 @@ local function removeActive(p1) -- Line: 69 -- upvalues: u90 (val)
         end
     end
 end
+
 local function dismiss(p1) -- Line: 78 -- upvalues: removeActive (val)
     if p1.closing then
         return
@@ -59,46 +65,62 @@ local function dismiss(p1) -- Line: 78 -- upvalues: removeActive (val)
         p1.scope:doCleanup()
     end)
 end
+
 function u19.Push(p1) -- Line: 92 -- upvalues: u90 (val), dismiss (val), u91 (ref), u22 (val), u15 (val), u76 (val)
-    local v1
-    if type(p1) ~= "table" or type(p1.userId) ~= "number" or type(p1.username) ~= "string" or type(p1.message) ~= "string" then
+    if type(p1) ~= "table" then
         return
     end
-    while true do
-        v1 = #u90
-        if 3 > v1 then
-            break
+    local userId = p1.userId
+    if type(userId) == "number" then
+        local username = p1.username
+        if type(username) == "string" then
+            local message = p1.message
+            if type(message) == "string" then
+                while true do
+                    if not (3 <= #u90) then
+                        break
+                    end
+                    dismiss(u90[1])
+                end
+                u91 = u91 + 1
+                local v1 = u22:innerScope()
+                local u26 = {closing = false}
+                u26.scope = v1
+                u26.transparency = v1:Value(1)
+                local v2 = u90
+                table.insert(v2, u26)
+                local v3 = u15
+                v2 = {
+                    scope = v1,
+                    UserId = p1.userId,
+                    Username = p1.username,
+                    Message = p1.message,
+                    Transparency = u26.transparency,
+                    LayoutOrder = u91,
+                }
+                v3 = v3(v2)
+                v3.Parent = u76
+                task.defer(function() -- Line: 123 -- upvalues: u26 (val)
+                    if not u26.closing then
+                        u26.transparency:set(0)
+                    end
+                end)
+                local duration = p1.duration
+                if type(duration) ~= "number" then
+                    v2 = 8
+                else
+                    local duration_2 = p1.duration
+                    v2 = math.clamp(duration_2, 3, 30)
+                end
+                task.delay(v2, function() -- Line: 132 -- upvalues: dismiss (upval), u26 (val)
+                    dismiss(u26)
+                end)
+                return
+            end
         end
-        dismiss(u90[1])
     end
-    u91 = u91 + 1
-    v1 = u22:innerScope()
-    local u26 = {closing = false, scope = v1, transparency = v1:Value(1)}
-    table.insert(u90, u26)
-    local v2 = {
-        scope = v1,
-        UserId = p1.userId,
-        Username = p1.username,
-        Message = p1.message,
-        Transparency = u26.transparency,
-        LayoutOrder = u91,
-    }
-    local v3 = u15(v2)
-    v3.Parent = u76
-    task.defer(function() -- Line: 123 -- upvalues: u26 (val)
-        if not u26.closing then
-            u26.transparency:set(0)
-        end
-    end)
-    if type(p1.duration) ~= "number" then
-        v2 = 8
-    else
-        v2 = math.clamp(p1.duration, 3, 30)
-    end
-    task.delay(v2, function() -- Line: 132 -- upvalues: dismiss (upval), u26 (val)
-        dismiss(u26)
-    end)
 end
+
 v2.AdminAnnouncement.On(function(p1) -- Line: 137 -- upvalues: u19 (val)
     u19.Push(p1)
 end)

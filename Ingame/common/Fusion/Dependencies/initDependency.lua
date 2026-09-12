@@ -3,8 +3,9 @@ require(Parent.PubTypes)
 local sharedState = require(Parent.Dependencies.sharedState)
 local initialisedStack = sharedState.initialisedStack
 return function(p1) -- Line: 16 -- upvalues: sharedState (val), initialisedStack (val)
+    local initialisedStackSize = sharedState.initialisedStackSize
     for i, v in ipairs(initialisedStack) do
-        if sharedState.initialisedStackSize < i then
+        if initialisedStackSize < i then
             return
         end
         v[p1] = true

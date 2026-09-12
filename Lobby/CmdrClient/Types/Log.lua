@@ -8,7 +8,10 @@ return function(p1) -- Line: 1
     local PermissionsHandler = require(CmdrShared:WaitForChild("PermissionsHandler"))
     local LoggingService = require(ServerScriptService.common.ZS_Server.Services.LoggingService)
     p1:RegisterHook("AfterRun", function(p1) -- Line: 19 -- upvalues: PermissionsHandler (val), LoggingService (val)
-        if not (PermissionsHandler:HasCommand(p1.Executor, p1.Group)) then
+        local v1 = PermissionsHandler
+        local Executor = p1.Executor
+        local Group = p1.Group
+        if not v1:HasCommand(Executor, Group) then
             return
         end
         LoggingService.LogCommand(p1)

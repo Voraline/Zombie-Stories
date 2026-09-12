@@ -10,7 +10,12 @@ return {
             if p1:GetArgument(1):Validate() == false then
                 return
             end
-            return {Name = "Argument Value Operator", Description = "The value operator to resolve. One of: * ** . ? ?N", Optional = true, Type = p1:GetArgument(1):GetValue()}
+            return {
+                Name = "Argument Value Operator",
+                Description = "The value operator to resolve. One of: * ** . ? ?N",
+                Optional = true,
+                Type = p1:GetArgument(1):GetValue(),
+            }
         end,
     },
     Run = function(p1) -- Line: 29

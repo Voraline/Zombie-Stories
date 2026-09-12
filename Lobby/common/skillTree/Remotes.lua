@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local v1 = {}
 local u6 = nil
+
 local function getOrCreateRemote(p1) -- Line: 11 -- upvalues: u6 (ref), ReplicatedStorage (val)
     if not u6 then
         u6 = ReplicatedStorage:FindFirstChild("SkillTreeRemotes")
@@ -18,6 +19,7 @@ local function getOrCreateRemote(p1) -- Line: 11 -- upvalues: u6 (ref), Replicat
     end
     return v1
 end
+
 v1.PurchaseSkill = getOrCreateRemote("PurchaseSkill")
 v1.SkillsUpdated = getOrCreateRemote("SkillsUpdated")
 v1.RequestSync = getOrCreateRemote("RequestSync")

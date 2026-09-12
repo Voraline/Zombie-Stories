@@ -1,13 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local Children = (require(ReplicatedStorage.Packages.Fusion)).Children
 local SliderModule = require(script.Parent.Parent.SliderModule)
 local u20 = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderModule (val)
     local Visible
     local scope = p1.scope
     local v1 = p1.Description ~= nil
-    local v2 = scope:New("ImageLabel")
-    v2 = v2({
+    local v2 = scope:New("ImageLabel")({
         Name = "Fill",
         BackgroundTransparency = 1,
         Image = "rbxassetid://2851928361",
@@ -19,8 +18,7 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Size = UDim2.fromScale(0.3, 0.75),
         SliceCenter = Rect.new(7, 7, 7, 7),
     })
-    local v3 = scope:New("TextButton")
-    v3 = v3({
+    local v3 = scope:New("TextButton")({
         Name = "Button",
         BackgroundTransparency = 1,
         Text = "",
@@ -43,10 +41,11 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         SliceCenter = Rect.new(7, 7, 7, 7),
         ZIndex = 3,
     }
-    v5[Children] = {v3}
+    local v6 = Children
+    v5[v6] = {v3}
     v4 = v4(v5)
     v5 = scope:New("Frame")
-    local v6 = {
+    v6 = {
         Name = "Back",
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Color3.new(),
@@ -54,13 +53,11 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Position = UDim2.fromScale(0, 0.5),
         Size = UDim2.fromScale(1, 0.75),
     }
-    local v7 = {}
-    local v8 = scope:New("UICorner")
-    v7[1] = v8({CornerRadius = UDim.new(1, 0)})
-    v6[Children] = v7
+    local v7 = Children
+    v6[v7] = {scope:New("UICorner")({CornerRadius = UDim.new(1, 0)})}
     v5 = v5(v6)
     v6 = scope:New("ImageLabel")
-    local v9 = {
+    v7 = {
         Name = "SlidingBase",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundTransparency = 1,
@@ -72,10 +69,11 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Size = UDim2.fromScale(1, 1),
         SliceCenter = Rect.new(7, 7, 7, 7),
     }
-    v9[Children] = {v2, v4, v5}
-    v6 = v6(v9)
-    v9 = scope:New("ImageLabel")
-    v7 = {
+    local v8 = Children
+    v7[v8] = {v2, v4, v5}
+    v6 = v6(v7)
+    v7 = scope:New("ImageLabel")
+    v8 = {
         Name = "Slide",
         AnchorPoint = Vector2.new(0.5, 1),
         BackgroundTransparency = 1,
@@ -88,10 +86,10 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         SizeConstraint = Enum.SizeConstraint.RelativeXX,
         SliceCenter = Rect.new(7, 7, 7, 7),
     }
-    v7[Children] = {v6}
-    v9 = v9(v7)
-    v7 = scope:New("TextBox")
-    local u222 = v7({
+    local v9 = Children
+    v8[v9] = {v6}
+    v7 = v7(v8)
+    local u222 = scope:New("TextBox")({
         Name = "Label",
         BackgroundTransparency = 1,
         Text = "1",
@@ -103,7 +101,7 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Size = UDim2.fromScale(1, 0.7),
         TextColor3 = Color3.new(1, 1, 1),
     })
-    v8 = scope:New("ImageLabel")
+    v9 = scope:New("ImageLabel")
     local v10 = {
         Name = "TextBox",
         AnchorPoint = Vector2.new(1, 0),
@@ -117,31 +115,33 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Size = UDim2.fromScale(0.16, 0.6),
         SliceCenter = Rect.new(7, 7, 7, 7),
     }
-    local v11 = {}
-    local v12 = scope:New("UICorner")
-    local v13 = {CornerRadius = UDim.new(0.2, 0)}
-    v11[1] = u222
-    v11[2] = v12(v13)
-    v10[Children] = v11
-    v8 = v8(v10)
+    local v11 = Children
+    local v12 = {}
+    local v13 = scope:New("UICorner")
+    local v14 = {CornerRadius = UDim.new(0.2, 0)}
+    v12[1] = u222
+    v12[2] = v13(v14)
+    v10[v11] = v12
+    v9 = v9(v10)
     v10 = scope:New("Frame")
-    local v14 = {Name = "NumberSlider", BackgroundTransparency = 1, LayoutOrder = p1.LayoutOrder or 1}
+    v11 = {Name = "NumberSlider", BackgroundTransparency = 1, LayoutOrder = p1.LayoutOrder or 1}
     if not v1 then
-        v11 = UDim2.fromScale(1, 0.11)
+        v12 = UDim2.fromScale(1, 0.11)
     else
-        v11 = UDim2.fromScale(1, 0.14)
+        v12 = UDim2.fromScale(1, 0.14)
     end
-    v14.Size = v11
-    v14.SizeConstraint = Enum.SizeConstraint.RelativeXX
+    v11.Size = v12
+    v11.SizeConstraint = Enum.SizeConstraint.RelativeXX
     if p1.Visible == nil then
         Visible = true
     else
         Visible = p1.Visible
     end
-    v14.Visible = Visible
+    v11.Visible = Visible
+    v12 = Children
     local v15 = {}
-    v12 = scope:New("Frame")
-    v13 = {
+    v13 = scope:New("Frame")
+    v14 = {
         Name = "Frame",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.new(),
@@ -149,11 +149,11 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromScale(0.99, 0.85),
     }
-    local v16 = {}
-    local v17 = scope:New("UICorner")
-    v17 = v17({})
-    local v18 = scope:New("TextLabel")
-    local v19 = {
+    local v16 = Children
+    local v17 = {}
+    local v18 = scope:New("UICorner")({})
+    local v19 = scope:New("TextLabel")
+    local v20 = {
         Name = "Label",
         BackgroundTransparency = 1,
         TextScaled = true,
@@ -165,12 +165,11 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
         TextColor3 = Color3.new(1, 1, 1),
         TextXAlignment = Enum.TextXAlignment.Left,
     }
-    v18 = v18(v19)
+    v19 = v19(v20)
     if not v1 then
-        v19 = nil
+        v20 = nil
     else
-        v19 = scope:New("TextLabel")
-        v19 = v19({
+        v20 = scope:New("TextLabel")({
             Name = "DescriptionLabel",
             BackgroundTransparency = 1,
             TextScaled = true,
@@ -185,28 +184,32 @@ return function(p1) -- Line: 26 -- upvalues: Children (val), u20 (val), SliderMo
             TextXAlignment = Enum.TextXAlignment.Left,
         })
     end
-    v16[1] = v17
-    v16[2] = v9
-    v16[3] = v8
-    v16[4] = v18
-    v16[5] = v19
-    v13[Children] = v16
-    v15[1] = v12(v13)
-    v14[Children] = v15
-    v10 = v10(v14)
-    v14 = SliderModule.new(v6, v4, v3, v2, {min = p1.Min, max = p1.Max, snapFactor = p1.SnapFactor}, {TextBox = u222})
-    v11 = v14:Activate()
-    v11(p1.Default)
-    local PropertyChangedSignal = u222:GetPropertyChangedSignal("Text")
-    PropertyChangedSignal:Connect(function() -- Line: 208 -- upvalues: u222 (val), p1 (val)
-        if not (u222:IsFocused()) and p1.OnChanged then
-            p1.OnChanged((tonumber(u222.Text)))
+    v17[1] = v18
+    v17[2] = v7
+    v17[3] = v9
+    v17[4] = v19
+    v17[5] = v20
+    v14[v16] = v17
+    v15[1] = v13(v14)
+    v11[v12] = v15
+    v10 = v10(v11)
+    v11 = SliderModule
+    v11 = v11.new(v6, v4, v3, v2, {min = p1.Min, max = p1.Max, snapFactor = p1.SnapFactor}, {TextBox = u222})
+    v12 = v11:Activate()
+    v12(p1.Default)
+    ;(u222:GetPropertyChangedSignal("Text")):Connect(function() -- Line: 208 -- upvalues: u222 (val), p1 (val)
+        if not u222:IsFocused() and p1.OnChanged then
+            local v1 = p1
+            local OnChanged = v1.OnChanged
+            local v2 = u222
+            local Text = v2.Text
+            OnChanged((tonumber(Text)))
         end
     end)
-    v14.InteractionEnded.Event:Connect(function(a1) -- Line: 216 -- upvalues: p1 (val)
+    v11.InteractionEnded.Event:Connect(function(p1_2) -- Line: 216 -- upvalues: p1 (val)
         if p1.OnChanged then
-            p1.OnChanged(a1, true)
+            p1.OnChanged(p1_2, true)
         end
     end)
-    return v10, v11
+    return v10, v12
 end

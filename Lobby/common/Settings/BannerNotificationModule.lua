@@ -21,33 +21,65 @@ return {
             v1.Content.Icon.Image = p4
             v1.Visible = true
             v1.Background.Image = "rbxassetid://11983017276"
-            TweenService:Create(v1.Background, u22, {ImageTransparency = 0.3}):Play()
-            TweenService:Create(v1.Background.Scale, u22, {Scale = 1.2}):Play()
+            local v2 = TweenService
+            local Background = v1.Background
+            local v3 = u22
+            v2:Create(Background, v3, {ImageTransparency = 0.3}):Play()
+            v2 = TweenService
+            local Scale = v1.Background.Scale
+            v3 = u22
+            v2:Create(Scale, v3, {Scale = 1.2}):Play()
             task.wait(0.3)
             v1.Background.Image = "rbxassetid://11942813307"
-            TweenService:Create(v1.Background, u22, {Size = UDim2.fromScale(1, 0.6)}):Play()
-            TweenService:Create(v1.Background.Scale, u22, {Scale = 1}):Play()
+            v2 = TweenService
+            local Background_3 = v1.Background
+            v3 = u22
+            local v4 = {Size = UDim2.fromScale(1, 0.6)}
+            v2:Create(Background_3, v3, v4):Play()
+            v2 = TweenService
+            local Scale_2 = v1.Background.Scale
+            v3 = u22
+            v2:Create(Scale_2, v3, {Scale = 1}):Play()
             task.wait(0.1)
-            TweenService:Create(v1.Content, u22, {GroupTransparency = 0}):Play()
+            v2 = TweenService
+            local Content = v1.Content
+            v3 = u22
+            v2:Create(Content, v3, {GroupTransparency = 0}):Play()
             task.wait(p5)
-            TweenService:Create(v1.Content, u22, {GroupTransparency = 1}):Play()
+            v2 = TweenService
+            local Content_2 = v1.Content
+            v3 = u22
+            v2:Create(Content_2, v3, {GroupTransparency = 1}):Play()
             task.wait(0.3)
             v1.Background.Image = "rbxassetid://11983017276"
-            TweenService:Create(v1.Background, u22, {Size = UDim2.fromScale(0.18, 0.6)}):Play()
-            TweenService:Create(v1.Background.Scale, u22, {Scale = 1.2}):Play()
+            v2 = TweenService
+            local Background_5 = v1.Background
+            v3 = u22
+            v4 = {Size = UDim2.fromScale(0.18, 0.6)}
+            v2:Create(Background_5, v3, v4):Play()
+            v2 = TweenService
+            local Scale_3 = v1.Background.Scale
+            v3 = u22
+            v2:Create(Scale_3, v3, {Scale = 1.2}):Play()
             task.wait(0.3)
-            TweenService:Create(v1.Background, u22, {ImageTransparency = 1}):Play()
-            TweenService:Create(v1.Background.Scale, u22, {Scale = 0}):Play()
+            v2 = TweenService
+            local Background_7 = v1.Background
+            v3 = u22
+            v2:Create(Background_7, v3, {ImageTransparency = 1}):Play()
+            v2 = TweenService
+            local Scale_4 = v1.Background.Scale
+            v3 = u22
+            v2:Create(Scale_4, v3, {Scale = 0}):Play()
             task.wait(0.3)
             v1:Destroy()
         end
     end,
     NumberOfActiveNotifications = function(p1) -- Line: 84 -- upvalues: RunService (val)
-        if not (RunService:IsClient()) then
-            return
-        end
-        for k, v in pairs(game.Players.LocalPlayer.PlayerGui:WaitForChild("BannerNotification").ActiveNotifications:GetChildren()) do
-            return #v - 1
+        if RunService:IsClient() then
+            local ActiveNotifications = (game.Players.LocalPlayer.PlayerGui:WaitForChild("BannerNotification")).ActiveNotifications
+            for k, v in pairs(ActiveNotifications:GetChildren()) do
+                return #v - 1
+            end
         end
     end,
 }

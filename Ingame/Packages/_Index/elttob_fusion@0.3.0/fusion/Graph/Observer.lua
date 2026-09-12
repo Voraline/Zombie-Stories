@@ -8,10 +8,12 @@ local evaluate = require(Parent.Graph.evaluate)
 local nicknames = require(Parent.Utility.nicknames)
 local v1 = {type = "Observer", timeliness = "eager", dependentSet = table.freeze({})}
 local u37 = table.freeze({__index = v1})
+
 function v1.onBind(p1, p2) -- Line: 82 -- upvalues: External (val)
     External.doTaskImmediate(p2)
     return p1:onChange(p2)
 end
+
 function v1:onChange(p2) -- Line: 90
     local u4 = table.freeze({})
     self._changeListeners[u4] = p2
@@ -19,6 +21,7 @@ function v1:onChange(p2) -- Line: 90
         self._changeListeners[u4] = nil
     end
 end
+
 function v1._evaluate(p1) -- Line: 101 -- upvalues: depend (val), External (val)
     if p1._watchingGraph ~= nil then
         depend(p1, p1._watchingGraph)
@@ -31,31 +34,43 @@ function v1._evaluate(p1) -- Line: 101 -- upvalues: depend (val), External (val)
     end
     return true
 end
+
 table.freeze(v1)
-return function(p1, p2) -- Line: 36 -- upvalues: External (val), castToGraph (val), u37 (val), nicknames (val), checkLifetime (val), evaluate (val)
+return function(p1, p2) -- Line: 36
+    -- upvalues: External (val), castToGraph (val), u37 (val), nicknames (val), checkLifetime (val), evaluate (val)
     local v1 = os.clock()
     if p2 == nil then
         External.logError("scopeMissing", nil, "Observers", "myScope:Observer(watching)")
     end
-    local u22 = setmetatable({
+    local v2 = {
         validity = "invalid",
         scope = p1,
         createdAt = v1,
         dependencySet = {},
         _watchingGraph = castToGraph(p2),
         _changeListeners = {},
-    }, u37)
-    local function v2() -- Line: 57 -- upvalues: u22 (val)
+    }
+    local v3 = u37
+    local u22 = setmetatable(v2, v3)
+
+    function v2() -- Line: 57 -- upvalues: u22 (val)
         u22.scope = nil
         for k in pairs(u22.dependencySet) do
             k.dependentSet[u22] = nil
         end
     end
+
     u22.oldestTask = v2
     nicknames[u22.oldestTask] = "Observer"
     table.insert(p1, v2)
     if u22._watchingGraph ~= nil then
-        checkLifetime.bOutlivesA(p1, u22.oldestTask, u22._watchingGraph.scope, u22._watchingGraph.oldestTask, checkLifetime.formatters.observer)
+        checkLifetime.bOutlivesA(
+            p1,
+            u22.oldestTask,
+            u22._watchingGraph.scope,
+            u22._watchingGraph.oldestTask,
+            checkLifetime.formatters.observer
+        )
     end
     evaluate(u22, true)
     return u22

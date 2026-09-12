@@ -1,11 +1,15 @@
 local RunService = game:GetService("RunService")
-local u5 = {gunBobCF = CFrame.new(), cameraBobCF = CFrame.new()}
+local u5 = {}
+u5.gunBobCF = CFrame.new()
+u5.cameraBobCF = CFrame.new()
 local bobCycles = require(script:WaitForChild("bobCycles"))
-RunService:BindToRenderStep("BobbingUtil", Enum.RenderPriority.Character.Value, function(p1) -- Line: 16 -- upvalues: bobCycles (val), u5 (val)
-    local v1, v2
+local Value = Enum.RenderPriority.Character.Value
+RunService:BindToRenderStep("BobbingUtil", Value, function(p1) -- Line: 16 -- upvalues: bobCycles (val), u5 (val)
     bobCycles.Weapon = u5.CurrentWeapon
-    v1, v2 = bobCycles.Update(p1)
-    u5.gunBobCF = v1
-    u5.cameraBobCF = v2
+    local v1 = u5
+    local v2 = u5
+    local v3, v4 = bobCycles.Update(p1)
+    v1.gunBobCF = v3
+    v2.cameraBobCF = v4
 end)
 return u5

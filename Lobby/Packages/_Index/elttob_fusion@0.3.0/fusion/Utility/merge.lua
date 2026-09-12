@@ -1,4 +1,5 @@
-local External = require(script.Parent.Parent.External)
+local Parent_2 = script.Parent.Parent
+local External = require(Parent_2.External)
 return function(p1, p2, ...) -- Line: 13 -- upvalues: External (val)
     local v1, v2, v3
     local v4 = {...}

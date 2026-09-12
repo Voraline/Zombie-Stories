@@ -3,31 +3,23 @@ require(ReplicatedStorage.Packages.Fusion)
 local u11 = require("../Theme")
 local u14 = require("../Components/GradientFade")
 return function(p1) -- Line: 33 -- upvalues: u11 (val), u14 (val)
-    local Visible, v1
+    local Visible
     local scope = p1.scope
-    v1 = scope:Computed(function(a1) -- Line: 35 -- upvalues: p1 (val), u11 (upval)
-        local FillColor3
-        local v1 = a1(p1.Value)
-        local v2 = a1(p1.Max)
-        if 0 >= v2 then
-            FillColor3 = p1.FillColor3
-            if not FillColor3 then
-                FillColor3 = u11.Menu.Accent
-            end
-            return a1(FillColor3)
-        end
-        if v2 <= v1 then
+    local v1 = scope:Computed(function(p1_2) -- Line: 35 -- upvalues: p1 (val), u11 (upval)
+        local v1 = p1_2(p1.Value)
+        local v2 = p1_2(p1.Max)
+        if 0 < v2 and v2 <= v1 then
             local CompleteColor3 = p1.CompleteColor3
             if not CompleteColor3 then
                 CompleteColor3 = u11.Menu.Positive
             end
-            return a1(CompleteColor3)
+            return p1_2(CompleteColor3)
         end
-        FillColor3 = p1.FillColor3
+        local FillColor3 = p1.FillColor3
         if not FillColor3 then
             FillColor3 = u11.Menu.Accent
         end
-        return a1(FillColor3)
+        return p1_2(FillColor3)
     end)
     local CornerRadius = p1.CornerRadius
     if not CornerRadius then
@@ -38,7 +30,8 @@ return function(p1) -- Line: 33 -- upvalues: u11 (val), u14 (val)
         ZIndex = u11.ZIndex.Content
     end
     local v2 = scope:New("Frame")
-    local v3 = {Name = p1.Name or "ProgressBar"}
+    local v3 = {}
+    v3.Name = p1.Name or "ProgressBar"
     local Size = p1.Size
     if not Size then
         Size = UDim2.new(1, 0, 0, 24)
@@ -72,10 +65,12 @@ return function(p1) -- Line: 33 -- upvalues: u11 (val), u14 (val)
     v3.ClipsDescendants = true
     local Children = scope.Children
     local v4 = {}
-    local v5 = scope:New("UICorner")
-    v5 = v5({CornerRadius = CornerRadius})
-    local v6 = scope:New("UIStroke")
-    v6 = v6({Thickness = u11.Stroke.Thin, Color = u11.Menu.Border, ApplyStrokeMode = Enum.ApplyStrokeMode.Border})
+    local v5 = scope:New("UICorner")({CornerRadius = CornerRadius})
+    local v6 = scope:New("UIStroke")({
+        Thickness = u11.Stroke.Thin,
+        Color = u11.Menu.Border,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    })
     local v7 = scope:New("Frame")
     local v8 = {
         Name = "Fill",
@@ -86,7 +81,8 @@ return function(p1) -- Line: 33 -- upvalues: u11 (val), u14 (val)
     }
     local Children_2 = scope.Children
     local v9 = {}
-    local v10 = u14({
+    local v10 = u14
+    v10 = v10({
         Rotation = 0,
         MinTransparency = 0,
         MaxTransparency = 1,
@@ -118,10 +114,7 @@ return function(p1) -- Line: 33 -- upvalues: u11 (val), u14 (val)
         v12.TextColor3 = TextColor3
         v12.ZIndex = u11.ZIndex.Overlay
         local Children_3 = scope.Children
-        v10 = {}
-        v11 = scope:New("UIStroke")
-        v10[1] = v11({Thickness = u11.Stroke.Thin, Color = u11.Menu.HeaderStroke})
-        v12[Children_3] = v10
+        v12[Children_3] = {scope:New("UIStroke")({Thickness = u11.Stroke.Thin, Color = u11.Menu.HeaderStroke})}
         v8 = v8(v12)
     end
     v4[1] = v5

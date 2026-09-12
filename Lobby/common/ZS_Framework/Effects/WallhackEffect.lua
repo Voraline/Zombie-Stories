@@ -1,15 +1,16 @@
-local u21, u22
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
-u21, u22 = require(ReplicatedStorage.Packages.Bin)()
+local u21, u22 = require(ReplicatedStorage.Packages.Bin)()
 local u24 = nil
+
 local function destroyHighlight() -- Line: 12 -- upvalues: u24 (ref)
     if u24 then
         u24:Destroy()
         u24 = nil
     end
 end
+
 local function createHighlight(p1) -- Line: 19 -- upvalues: u24 (ref)
     if u24 then
         u24:Destroy()
@@ -22,14 +23,16 @@ local function createHighlight(p1) -- Line: 19 -- upvalues: u24 (ref)
     Highlight.Parent = p1
     u24 = Highlight
 end
-local function toggleWallhack() -- Line: 30 -- upvalues: GameState (val), u22 (val), u24 (ref), CollectionService (val), u21 (val)
-    local Highlight
+
+local function toggleWallhack() -- Line: 30
+    -- upvalues: GameState (val), u22 (val), u24 (ref), CollectionService (val), u21 (val)
+    local WallhackEnabled = GameState.Data.Variables.WallhackEnabled
     u22()
     if u24 then
         u24:Destroy()
         u24 = nil
     end
-    if not GameState.Data.Variables.WallhackEnabled then
+    if not WallhackEnabled then
         return
     end
     local v1 = CollectionService:GetTagged("ZombieFolder")[1]
@@ -38,15 +41,15 @@ local function toggleWallhack() -- Line: 30 -- upvalues: GameState (val), u22 (v
             u24:Destroy()
             u24 = nil
         end
-        Highlight = Instance.new("Highlight")
+        local Highlight = Instance.new("Highlight")
         Highlight.Name = "WallhackHighlight"
         Highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
         Highlight.FillTransparency = 1
         Highlight.Parent = v1
         u24 = Highlight
     end
-    local InstanceAddedSignal = CollectionService:GetInstanceAddedSignal("ZombieFolder")
-    u21(InstanceAddedSignal:Connect(function(p1) -- Line: 45 -- upvalues: GameState (upval), u24 (upval)
+    local v2 = u21
+    v2((CollectionService:GetInstanceAddedSignal("ZombieFolder")):Connect(function(p1) -- Line: 45 -- upvalues: GameState (upval), u24 (upval)
         if GameState.Data.Variables.WallhackEnabled then
             if u24 then
                 u24:Destroy()
@@ -61,6 +64,7 @@ local function toggleWallhack() -- Line: 30 -- upvalues: GameState (val), u22 (v
         end
     end))
 end
+
 task.spawn(function() -- Line: 52 -- upvalues: toggleWallhack (val)
     toggleWallhack()
 end)

@@ -1,6 +1,7 @@
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
-local External = require(script.Parent.External)
+local Parent = script.Parent
+local External = require(Parent.External)
 local v1 = {
     policies = {allowWebLinks = RunService:IsStudio()},
     doTaskImmediate = function(p1) -- Line: 24
@@ -14,32 +15,48 @@ local v1 = {
     end,
     logWarn = warn,
 }
+
 local function performUpdateStep() -- Line: 56 -- upvalues: External (val)
     External.performUpdateStep(os.clock())
 end
+
 local u25 = nil
-function v1.startScheduler() -- Line: 64 -- upvalues: u25 (ref), RunService (val), HttpService (val), performUpdateStep (val)
-    local u25
+
+function v1.startScheduler() -- Line: 64
+    -- upvalues: u25 (ref), RunService (val), HttpService (val), performUpdateStep (val)
     if u25 ~= nil then
         return
     end
-    if not (RunService:IsClient()) then
-        u25 = RunService.Heartbeat:Connect(performUpdateStep)
-        function u25() -- Line: 82 -- upvalues: u25 (val)
-            u25:Disconnect()
+    if not RunService:IsClient() then
+        local v1 = RunService
+        local Heartbeat = v1.Heartbeat
+        local v2 = performUpdateStep
+        local u25_2 = Heartbeat:Connect(v2)
+
+        function u25() -- Line: 82 -- upvalues: u25_2 (val)
+            u25_2:Disconnect()
         end
+
         return
     end
     local u10 = "FusionUpdateStep_" .. HttpService:GenerateGUID()
-    RunService:BindToRenderStep(u10, Enum.RenderPriority.First.Value, performUpdateStep)
+    local v3 = RunService
+    local Value = Enum.RenderPriority.First.Value
+    local v4 = performUpdateStep
+    v3:BindToRenderStep(u10, Value, v4)
+
     function u25() -- Line: 77 -- upvalues: RunService (upval), u10 (val)
-        RunService:UnbindFromRenderStep(u10)
+        local v1 = RunService
+        local v2 = u10
+        v1:UnbindFromRenderStep(v2)
     end
 end
+
 function v1.stopScheduler() -- Line: 91 -- upvalues: u25 (ref)
     if u25 ~= nil then
         u25()
         u25 = nil
     end
 end
+
 return v1

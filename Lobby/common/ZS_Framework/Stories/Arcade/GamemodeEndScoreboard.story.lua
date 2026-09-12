@@ -9,7 +9,12 @@ return {
     story = function(p1) -- Line: 16 -- upvalues: Players (val), u17 (val)
         local u5 = p1.scope:Value("")
         task.spawn(function() -- Line: 21 -- upvalues: u5 (val), Players (upval)
-            u5:set(Players:GetUserThumbnailAsync(1583746009, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100))
+            local v1 = u5
+            local v2 = Players
+            local HeadShot = Enum.ThumbnailType.HeadShot
+            local Size100x100 = Enum.ThumbnailSize.Size100x100
+            local UserThumbnailAsync = v2:GetUserThumbnailAsync(1583746009, HeadShot, Size100x100)
+            v1:set(UserThumbnailAsync)
         end)
         p1.Players = {
             {Name = "thebigkannye", Score = 100, Image = u5},

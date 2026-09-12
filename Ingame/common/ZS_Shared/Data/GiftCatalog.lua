@@ -1,3 +1,4 @@
+local Key, Keys
 local v1 = {
     Entries = {
         {
@@ -176,10 +177,14 @@ local v1 = {
 }
 local u25 = {}
 for i, v in ipairs(v1.Entries) do
-    table.insert(v1.Keys, v.Key)
+    Keys = v1.Keys
+    Key = v.Key
+    table.insert(Keys, Key)
     u25[v.Key] = v
 end
+
 function v1.GetByKey(p1) -- Line: 192 -- upvalues: u25 (val)
     return u25[p1]
 end
+
 return v1

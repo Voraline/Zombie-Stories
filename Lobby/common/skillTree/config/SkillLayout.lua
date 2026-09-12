@@ -1,52 +1,51 @@
-local v1, v2, v3
-local u119 = {}
-local v4 = {
-    "core1",
-    "core2",
-    "core3",
-    "core4",
-    "core5",
+local v1, v2, v3, v4, v5
+local u119 = {
+    {"core1", "core2", "core3", "core4", "core5"},
 }
-u119[1] = v4
-local u90 = {}
-local v5 = {"steadyAim", "fastHands"}
-u90[1] = v5
-u90[2] = {"deepPockets", "quickInteract", "sleightSwitch", "meleeTempo"}
-u90[3] = {"fury", "deadEye", "parryMaster"}
-u90[4] = {"quickDraw"}
-local u122 = {}
-local v6 = {"thickSkin", "grit"}
-u122[1] = v6
-u122[2] = {"adrenaline", "ironWill", "desperateSprint"}
-u122[3] = {"secondChance", "swanSong", "secondWind", "lastStand"}
-u122[4] = {"theSpartan"}
+local u90 = {
+    {"steadyAim", "fastHands"},
+    {"deepPockets", "quickInteract", "sleightSwitch", "meleeTempo"},
+    {"fury", "deadEye", "parryMaster"},
+    {"quickDraw"},
+}
+local u122 = {
+    {"thickSkin", "grit"},
+    {"adrenaline", "ironWill", "desperateSprint"},
+    {"secondChance", "swanSong", "secondWind", "lastStand"},
+    {"theSpartan"},
+}
 local u124 = {}
-local v7 = u119[1]
+local v6 = u119[1]
+local v7 = nil
 local v8 = nil
-local v9 = nil
-for i, j in v7, v8, v9 do
-    u124[j] = {column = 0, row = (i - 1) * 1.5}
+for i, j in v6, v7, v8 do
+    v5 = {column = 0, row = (i - 1) * 1.5}
+    u124[j] = v5
 end
-v7 = u122
+v6 = u122
+v7 = nil
 v8 = nil
-v9 = nil
-for k, n in v7, v8, v9 do
+for k, n in v6, v7, v8 do
+    v5 = #n
     v1 = n
     v2 = nil
     v3 = nil
     for m, i5 in v1, v2, v3 do
-        u124[i5] = {row = 1.5 + ((#n - 1) / 2 - (m - 1)), column = -k}
+        v4 = {row = 1.5 + ((v5 - 1) / 2 - (m - 1)), column = -k}
+        u124[i5] = v4
     end
 end
-v7 = u90
+v6 = u90
+v7 = nil
 v8 = nil
-v9 = nil
-for i6, i7 in v7, v8, v9 do
+for i6, i7 in v6, v7, v8 do
+    v5 = #i7
     v1 = i7
     v2 = nil
     v3 = nil
     for i8, i9 in v1, v2, v3 do
-        u124[i9] = {row = 3 + ((#i7 - 1) / 2 - (i8 - 1)), column = i6}
+        v4 = {row = 3 + ((v5 - 1) / 2 - (i8 - 1)), column = i6}
+        u124[i9] = v4
     end
 end
 return {

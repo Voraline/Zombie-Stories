@@ -26,8 +26,7 @@ return function(p1) -- Line: 1
     local RunService = game:GetService("RunService")
     local GuiService = game:GetService("GuiService")
     local u60 = 1
-    local AttributeChangedSignal = Frame:GetAttributeChangedSignal("RotationSpeed")
-    AttributeChangedSignal:Connect(function() -- Line: 37 -- upvalues: u60 (ref), Frame (val)
+    ;(Frame:GetAttributeChangedSignal("RotationSpeed")):Connect(function() -- Line: 37 -- upvalues: u60 (ref), Frame (val)
         u60 = Frame:GetAttribute("RotationSpeed")
     end)
     RunService.Heartbeat:Connect(function() -- Line: 40 -- upvalues: GuiService (val), UIGradient (val), u60 (ref)

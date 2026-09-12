@@ -2,14 +2,16 @@ local u0 = {}
 u0.__index = u0
 local profilebegin = debug.profilebegin
 local profileend = debug.profileend
-local new = CFrame.new
+local new = Vector3.new
+local new_2 = CFrame.new
 local Angles = CFrame.Angles
 local rad = math.rad
-local u8 = Vector3.new()
+local u8 = new()
 local CameraShakeInstance = require(script:WaitForChild("CameraShakeInstance"))
 local CameraShakeState = CameraShakeInstance.CameraShakeState
 u0.CameraShakeInstance = CameraShakeInstance
 u0.Presets = require("@self/CameraShakePresets")
+
 function u0.new(p1, p2) -- Line: 87 -- upvalues: u8 (val), u0 (val)
     local v1 = type(p1) == "number"
     assert(v1, "RenderPriority must be a number (e.g.: Enum.RenderPriority.Camera.Value)")
@@ -22,28 +24,35 @@ function u0.new(p1, p2) -- Line: 87 -- upvalues: u8 (val), u0 (val)
         _camShakeInstances = {},
         _removeInstances = {},
     }
-    return (setmetatable(v1, u0))
+    local v2 = u0
+    return (setmetatable(v1, v2))
 end
+
 function u0.Start(p1) -- Line: 106 -- upvalues: profilebegin (val), profileend (val)
     if p1._running then
         return
     end
     p1._running = true
     local RunService = game:GetService("RunService")
-    RunService:BindToRenderStep(p1._renderName, p1._renderPriority, function(a1) -- Line: 109 -- upvalues: profilebegin (upval), p1 (val), profileend (upval)
+    local _renderName = p1._renderName
+    local _renderPriority = p1._renderPriority
+    RunService:BindToRenderStep(_renderName, _renderPriority, function(p1_2) -- Line: 109 -- upvalues: profilebegin (upval), p1 (val), profileend (upval)
         profilebegin("CameraShakerUpdate")
-        p1:Update(a1)
+        p1:Update(p1_2)
         profileend()
     end)
 end
+
 function u0.Stop(p1) -- Line: 117
     if not p1._running then
         return
     end
     local RunService = game:GetService("RunService")
-    RunService:UnbindFromRenderStep(p1._renderName)
+    local _renderName = p1._renderName
+    RunService:UnbindFromRenderStep(_renderName)
     p1._running = false
 end
+
 function u0.StopSustained(p1, p2) -- Line: 124
     local fadeInDuration
     local v1 = p2
@@ -57,95 +66,88 @@ function u0.StopSustained(p1, p2) -- Line: 124
         end
     end
 end
-function u0:Update(p2) -- Line: 133 -- upvalues: u8 (val), CameraShakeState (val), new (val), Angles (val), rad (val)
-    local State, v1, v2, v3, v4
-    local v5 = u8
-    local v6 = u8
+
+function u0:Update(p2) -- Line: 133 -- upvalues: u8 (val), CameraShakeState (val), new_2 (val), Angles (val), rad (val)
+    local State, v1, v2
+    local v3 = u8
+    local v4 = u8
     local _camShakeInstances = self._camShakeInstances
-    local v7 = #_camShakeInstances
-    local v8 = 1
-    v1, v2 = self, p2
-    for i = 1, v7, v8 do
-        v4 = _camShakeInstances[i]
-        State = v4:GetState()
+    local v5 = #_camShakeInstances
+    local v6, v7 = self, p2
+    for i = 1, v5 do
+        v2 = _camShakeInstances[i]
+        State = v2:GetState()
         if State ~= CameraShakeState.Inactive then
             if State ~= CameraShakeState.Inactive then
-                v3 = v4:UpdateShake(v2)
-                v5 = v5 + v3 * v4.PositionInfluence
-                v6 = v6 + v3 * v4.RotationInfluence
+                v1 = v2:UpdateShake(v7)
+                v3 = v3 + v1 * v2.PositionInfluence
+                v4 = v4 + v1 * v2.RotationInfluence
             end
-        elseif v4.DeleteOnInactive then
-            v1._removeInstances[#v1._removeInstances + 1] = i
+        elseif v2.DeleteOnInactive then
+            v6._removeInstances[#v6._removeInstances + 1] = i
+        elseif State ~= CameraShakeState.Inactive then
+            v1 = v2:UpdateShake(v7)
+            v3 = v3 + v1 * v2.PositionInfluence
+            v4 = v4 + v1 * v2.RotationInfluence
         end
     end
-    v7 = 1
-    v8 = -1
-    for j = #v1._removeInstances, v7, v8 do
-        table.remove(_camShakeInstances, v1._removeInstances[j])
-        v1._removeInstances[j] = nil
+    for j = #v6._removeInstances, 1, -1 do
+        v2 = v6._removeInstances[j]
+        table.remove(_camShakeInstances, v2)
+        v6._removeInstances[j] = nil
     end
-    local v9 = new(v5)
-    v3 = rad(v6.Y)
-    v8 = v9 * Angles(0, v3, 0)
-    v4 = rad(v6.X)
-    return v8 * Angles(v4, 0, (rad(v6.Z)))
+    local v8 = new_2(v3)
+    v2 = Angles
+    local Y = v4.Y
+    local v9 = v8 * v2(0, rad(Y), 0)
+    v8 = Angles
+    local X = v4.X
+    v2 = rad(X)
+    local Z = v4.Z
+    return v9 * v8(v2, 0, (rad(Z)))
 end
+
 function u0.Shake(p1, p2) -- Line: 169
-    local _camShakeInstance
-    _camShakeInstance = if type(p2) == "table" then p2._camShakeInstance else false
+    local _camShakeInstance = false
+    if type(p2) == "table" then
+        _camShakeInstance = p2._camShakeInstance
+    end
     assert(_camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
     p1._camShakeInstances[#p1._camShakeInstances + 1] = p2
     return p2
 end
+
 function u0.ShakeSustain(p1, p2) -- Line: 176
-    local _camShakeInstance
-    _camShakeInstance = if type(p2) == "table" then p2._camShakeInstance else false
+    local _camShakeInstance = false
+    if type(p2) == "table" then
+        _camShakeInstance = p2._camShakeInstance
+    end
     assert(_camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
     p1._camShakeInstances[#p1._camShakeInstances + 1] = p2
-    p2:StartFadeIn(p2.fadeInDuration)
+    local fadeInDuration = p2.fadeInDuration
+    p2:StartFadeIn(fadeInDuration)
     return p2
 end
+
 function u0.ShakeOnce(p1, p2, p3, p4, p5, p6, p7) -- Line: 184 -- upvalues: CameraShakeInstance (val)
-    local v1
-    local v2 = CameraShakeInstance.new(p2, p3, p4, p5)
-    if typeof(p6) ~= "Vector3" then
-        v1 = Vector3.new(0.15000000596046448, 0.15000000596046448, 0.15000000596046448)
-    else
-        v1 = p6
-    end
-    v2.PositionInfluence = v1
-    if typeof(p7) ~= "Vector3" then
-        v1 = Vector3.new(1, 1, 1)
-    else
-        v1 = p7
-        if not v1 then
-            v1 = Vector3.new(1, 1, 1)
-        end
-    end
-    v2.RotationInfluence = v1
-    p1._camShakeInstances[#p1._camShakeInstances + 1] = v2
-    return v2
+    local v1 = CameraShakeInstance.new(p2, p3, p4, p5)
+    local v2 = typeof(p6) == "Vector3" and p6 or Vector3.new(0.15000000596046448, 0.15000000596046448, 0.15000000596046448)
+    v1.PositionInfluence = v2
+    v2 = typeof(p7) == "Vector3" and p7 or Vector3.new(1, 1, 1)
+    v1.RotationInfluence = v2
+    p1._camShakeInstances[#p1._camShakeInstances + 1] = v1
+    return v1
 end
+
 function u0.StartShake(p1, p2, p3, p4, p5, p6) -- Line: 193 -- upvalues: CameraShakeInstance (val)
-    local v1
-    local v2 = CameraShakeInstance.new(p2, p3, p4)
-    if typeof(p5) ~= "Vector3" then
-        v1 = Vector3.new(0.15000000596046448, 0.15000000596046448, 0.15000000596046448)
-    else
-        v1 = p5
-    end
-    v2.PositionInfluence = v1
-    if typeof(p6) ~= "Vector3" then
-        v1 = Vector3.new(1, 1, 1)
-    else
-        v1 = p6
-        if not v1 then
-            v1 = Vector3.new(1, 1, 1)
-        end
-    end
-    v2.RotationInfluence = v1
-    v2:StartFadeIn(p4)
-    p1._camShakeInstances[#p1._camShakeInstances + 1] = v2
-    return v2
+    local v1 = CameraShakeInstance.new(p2, p3, p4)
+    local v2 = typeof(p5) == "Vector3" and p5 or Vector3.new(0.15000000596046448, 0.15000000596046448, 0.15000000596046448)
+    v1.PositionInfluence = v2
+    v2 = typeof(p6) == "Vector3" and p6 or Vector3.new(1, 1, 1)
+    v1.RotationInfluence = v2
+    v1:StartFadeIn(p4)
+    p1._camShakeInstances[#p1._camShakeInstances + 1] = v1
+    return v1
 end
+
 return u0

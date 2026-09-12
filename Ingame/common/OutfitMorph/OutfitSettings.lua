@@ -1,5 +1,6 @@
 local ItemData = require(script.Parent.Parent:WaitForChild("ItemData"))
 local u9 = {HATS_BIT = 1, FORCE_BIT = 2, EXPLICIT_BIT = 3}
+
 local function readBit(p1, p2) -- Line: 9
     if type(p1) ~= "table" then
         return 0
@@ -13,6 +14,7 @@ local function readBit(p1, p2) -- Line: 9
     end
     return 0
 end
+
 function u9.Resolve(p1, p2, p3) -- Line: 22 -- upvalues: u9 (val), ItemData (val)
     local v1, v2, v3, v4, v5
     local EXPLICIT_BIT = u9.EXPLICIT_BIT
@@ -71,6 +73,9 @@ function u9.Resolve(p1, p2, p3) -- Line: 22 -- upvalues: u9 (val), ItemData (val
         v3 = nil
     else
         v3 = ItemData.List[tostring(p2)]
+        if not v3 then
+            v3 = nil
+        end
     end
     if v3 and v3.HasHats == false then
         v2 = false
@@ -79,11 +84,15 @@ function u9.Resolve(p1, p2, p3) -- Line: 22 -- upvalues: u9 (val), ItemData (val
     v4 = {ForceOutfit = v1, UseOutfitHats = v2, HatsToggleOn = v2}
     v5 = v1
     if v5 then
-        v5 = if v3 ~= nil then v3.HasHats ~= false else true
+        v5 = true
+        if v3 ~= nil then
+            v5 = v3.HasHats ~= false
+        end
     end
     v4.HatsToggleVisible = v5
     return v4
 end
+
 function u9.ResolveForClass(p1, p2, p3) -- Line: 46 -- upvalues: u9 (val)
     local v1, v2, v3
     local Loadout = p1
@@ -113,15 +122,19 @@ function u9.ResolveForClass(p1, p2, p3) -- Line: 46 -- upvalues: u9 (val)
         v2 = nil
     else
         v2 = Inventory[1]
+        if not v2 then
+            v2 = nil
+        end
     end
     if v2 == nil then
         v3 = nil
     else
         v3 = tostring(v2)
+        if not v3 then
+            v3 = nil
+        end
     end
-    if not v3 then
-        v1 = nil
-    elseif not Loadout.OutfitMods then
+    if not v3 or not Loadout.OutfitMods then
         v1 = nil
     else
         v1 = Loadout.OutfitMods[v3]
@@ -129,11 +142,11 @@ function u9.ResolveForClass(p1, p2, p3) -- Line: 46 -- upvalues: u9 (val)
             v1 = nil
         end
     end
-    local v6 = u9.Resolve(v1, v3, p3)
-    return v6, v3
+    return (u9.Resolve(v1, v3, p3)), v3
 end
+
 function u9.NextValue(p1, p2) -- Line: 59 -- upvalues: u9 (val)
-    local HATS_BIT, v1
+    local v1
     if p2 == u9.FORCE_BIT then
         if u9.Resolve(p1, nil).ForceOutfit then
             return 0
@@ -144,7 +157,7 @@ function u9.NextValue(p1, p2) -- Line: 59 -- upvalues: u9 (val)
         error("Invalid outfit mod type", 2)
         return
     end
-    HATS_BIT = u9.HATS_BIT
+    local HATS_BIT = u9.HATS_BIT
     if type(p1) == "table" then
         local v2 = p1[HATS_BIT]
         if v2 == nil then
@@ -163,13 +176,14 @@ function u9.NextValue(p1, p2) -- Line: 59 -- upvalues: u9 (val)
     end
     return 1
 end
+
 function u9.WriteBit(p1, p2, p3) -- Line: 69 -- upvalues: u9 (val)
-    local FORCE_BIT, HATS_BIT, v1, v2, v3
+    local v1, v2, v3
     if p2 ~= u9.HATS_BIT and p2 ~= u9.FORCE_BIT then
         error("Invalid outfit mod type", 2)
     end
     local v4 = {}
-    HATS_BIT = u9.HATS_BIT
+    local HATS_BIT = u9.HATS_BIT
     if type(p1) == "table" then
         v3 = p1[HATS_BIT]
         if v3 == nil then
@@ -183,7 +197,7 @@ function u9.WriteBit(p1, p2, p3) -- Line: 69 -- upvalues: u9 (val)
     else
         v1 = 0
     end
-    FORCE_BIT = u9.FORCE_BIT
+    local FORCE_BIT = u9.FORCE_BIT
     if type(p1) == "table" then
         local v5 = p1[FORCE_BIT]
         if v5 == nil then
@@ -225,13 +239,30 @@ function u9.WriteBit(p1, p2, p3) -- Line: 69 -- upvalues: u9 (val)
     end
     return v4
 end
+
 function u9.IsValidWrite(p1, p2) -- Line: 87 -- upvalues: u9 (val)
     local v1
     if p1 == u9.HATS_BIT then
-        v1 = if type(p2) == "number" then if p2 ~= 0 then p2 == 1 else true else false
+        v1 = false
+        if type(p2) == "number" then
+            v1 = true
+            if p2 ~= 0 then
+                v1 = p2 == 1
+            end
+        end
     else
-        v1 = if p1 == u9.FORCE_BIT then if type(p2) == "number" then if p2 ~= 0 then p2 == 1 else true else false else false
+        v1 = false
+        if p1 == u9.FORCE_BIT then
+            v1 = false
+            if type(p2) == "number" then
+                v1 = true
+                if p2 ~= 0 then
+                    v1 = p2 == 1
+                end
+            end
+        end
     end
     return v1
 end
+
 return table.freeze(u9)

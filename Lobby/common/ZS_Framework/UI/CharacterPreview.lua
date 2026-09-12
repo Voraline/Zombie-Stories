@@ -6,36 +6,39 @@ local DragYaw = require(script.Parent.DragYaw)
 local WepConfig = require(ReplicatedStorage.common.WepConfig)
 local u30 = {}
 u30.__index = u30
-local u31 = {HumanoidRootPart = true, Head = true, Torso = true}
-u31["Left Arm"] = true
-u31["Right Arm"] = true
-u31["Left Leg"] = true
-u31["Right Leg"] = true
+local u31 = {
+    HumanoidRootPart = true,
+    Head = true,
+    Torso = true,
+    ["Left Arm"] = true,
+    ["Right Arm"] = true,
+    ["Left Leg"] = true,
+    ["Right Leg"] = true,
+}
+
 local function cloneModel(p1) -- Line: 32
-    local v1, v2
-    if not p1 or not (p1:IsA("Model")) then
+    if p1 and p1:IsA("Model") then
+        local Archivable = p1.Archivable
+        p1.Archivable = true
+        local success, result = pcall(function() -- Line: 38 -- upvalues: p1 (val)
+            return p1:Clone()
+        end)
+        p1.Archivable = Archivable
+        if success and result and result:IsA("Model") then
+            return result
+        end
         return nil
-    end
-    local Archivable = p1.Archivable
-    p1.Archivable = true
-    v1, v2 = pcall(function() -- Line: 38 -- upvalues: p1 (val)
-        return p1:Clone()
-    end)
-    p1.Archivable = Archivable
-    if not v1 or not v2 then
-        return nil
-    end
-    if v2:IsA("Model") then
-        return v2
     end
     return nil
 end
+
 local function jointParts(p1) -- Line: 45
-    if p1:IsA("JointInstance") or p1:IsA("WeldConstraint") then
-        return p1.Part0, p1.Part1
+    if not p1:IsA("JointInstance") and not p1:IsA("WeldConstraint") then
+        return nil, nil
     end
-    return nil, nil
+    return p1.Part0, p1.Part1
 end
+
 local function motorKey(p1) -- Line: 52
     local Name_2, Name_3
     local Part0 = p1.Part0
@@ -47,6 +50,9 @@ local function motorKey(p1) -- Line: 52
         Name_2 = ""
     else
         Name_2 = Part0.Name
+        if not Name_2 then
+            Name_2 = ""
+        end
     end
     if not Part1 then
         Name_3 = ""
@@ -61,119 +67,152 @@ local function motorKey(p1) -- Line: 52
     v1[3] = Name_3
     return concat(v1, "|")
 end
+
 local function neutralizeFromTemplate(p1, p2) -- Line: 58 -- upvalues: u31 (val), motorKey (val)
+    local v1
     local HumanoidRootPart = p1:FindFirstChild("HumanoidRootPart")
     local HumanoidRootPart_2 = p2
     if HumanoidRootPart_2 then
         HumanoidRootPart_2 = p2:FindFirstChild("HumanoidRootPart")
     end
-    if not HumanoidRootPart then
-        if HumanoidRootPart and HumanoidRootPart:IsA("BasePart") then
-            p1:PivotTo(CFrame.new())
-        end
-        for i, v in ipairs(p1:GetDescendants()) do
-            if v:IsA("Motor6D") then
-                v.Transform = CFrame.new()
-            end
-        end
-        return
-    elseif HumanoidRootPart:IsA("BasePart") and HumanoidRootPart_2 and HumanoidRootPart_2:IsA("BasePart") then
-        local Part0, Part1, part0, part1, v1, v2, v3, v4, v5, v6
+    if HumanoidRootPart
+        and HumanoidRootPart:IsA("BasePart")
+        and HumanoidRootPart_2
+        and HumanoidRootPart_2:IsA("BasePart") then
+        local CFrame_2, CFrame_3, CFrame_4, CFrame_5, Part0, Part1, part0, part1, v2, v3, v4, v5, v6
         local v7 = {}
         for k in pairs(u31) do
-            v3 = p2:FindFirstChild(k)
-            if v3 and v3:IsA("BasePart") then
-                v7[k] = HumanoidRootPart_2.CFrame:ToObjectSpace(v3.CFrame)
+            v2 = p2:FindFirstChild(k)
+            if v2 and v2:IsA("BasePart") then
+                CFrame_4 = HumanoidRootPart_2.CFrame
+                CFrame_5 = v2.CFrame
+                v7[k] = (CFrame_4:ToObjectSpace(CFrame_5))
             end
         end
         local v8 = {}
-        v2, v1 = p2, p1
-        for i2, i3 in ipairs(p1:GetDescendants()) do
-            if i3:IsA("JointInstance") then
-                Part0 = i3.Part0
-                Part1 = i3.Part1
-            elseif not (i3:IsA("WeldConstraint")) then
+        local v9, v10 = p2, p1
+        for i, v in ipairs(p1:GetDescendants()) do
+            if v:IsA("JointInstance") then
+                Part0 = v.Part0
+                Part1 = v.Part1
+            elseif not v:IsA("WeldConstraint") then
                 Part0 = nil
                 Part1 = nil
+            else
+                Part0 = v.Part0
+                Part1 = v.Part1
             end
             if Part0 and Part1 then
-                if not (Part0:IsDescendantOf(v1)) then
-                    i3:Destroy()
-                elseif Part1:IsDescendantOf(v1) then
-                    table.insert(v8, {part0 = Part0, part1 = Part1, relative = Part0.CFrame:ToObjectSpace(Part1.CFrame)})
+                if not Part0:IsDescendantOf(v10) or not Part1:IsDescendantOf(v10) then
+                    v:Destroy()
+                else
+                    v6 = {part0 = Part0, part1 = Part1}
+                    CFrame_2 = Part0.CFrame
+                    CFrame_3 = Part1.CFrame
+                    v6.relative = CFrame_2:ToObjectSpace(CFrame_3)
+                    table.insert(v8, v6)
                 end
             end
         end
-        local v9 = {}
-        for i4, j in ipairs(v2:GetDescendants()) do
+        v1 = {}
+        for i2, i3 in ipairs(v9:GetDescendants()) do
+            if i3:IsA("Motor6D") then
+                v1[motorKey(i3)] = i3
+            end
+        end
+        for i4, j in ipairs(v10:GetDescendants()) do
             if j:IsA("Motor6D") then
-                v9[motorKey(j)] = j
-            end
-        end
-        for i5, k2 in ipairs(v1:GetDescendants()) do
-            if k2:IsA("Motor6D") then
-                v4 = v9[motorKey(k2)]
-                if v4 then
-                    k2.C0 = v4.C0
-                    k2.C1 = v4.C1
+                v3 = v1[motorKey(j)]
+                if v3 then
+                    j.C0 = v3.C0
+                    j.C1 = v3.C1
                 end
-                k2.Transform = CFrame.new()
+                j.Transform = CFrame.new()
             end
         end
-        local v10 = {}
-        for k3 in pairs(u31) do
-            v5 = v1:FindFirstChild(k3)
-            v6 = v7[k3]
-            if v5 and v5:IsA("BasePart") and v6 then
-                v5.CFrame = v6
-                v10[v5] = true
+        local v11 = {}
+        for k2 in pairs(u31) do
+            v4 = v10:FindFirstChild(k2)
+            v5 = v7[k2]
+            if v4 and v4:IsA("BasePart") and v5 then
+                v4.CFrame = v5
+                v11[v4] = true
             end
         end
         HumanoidRootPart.CFrame = CFrame.new()
-        v10[HumanoidRootPart] = true
-        local v11 = true
-        while v11 do
-            v11 = false
-            for i6, n in ipairs(v8) do
-                part0 = n.part0
-                part1 = n.part1
+        v11[HumanoidRootPart] = true
+        local v12 = true
+        while v12 do
+            v12 = false
+            for i5, k3 in ipairs(v8) do
+                part0 = k3.part0
+                part1 = k3.part1
                 if part0.Parent and part1.Parent then
-                    if not (v10[part0]) then
-                        if v10[part1] and not (v10[part0]) then
-                            part0.CFrame = part1.CFrame * n.relative:Inverse()
-                            v10[part0] = true
-                            v11 = true
+                    if not v11[part0] then
+                        if v11[part1] and not v11[part0] then
+                            part0.CFrame = part1.CFrame * k3.relative:Inverse()
+                            v11[part0] = true
+                            v12 = true
                         end
-                    elseif not (v10[part1]) then
-                        part1.CFrame = part0.CFrame * n.relative
-                        v10[part1] = true
-                        v11 = true
+                    elseif not v11[part1] then
+                        part1.CFrame = part0.CFrame * k3.relative
+                        v11[part1] = true
+                        v12 = true
+                    elseif v11[part1] and not v11[part0] then
+                        part0.CFrame = part1.CFrame * k3.relative:Inverse()
+                        v11[part0] = true
+                        v12 = true
                     end
                 end
             end
         end
-        for i7, m in ipairs(v1:GetDescendants()) do
-            if m:IsA("BasePart") and not (v10[m]) then
-                m:Destroy()
+        for i6, n in ipairs(v10:GetDescendants()) do
+            if n:IsA("BasePart") and not v11[n] then
+                n:Destroy()
             end
         end
         return
     end
+    if HumanoidRootPart and HumanoidRootPart:IsA("BasePart") then
+        v1 = CFrame.new()
+        p1:PivotTo(v1)
+    end
+    for i7, m in ipairs(p1:GetDescendants()) do
+        if m:IsA("Motor6D") then
+            m.Transform = CFrame.new()
+        end
+    end
 end
+
 local function sanitizeRig(p1) -- Line: 163
     local v1
-    local v2 = {"Vehicle", "Animate", "LoadoutModel"}
-    for i, v in ipairs(v2) do
+    local v2 = ipairs
+    local v3 = {"Vehicle", "Animate", "LoadoutModel"}
+    for i, v in v2(v3) do
         v1 = p1:FindFirstChild(v)
         if v1 then
             v1:Destroy()
         end
     end
-    local v3 = p1
+    local v4 = p1
     for i2, i3 in ipairs(p1:GetDescendants()) do
-        if i3:IsA("LuaSourceContainer") then
+        if i3:IsA("LuaSourceContainer")
+            or i3:IsA("Tool")
+            or i3:IsA("Sound")
+            or i3:IsA("ParticleEmitter")
+            or i3:IsA("Trail")
+            or i3:IsA("Beam")
+            or i3:IsA("Smoke")
+            or i3:IsA("Fire")
+            or i3:IsA("Sparkles")
+            or i3:IsA("BodyMover")
+            or i3:IsA("LinearVelocity")
+            or i3:IsA("AngularVelocity")
+            or i3:IsA("VectorForce")
+            or i3:IsA("AlignPosition")
+            or i3:IsA("AlignOrientation") then
             i3:Destroy()
-        elseif not (i3:IsA("Tool")) and not (i3:IsA("Sound")) and not (i3:IsA("ParticleEmitter")) and not (i3:IsA("Trail")) and not (i3:IsA("Beam")) and not (i3:IsA("Smoke")) and not (i3:IsA("Fire")) and not (i3:IsA("Sparkles")) and not (i3:IsA("BodyMover")) and not (i3:IsA("LinearVelocity")) and not (i3:IsA("AngularVelocity")) and not (i3:IsA("VectorForce")) and not (i3:IsA("AlignPosition")) and not (i3:IsA("AlignOrientation")) and i3:IsA("BasePart") then
+        elseif i3:IsA("BasePart") then
             i3.Anchored = false
             i3.CanCollide = false
             i3.CanTouch = false
@@ -183,22 +222,24 @@ local function sanitizeRig(p1) -- Line: 163
             i3.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
         end
     end
-    local Humanoid = v3:FindFirstChildOfClass("Humanoid")
+    local Humanoid = v4:FindFirstChildOfClass("Humanoid")
     if Humanoid then
         Humanoid.AutoRotate = false
         Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
         Humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff
         Humanoid.NameDisplayDistance = 0
     end
-    local HumanoidRootPart = v3:FindFirstChild("HumanoidRootPart")
+    local HumanoidRootPart = v4:FindFirstChild("HumanoidRootPart")
     if HumanoidRootPart and HumanoidRootPart:IsA("BasePart") then
         HumanoidRootPart.Anchored = true
-        v3.PrimaryPart = HumanoidRootPart
+        v4.PrimaryPart = HumanoidRootPart
     end
-    v3.Archivable = true
-    return v3
+    v4.Archivable = true
+    return v4
 end
-local function createCanonicalRig(p1, p2, p3) -- Line: 218 -- upvalues: cloneModel (val), AvatarProvider (val), neutralizeFromTemplate (val), sanitizeRig (val)
+
+local function createCanonicalRig(p1, p2, p3) -- Line: 218
+    -- upvalues: cloneModel (val), AvatarProvider (val), neutralizeFromTemplate (val), sanitizeRig (val)
     local v1 = cloneModel(p2)
     if p3 then
         local HolsterCosmetics = v1
@@ -233,14 +274,18 @@ local function createCanonicalRig(p1, p2, p3) -- Line: 218 -- upvalues: cloneMod
     end
     return (sanitizeRig(v3))
 end
+
 local function cleanViewmodel(p1) -- Line: 246
-    local KeyParts
     for i, v in ipairs(p1:GetChildren()) do
-        if v.Name ~= "KeyParts" and v.Name ~= "Weapon" and v.Name ~= "Attachments" and v.Name ~= "GlobalParts" and v.Name ~= "Animations" then
+        if v.Name ~= "KeyParts"
+            and v.Name ~= "Weapon"
+            and v.Name ~= "Attachments"
+            and v.Name ~= "GlobalParts"
+            and v.Name ~= "Animations" then
             v:Destroy()
         end
     end
-    KeyParts = p1:FindFirstChild("KeyParts")
+    local KeyParts = p1:FindFirstChild("KeyParts")
     if not KeyParts then
         return nil
     end
@@ -254,106 +299,131 @@ local function cleanViewmodel(p1) -- Line: 246
     end
     return KeyParts:FindFirstChild("Handle")
 end
+
 local function scaleModel(p1, p2) -- Line: 274
+    local v1
     for i, v in ipairs(p1:GetDescendants()) do
         if v:IsA("BasePart") then
             v.Size = v.Size * p2
         elseif v:IsA("JointInstance") and v.Name ~= "Grip" then
-            v.C0 = v.C0 - v.C0.Position + v.C0.Position * p2
-            v.C1 = v.C1 - v.C1.Position + v.C1.Position * p2
+            v1 = v.C0 - v.C0.Position
+            v.C0 = v1 + v.C0.Position * p2
+            v1 = v.C1 - v.C1.Position
+            v.C1 = v1 + v.C1.Position * p2
         end
     end
 end
+
 local function getRootCenteredExtents(p1) -- Line: 285
-    local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10
+    local CFrame, Magnitude, Y, Y_2, v1, v2, v3, v4, v5, v6, v7
     local Pivot = p1:GetPivot()
-    local v11 = (1 / 0)
-    local v12 = (-1 / 0)
-    local v13 = 0
+    local v8 = (1 / 0)
+    local v9 = (-1 / 0)
+    local v10 = 0
     for i, v in ipairs(p1:GetDescendants()) do
         if v:IsA("BasePart") and v.Name ~= "PreviewPivot" then
             v1 = v.Size * 0.5
-            v2 = 1
-            v3 = 2
-            for i2 = -1, v2, v3 do
-                v4 = 1
-                v5 = 2
-                for j = -1, v4, v5 do
-                    v6 = 1
-                    v7 = 2
-                    for k = -1, v6, v7 do
-                        v9 = v1.X * i2
-                        v10 = v1.Y * j
-                        v8 = Pivot:PointToObjectSpace(v.CFrame:PointToWorldSpace((Vector3.new(v9, v10, v1.Z * k))))
-                        v11 = math.min(v11, v8.Y)
-                        v12 = math.max(v12, v8.Y)
-                        v13 = math.max(v13, Vector2.new(v8.X, v8.Z).Magnitude)
+            for i2 = -1, 1, 2 do
+                for j = -1, 1, 2 do
+                    for k = -1, 1, 2 do
+                        CFrame = v.CFrame
+                        v5 = v1.X * i2
+                        v6 = v1.Y * j
+                        v7 = v1.Z * k
+                        v4 = Vector3.new(v5, v6, v7)
+                        v3 = CFrame:PointToWorldSpace(v4)
+                        v2 = Pivot:PointToObjectSpace(v3)
+                        Y = v2.Y
+                        v8 = math.min(v8, Y)
+                        Y_2 = v2.Y
+                        v9 = math.max(v9, Y_2)
+                        Magnitude = (Vector2.new(v2.X, v2.Z)).Magnitude
+                        v10 = math.max(v10, Magnitude)
                     end
                 end
             end
         end
     end
-    if v11 == (1 / 0) then
+    if v8 == (1 / 0) then
         return -3, 3, 3
     end
-    return v11, v12, (math.max(v13, 0.1))
+    return v8, v9, (math.max(v10, 0.1))
 end
+
 function u30:_playAnimation(p2) -- Line: 315
-    local v1, v2
-    if self.destroyed or not p2 or not (p2:IsA("Animation")) or not self.rig then
-        return
-    end
-    local Humanoid = self.rig:FindFirstChildOfClass("Humanoid")
-    if not Humanoid then
-        return
-    end
-    local Animator = Humanoid:FindFirstChildOfClass("Animator")
-    if not Animator then
-        Animator = Instance.new("Animator")
-    end
-    Animator.Parent = Humanoid
-    v1, v2 = pcall(function() -- Line: 325 -- upvalues: Animator (val), p2 (val)
-        return Animator:LoadAnimation(p2)
-    end)
-    if not v1 or not v2 or self.destroyed then
-        return
-    end
-    if self.animationTrack then
-        pcall(function() -- Line: 332 -- upvalues: self (val)
-            self.animationTrack:Stop(0.1)
+    if not self.destroyed and p2 and p2:IsA("Animation") and self.rig then
+        local Humanoid = self.rig:FindFirstChildOfClass("Humanoid")
+        if not Humanoid then
+            return
+        end
+        local Animator = Humanoid:FindFirstChildOfClass("Animator")
+        if not Animator then
+            Animator = Instance.new("Animator")
+        end
+        Animator.Parent = Humanoid
+        local success, result = pcall(function() -- Line: 325 -- upvalues: Animator (val), p2 (val)
+            local v1 = Animator
+            local v2 = p2
+            return v1:LoadAnimation(v2)
         end)
+        if success and result and not self.destroyed then
+            if self.animationTrack then
+                pcall(function() -- Line: 332 -- upvalues: self (val)
+                    self.animationTrack:Stop(0.1)
+                end)
+            end
+            result.Looped = true
+            result:Play(0.1)
+            self.animationTrack = result
+            return
+        end
+        return
     end
-    v2.Looped = true
-    v2:Play(0.1)
-    self.animationTrack = v2
 end
+
 function u30:_fitCamera() -- Line: 341 -- upvalues: getRootCenteredExtents (val)
-    local v1, v2, v3
     local viewport = self.viewport
     local previewModel = self.previewModel
     local camera = self.camera
-    if self.destroyed or not viewport or not previewModel or not camera or viewport.AbsoluteSize.X <= 0 or viewport.AbsoluteSize.Y <= 0 then
+    if not self.destroyed
+        and viewport
+        and previewModel
+        and camera
+        and not (viewport.AbsoluteSize.X <= 0)
+        and not (viewport.AbsoluteSize.Y <= 0) then
+        local v1, v2, v3 = getRootCenteredExtents(previewModel)
+        local v4 = v2 - v1
+        local v5 = math.max(v4, 0.1)
+        v4 = (v1 + v2) * 0.5 + v5 * (self.focusOffset or 0.08)
+        local v6 = v2 - v4
+        local v7 = v4 - v1
+        local v8 = math.max(v6, v7)
+        v7 = camera.FieldOfView * 0.5
+        v6 = math.rad(v7)
+        v7 = viewport.AbsoluteSize.X / viewport.AbsoluteSize.Y
+        local v9 = (math.tan(v6)) * v7
+        local v10 = math.atan(v9)
+        v9 = v3 + v3 / math.tan(v10)
+        local v11 = v3 + v8 / (math.tan(v6))
+        local v12 = (math.max(v9, v11)) * (self.cameraPadding or 1.04)
+        local v13 = Vector3.new(0, v4, 0)
+        camera.CFrame = CFrame.lookAt(Vector3.new(0, v4, v12), v13)
         return
     end
-    v1, v2, v3 = getRootCenteredExtents(previewModel)
-    local v4 = math.max(v2 - v1, 0.1)
-    local v5 = (v1 + v2) * 0.5 + v4 * (self.focusOffset or 0.08)
-    local v6 = math.max(v2 - v5, v5 - v1)
-    local v7 = math.rad(camera.FieldOfView * 0.5)
-    local v8 = v3 + v3 / math.tan((math.atan(math.tan(v7) * (viewport.AbsoluteSize.X / viewport.AbsoluteSize.Y))))
-    local v9 = math.max(v8, v3 + v6 / math.tan(v7))
-    local v10 = v9 * (self.cameraPadding or 1.04)
-    v9 = Vector3.new(0, v5, 0)
-    local v11 = Vector3.new(0, v5, v10)
-    camera.CFrame = CFrame.lookAt(v11, v9)
 end
+
 function u30:_applyRotation() -- Line: 370
     if not self.destroyed and self.previewModel and self.previewModel.Parent then
-        self.previewModel:PivotTo(CFrame.Angles(0, self.yaw, 0))
+        local previewModel = self.previewModel
+        local v1 = CFrame.Angles(0, self.yaw, 0)
+        previewModel:PivotTo(v1)
     end
 end
+
 function u30:_bindDrag() -- Line: 376 -- upvalues: DragYaw (val)
-    self.drag = DragYaw.bind({
+    local v1 = DragYaw
+    local bind = v1.bind
+    local v2 = {
         Surface = self.viewport,
         Sensitivity = self.dragSensitivity,
         InitialYaw = self.yaw,
@@ -361,163 +431,178 @@ function u30:_bindDrag() -- Line: 376 -- upvalues: DragYaw (val)
             self.yaw = p1
             self:_applyRotation()
         end,
-    })
+    }
+    self.drag = bind(v2)
 end
-function u30:_attachWeapon() -- Line: 388 -- upvalues: WepConfig (val), cleanViewmodel (val), scaleModel (val), RunService (val)
-    local rig, weaponName
-    if self.destroyed or not self.weaponName or not self.rig then
-        return
-    end
-    rig = self.rig
-    local v1 = WepConfig:StreamViewmodel(self.weaponName)
-    v1 = v1:andThen(function(p1) -- Line: 394 -- upvalues: self (val), rig (val), WepConfig (upval), cleanViewmodel (upval), scaleModel (upval), RunService (upval)
-        local Motor6D, WorldScaleValue, v1, v2, v3
-        if self.destroyed or not rig.Parent then
-            return
-        end
-        local v4 = p1:Clone()
-        local weaponId = self.weaponId
-        if not weaponId then
-            weaponId = self.weaponName
-        end
-        local WeaponConfig = WepConfig:GetWeaponConfig(weaponId)
-        local v5 = cleanViewmodel(v4)
-        if not v5 or not (v5:IsA("BasePart")) then
-            v4:Destroy()
-            return
-        end
-        if not WeaponConfig then
-            WorldScaleValue = 1
-        else
-            WorldScaleValue = WeaponConfig.WorldScaleValue
-        end
-        scaleModel(v4, WorldScaleValue)
-        local RightHand = rig:FindFirstChild("Right Arm")
-        if not RightHand then
-            RightHand = rig:FindFirstChild("RightHand")
-        end
-        if not RightHand or not (RightHand:IsA("BasePart")) then
-            v4:Destroy()
-            return
-        end
-        local Grip = v5:FindFirstChild("Grip")
-        if not Grip then
-            v1 = RightHand
-            if Grip and Grip:IsA("StringValue") then
-                v2 = rig:FindFirstChild(Grip.Value)
-                if v2 and v2:IsA("BasePart") then
-                    v1 = v2
+
+function u30:_attachWeapon() -- Line: 388
+    -- upvalues: WepConfig (val), cleanViewmodel (val), scaleModel (val), RunService (val)
+    if not self.destroyed and self.weaponName and self.rig then
+        local rig = self.rig
+        local v1 = WepConfig
+        local weaponName = self.weaponName
+        v1 = v1:StreamViewmodel(weaponName)
+        v1 = v1:andThen(function(p1) -- Line: 394
+            -- upvalues: self (val), rig (val), WepConfig (upval), cleanViewmodel (upval), scaleModel (upval)
+            -- upvalues: RunService (upval)
+            if not self.destroyed and rig.Parent then
+                local v1 = p1:Clone()
+                local v2 = WepConfig
+                local weaponId = self.weaponId
+                if not weaponId then
+                    weaponId = self.weaponName
                 end
-            end
-            if Grip then
-                Grip:Destroy()
-            end
-            Motor6D = Instance.new("Motor6D")
-            Motor6D.Name = "Grip"
-            Motor6D.Part0 = v1
-            Motor6D.Part1 = v5
-            local v6 = CFrame.new(0, -1.1, -0.2)
-            Motor6D.C0 = v6 * CFrame.Angles(3.141592653589793, 0, 0)
-            Motor6D.Parent = RightHand
-        elseif Grip:IsA("Motor6D") then
-            local BodyPart = Grip:FindFirstChild("BodyPart")
-            v2 = BodyPart
-            if v2 then
-                v2 = BodyPart:IsA("StringValue")
-                if v2 then
-                    v2 = rig:FindFirstChild(BodyPart.Value)
+                local WeaponConfig = v2:GetWeaponConfig(weaponId)
+                local v3 = cleanViewmodel(v1)
+                if v3 and v3:IsA("BasePart") then
+                    local WorldScaleValue
+                    local v4 = scaleModel
+                    local v5 = v1
+                    if not WeaponConfig then
+                        WorldScaleValue = 1
+                    else
+                        WorldScaleValue = WeaponConfig.WorldScaleValue
+                        if not WorldScaleValue then
+                            WorldScaleValue = 1
+                        end
+                    end
+                    v4(v5, WorldScaleValue)
+                    local RightHand = rig:FindFirstChild("Right Arm")
+                    if not RightHand then
+                        RightHand = rig:FindFirstChild("RightHand")
+                    end
+                    if RightHand and RightHand:IsA("BasePart") then
+                        local v6, v7, v8
+                        local Grip = v3:FindFirstChild("Grip")
+                        if not Grip or not Grip:IsA("Motor6D") then
+                            v6 = RightHand
+                            if Grip and Grip:IsA("StringValue") then
+                                v7 = rig
+                                local Value_2 = Grip.Value
+                                v7 = v7:FindFirstChild(Value_2)
+                                if v7 and v7:IsA("BasePart") then
+                                    v6 = v7
+                                end
+                            end
+                            if Grip then
+                                Grip:Destroy()
+                            end
+                            local Motor6D = Instance.new("Motor6D")
+                            Motor6D.Name = "Grip"
+                            Motor6D.Part0 = v6
+                            Motor6D.Part1 = v3
+                            Motor6D.C0 = (CFrame.new(0, -1.1, -0.2)) * CFrame.Angles(3.141592653589793, 0, 0)
+                            Motor6D.Parent = RightHand
+                        else
+                            local BodyPart = Grip:FindFirstChild("BodyPart")
+                            v7 = BodyPart
+                            if v7 then
+                                v7 = BodyPart:IsA("StringValue")
+                                if v7 then
+                                    v7 = rig
+                                    local Value = BodyPart.Value
+                                    v7 = v7:FindFirstChild(Value)
+                                end
+                            end
+                            if not v7 or not v7:IsA("BasePart") then
+                                v8 = RightHand
+                            else
+                                v8 = v7
+                            end
+                            Grip.Part0 = v8
+                            Grip.Part1 = v3
+                            Grip.Parent = RightHand
+                        end
+                        v1.Name = "PreviewWeapon"
+                        v1.Parent = rig
+                        v6 = nil
+                        if WeaponConfig and WeaponConfig.UseIdleForPreview then
+                            local Animations = v1:FindFirstChild("Animations")
+                            v8 = Animations
+                            if v8 then
+                                v8 = Animations:FindFirstChild("3P")
+                            end
+                            local Idle3P = v8
+                            if Idle3P then
+                                Idle3P = v8:FindFirstChild("Idle3P")
+                            end
+                            v6 = Idle3P
+                        end
+                        if not v6 and self.animations then
+                            if not WeaponConfig or not WeaponConfig.IsMelee then
+                                v7 = "StandingGunV1"
+                            else
+                                v7 = "StandingMeleeV1"
+                            end
+                            v6 = self.animations:FindFirstChild(v7)
+                        end
+                        self:_playAnimation(v6)
+                        task.defer(function() -- Line: 453 -- upvalues: self (upval), RunService (upval)
+                            if self.destroyed then
+                                return
+                            end
+                            RunService.RenderStepped:Wait()
+                            RunService.RenderStepped:Wait()
+                            self:_fitCamera()
+                        end)
+                        return
+                    end
+                    v1:Destroy()
+                    return
                 end
-            end
-            if not v2 then
-                v3 = RightHand
-            elseif v2:IsA("BasePart") then
-                v3 = v2
-            end
-            Grip.Part0 = v3
-            Grip.Part1 = v5
-            Grip.Parent = RightHand
-        end
-        v4.Name = "PreviewWeapon"
-        v4.Parent = rig
-        v1 = nil
-        if WeaponConfig and WeaponConfig.UseIdleForPreview then
-            local Animations = v4:FindFirstChild("Animations")
-            v3 = Animations
-            if v3 then
-                v3 = Animations:FindFirstChild("3P")
-            end
-            local Idle3P = v3
-            if Idle3P then
-                Idle3P = v3:FindFirstChild("Idle3P")
-            end
-            v1 = Idle3P
-        end
-        if not v1 and self.animations then
-            if not WeaponConfig then
-                v2 = "StandingGunV1"
-            elseif not WeaponConfig.IsMelee then
-                v2 = "StandingGunV1"
-            else
-                v2 = "StandingMeleeV1"
-            end
-            v1 = self.animations:FindFirstChild(v2)
-        end
-        self:_playAnimation(v1)
-        task.defer(function() -- Line: 453 -- upvalues: self (upval), RunService (upval)
-            if self.destroyed then
+                v1:Destroy()
                 return
             end
-            RunService.RenderStepped:Wait()
-            RunService.RenderStepped:Wait()
-            self:_fitCamera()
         end)
-    end)
-    v1:catch(function() end)
-end
-function u30:_attachHolsters() -- Line: 465 -- upvalues: WepConfig (val)
-    local rig, v1
-    if self.destroyed or not self.rig or not self.holsterWeapons or not self.attachHolster then
+        v1:catch(function() end)
         return
     end
-    rig = self.rig
-    local Folder = Instance.new("Folder")
-    Folder.Name = "HolsterCosmetics"
-    Folder.Parent = rig
-    for k, v in pairs(self.holsterWeapons) do
-        if not (table.find(self.removeHolsters, k)) then
-            v1 = WepConfig:StreamViewmodel(v)
-            v1 = v1:andThen(function(p1) -- Line: 476 -- upvalues: self (val), rig (val), k (val), Folder (val)
-                local v1, v2
-                if self.destroyed or not rig.Parent then
+end
+
+function u30:_attachHolsters() -- Line: 465 -- upvalues: WepConfig (val)
+    if not self.destroyed and self.rig and self.holsterWeapons and self.attachHolster then
+        local rig = self.rig
+        local Folder = Instance.new("Folder")
+        Folder.Name = "HolsterCosmetics"
+        Folder.Parent = rig
+        for k, v in pairs(self.holsterWeapons) do
+            if not table.find(self.removeHolsters, k) then
+                ((WepConfig:StreamViewmodel(v)):andThen(function(p1) -- Line: 476 -- upvalues: self (val), rig (val), k (val), Folder (val)
+                    if not self.destroyed and rig.Parent then
+                        local success, result = pcall(self.attachHolster, p1, rig, k, Folder)
+                        if success and result then
+                            self:_fitCamera()
+                            return
+                        end
+                        p1:Destroy()
+                        return
+                    end
                     p1:Destroy()
-                    return
-                end
-                v1, v2 = pcall(self.attachHolster, p1, rig, k, Folder)
-                if not v1 or not v2 then
-                    p1:Destroy()
-                    return
-                end
-                self:_fitCamera()
-            end)
-            v1:catch(function() end)
+                end)):catch(function() end)
+            end
         end
+        return
     end
 end
+
 function u30:_build() -- Line: 494 -- upvalues: createCanonicalRig (val), RunService (val)
     local v1
-    local v2 = self.holsterWeapons ~= nil
-    local v3 = createCanonicalRig(self.userId, self.appearanceSource, v2)
+    local v2 = createCanonicalRig
+    local userId = self.userId
+    local appearanceSource = self.appearanceSource
+    local v3 = self.holsterWeapons ~= nil
+    v2 = v2(userId, appearanceSource, v3)
     if self.destroyed then
-        if v3 then
-            v3:Destroy()
+        if v2 then
+            v2:Destroy()
         end
         return
     end
-    if not v3 then
+    if not v2 then
         return
     end
-    self.rig = v3
-    local HolsterCosmetics = v3:FindFirstChild("HolsterCosmetics")
+    self.rig = v2
+    local HolsterCosmetics = v2:FindFirstChild("HolsterCosmetics")
     local v4 = self
     for i, v in ipairs(self.removeHolsters) do
         v1 = HolsterCosmetics
@@ -534,7 +619,7 @@ function u30:_build() -- Line: 494 -- upvalues: createCanonicalRig (val), RunSer
     local Model = Instance.new("Model")
     Model.Name = "CenteredCharacter"
     Model.Parent = WorldModel
-    v3.Parent = Model
+    v2.Parent = Model
     local Part = Instance.new("Part")
     Part.Name = "PreviewPivot"
     Part.Size = Vector3.new(0.05000000074505806, 0.05000000074505806, 0.05000000074505806)
@@ -561,9 +646,7 @@ function u30:_build() -- Line: 494 -- upvalues: createCanonicalRig (val), RunSer
     v4:_playAnimation(animations)
     v4:_applyRotation()
     v4:_bindDrag()
-    v1 = 2
-    local v5 = 1
-    for i2 = 1, v1, v5 do
+    for i2 = 1, 2 do
         if 0 < v4.viewport.AbsoluteSize.X and 0 < v4.viewport.AbsoluteSize.Y then
             break
         end
@@ -580,6 +663,7 @@ function u30:_build() -- Line: 494 -- upvalues: createCanonicalRig (val), RunSer
         task.defer(v4.onReady, v4)
     end
 end
+
 function u30:Destroy() -- Line: 567
     if self.destroyed then
         return
@@ -613,6 +697,7 @@ function u30:Destroy() -- Line: 567
     self.rig = nil
     self.previewModel = nil
 end
+
 function u30.Mount(p1) -- Line: 601 -- upvalues: u30 (val)
     local v1 = type(p1) == "table"
     assert(v1, "CharacterPreview.Mount requires a config table")
@@ -621,21 +706,24 @@ function u30.Mount(p1) -- Line: 601 -- upvalues: u30 (val)
         ViewportFrame = p1.ViewportFrame:IsA("ViewportFrame")
     end
     assert(ViewportFrame, "ViewportFrame is required")
-    v1 = {
-        destroyed = false,
-        viewport = p1.ViewportFrame,
-        userId = tonumber(p1.UserId) or 0,
-        appearanceSource = p1.AppearanceSource,
-        weaponId = p1.WeaponId,
-        weaponName = p1.WeaponName,
-        animations = p1.Animations,
-        worldName = p1.WorldName or "CharacterPreviewWorld",
-        fieldOfView = tonumber(p1.FieldOfView) or 35,
-        cameraPadding = tonumber(p1.CameraPadding) or 1.04,
-        focusOffset = tonumber(p1.FocusOffset) or 0.08,
-        dragSensitivity = tonumber(p1.DragSensitivity) or 0.012,
-        yaw = tonumber(p1.InitialYaw) or 3.141592653589793,
-    }
+    v1 = {destroyed = false, viewport = p1.ViewportFrame}
+    local UserId = p1.UserId
+    v1.userId = tonumber(UserId) or 0
+    v1.appearanceSource = p1.AppearanceSource
+    v1.weaponId = p1.WeaponId
+    v1.weaponName = p1.WeaponName
+    v1.animations = p1.Animations
+    v1.worldName = p1.WorldName or "CharacterPreviewWorld"
+    local FieldOfView = p1.FieldOfView
+    v1.fieldOfView = tonumber(FieldOfView) or 35
+    local CameraPadding = p1.CameraPadding
+    v1.cameraPadding = tonumber(CameraPadding) or 1.04
+    local FocusOffset = p1.FocusOffset
+    v1.focusOffset = tonumber(FocusOffset) or 0.08
+    local DragSensitivity = p1.DragSensitivity
+    v1.dragSensitivity = tonumber(DragSensitivity) or 0.012
+    local InitialYaw = p1.InitialYaw
+    v1.yaw = tonumber(InitialYaw) or 3.141592653589793
     local RemoveHolsters = p1.RemoveHolsters
     if not RemoveHolsters then
         RemoveHolsters = {"HolsterPrimary"}
@@ -645,10 +733,12 @@ function u30.Mount(p1) -- Line: 601 -- upvalues: u30 (val)
     v1.attachHolster = p1.AttachHolster
     v1.onReady = p1.OnReady
     v1.connections = {}
-    local u66 = setmetatable(v1, u30)
+    local v2 = u30
+    local u66 = setmetatable(v1, v2)
     task.spawn(function() -- Line: 627 -- upvalues: u66 (val)
         u66:_build()
     end)
     return u66
 end
+
 return u30

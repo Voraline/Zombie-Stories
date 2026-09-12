@@ -7,6 +7,7 @@ local u6 = {}
 local u7 = {}
 local u10 = require("../Utility")
 local u11 = nil
+
 function u0.start(p1) -- Line: 23 -- upvalues: u11 (ref), u3 (ref), u1 (val), u10 (val), u0 (val), CurrentCamera (val)
     u11 = p1
     u3 = u11.iconsDictionary
@@ -22,7 +23,8 @@ function u0.start(p1) -- Line: 23 -- upvalues: u11 (ref), u3 (ref), u1 (val), u1
         end
     end
     local u17 = false
-    local u22 = u10.createStagger(0.1, function(p1) -- Line: 41 -- upvalues: u17 (ref), u0 (upval)
+    local v2 = u10
+    local u22 = v2.createStagger(0.1, function(p1) -- Line: 41 -- upvalues: u17 (ref), u0 (upval)
         if not u17 then
             return
         end
@@ -39,15 +41,14 @@ function u0.start(p1) -- Line: 23 -- upvalues: u11 (ref), u3 (ref), u1 (val), u1
     u11.iconAdded:Connect(u22)
     u11.iconRemoved:Connect(u22)
     u11.iconChanged:Connect(u22)
-    local PropertyChangedSignal = CurrentCamera:GetPropertyChangedSignal("ViewportSize")
-    PropertyChangedSignal:Connect(function() -- Line: 61 -- upvalues: u22 (val)
+    ;(CurrentCamera:GetPropertyChangedSignal("ViewportSize")):Connect(function() -- Line: 61 -- upvalues: u22 (val)
         u22(true)
     end)
-    local PropertyChangedSignal_2 = v1:GetPropertyChangedSignal("AbsoluteSize")
-    PropertyChangedSignal_2:Connect(function() -- Line: 64 -- upvalues: u22 (val)
+    ;(v1:GetPropertyChangedSignal("AbsoluteSize")):Connect(function() -- Line: 64 -- upvalues: u22 (val)
         u22(true)
     end)
 end
+
 function u0.getWidth(p1, p2) -- Line: 69
     local widget = p1.widget
     local Attribute = widget:GetAttribute("TargetWidth")
@@ -56,6 +57,7 @@ function u0.getWidth(p1, p2) -- Line: 69
     end
     return Attribute
 end
+
 function u0.getAvailableIcons(p1) -- Line: 74 -- upvalues: u2 (val), u0 (val)
     local v1 = u2[p1]
     if not v1 then
@@ -63,9 +65,11 @@ function u0.getAvailableIcons(p1) -- Line: 74 -- upvalues: u2 (val), u0 (val)
     end
     return v1
 end
+
 function u0.updateAvailableIcons(p1) -- Line: 82 -- upvalues: u1 (val), u3 (ref), u7 (val), u2 (val)
     local parentIconUID, v1, v2
     local v3 = 0
+    local UIListLayout = u1[p1].UIListLayout
     local v4 = {}
     local v5 = p1
     for k, v in pairs(u3) do
@@ -109,26 +113,29 @@ function u0.updateAvailableIcons(p1) -- Line: 82 -- upvalues: u1 (val), u3 (ref)
     u2[v5] = v4
     return v4
 end
+
 function u0.getRealXPositions(p1, p2) -- Line: 132 -- upvalues: u1 (val), u10 (val), u0 (val)
     local v1, v2, v3, v4
     local v5 = p1 == "Left"
     local v6 = u1[p1]
     local X = v6.AbsolutePosition.X
+    local X_2 = v6.AbsoluteSize.X
     local Offset = v6.UIListLayout.Padding.Offset
     if not v5 then
-        v4 = X + v6.AbsoluteSize.X
+        v4 = X + X_2
     else
         v4 = X
+        if not v4 then
+            v4 = X + X_2
+        end
     end
     local v7 = {}
     if v5 then
         u10.reverseTable(p2)
     end
-    local v8 = 1
-    local v9 = -1
-    local v10 = p2
-    for i = #p2, v8, v9 do
-        v1 = v10[i]
+    local v8 = p2
+    for i = #p2, 1, -1 do
+        v1 = v8[i]
         v2 = u0.getWidth(v1)
         if not v5 then
             v4 = v4 - v2
@@ -141,11 +148,15 @@ function u0.getRealXPositions(p1, p2) -- Line: 132 -- upvalues: u1 (val), u10 (v
             v3 = -Offset
         else
             v3 = Offset
+            if not v3 then
+                v3 = -Offset
+            end
         end
         v4 = v4 + v3
     end
     return v7
 end
+
 function u0.updateBoundary(p1) -- Line: 162 -- upvalues: u1 (val), u0 (val), u6 (val), u11 (ref), u7 (val), u10 (val)
     local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
     local v13 = u1[p1]
@@ -153,11 +164,12 @@ function u0.updateBoundary(p1) -- Line: 162 -- upvalues: u1 (val), u0 (val), u6 
     local X = v13.AbsolutePosition.X
     local X_2 = v13.AbsoluteSize.X
     local Offset = UIListLayout.Padding.Offset
+    local Offset_2 = UIListLayout.Padding.Offset
     local v14 = u0.updateAvailableIcons(p1)
     local v15 = 0
     local v16 = 0
     for k, v in pairs(v14) do
-        v15 = v15 + (u0.getWidth(v) + UIListLayout.Padding.Offset)
+        v15 = v15 + (u0.getWidth(v) + Offset_2)
         v16 = v16 + 1
     end
     if v16 <= 0 then
@@ -175,7 +187,8 @@ function u0.updateBoundary(p1) -- Line: 162 -- upvalues: u1 (val), u0 (val), u6 
         end
         v20 = u11.new()
         v20:setImage(6069276526, "Deselected")
-        v20:setName("Overflow" .. p1)
+        v3 = "Overflow" .. p1
+        v20:setName(v3)
         v20:setOrder(v1)
         v20:setAlignment(p1)
         v20:autoDeselect(false)
@@ -198,137 +211,174 @@ function u0.updateBoundary(p1) -- Line: 162 -- upvalues: u1 (val), u0 (val), u6 
         end
     else
         v2 = v21[1]
+        if not v2 then
+            v2 = v19
+            if v2 then
+                v2 = v21[#v21]
+            end
+        end
     end
-    local v22 = u6[v1]
+    v3 = u6[v1]
     if not v18 then
-        v3 = X
+        v4 = X
     else
-        v3 = X + X_2
+        v4 = X + X_2
+        if not v4 then
+            v4 = X
+        end
     end
     if v2 then
-        v4 = u0.getRealXPositions(v1, v21)
-        v5 = v4[v2.UID]
-        v6 = u0.getWidth(v2)
+        local widget = v2.widget
+        v6 = (u0.getRealXPositions(v1, v21))[v2.UID]
+        v7 = u0.getWidth(v2)
         if not v18 then
-            v7 = v5 + v6 + Offset
+            v8 = v6 + v7 + Offset
         else
-            v7 = v5 - Offset
+            v8 = v6 - Offset
+            if not v8 then
+                v8 = v6 + v7 + Offset
+            end
         end
-        v3 = v7
+        v4 = v8
     end
     local Center = u0.getAvailableIcons("Center")
     if not v18 then
-        v4 = #Center
+        v5 = #Center
     else
-        v4 = 1
+        v5 = 1
     end
-    v5 = Center[v4]
-    if v5 and not v5.hasRelocatedInOverflow then
-        local v23
+    v6 = Center[v5]
+    if v6 and not v6.hasRelocatedInOverflow then
+        local v22
         if not v18 then
-            v6 = v19
-            if v6 then
-                v6 = v14[1]
+            v7 = v19
+            if v7 then
+                v7 = v14[1]
             end
         else
-            v6 = v14[#v14]
+            v7 = v14[#v14]
+            if not v7 then
+                v7 = v19
+                if v7 then
+                    v7 = v14[1]
+                end
+            end
         end
-        local X_3 = v5.widget.AbsolutePosition.X
-        local X_4 = v6.widget.AbsolutePosition.X
-        v9 = u0.getWidth(v6)
+        local X_3 = v6.widget.AbsolutePosition.X
+        local X_4 = v7.widget.AbsolutePosition.X
+        v9 = u0.getWidth(v7)
         if not v18 then
-            v23 = X_3 + u0.getWidth(v5) + Offset
+            v22 = X_3 + u0.getWidth(v6) + Offset
         else
-            v23 = X_3 - Offset
+            v22 = X_3 - Offset
+            if not v22 then
+                v22 = X_3 + u0.getWidth(v6) + Offset
+            end
         end
         if not v18 then
             v10 = X_4
         else
             v10 = X_4 + v9
+            if not v10 then
+                v10 = X_4
+            end
         end
         if not v18 then
-            if v19 and v10 < v23 then
-                v5:align("Right")
-                v5.hasRelocatedInOverflow = true
+            if v19 and v10 < v22 then
+                v6:align("Right")
+                v6.hasRelocatedInOverflow = true
             end
-        elseif v23 < v10 then
-            v5:align("Left")
-            v5.hasRelocatedInOverflow = true
+        elseif v22 < v10 then
+            v6:align("Left")
+            v6.hasRelocatedInOverflow = true
         end
     end
     if v20 then
-        v7 = v20:getInstance("Menu")
-        v8 = X + X_2
+        v8 = v20:getInstance("Menu")
+        local v23 = X + X_2
         v9 = X_2
-        if v7 and v22 then
+        if v8 and v3 then
             local v24
-            local X_5 = v22.widget.AbsolutePosition.X
-            v11 = u0.getWidth(v22)
+            local X_5 = v3.widget.AbsolutePosition.X
+            v11 = u0.getWidth(v3)
             if not v18 then
                 v12 = X_5 + v11 + Offset
             else
                 v12 = X_5 - Offset
+                if not v12 then
+                    v12 = X_5 + v11 + Offset
+                end
             end
-            local v25 = v22:getInstance("Menu")
-            local v26 = v25.AbsoluteCanvasSize.X <= v7.AbsoluteCanvasSize.X
+            local v25 = v3:getInstance("Menu")
+            local X_6 = v8.AbsoluteCanvasSize.X
+            local v26 = v25.AbsoluteCanvasSize.X <= X_6
             local v27 = X + X_2 / 2
             if not v18 then
                 v24 = v27 + Offset / 2
             else
                 v24 = v27 - Offset / 2
+                if not v24 then
+                    v24 = v27 + Offset / 2
+                end
             end
-            v6 = if v26 then v12 else v24
+            v7 = v24
+            if v26 then
+                v7 = v12
+            end
             if not v18 then
-                v27 = v8 - v6
+                v27 = v23 - v7
             else
-                v27 = v6 - X
+                v27 = v7 - X
+                if not v27 then
+                    v27 = v23 - v7
+                end
             end
             v9 = v27
         end
-        local Attribute = v7
+        local Attribute = v8
         if Attribute then
-            Attribute = v7:GetAttribute("MaxWidth")
+            Attribute = v8:GetAttribute("MaxWidth")
         end
         v9 = u10.round(v9)
-        if v7 and Attribute ~= v9 then
-            v7:SetAttribute("MaxWidth", v9)
+        if v8 and Attribute ~= v9 then
+            v8:SetAttribute("MaxWidth", v9)
         end
     end
-    v6 = false
-    v7 = u0.getRealXPositions(p1, v14)
-    v8 = 1
-    v9 = -1
-    for i = #v14, v8, v9 do
+    v7 = false
+    v8 = u0.getRealXPositions(p1, v14)
+    for i = #v14, 1, -1 do
         v10 = v14[i]
         v11 = u0.getWidth(v10)
-        v12 = v7[v10.UID]
+        v12 = v8[v10.UID]
         if not v18 then
-            if v19 and v12 <= v3 then
-                v6 = true
+            if v19 and v12 <= v4 then
+                v7 = true
             end
-        elseif v3 <= v12 + v11 then
+        elseif v4 <= v12 + v11 or v19 and v12 <= v4 then
+            v7 = true
         end
     end
-    v8 = 1
-    v9 = -1
-    for j = #v14, v8, v9 do
+    for j = #v14, 1, -1 do
         v10 = v14[j]
-        if not (u7[v10.UID]) then
-            if not v6 then
-                if not v6 and v10.parentIconUID then
+        if not u7[v10.UID] then
+            if not v7 then
+                if not v7 and v10.parentIconUID then
                     v10:leave()
                 end
             elseif not v10.parentIconUID then
                 v10:joinMenu(v20)
+            elseif not v7 and v10.parentIconUID then
+                v10:leave()
             end
         end
     end
-    if v20.isEnabled ~= v6 then
-        v20:setEnabled(v6)
+    if v20.isEnabled ~= v7 then
+        v20:setEnabled(v7)
     end
     if v20.isEnabled and not v20.overflowAlreadyOpened then
         v20.overflowAlreadyOpened = true
         v20:select()
     end
 end
+
 return u0

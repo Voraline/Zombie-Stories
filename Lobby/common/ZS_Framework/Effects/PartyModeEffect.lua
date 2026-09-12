@@ -1,13 +1,16 @@
-local u31, u32
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local SoundService = game:GetService("SoundService")
 local GameState = require(ReplicatedStorage.common.ZS_Shared.Data.GameState)
-u31, u32 = require(ReplicatedStorage.Packages.Bin)()
-local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (val), SoundService (val), u31 (val), Lighting (val), RunService (val)
+local u31, u32 = require(ReplicatedStorage.Packages.Bin)()
+
+local function togglePartyMode() -- Line: 14
+    -- upvalues: GameState (val), u32 (val), SoundService (val), u31 (val), Lighting (val), RunService (val)
+    local v1 = GameState
+    local PartyModeEnabled = v1.Data.Variables.PartyModeEnabled
     u32()
-    if not GameState.Data.Variables.PartyModeEnabled then
+    if not PartyModeEnabled then
         return
     end
     local Primary = SoundService:WaitForChild("Primary")
@@ -16,18 +19,18 @@ local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (
     u19.Name = "PartyModeMusicGroup"
     u19.Volume = Music:GetAttribute("Volume") or 1
     u19.Parent = Primary
-    local AttributeChangedSignal = Music:GetAttributeChangedSignal("Volume")
-    u31(AttributeChangedSignal:Connect(function() -- Line: 31 -- upvalues: u19 (val), Music (val)
+    local v2 = u31
+    v2((Music:GetAttributeChangedSignal("Volume")):Connect(function() -- Line: 31 -- upvalues: u19 (val), Music (val)
         u19.Volume = Music:GetAttribute("Volume") or 1
     end))
-    local v1 = u31(Instance.new("Sound"))
-    v1.Name = "PartyModeMusic"
-    v1.SoundId = "rbxassetid://80336684189373"
-    v1.Looped = true
-    v1.Volume = 1
-    v1.SoundGroup = u19
-    v1.Parent = SoundService
-    v1.Playing = true
+    v2 = u31(Instance.new("Sound"))
+    v2.Name = "PartyModeMusic"
+    v2.SoundId = "rbxassetid://80336684189373"
+    v2.Looped = true
+    v2.Volume = 1
+    v2.SoundGroup = u19
+    v2.Parent = SoundService
+    v2.Playing = true
     local ColorCorrection = Lighting:FindFirstChild("ColorCorrection")
     if not ColorCorrection then
         ColorCorrection = Instance.new("ColorCorrectionEffect")
@@ -39,18 +42,23 @@ local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (
     local u60 = nil
     local u61 = 1
     local u62 = 0.25
+
     local function updateFormula() -- Line: 84 -- upvalues: u61 (ref)
         return CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, u61)
     end
-    u31(RunService.RenderStepped:Connect(function(p1) -- Line: 88 -- upvalues: u58 (ref), u60 (ref), u57 (val), u59 (ref), u61 (ref), u62 (ref), ColorCorrection (ref)
-        local v1, v2, v3
+
+    local v3 = u31
+    local v4 = RunService
+    v3(v4.RenderStepped:Connect(function(p1) -- Line: 88
+        -- upvalues: u58 (ref), u60 (ref), u57 (val), u59 (ref), u61 (ref), u62 (ref), ColorCorrection (ref)
+        local v1, v2, v3, v4
         local CurrentCamera = workspace.CurrentCamera
         if not u58 then
             u60 = -1
             v1 = {}
             v2 = u57
             v3 = nil
-            local v4 = nil
+            v4 = nil
             for i, j in v2, v3, v4 do
                 table.insert(v1, i)
             end
@@ -61,29 +69,32 @@ local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (
             end
             u58 = v1[math.random(#v1)]
         end
-        u61 = math.clamp(u61 + u60 * 0.4705882352941176 * p1, 0.9, 1)
+        v2 = u61 + u60 * 0.4705882352941176 * p1
+        u61 = math.clamp(v2, 0.9, 1)
         CurrentCamera.CFrame = CurrentCamera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, u61)
         v2 = u62 + u60 * -1 * 3.5294117647058822 * p1
         u62 = math.clamp(v2, 0.25, 1)
         if u59 ~= "Exclude" then
-            u57[u58] = math.clamp(u57[u58] + u60 * 1200 * p1, 0, 255)
-            v1 = u57[u58]
-            if v1 > 0 then
-                v1 = u57[u58]
-                if 255 <= v1 then
-                    u60 = -1
-                    u58 = nil
-                end
-            else
+            v1 = u57
+            v2 = u58
+            v4 = u57[u58] + u60 * 1200 * p1
+            v1[v2] = (math.clamp(v4, 0, 255))
+            if u57[u58] <= 0 then
                 u60 = 1
+            elseif 255 <= u57[u58] then
+                u60 = -1
+                u58 = nil
             end
         else
+            local v5, v6
             v1 = u57
             v2 = nil
             v3 = nil
             for k, n in v1, v2, v3 do
                 if k ~= u58 then
-                    u57[k] = math.clamp(n + u60 * 1200 * p1, 0, 255)
+                    v5 = u57
+                    v6 = n + u60 * 1200 * p1
+                    v5[k] = (math.clamp(v6, 0, 255))
                 end
             end
             v1 = u57
@@ -104,6 +115,7 @@ local function togglePartyMode() -- Line: 14 -- upvalues: GameState (val), u32 (
         ColorCorrection.Saturation = u62
     end))
 end
+
 task.spawn(function() -- Line: 149 -- upvalues: Lighting (val), togglePartyMode (val)
     Lighting:WaitForChild("ColorCorrection", 10)
     togglePartyMode()

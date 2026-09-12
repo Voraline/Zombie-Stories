@@ -1,8 +1,7 @@
 local SoundService = game:GetService("SoundService")
 local v1 = {}
 local HitMarkLense = script:WaitForChild("HitMarkLense")
-local Crosshair = HitMarkLense:WaitForChild("Crosshair")
-local Hitmarker = Crosshair:WaitForChild("Hitmarker")
+local Hitmarker = (HitMarkLense:WaitForChild("Crosshair")):WaitForChild("Hitmarker")
 HitMarkLense.Parent = game.Players.LocalPlayer.PlayerGui
 local SpriteClip = require(script:WaitForChild("SpriteClip"))
 local TweenService = game:GetService("TweenService")
@@ -16,28 +15,37 @@ u36.CurrentFrame = 9
 u36.Looped = false
 local u47 = nil
 local u48 = nil
+
 function v1.Init(p1, p2) -- Line: 25 -- upvalues: u47 (ref), u36 (val), u48 (ref), TweenService (val)
     u47 = p2
-    local Crosshair = u47:WaitForChild("Crosshair")
-    u36.Adornee = Crosshair:WaitForChild("SpriteLabel")
-    local v1 = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-    u48 = TweenService:Create(u47.Crosshair.ArmorIcon, v1, {ImageTransparency = 1})
+    local v1 = u36
+    v1.Adornee = (u47:WaitForChild("Crosshair")):WaitForChild("SpriteLabel")
+    v1 = TweenService
+    local v2 = u47
+    local ArmorIcon = v2.Crosshair.ArmorIcon
+    local v3 = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    u48 = v1:Create(ArmorIcon, v3, {ImageTransparency = 1})
 end
+
 function v1.UpdateLense(p1, p2) -- Line: 31 -- upvalues: u36 (val), Hitmarker (val), HitMarkLense (val), u47 (ref)
-    if not p2 or not p2.Parent then
-        u36.Adornee.Parent = u47.Crosshair
-        HitMarkLense.Enabled = false
+    if p2 and p2.Parent then
+        u36.Adornee.Parent = Hitmarker
+        HitMarkLense.Enabled = true
+        local Position = p2.Position
+        local v1 = p2:FindFirstAncestorWhichIsA("Part")
+        local v2 = Vector2.new(Position.X.Scale, Position.Y.Scale)
+        local Size = v1.Size
+        local v3 = v1.CFrame * CFrame.new(-(v1.Size.X / 2) + v1.Size.X * v2.X, v1.Size.Y / 2 - v1.Size.Y * v2.Y, 0)
+        local Camera = workspace.Camera
+        local p = v3.p
+        local v4 = Camera:WorldToScreenPoint(p)
+        Hitmarker.Position = UDim2.new(0, v4.X, 0, v4.Y)
         return
     end
-    u36.Adornee.Parent = Hitmarker
-    HitMarkLense.Enabled = true
-    local Position = p2.Position
-    local v1 = p2:FindFirstAncestorWhichIsA("Part")
-    local v2 = Vector2.new(Position.X.Scale, Position.Y.Scale)
-    local v3 = v1.CFrame * CFrame.new(-(v1.Size.X / 2) + v1.Size.X * v2.X, v1.Size.Y / 2 - v1.Size.Y * v2.Y, 0)
-    local v4 = workspace.Camera:WorldToScreenPoint(v3.p)
-    Hitmarker.Position = UDim2.new(0, v4.X, 0, v4.Y)
+    u36.Adornee.Parent = u47.Crosshair
+    HitMarkLense.Enabled = false
 end
+
 function v1.Emit(p1, p2, p3, p4) -- Line: 48 -- upvalues: u48 (ref), u47 (ref), SoundService (val), u36 (val)
     local v1 = p2
     if not v1 then
@@ -96,4 +104,5 @@ function v1.Emit(p1, p2, p3, p4) -- Line: 48 -- upvalues: u48 (ref), u47 (ref), 
         u36:Play()
     end
 end
+
 return v1

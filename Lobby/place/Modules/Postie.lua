@@ -1,64 +1,78 @@
-local Received, Sent
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 game:GetService("ReplicatedStorage")
-if not (script:FindFirstChild("Sent")) then
+if not script:FindFirstChild("Sent") then
     local RemoteEvent = Instance.new("RemoteEvent")
     RemoteEvent.Name = "Sent"
     RemoteEvent.Parent = script
 end
-if not (script:FindFirstChild("Received")) then
+if not script:FindFirstChild("Received") then
     local RemoteEvent_2 = Instance.new("RemoteEvent")
     RemoteEvent_2.Name = "Received"
     RemoteEvent_2.Parent = script
 end
-Sent = script.Sent
-Received = script.Received
+local Sent = script.Sent
+local Received = script.Received
 local u43 = RunService:IsServer()
 local u44 = {}
 local u45 = {}
+
 local function spawnNow(p1, ...) -- Line: 97
     local BindableEvent = Instance.new("BindableEvent")
     local u6 = table.pack(...)
     BindableEvent.Event:Connect(function() -- Line: 100 -- upvalues: p1 (val), u6 (val)
-        p1(table.unpack(u6, 1, u6.n))
+        local v1 = p1
+        local v2 = u6
+        local v3 = u6
+        local n = v3.n
+        v1(table.unpack(v2, 1, n))
     end)
     BindableEvent:Fire()
     BindableEvent:Destroy()
 end
+
 local v1 = {
     InvokeClient = function(p1, p2, p3, ...) -- Line: 112 -- upvalues: u43 (val), u45 (val), HttpService (val), spawnNow (val), Sent (val)
-        local u43
-        assert(u43, "Postie.InvokeClient can only be called from the server")
-        local v1 = typeof(p1) == "string"
+        local v1 = u43
+        assert(v1, "Postie.InvokeClient can only be called from the server")
+        v1 = typeof(p1) == "string"
         assert(v1, "bad argument #1 to Postie.InvokeClient, expects string")
-        v1 = if typeof(p2) == "Instance" then p2:IsA("Player") else false
+        v1 = false
+        if typeof(p2) == "Instance" then
+            v1 = p2:IsA("Player")
+        end
         assert(v1, "bad argument #2 to Postie.InvokeClient, expects Instance<Player>")
         v1 = typeof(p3) == "number"
         assert(v1, "bad argument #3 to Postie.InvokeClient, expects number")
         local BindableEvent = Instance.new("BindableEvent")
-        u43 = false
+        local u43_2 = false
         local u46 = #u45 + 1
         local u51 = HttpService:GenerateGUID(false)
-        u45[u46] = function(p1, a2, ...) -- Line: 123 -- upvalues: p2 (val), u51 (val), u43 (ref), u45 (upval), u46 (val), BindableEvent (val)
-            if p1 ~= p2 or a2 ~= u51 then
-                return false
+        local v2 = u45
+
+        v2[u46] = function(p1, p2_2, ...) -- Line: 123
+            -- upvalues: p2 (val), u51 (val), u43_2 (ref), u45 (upval), u46 (val), BindableEvent (val)
+            if p1 == p2 and p2_2 == u51 then
+                u43_2 = true
+                table.remove(u45, u46)
+                BindableEvent:Fire(true, ...)
+                return true
             end
-            u43 = true
-            table.remove(u45, u46)
-            BindableEvent:Fire(true, ...)
-            return true
+            return false
         end
-        spawnNow(function() -- Line: 131 -- upvalues: p3 (val), u43 (ref), u45 (upval), u46 (val), BindableEvent (val)
+
+        v2 = spawnNow
+        v2(function() -- Line: 131 -- upvalues: p3 (val), u43_2 (ref), u45 (upval), u46 (val), BindableEvent (val)
             task.wait(p3)
-            if u43 then
+            if u43_2 then
                 return
             end
             table.remove(u45, u46)
             BindableEvent:Fire(false)
         end)
         Sent:FireClient(p2, p1, u51, ...)
-        return BindableEvent.Event:Wait()
+        v2 = BindableEvent.Event:Wait()
+        return v2
     end,
     InvokeServer = function(p1, p2, ...) -- Line: 143 -- upvalues: u43 (val), u45 (val), HttpService (val), spawnNow (val), Sent (val)
         local v1 = not u43
@@ -71,7 +85,9 @@ local v1 = {
         local u29 = false
         local u32 = #u45 + 1
         local u37 = HttpService:GenerateGUID(false)
-        u45[u32] = function(p1, ...) -- Line: 153 -- upvalues: u37 (val), u29 (ref), u45 (upval), u32 (val), BindableEvent (val)
+        local v2 = u45
+
+        v2[u32] = function(p1, ...) -- Line: 153 -- upvalues: u37 (val), u29 (ref), u45 (upval), u32 (val), BindableEvent (val)
             if p1 ~= u37 then
                 return false
             end
@@ -80,7 +96,9 @@ local v1 = {
             BindableEvent:Fire(true, ...)
             return true
         end
-        spawnNow(function() -- Line: 161 -- upvalues: p2 (val), u29 (ref), u45 (upval), u32 (val), BindableEvent (val)
+
+        v2 = spawnNow
+        v2(function() -- Line: 161 -- upvalues: p2 (val), u29 (ref), u45 (upval), u32 (val), BindableEvent (val)
             task.wait(p2)
             if u29 then
                 return
@@ -89,7 +107,8 @@ local v1 = {
             BindableEvent:Fire(false)
         end)
         Sent:FireServer(p1, u37, ...)
-        return BindableEvent.Event:Wait()
+        v2 = BindableEvent.Event:Wait()
+        return v2
     end,
     SetCallback = function(p1, p2) -- Line: 173 -- upvalues: u44 (val)
         local v1 = typeof(p1) == "string"
@@ -112,11 +131,12 @@ if u43 then
     end)
     Sent.OnServerEvent:Connect(function(p1, p2, p3, ...) -- Line: 195 -- upvalues: u44 (val), Received (val)
         local v1 = u44[p2]
-        local v2 = v1
-        if v2 then
-            v2 = v1(p1, ...)
+        local v2 = Received
+        local v3 = v1
+        if v3 then
+            v3 = v1(p1, ...)
         end
-        Received:FireClient(p1, p3, v2)
+        v2:FireClient(p1, p3, v3)
     end)
     return v1
 end
@@ -129,10 +149,11 @@ Received.OnClientEvent:Connect(function(...) -- Line: 201 -- upvalues: u45 (val)
 end)
 Sent.OnClientEvent:Connect(function(p1, p2, ...) -- Line: 207 -- upvalues: u44 (val), Received (val)
     local v1 = u44[p1]
-    local v2 = v1
-    if v2 then
-        v2 = v1(...)
+    local v2 = Received
+    local v3 = v1
+    if v3 then
+        v3 = v1(...)
     end
-    Received:FireServer(p2, v2)
+    v2:FireServer(p2, v3)
 end)
 return v1

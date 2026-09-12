@@ -3,14 +3,17 @@ require(Parent.PubTypes)
 require(Parent.Types)
 local initDependency = require(Parent.Dependencies.initDependency)
 local v1 = {}
-local u14 = {__index = v1}
+local u14 = {}
+u14.__index = v1
 local u15 = {}
+
 function v1.update(p1) -- Line: 26
     for k, v in pairs(p1._changeListeners) do
         task.spawn(v)
     end
     return false
 end
+
 function v1.onChange(p1, p2) -- Line: 41 -- upvalues: u15 (val)
     local u2 = {}
     p1._numChangeListeners = p1._numChangeListeners + 1
@@ -30,6 +33,7 @@ function v1.onChange(p1, p2) -- Line: 41 -- upvalues: u15 (val)
         end
     end
 end
+
 return function(p1) -- Line: 66 -- upvalues: u14 (val), initDependency (val)
     local v1 = {type = "State", kind = "Observer", _numChangeListeners = 0}
     local v2 = {}
@@ -37,7 +41,8 @@ return function(p1) -- Line: 66 -- upvalues: u14 (val), initDependency (val)
     v1.dependencySet = v2
     v1.dependentSet = {}
     v1._changeListeners = {}
-    local v3 = setmetatable(v1, u14)
+    v2 = u14
+    local v3 = setmetatable(v1, v2)
     initDependency(v3)
     p1.dependentSet[v3] = true
     return v3

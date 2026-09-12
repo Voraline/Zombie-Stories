@@ -4,9 +4,11 @@ local Enums = require(Utility:WaitForChild("Enums"))
 local initChasis = Remotes:WaitForChild("initChasis")
 local CurrentCamera = game.Workspace.CurrentCamera
 local Terrain = game.Workspace:WaitForChild("Terrain")
+
 local function lerpNumber(p1, p2, p3) -- Line: 16
     return (1 - p3) * p1 + p3 * p2
 end
+
 local function initAttachments(p1) -- Line: 20 -- upvalues: Terrain (val)
     local Attachment = Instance.new("Attachment")
     Attachment.Name = "diveAttachment"
@@ -28,15 +30,19 @@ local function initAttachments(p1) -- Line: 20 -- upvalues: Terrain (val)
     end)
     return Attachment, AlignPosition, AlignOrientation
 end
+
 local v1 = {}
-local u34 = {__index = v1}
+local u34 = {}
+u34.__index = v1
+
 function v1.new(p1) -- Line: 49 -- upvalues: initChasis (val), initAttachments (val), Enums (val), u34 (val)
     local u1 = {}
-    local PlayerScripts = p1:WaitForChild("PlayerScripts")
-    local ControlScript = PlayerScripts:WaitForChild("ControlScript")
-    u1.control = require(ControlScript:WaitForChild("MasterControl"))
+    local v1 = require
+    local ControlScript = (p1:WaitForChild("PlayerScripts")):WaitForChild("ControlScript")
+    u1.control = v1(ControlScript:WaitForChild("MasterControl"))
+
     local function setupCharacter(p1) -- Line: 54 -- upvalues: u1 (val), initChasis (upval), initAttachments (upval)
-        local v1, v2, v3
+        local v1
         u1.character = p1
         u1.humanoid = u1.character:WaitForChild("Humanoid")
         u1.hrp = u1.character:WaitForChild("HumanoidRootPart", 5)
@@ -45,20 +51,24 @@ function v1.new(p1) -- Line: 49 -- upvalues: initChasis (val), initAttachments (
         end
         u1.rootAttach = u1.hrp:WaitForChild("RootAttachment")
         u1.loadingChasis = true
-        initChasis:InvokeServer(u1.humanoid)
+        local v2 = initChasis
+        local v3 = u1
+        local humanoid = v3.humanoid
+        v2:InvokeServer(humanoid)
         u1.chasis = u1.character:WaitForChild("Vehicle")
         u1.force = u1.chasis:WaitForChild("VectorForce")
         u1.force2 = u1.chasis:WaitForChild("VectorForce2")
         u1.loadingChasis = false
         u1.chasisLoaded = true
         u1.chasis.Anchored = true
-        v1, v2, v3 = initAttachments(u1)
+        v2, v1, v3 = initAttachments(u1)
         u1._mass = u1.chasis:GetMass()
-        u1._worldAttach = v1
-        u1._alignPosition = v2
+        u1._worldAttach = v2
+        u1._alignPosition = v1
         u1._alignOrientation = v3
         u1._fullyInitialized = true
     end
+
     u1.character = p1.Character
     if u1.character then
         setupCharacter(u1.character)
@@ -80,13 +90,16 @@ function v1.new(p1) -- Line: 49 -- upvalues: initChasis (val), initAttachments (
     u1.air_drag_const = 0.2
     u1.turn_brake_boost = 15
     u1.max_speed = 80
-    return (setmetatable(u1, u34))
+    local v2 = u34
+    return (setmetatable(u1, v2))
 end
+
 function v1:Destroy() -- Line: 112
     self._worldAttach:Destroy()
     self.chasis:Destroy()
     self.isActive = false
 end
+
 function v1:setActive(p2, p3) -- Line: 118 -- upvalues: Enums (val)
     if not self.chasis.Parent then
         return
@@ -106,29 +119,23 @@ function v1:setActive(p2, p3) -- Line: 118 -- upvalues: Enums (val)
     self._mode = Default
     self.isActive = p2
 end
+
 function v1.jump(p1) -- Line: 136
     local v1
+    local chasis = p1.chasis
+    local v2 = p1._floorNormal * 30
     if p1.isGrounded then
         v1 = 1
     else
         v1 = 1.1
     end
-    p1.chasis:ApplyImpulse(p1._floorNormal * 30 * v1)
+    local v3 = v2 * v1
+    chasis:ApplyImpulse(v3)
 end
+
 function v1.update(p1, p2) -- Line: 140 -- upvalues: Enums (val), CurrentCamera (val)
-    if p1.humanoid.Sit then
-        if p1.isActive then
-            p1:setActive(false)
-        end
-        p1.isGrounded = true
-        p1.force.Force = Vector3.new(0, 0, 0)
-        p1.slideVector = CFrame.new()
-        if p1.hrp and p1.chasis then
-            p1.chasis.CFrame = p1.hrp.CFrame
-        end
-        return
-    elseif p1.humanoid.SeatPart == nil then
-        local Air, Distance, Normal, Z, _orientation, _turnForce, isGrounded, v1, v2, v3, v4, v5, v6
+    if not p1.humanoid.Sit and p1.humanoid.SeatPart == nil then
+        local Air, Distance, Normal, Z_2, _floorNormal_2, _orientation_2, _turnForce, v1, v2, v3, v4, v5, v6, v7, v8
         if not p1.isActive then
             if p1.hrp and p1.chasis then
                 p1.chasis.CFrame = p1.hrp.CFrame
@@ -136,143 +143,234 @@ function v1.update(p1, p2) -- Line: 140 -- upvalues: Enums (val), CurrentCamera 
             p1.slideVector = CFrame.new()
             return
         end
-        local v7 = RaycastParams.new()
-        v7.IgnoreWater = true
-        v7.RespectCanCollide = true
-        v7.FilterType = Enums.RaycastFilterType.Exclude
-        v7.FilterDescendantsInstances = {p1.character, workspace.Ignore, workspace.Zombies}
-        local v8 = p1.chasis.Size.Y / 2 + 0.2
-        local v9 = p1.chasis.Position + Vector3.new(0, 0.25, 0)
-        local v10 = workspace:Spherecast(v9, v8, Vector3.new(0, -0.25, 0), v7)
+        local v9 = RaycastParams.new()
+        v9.IgnoreWater = true
+        v9.RespectCanCollide = true
+        v9.FilterType = Enums.RaycastFilterType.Exclude
+        v9.FilterDescendantsInstances = {p1.character, workspace.Ignore, workspace.Zombies}
+        local v10 = p1.chasis.Size.Y / 2 + 0.2
+        local v11 = workspace
+        local v12 = p1.chasis.Position + Vector3.new(0, 0.25, 0)
+        v11 = v11:Spherecast(v12, v10, Vector3.new(0, -0.25, 0), v9)
         local Instance = nil
         local Material = nil
-        if not v10 then
+        if not v11 then
             Normal = Vector3.new(0, 1, 0)
         else
-            Instance = v10.Instance
-            Normal = v10.Normal
-            Material = v10.Material
+            Instance = v11.Instance
+            Normal = v11.Normal
+            Material = v11.Material
         end
-        if not v10 then
+        if not v11 then
             Distance = 5
         else
-            Distance = v10.Distance
+            Distance = v11.Distance
+            if not Distance then
+                Distance = 5
+            end
         end
-        local v11 = Distance <= 1.3
-        p1.isGrounded = v11
+        local v13 = Distance <= 1.3
+        p1.isGrounded = v13
         if not Material then
-            v11 = 0
+            v13 = 0
         else
-            v11 = PhysicalProperties.new(Material).Friction * 2
+            v13 = PhysicalProperties.new(Material).Friction * 2
+            if not v13 then
+                v13 = 0
+            end
         end
-        p1._floorFriction = v11
-        if Distance > p1.humanoid.HipHeight then
+        p1._floorFriction = v13
+        if not (Distance <= p1.humanoid.HipHeight) then
             Air = Enums.Material.Air
         else
             Air = Material
+            if not Air then
+                Air = Enums.Material.Air
+            end
         end
         p1._floorMaterial = Air
         if not Instance then
-            v11 = p1._floorNormal:Lerp(Vector3.new(0, 1, 0), (math.min(p2, 1)))
-        elseif not p1.isGrounded then
-            v11 = p1._floorNormal:Lerp(Normal, (math.min(p2 * 5, 1)))
+            _floorNormal_2 = p1._floorNormal
+            v1 = math.min(p2, 1)
+            v13 = _floorNormal_2:Lerp(Vector3.new(0, 1, 0), v1)
         else
-            v11 = Normal
+            local _floorNormal
+            if not p1.isGrounded then
+                _floorNormal = p1._floorNormal
+                v2 = p2 * 5
+                v1 = math.min(v2, 1)
+                v13 = _floorNormal:Lerp(Normal, v1)
+                if not v13 then
+                    _floorNormal_2 = p1._floorNormal
+                    v1 = math.min(p2, 1)
+                    v13 = _floorNormal_2:Lerp(Vector3.new(0, 1, 0), v1)
+                end
+            else
+                v13 = Normal
+                if not v13 then
+                    _floorNormal = p1._floorNormal
+                    v2 = p2 * 5
+                    v1 = math.min(v2, 1)
+                    v13 = _floorNormal:Lerp(Normal, v1)
+                    if not v13 then
+                        _floorNormal_2 = p1._floorNormal
+                        v1 = math.min(p2, 1)
+                        v13 = _floorNormal_2:Lerp(Vector3.new(0, 1, 0), v1)
+                    end
+                end
+            end
         end
-        p1._floorNormal = v11
-        local v12 = CFrame.new(Vector3.new(0, 0, 0), (CurrentCamera.CFrame.lookVector * Vector3.new(1, 0, 1)).unit)
-        local v13 = v12:vectorToObjectSpace(p1._floorNormal)
-        local v14 = math.atan2(-v13.X, v13.Y)
-        local v15 = math.atan2(v13.Z, v13.Y)
-        local v16 = CFrame.Angles(v15, 0, 0)
-        local v17 = v16 * CFrame.Angles(0, 0, v14)
-        local v18 = CFrame.Angles(0, 0, v14)
-        v12 = v12 * v17:Lerp(v18 * CFrame.Angles(v15, 0, 0), 0.5)
+        p1._floorNormal = v13
+        local v14 = CurrentCamera
+        local unit = (v14.CFrame.lookVector * Vector3.new(1, 0, 1)).unit
+        v14 = CFrame.new(Vector3.new(0, 0, 0), unit)
+        local _floorNormal_3 = p1._floorNormal
+        local v15 = v14:vectorToObjectSpace(_floorNormal_3)
+        local v16 = -v15.X
+        local Y = v15.Y
+        v1 = math.atan2(v16, Y)
+        local Z = v15.Z
+        local Y_2 = v15.Y
+        v2 = math.atan2(Z, Y_2)
+        local v17 = (CFrame.Angles(v2, 0, 0)) * CFrame.Angles(0, 0, v1)
+        v16 = (CFrame.Angles(0, 0, v1)) * (CFrame.Angles(v2, 0, 0))
+        v14 = v14 * v17:Lerp(v16, 0.5)
         local speed = 0
         local MoveVector = p1.control:GetMoveVector()
-        if MoveVector.Z >= 0 then
-            Z = MoveVector.Z
+        local X = MoveVector.X
+        local Y_3 = MoveVector.Y
+        if not (MoveVector.Z < 0) then
+            Z_2 = MoveVector.Z
         else
-            Z = 0
+            Z_2 = 0
         end
-        local v19 = Vector3.new(MoveVector.X, MoveVector.Y, Z)
-        isGrounded = p1.isGrounded
+        local v18 = Vector3.new(X, Y_3, Z_2)
+        local isGrounded = p1.isGrounded
         local Velocity = p1.chasis.Velocity
-        local v20 = Vector3.new(0, 1, 0):Dot(p1._floorNormal)
+        local _floorNormal_4 = p1._floorNormal
+        local v19 = Vector3.new(0, 1, 0):Dot(_floorNormal_4)
         if p1._mode == Enums.PhysBallType.Default then
-            local unit
-            speed = p1.speed
-            v2 = v19:Dot(v19)
-            if 0 >= v2 then
-                unit = v19
-            else
-                unit = v19.unit
-            end
-            v19 = unit
-        elseif p1._mode == Enums.PhysBallType.Dive then
             local unit_2
-            v1 = math.min(p1.speed, p1.chasis.Velocity.magnitude)
-            if v20 < 1 then
-                v2 = v1
-                if not v2 then
-                    v2 = v1 * 0.1
+            speed = p1.speed
+            if not (0 < (v18:Dot(v18))) then
+                unit_2 = v18
+            else
+                unit_2 = v18.unit
+                if not unit_2 then
+                    unit_2 = v18
+                end
+            end
+            v18 = unit_2
+        elseif p1._mode == Enums.PhysBallType.Dive then
+            local unit_3
+            local speed_2 = p1.speed
+            local magnitude = p1.chasis.Velocity.magnitude
+            v3 = math.min(speed_2, magnitude)
+            if v19 < 1 then
+                v4 = v3
+                if not v4 then
+                    v4 = v3 * 0.1
                 end
             elseif p1.isGrounded then
-            end
-            speed = v2
-            v3 = v19:Dot(v19)
-            if 0 >= v3 then
-                unit_2 = Vector3.new(0, 0, 0)
+                v4 = v3 * 0.1
             else
-                unit_2 = v19.unit
+                v4 = v3
+                if not v4 then
+                    v4 = v3 * 0.1
+                end
             end
-            v19 = unit_2
+            speed = v4
+            if not (0 < (v18:Dot(v18))) then
+                unit_3 = Vector3.new(0, 0, 0)
+            else
+                unit_3 = v18.unit
+                if not unit_3 then
+                    unit_3 = Vector3.new(0, 0, 0)
+                end
+            end
+            v18 = unit_3
         end
-        v1 = workspace.Camera.CFrame.LookVector * 10
-        v2 = v1 - Vector3.new(0, v1.Y, 0)
-        v3 = -Velocity * (p1.air_drag_const + p1._floorFriction)
-        local v21 = v12:vectorToWorldSpace(v19)
+        v3 = workspace.Camera.CFrame.LookVector * 10
+        local Y_4 = v3.Y
+        v4 = v3 - Vector3.new(0, Y_4, 0)
+        local v20 = -Velocity * (p1.air_drag_const + p1._floorFriction)
+        local v21 = v14:vectorToWorldSpace(v18)
         local v22 = Velocity * Vector3.new(1, 0, 1)
         local v23 = 0
         if 1 < v22.magnitude and 0 < v21.magnitude then
-            v5 = -v21.unit:Dot(v22.unit)
-            v23 = math.clamp(v5, 0, 1)
+            local unit_4 = v21.unit
+            local unit_5 = v22.unit
+            v6 = -unit_4:Dot(unit_5)
+            v23 = math.clamp(v6, 0, 1)
         end
-        if 1 >= Velocity.magnitude then
-            _orientation = p1._orientation
+        if not (1 < Velocity.magnitude) then
+            _orientation_2 = p1._orientation
         else
-            v6 = CFrame.new(Vector3.new(), Velocity)
-            _orientation = p1._orientation:lerp(v6, (math.min(p2 * 10, 1)))
+            local _orientation = p1._orientation
+            v7 = CFrame.new(Vector3.new(), Velocity)
+            v8 = p2 * 10
+            local v24 = math.min(v8, 1)
+            _orientation_2 = _orientation:lerp(v7, v24)
+            if not _orientation_2 then
+                _orientation_2 = p1._orientation
+            end
         end
-        p1._orientation = _orientation
-        local v24 = v23
-        p1._turnForce = v21 * ((1 - v24) * 1 + v24 * p1.turn_brake_boost) * speed
+        p1._orientation = _orientation_2
+        local turn_brake_boost = p1.turn_brake_boost
+        v8 = v23
+        local v25 = (1 - v8) * 1
+        p1._turnForce = v21 * (v25 + v8 * turn_brake_boost) * speed
         local force = p1.force
         if not isGrounded then
             _turnForce = Vector3.new()
         else
             _turnForce = p1._turnForce
+            if not _turnForce then
+                _turnForce = Vector3.new()
+            end
         end
-        force.Force = _turnForce + v3
-        if p1.max_speed < v22.magnitude then
-            v4 = v22.unit * p1.max_speed
-            p1.chasis.AssemblyLinearVelocity = Vector3.new(v4.X, Velocity.Y, v4.Z)
+        force.Force = _turnForce + v20
+        local magnitude_2 = v22.magnitude
+        if p1.max_speed < magnitude_2 then
+            v5 = v22.unit * p1.max_speed
+            local chasis_2 = p1.chasis
+            local X_2 = v5.X
+            local Y_5 = Velocity.Y
+            local Z_3 = v5.Z
+            chasis_2.AssemblyLinearVelocity = Vector3.new(X_2, Y_5, Z_3)
         end
-        v4 = CFrame.lookAt(p1.hrp.CFrame.p, p1.hrp.CFrame.p + v2)
-        v5 = CFrame.new(p1.chasis.CFrame.p + Vector3.new(0, 0.6000000238418579, 0)) * (v4 - v4.p)
-        v6 = v5:VectorToObjectSpace(Normal)
-        v24 = 0.001 < math.acos((CFrame.new().LookVector:Dot(CFrame.Angles(v6.z, 0, -v6.x).LookVector)))
-        p1.OnRamp = v24
+        v5 = CFrame.lookAt(p1.hrp.CFrame.p, p1.hrp.CFrame.p + v4)
+        v5 = v5 - v5.p
+        v6 = CFrame.new(p1.chasis.CFrame.p + Vector3.new(0, 0.6000000238418579, 0)) * v5
+        v7 = v6:VectorToObjectSpace(Normal)
+        local LookVector = (CFrame.new()).LookVector
+        local LookVector_2 = (CFrame.Angles(v7.z, 0, -v7.x)).LookVector
+        v8 = LookVector:Dot(LookVector_2)
+        v8 = 0.001 < math.acos(v8)
+        p1.OnRamp = v8
         if not p1.slideVector then
             p1.slideVector = CFrame.new()
         end
-        local v25 = CFrame.Angles(v6.z, 0, -v6.x)
-        p1.slideVector = p1.slideVector:lerp(v25, (math.min(p2 * 10, 1)))
-        p1._worldAttach.CFrame = v5
+        local slideVector = p1.slideVector
+        local v26 = CFrame.Angles(v7.z, 0, -v7.x)
+        local v27 = p2 * 10
+        local v28 = math.min(v27, 1)
+        p1.slideVector = slideVector:lerp(v26, v28)
+        p1._worldAttach.CFrame = v6
         if p1._floorMaterial == Enums.Material.Water then
             p1.chasis.Anchored = true
         end
         return
     end
+    if p1.isActive then
+        p1:setActive(false)
+    end
+    p1.isGrounded = true
+    p1.force.Force = Vector3.new(0, 0, 0)
+    p1.slideVector = CFrame.new()
+    if p1.hrp and p1.chasis then
+        p1.chasis.CFrame = p1.hrp.CFrame
+    end
 end
+
 return v1

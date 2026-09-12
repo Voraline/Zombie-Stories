@@ -1,4 +1,4 @@
-local v1 = {
+return {
     Ammo = 20,
     StoredAmmo = 160,
     AmmoType = nil,
@@ -51,18 +51,27 @@ local v1 = {
     BulletCasing = "pistol",
     WorldScaleValue = 0.86393063656991,
     NewSkinsSystem = true,
+    NewSkinsSystemBlacklist = {["Vanilla P226"] = true, ["Cybernetic P226"] = true},
+    UseAltCameraReload = true,
+    DynamicFOVOffsetConstant = 2,
+    AimDynamicFOVOffsetConstant = 0.5,
+    Offset = CFrame.new(0.100000001, -0.0500000007, -0.0500000007, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    SprintOffset = CFrame.new(
+        -0.300000012,
+        0,
+        -0.300000012,
+        0.962250173,
+        -0.0841859728,
+        0.258819044,
+        -0.0299755037,
+        0.912392259,
+        0.408217907,
+        -0.270510703,
+        -0.400565982,
+        0.875426054
+    ),
+    AimOffset = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    VerticalRecoil = 5.2,
+    HorizontalRecoil = 3,
+    AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/BasePistol"),
 }
-local v2 = {}
-v2["Vanilla P226"] = true
-v2["Cybernetic P226"] = true
-v1.NewSkinsSystemBlacklist = v2
-v1.UseAltCameraReload = true
-v1.DynamicFOVOffsetConstant = 2
-v1.AimDynamicFOVOffsetConstant = 0.5
-v1.Offset = CFrame.new(0.100000001, -0.0500000007, -0.0500000007, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-v1.SprintOffset = CFrame.new(-0.300000012, 0, -0.300000012, 0.962250173, -0.0841859728, 0.258819044, -0.0299755037, 0.912392259, 0.408217907, -0.270510703, -0.400565982, 0.875426054)
-v1.AimOffset = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-v1.VerticalRecoil = 5.2
-v1.HorizontalRecoil = 3
-v1.AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/BasePistol")
-return v1

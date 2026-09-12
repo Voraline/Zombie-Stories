@@ -1,8 +1,9 @@
 local v1 = scope:New("Folder")
 local v2 = {Name = "Resources"}
-local v3 = {}
-local v4 = scope:New("ImageButton")
-local v5 = {
+local v3 = Children
+local v4 = {}
+local v5 = scope:New("ImageButton")
+local v6 = {
     Name = "Dropdownold",
     AnchorPoint = Vector2.new(1, 1),
     BackgroundTransparency = 1,
@@ -17,9 +18,10 @@ local v5 = {
     SliceCenter = Rect.new(7, 7, 7, 7),
     Visible = false,
 }
-local v6 = {}
-local v7 = scope:New("ScrollingFrame")
-local v8 = {
+local v7 = Children
+local v8 = {}
+local v9 = scope:New("ScrollingFrame")
+local v10 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -32,9 +34,9 @@ local v8 = {
     Selectable = false,
     Size = UDim2.new(1, -5, 1, -5),
 }
-local v9 = {}
-local v10 = scope:New("UIGridLayout")
-v10 = v10({
+local v11 = Children
+local v12 = {}
+local v13 = scope:New("UIGridLayout")({
     Name = "UIGridLayout",
     CellPadding = UDim2.fromOffset(0, -5),
     CellSize = UDim2.new(1, 0, 0, 45),
@@ -43,8 +45,8 @@ v10 = v10({
     SortOrder = Enum.SortOrder.LayoutOrder,
     VerticalAlignment = Enum.VerticalAlignment.Center,
 })
-local v11 = scope:New("TextButton")
-local v12 = {
+local v14 = scope:New("TextButton")
+local v15 = {
     Name = "Exit",
     Active = false,
     BackgroundTransparency = 1,
@@ -52,9 +54,10 @@ local v12 = {
     Size = UDim2.fromOffset(100, 100),
     Visible = false,
 }
-local v13 = {}
-local v14 = scope:New("ImageLabel")
-local v15 = {
+local v16 = Children
+local v17 = {}
+local v18 = scope:New("ImageLabel")
+local v19 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -67,9 +70,9 @@ local v15 = {
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
-local v16 = {}
-local v17 = scope:New("ImageLabel")
-v17 = v17({
+local v20 = Children
+local v21 = {}
+local v22 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -80,8 +83,8 @@ v17 = v17({
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-local v18 = scope:New("TextLabel")
-local v19 = {
+local v23 = scope:New("TextLabel")
+local v24 = {
     Name = "Label",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -92,25 +95,24 @@ local v19 = {
     TextColor3 = Color3.fromRGB(255, 73, 73),
     TextScaled = true,
 }
-local v20 = {}
-local v21 = scope:New("UITextSizeConstraint")
-v20[1] = v21({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v19[Children] = v20
-v16[1] = v17
-v16[2] = v18(v19)
-v15[Children] = v16
+local v25 = Children
+v24[v25] = {scope:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
+v21[1] = v22
+v21[2] = v23(v24)
+v19[v20] = v21
+v18 = v18(v19)
+v19 = scope:New("UISizeConstraint")
+v20 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
+v17[1] = v18
+v17[2] = v19(v20)
+v15[v16] = v17
 v14 = v14(v15)
-v15 = scope:New("UISizeConstraint")
-local v22 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
-v13[1] = v14
-v13[2] = v15(v22)
-v12[Children] = v13
-v11 = v11(v12)
-v12 = scope:New("TextButton")
-local v23 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromOffset(100, 100), Visible = false}
-v14 = {}
-v15 = scope:New("ImageLabel")
-v22 = {
+v15 = scope:New("TextButton")
+v16 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromOffset(100, 100), Visible = false}
+v17 = Children
+v18 = {}
+v19 = scope:New("ImageLabel")
+v20 = {
     Name = "Frame",
     Active = true,
     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -124,9 +126,9 @@ v22 = {
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
-v17 = {}
-v18 = scope:New("ImageLabel")
-v18 = v18({
+v21 = Children
+v22 = {}
+v23 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -137,8 +139,8 @@ v18 = v18({
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-v19 = scope:New("TextLabel")
-local v24 = {
+v24 = scope:New("TextLabel")
+v25 = {
     Name = "Label",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -149,26 +151,24 @@ local v24 = {
     TextColor3 = Color3.fromRGB(216, 216, 216),
     TextScaled = true,
 }
-v21 = {}
-local v25 = scope:New("UITextSizeConstraint")
-v21[1] = v25({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v24[Children] = v21
-v17[1] = v18
-v17[2] = v19(v24)
-v22[Children] = v17
-v15 = v15(v22)
-v22 = scope:New("UISizeConstraint")
-v16 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
-v14[1] = v15
-v14[2] = v22(v16)
-v23[Children] = v14
-v9[1] = v10
-v9[2] = v11
-v9[3] = v12(v23)
-v8[Children] = v9
-v7 = v7(v8)
-v8 = scope:New("TextButton")
-local v26 = {
+local v26 = Children
+v25[v26] = {scope:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
+v22[1] = v23
+v22[2] = v24(v25)
+v20[v21] = v22
+v19 = v19(v20)
+v20 = scope:New("UISizeConstraint")
+v21 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
+v18[1] = v19
+v18[2] = v20(v21)
+v16[v17] = v18
+v12[1] = v13
+v12[2] = v14
+v12[3] = v15(v16)
+v10[v11] = v12
+v9 = v9(v10)
+v10 = scope:New("TextButton")
+v11 = {
     Name = "Exit",
     AnchorPoint = Vector2.new(1, 0),
     BackgroundTransparency = 1,
@@ -177,9 +177,10 @@ local v26 = {
     Size = UDim2.fromOffset(35, 35),
     Text = "X",
 }
-v10 = {}
-v11 = scope:New("ImageLabel")
-v12 = {
+v12 = Children
+v13 = {}
+v14 = scope:New("ImageLabel")
+v15 = {
     Name = "WeaponStats",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -192,9 +193,9 @@ v12 = {
     Size = UDim2.fromScale(1, 1),
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
-v13 = {}
-v14 = scope:New("ImageLabel")
-v14 = v14({
+v16 = Children
+v17 = {}
+v18 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -205,8 +206,8 @@ v14 = v14({
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-v15 = scope:New("TextLabel")
-v22 = {
+v19 = scope:New("TextLabel")
+v20 = {
     Name = "Label",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -217,21 +218,19 @@ v22 = {
     TextColor3 = Color3.fromRGB(255, 73, 73),
     TextScaled = true,
 }
-v17 = {}
-v18 = scope:New("UITextSizeConstraint")
-v17[1] = v18({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v22[Children] = v17
-v13[1] = v14
-v13[2] = v15(v22)
-v12[Children] = v13
-v10[1] = v11(v12)
-v26[Children] = v10
-v6[1] = v7
-v6[2] = v8(v26)
-v5[Children] = v6
-v4 = v4(v5)
-v5 = scope:New("ScrollingFrame")
-local v27 = {
+v21 = Children
+v20[v21] = {scope:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
+v17[1] = v18
+v17[2] = v19(v20)
+v15[v16] = v17
+v13[1] = v14(v15)
+v11[v12] = v13
+v8[1] = v9
+v8[2] = v10(v11)
+v6[v7] = v8
+v5 = v5(v6)
+v6 = scope:New("ScrollingFrame")
+v7 = {
     Name = "ContainerTemplate",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -246,29 +245,27 @@ local v27 = {
     TopImage = "",
     Visible = false,
 }
-v7 = {}
-v8 = scope:New("UIListLayout")
-v7[1] = v8({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})
-v27[Children] = v7
-v5 = v5(v27)
-v27 = scope:New("Sound")
-v27 = v27({Name = "button", SoundId = "rbxassetid://129190194679291"})
-v6 = scope:New("Sound")
-v6 = v6({Name = "close", SoundId = "rbxassetid://92617871621489"})
-v7 = scope:New("Folder")
-v8 = {Name = "Templates"}
-v9 = {}
-v10 = scope:New("Frame")
-v11 = {
+v8 = Children
+v7[v8] = {scope:New("UIListLayout")({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})}
+v6 = v6(v7)
+v7 = scope:New("Sound")({Name = "button", SoundId = "rbxassetid://129190194679291"})
+v8 = scope:New("Sound")({Name = "close", SoundId = "rbxassetid://92617871621489"})
+v9 = scope:New("Folder")
+v10 = {Name = "Templates"}
+v11 = Children
+v12 = {}
+v13 = scope:New("Frame")
+v14 = {
     Name = "Toggle",
     BackgroundTransparency = 1,
     LayoutOrder = 1,
     Size = UDim2.fromScale(1, 0.08),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v23 = {}
-v13 = scope:New("Frame")
-v14 = {
+v15 = Children
+v16 = {}
+v17 = scope:New("Frame")
+v18 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -276,11 +273,11 @@ v14 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v22 = {}
-v16 = scope:New("UICorner")
-v16 = v16({Name = "UICorner"})
-v17 = scope:New("ImageButton")
-v18 = {
+v19 = Children
+v20 = {}
+v21 = scope:New("UICorner")({Name = "UICorner"})
+v22 = scope:New("ImageButton")
+v23 = {
     Name = "Toggle",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundTransparency = 1,
@@ -292,9 +289,10 @@ v18 = {
     Size = UDim2.fromScale(0.18, 1),
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v24 = {}
-v20 = scope:New("Frame")
-v21 = {
+v24 = Children
+v25 = {}
+v26 = scope:New("Frame")
+local v27 = {
     Name = "Back",
     AnchorPoint = Vector2.new(0, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -302,13 +300,11 @@ v21 = {
     Position = UDim2.fromScale(0, 0.5),
     Size = UDim2.fromScale(1, 1),
 }
-local v28 = {}
-local v29 = scope:New("UICorner")
-v28[1] = v29({Name = "UICorner", CornerRadius = UDim.new(0.17, 0)})
-v21[Children] = v28
-v20 = v20(v21)
-v21 = scope:New("Frame")
-v25 = {
+local v28 = Children
+v27[v28] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.17, 0)})}
+v26 = v26(v27)
+v27 = scope:New("Frame")
+v28 = {
     Name = "Fill",
     AnchorPoint = Vector2.new(0, 0.5),
     BackgroundTransparency = 1,
@@ -317,18 +313,17 @@ v25 = {
     Size = UDim2.fromScale(0.75, 1),
     ZIndex = 2,
 }
-v29 = {}
-local v30 = scope:New("Frame")
-local v31 = {Name = "Frame", BackgroundColor3 = Color3.fromRGB(255, 184, 84), Size = UDim2.fromScale(100, 1)}
-local v32 = {}
-local v33 = scope:New("UICorner")
-v32[1] = v33({Name = "UICorner", CornerRadius = UDim.new(0.17, 0)})
-v31[Children] = v32
-v29[1] = v30(v31)
-v25[Children] = v29
-v21 = v21(v25)
-v25 = scope:New("Frame")
-v28 = {
+local v29 = Children
+local v30 = {}
+local v31 = scope:New("Frame")
+local v32 = {Name = "Frame", BackgroundColor3 = Color3.fromRGB(255, 184, 84), Size = UDim2.fromScale(100, 1)}
+local v33 = Children
+v32[v33] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.17, 0)})}
+v30[1] = v31(v32)
+v28[v29] = v30
+v27 = v27(v28)
+v28 = scope:New("Frame")
+v29 = {
     Name = "Slide",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -336,17 +331,14 @@ v28 = {
     Size = UDim2.fromScale(0.4, 1),
     ZIndex = 3,
 }
-v30 = {}
-v31 = scope:New("UICorner")
-v30[1] = v31({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
-v28[Children] = v30
-v24[1] = v20
-v24[2] = v21
-v24[3] = v25(v28)
-v18[Children] = v24
-v17 = v17(v18)
-v18 = scope:New("TextLabel")
-v18 = v18({
+v30 = Children
+v29[v30] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})}
+v25[1] = v26
+v25[2] = v27
+v25[3] = v28(v29)
+v23[v24] = v25
+v22 = v22(v23)
+v23 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -358,8 +350,8 @@ v18 = v18({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v19 = scope:New("TextLabel")
-v24 = {
+v24 = scope:New("TextLabel")
+v25 = {
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -374,19 +366,25 @@ v24 = {
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 }
-v22[1] = v16
-v22[2] = v17
-v22[3] = v18
-v22[4] = v19(v24)
-v14[Children] = v22
-v23[1] = v13(v14)
-v11[Children] = v23
-v10 = v10(v11)
-v11 = scope:New("Frame")
-v12 = {Name = "NumberSlider", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.11), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v13 = {}
+v20[1] = v21
+v20[2] = v22
+v20[3] = v23
+v20[4] = v24(v25)
+v18[v19] = v20
+v16[1] = v17(v18)
+v14[v15] = v16
+v13 = v13(v14)
 v14 = scope:New("Frame")
 v15 = {
+    Name = "NumberSlider",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.11),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v16 = Children
+v17 = {}
+v18 = scope:New("Frame")
+v19 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -394,11 +392,11 @@ v15 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v16 = {}
-v17 = scope:New("UICorner")
-v17 = v17({Name = "UICorner"})
-v18 = scope:New("ImageLabel")
-v19 = {
+v20 = Children
+v21 = {}
+v22 = scope:New("UICorner")({Name = "UICorner"})
+v23 = scope:New("ImageLabel")
+v24 = {
     Name = "Slide",
     AnchorPoint = Vector2.new(0.5, 1),
     BackgroundTransparency = 1,
@@ -411,9 +409,10 @@ v19 = {
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v20 = {}
-v21 = scope:New("ImageLabel")
-v25 = {
+v25 = Children
+v26 = {}
+v27 = scope:New("ImageLabel")
+v28 = {
     Name = "SlidingBase",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -425,9 +424,9 @@ v25 = {
     Size = UDim2.fromScale(1, 1),
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v29 = {}
-v30 = scope:New("ImageLabel")
-v30 = v30({
+v29 = Children
+v30 = {}
+v31 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -439,8 +438,8 @@ v30 = v30({
     Size = UDim2.fromScale(0.3, 0.75),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-v31 = scope:New("ImageLabel")
-local v34 = {
+v32 = scope:New("ImageLabel")
+v33 = {
     Name = "Slide",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -451,23 +450,23 @@ local v34 = {
     SliceCenter = Rect.new(7, 7, 7, 7),
     ZIndex = 3,
 }
-v33 = {}
-local v35 = scope:New("TextButton")
-v33[1] = v35({
-    Name = "Button",
-    BackgroundTransparency = 1,
-    Text = "",
-    TextSize = 14,
-    TextTransparency = 1,
-    ZIndex = 50,
-    FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-    Size = UDim2.fromScale(1, 1),
-    TextColor3 = Color3.new(),
-})
-v34[Children] = v33
-v31 = v31(v34)
-v34 = scope:New("Frame")
-v32 = {
+local v34 = Children
+v33[v34] = {
+    scope:New("TextButton")({
+        Name = "Button",
+        BackgroundTransparency = 1,
+        Text = "",
+        TextSize = 14,
+        TextTransparency = 1,
+        ZIndex = 50,
+        FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+        Size = UDim2.fromScale(1, 1),
+        TextColor3 = Color3.new(),
+    }),
+}
+v32 = v32(v33)
+v33 = scope:New("Frame")
+v34 = {
     Name = "Back",
     AnchorPoint = Vector2.new(0, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -475,19 +474,17 @@ v32 = {
     Position = UDim2.fromScale(0, 0.5),
     Size = UDim2.fromScale(1, 0.75),
 }
-v35 = {}
-local v36 = scope:New("UICorner")
-v35[1] = v36({Name = "UICorner", CornerRadius = UDim.new(1, 0)})
-v32[Children] = v35
-v29[1] = v30
-v29[2] = v31
-v29[3] = v34(v32)
-v25[Children] = v29
-v20[1] = v21(v25)
-v19[Children] = v20
-v18 = v18(v19)
-v19 = scope:New("ImageLabel")
-v24 = {
+local v35 = Children
+v34[v35] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(1, 0)})}
+v30[1] = v31
+v30[2] = v32
+v30[3] = v33(v34)
+v28[v29] = v30
+v26[1] = v27(v28)
+v24[v25] = v26
+v23 = v23(v24)
+v24 = scope:New("ImageLabel")
+v25 = {
     Name = "TextBox",
     AnchorPoint = Vector2.new(1, 0),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -500,9 +497,9 @@ v24 = {
     Size = UDim2.fromScale(0.16, 0.6),
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v21 = {}
-v25 = scope:New("TextBox")
-v25 = v25({
+v26 = Children
+v27 = {}
+v28 = scope:New("TextBox")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "1",
@@ -514,14 +511,13 @@ v25 = v25({
     Size = UDim2.fromScale(1, 0.7),
     TextColor3 = Color3.new(1, 1, 1),
 })
-v28 = scope:New("UICorner")
-v29 = {Name = "UICorner", CornerRadius = UDim.new(0.2, 0)}
-v21[1] = v25
-v21[2] = v28(v29)
-v24[Children] = v21
-v19 = v19(v24)
-v24 = scope:New("TextLabel")
-v24 = v24({
+v29 = scope:New("UICorner")
+v30 = {Name = "UICorner", CornerRadius = UDim.new(0.2, 0)}
+v27[1] = v28
+v27[2] = v29(v30)
+v25[v26] = v27
+v24 = v24(v25)
+v25 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "MUSIC VOLUME",
@@ -533,8 +529,8 @@ v24 = v24({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v20 = scope:New("TextLabel")
-v21 = {
+v26 = scope:New("TextLabel")
+v27 = {
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -549,20 +545,26 @@ v21 = {
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 }
-v16[1] = v17
-v16[2] = v18
-v16[3] = v19
-v16[4] = v24
-v16[5] = v20(v21)
-v15[Children] = v16
-v13[1] = v14(v15)
-v12[Children] = v13
-v11 = v11(v12)
-v12 = scope:New("Frame")
-v23 = {Name = "Number", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.08), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v14 = {}
+v21[1] = v22
+v21[2] = v23
+v21[3] = v24
+v21[4] = v25
+v21[5] = v26(v27)
+v19[v20] = v21
+v17[1] = v18(v19)
+v15[v16] = v17
+v14 = v14(v15)
 v15 = scope:New("Frame")
-v22 = {
+v16 = {
+    Name = "Number",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.08),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v17 = Children
+v18 = {}
+v19 = scope:New("Frame")
+v20 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -570,9 +572,10 @@ v22 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v17 = {}
-v18 = scope:New("ImageLabel")
-v19 = {
+v21 = Children
+v22 = {}
+v23 = scope:New("ImageLabel")
+v24 = {
     Name = "Toggle",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -585,9 +588,9 @@ v19 = {
     Size = UDim2.fromScale(0.16, 1),
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v20 = {}
-v21 = scope:New("TextBox")
-v21 = v21({
+v25 = Children
+v26 = {}
+v27 = scope:New("TextBox")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "1",
@@ -599,14 +602,13 @@ v21 = v21({
     Size = UDim2.fromScale(1, 0.7),
     TextColor3 = Color3.new(1, 1, 1),
 })
-v25 = scope:New("UICorner")
-v28 = {Name = "UICorner", CornerRadius = UDim.new(0.15, 0)}
-v20[1] = v21
-v20[2] = v25(v28)
-v19[Children] = v20
-v18 = v18(v19)
-v19 = scope:New("TextLabel")
-v19 = v19({
+v28 = scope:New("UICorner")
+v29 = {Name = "UICorner", CornerRadius = UDim.new(0.15, 0)}
+v26[1] = v27
+v26[2] = v28(v29)
+v24[v25] = v26
+v23 = v23(v24)
+v24 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "MUSIC VOLUME",
@@ -618,10 +620,9 @@ v19 = v19({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v24 = scope:New("UICorner")
-v24 = v24({Name = "UICorner"})
-v20 = scope:New("TextLabel")
-v21 = {
+v25 = scope:New("UICorner")({Name = "UICorner"})
+v26 = scope:New("TextLabel")
+v27 = {
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -636,19 +637,25 @@ v21 = {
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 }
-v17[1] = v18
-v17[2] = v19
-v17[3] = v24
-v17[4] = v20(v21)
-v22[Children] = v17
-v14[1] = v15(v22)
-v23[Children] = v14
-v12 = v12(v23)
-v23 = scope:New("Frame")
-v13 = {Name = "BindsHeader", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.09), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v15 = {}
-v22 = scope:New("Frame")
-v16 = {
+v22[1] = v23
+v22[2] = v24
+v22[3] = v25
+v22[4] = v26(v27)
+v20[v21] = v22
+v18[1] = v19(v20)
+v16[v17] = v18
+v15 = v15(v16)
+v16 = scope:New("Frame")
+v17 = {
+    Name = "BindsHeader",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.09),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v18 = Children
+v19 = {}
+v20 = scope:New("Frame")
+v21 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -656,11 +663,10 @@ v16 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v18 = {}
-v19 = scope:New("UICorner")
-v19 = v19({Name = "UICorner"})
-v24 = scope:New("TextLabel")
-v24 = v24({
+v22 = Children
+v23 = {}
+v24 = scope:New("UICorner")({Name = "UICorner"})
+v25 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "PRESS TO BIND",
@@ -672,8 +678,7 @@ v24 = v24({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v20 = scope:New("ImageLabel")
-v20 = v20({
+v26 = scope:New("ImageLabel")({
     Name = "KeyboardLabel",
     BackgroundTransparency = 1,
     Image = "rbxassetid://13693390115",
@@ -683,8 +688,7 @@ v20 = v20({
     Size = UDim2.fromScale(0.06, 0.06),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 })
-v21 = scope:New("ImageLabel")
-v21 = v21({
+v27 = scope:New("ImageLabel")({
     Name = "MouseLabel",
     BackgroundTransparency = 1,
     Image = "rbxassetid://13693587767",
@@ -694,8 +698,8 @@ v21 = v21({
     Size = UDim2.fromScale(0.06, 0.06),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 })
-v25 = scope:New("ImageLabel")
-v28 = {
+v28 = scope:New("ImageLabel")
+v29 = {
     Name = "GamepadLabel",
     BackgroundTransparency = 1,
     Image = "rbxassetid://13693666926",
@@ -705,20 +709,26 @@ v28 = {
     Size = UDim2.fromScale(0.06, 0.06),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v18[1] = v19
-v18[2] = v24
-v18[3] = v20
-v18[4] = v21
-v18[5] = v25(v28)
-v16[Children] = v18
-v15[1] = v22(v16)
-v13[Children] = v15
-v23 = v23(v13)
-v13 = scope:New("Frame")
-v14 = {Name = "Header", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.09), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v22 = {}
-v16 = scope:New("Frame")
-v17 = {
+v23[1] = v24
+v23[2] = v25
+v23[3] = v26
+v23[4] = v27
+v23[5] = v28(v29)
+v21[v22] = v23
+v19[1] = v20(v21)
+v17[v18] = v19
+v16 = v16(v17)
+v17 = scope:New("Frame")
+v18 = {
+    Name = "Header",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.09),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v19 = Children
+v20 = {}
+v21 = scope:New("Frame")
+v22 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -726,11 +736,11 @@ v17 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v19 = {}
-v24 = scope:New("UICorner")
-v24 = v24({Name = "UICorner"})
-v20 = scope:New("TextLabel")
-v21 = {
+v23 = Children
+v24 = {}
+v25 = scope:New("UICorner")({Name = "UICorner"})
+v26 = scope:New("TextLabel")
+v27 = {
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "GRAPHICS",
@@ -741,17 +751,23 @@ v21 = {
     Size = UDim2.fromScale(0.9, 0.9),
     TextColor3 = Color3.new(1, 1, 1),
 }
-v19[1] = v24
-v19[2] = v20(v21)
-v17[Children] = v19
-v22[1] = v16(v17)
-v14[Children] = v22
-v13 = v13(v14)
-v14 = scope:New("Frame")
-v15 = {Name = "Dropdown", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.08), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v16 = {}
-v17 = scope:New("Frame")
-v18 = {
+v24[1] = v25
+v24[2] = v26(v27)
+v22[v23] = v24
+v20[1] = v21(v22)
+v18[v19] = v20
+v17 = v17(v18)
+v18 = scope:New("Frame")
+v19 = {
+    Name = "Dropdown",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.08),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v20 = Children
+v21 = {}
+v22 = scope:New("Frame")
+v23 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -759,11 +775,11 @@ v18 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v24 = {}
-v20 = scope:New("UICorner")
-v20 = v20({Name = "UICorner"})
-v21 = scope:New("ImageButton")
-v25 = {
+v24 = Children
+v25 = {}
+v26 = scope:New("UICorner")({Name = "UICorner"})
+v27 = scope:New("ImageButton")
+v28 = {
     Name = "Toggle",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -776,9 +792,9 @@ v25 = {
     Size = UDim2.fromScale(0.22, 1),
     SliceCenter = Rect.new(7, 7, 7, 7),
 }
-v29 = {}
-v30 = scope:New("TextLabel")
-v30 = v30({
+v29 = Children
+v30 = {}
+v31 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "AUTOMATIC",
@@ -789,8 +805,7 @@ v30 = v30({
     Size = UDim2.fromScale(0.78, 0.6),
     TextColor3 = Color3.new(1, 1, 1),
 })
-v31 = scope:New("ImageLabel")
-v31 = v31({
+v32 = scope:New("ImageLabel")({
     Name = "keyboard_arrow_down",
     BackgroundTransparency = 1,
     Image = "rbxassetid://3926305904",
@@ -804,15 +819,14 @@ v31 = v31({
     Size = UDim2.fromScale(0.2, 0.2),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 })
-v34 = scope:New("UICorner")
-v32 = {Name = "UICorner", CornerRadius = UDim.new(0.15, 0)}
-v29[1] = v30
-v29[2] = v31
-v29[3] = v34(v32)
-v25[Children] = v29
-v21 = v21(v25)
-v25 = scope:New("TextLabel")
-v25 = v25({
+v33 = scope:New("UICorner")
+v34 = {Name = "UICorner", CornerRadius = UDim.new(0.15, 0)}
+v30[1] = v31
+v30[2] = v32
+v30[3] = v33(v34)
+v28[v29] = v30
+v27 = v27(v28)
+v28 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "ZOMBIE DETAIL",
@@ -824,8 +838,8 @@ v25 = v25({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v28 = scope:New("TextLabel")
-v29 = {
+v29 = scope:New("TextLabel")
+v30 = {
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -840,19 +854,25 @@ v29 = {
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 }
-v24[1] = v20
-v24[2] = v21
-v24[3] = v25
-v24[4] = v28(v29)
-v18[Children] = v24
-v16[1] = v17(v18)
-v15[Children] = v16
-v14 = v14(v15)
-v15 = scope:New("Frame")
-v22 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.08), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-v17 = {}
-v18 = scope:New("Frame")
-v19 = {
+v25[1] = v26
+v25[2] = v27
+v25[3] = v28
+v25[4] = v29(v30)
+v23[v24] = v25
+v21[1] = v22(v23)
+v19[v20] = v21
+v18 = v18(v19)
+v19 = scope:New("Frame")
+v20 = {
+    Name = "Button",
+    BackgroundTransparency = 1,
+    Size = UDim2.fromScale(1, 0.08),
+    SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+v21 = Children
+v22 = {}
+v23 = scope:New("Frame")
+v24 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -860,9 +880,9 @@ v19 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v20 = {}
-v21 = scope:New("TextLabel")
-v21 = v21({
+v25 = Children
+v26 = {}
+v27 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "MUSIC VOLUME",
@@ -874,10 +894,9 @@ v21 = v21({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v25 = scope:New("UICorner")
-v25 = v25({Name = "UICorner"})
-v28 = scope:New("Frame")
-v29 = {
+v28 = scope:New("UICorner")({Name = "UICorner"})
+v29 = scope:New("Frame")
+v30 = {
     Name = "Toggle",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -885,35 +904,35 @@ v29 = {
     Position = UDim2.new(1, -3, 0.5, 0),
     Size = UDim2.fromScale(0.15, 1),
 }
-v31 = {}
-v34 = scope:New("UICorner")
-v34 = v34({Name = "UICorner", CornerRadius = UDim.new(0.18, 0)})
-v32 = scope:New("TextButton")
-v33 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), TextTransparency = 1}
-v36 = {}
-local v37 = scope:New("TextLabel")
-v36[1] = v37({
-    Name = "Label",
-    BackgroundTransparency = 1,
-    Text = "OPEN",
-    TextScaled = true,
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-    Position = UDim2.fromScale(0.5, 0.5),
-    Size = UDim2.fromScale(0.9, 0.9),
-    TextColor3 = Color3.fromRGB(255, 184, 84),
-})
-v33[Children] = v36
-v32 = v32(v33)
-v33 = scope:New("UIStroke")
-v35 = {Name = "UIStroke", Thickness = 3, Color = Color3.fromRGB(255, 184, 84)}
-v31[1] = v34
-v31[2] = v32
-v31[3] = v33(v35)
-v29[Children] = v31
-v28 = v28(v29)
-v29 = scope:New("TextLabel")
-v30 = {
+v31 = Children
+v32 = {}
+v33 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.18, 0)})
+v34 = scope:New("TextButton")
+v35 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), TextTransparency = 1}
+local v36 = Children
+v35[v36] = {
+    scope:New("TextLabel")({
+        Name = "Label",
+        BackgroundTransparency = 1,
+        Text = "OPEN",
+        TextScaled = true,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
+        Position = UDim2.fromScale(0.5, 0.5),
+        Size = UDim2.fromScale(0.9, 0.9),
+        TextColor3 = Color3.fromRGB(255, 184, 84),
+    }),
+}
+v34 = v34(v35)
+v35 = scope:New("UIStroke")
+v36 = {Name = "UIStroke", Thickness = 3, Color = Color3.fromRGB(255, 184, 84)}
+v32[1] = v33
+v32[2] = v34
+v32[3] = v35(v36)
+v30[v31] = v32
+v29 = v29(v30)
+v30 = scope:New("TextLabel")
+v31 = {
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -928,25 +947,26 @@ v30 = {
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 }
-v20[1] = v21
-v20[2] = v25
-v20[3] = v28
-v20[4] = v29(v30)
-v19[Children] = v20
-v17[1] = v18(v19)
-v22[Children] = v17
-v15 = v15(v22)
-v22 = scope:New("Frame")
-v16 = {
+v26[1] = v27
+v26[2] = v28
+v26[3] = v29
+v26[4] = v30(v31)
+v24[v25] = v26
+v22[1] = v23(v24)
+v20[v21] = v22
+v19 = v19(v20)
+v20 = scope:New("Frame")
+v21 = {
     Name = "Bind",
     BackgroundTransparency = 1,
     LayoutOrder = 1,
     Size = UDim2.fromScale(1, 0.16),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v18 = {}
-v19 = scope:New("Frame")
-v24 = {
+v22 = Children
+v23 = {}
+v24 = scope:New("Frame")
+v25 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -954,11 +974,10 @@ v24 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.fromScale(0.99, 0.85),
 }
-v21 = {}
-v25 = scope:New("UICorner")
-v25 = v25({Name = "UICorner"})
-v28 = scope:New("TextLabel")
-v28 = v28({
+v26 = Children
+v27 = {}
+v28 = scope:New("UICorner")({Name = "UICorner"})
+v29 = scope:New("TextLabel")({
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "JUMP",
@@ -971,8 +990,7 @@ v28 = v28({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v29 = scope:New("TextLabel")
-v29 = v29({
+v30 = scope:New("TextLabel")({
     Name = "DescriptionLabel",
     BackgroundTransparency = 1,
     Text = "ANIMATED SKINS",
@@ -987,8 +1005,8 @@ v29 = v29({
     TextColor3 = Color3.new(1, 1, 1),
     TextXAlignment = Enum.TextXAlignment.Left,
 })
-v30 = scope:New("ImageButton")
-v31 = {
+v31 = scope:New("ImageButton")
+v32 = {
     Name = "GamepadButton",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.fromRGB(107, 107, 107),
@@ -999,17 +1017,17 @@ v31 = {
     Size = UDim2.fromScale(0.11, 0.11),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v32 = {}
-v33 = scope:New("UICorner")
-v33 = v33({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
-v35 = scope:New("UIStroke")
-v36 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
-v32[1] = v33
-v32[2] = v35(v36)
-v31[Children] = v32
-v30 = v30(v31)
-v31 = scope:New("ImageButton")
-v34 = {
+v33 = Children
+v34 = {}
+v35 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
+v36 = scope:New("UIStroke")
+local v37 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
+v34[1] = v35
+v34[2] = v36(v37)
+v32[v33] = v34
+v31 = v31(v32)
+v32 = scope:New("ImageButton")
+v33 = {
     Name = "MouseButton",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.fromRGB(107, 107, 107),
@@ -1020,17 +1038,17 @@ v34 = {
     Size = UDim2.fromScale(0.11, 0.11),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v33 = {}
-v35 = scope:New("UICorner")
-v35 = v35({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
-v36 = scope:New("UIStroke")
-v37 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
-v33[1] = v35
-v33[2] = v36(v37)
-v34[Children] = v33
-v31 = v31(v34)
-v34 = scope:New("ImageButton")
-v32 = {
+v34 = Children
+v35 = {}
+v36 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
+v37 = scope:New("UIStroke")
+local v38 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
+v35[1] = v36
+v35[2] = v37(v38)
+v33[v34] = v35
+v32 = v32(v33)
+v33 = scope:New("ImageButton")
+v34 = {
     Name = "KeyboardButton",
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Color3.fromRGB(107, 107, 107),
@@ -1041,35 +1059,35 @@ v32 = {
     Size = UDim2.fromScale(0.11, 0.11),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
 }
-v35 = {}
-v36 = scope:New("UICorner")
-v36 = v36({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
-v37 = scope:New("UIStroke")
-local v38 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
-v35[1] = v36
-v35[2] = v37(v38)
-v32[Children] = v35
-v21[1] = v25
-v21[2] = v28
-v21[3] = v29
-v21[4] = v30
-v21[5] = v31
-v21[6] = v34(v32)
-v24[Children] = v21
-v18[1] = v19(v24)
-v16[Children] = v18
-v9[1] = v10
-v9[2] = v11
-v9[3] = v12
-v9[4] = v23
-v9[5] = v13
-v9[6] = v14
-v9[7] = v15
-v9[8] = v22(v16)
-v8[Children] = v9
-v7 = v7(v8)
-v8 = scope:New("ImageButton")
-v26 = {
+v35 = Children
+v36 = {}
+v37 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.1, 0)})
+v38 = scope:New("UIStroke")
+local v39 = {Name = "UIStroke", Color = Color3.fromRGB(255, 184, 84)}
+v36[1] = v37
+v36[2] = v38(v39)
+v34[v35] = v36
+v27[1] = v28
+v27[2] = v29
+v27[3] = v30
+v27[4] = v31
+v27[5] = v32
+v27[6] = v33(v34)
+v25[v26] = v27
+v23[1] = v24(v25)
+v21[v22] = v23
+v12[1] = v13
+v12[2] = v14
+v12[3] = v15
+v12[4] = v16
+v12[5] = v17
+v12[6] = v18
+v12[7] = v19
+v12[8] = v20(v21)
+v10[v11] = v12
+v9 = v9(v10)
+v10 = scope:New("ImageButton")
+v11 = {
     Name = "Dropdown",
     AnchorPoint = Vector2.new(1, 1),
     BackgroundTransparency = 1,
@@ -1085,9 +1103,10 @@ v26 = {
     Visible = false,
     ZIndex = 2,
 }
-v10 = {}
-v11 = scope:New("ScrollingFrame")
-v12 = {
+v12 = Children
+v13 = {}
+v14 = scope:New("ScrollingFrame")
+v15 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -1100,9 +1119,10 @@ v12 = {
     Selectable = false,
     Size = UDim2.new(1, -5, 1, -5),
 }
-v13 = {}
-v14 = scope:New("TextButton")
-v15 = {
+v16 = Children
+v17 = {}
+v18 = scope:New("TextButton")
+v19 = {
     Name = "Exit",
     Active = false,
     BackgroundTransparency = 1,
@@ -1110,9 +1130,10 @@ v15 = {
     Size = UDim2.fromOffset(100, 100),
     Visible = false,
 }
-v16 = {}
-v17 = scope:New("ImageLabel")
-v18 = {
+v20 = Children
+v21 = {}
+v22 = scope:New("ImageLabel")
+v23 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -1125,9 +1146,9 @@ v18 = {
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
-v24 = {}
-v20 = scope:New("ImageLabel")
-v20 = v20({
+v24 = Children
+v25 = {}
+v26 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -1138,8 +1159,8 @@ v20 = v20({
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-v21 = scope:New("TextLabel")
-v25 = {
+v27 = scope:New("TextLabel")
+v28 = {
     Name = "Label",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -1150,31 +1171,30 @@ v25 = {
     TextColor3 = Color3.fromRGB(255, 73, 73),
     TextScaled = true,
 }
-v29 = {}
-v30 = scope:New("UITextSizeConstraint")
-v29[1] = v30({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v25[Children] = v29
-v24[1] = v20
-v24[2] = v21(v25)
-v18[Children] = v24
-v17 = v17(v18)
-v18 = scope:New("UISizeConstraint")
-v19 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
-v16[1] = v17
-v16[2] = v18(v19)
-v15[Children] = v16
-v14 = v14(v15)
-v15 = scope:New("TextButton")
-v22 = {
+v29 = Children
+v28[v29] = {scope:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
+v25[1] = v26
+v25[2] = v27(v28)
+v23[v24] = v25
+v22 = v22(v23)
+v23 = scope:New("UISizeConstraint")
+v24 = {Name = "UISizeConstraint", MaxSize = Vector2.new(300, 0)}
+v21[1] = v22
+v21[2] = v23(v24)
+v19[v20] = v21
+v18 = v18(v19)
+v19 = scope:New("TextButton")
+v20 = {
     Name = "Button",
     BackgroundTransparency = 1,
     Size = UDim2.fromScale(0.5, 0.14),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
     Visible = false,
 }
-v17 = {}
-v18 = scope:New("Frame")
-v19 = {
+v21 = Children
+v22 = {}
+v23 = scope:New("Frame")
+v24 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(1, 1, 1),
@@ -1182,13 +1202,12 @@ v19 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.new(1, 0, 0.8, -6),
 }
-v20 = {}
-v21 = scope:New("UICorner")
-v21 = v21({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
-v25 = scope:New("UIStroke")
-v25 = v25({Name = "UIStroke", Thickness = 3, Color = Color3.fromRGB(255, 184, 84)})
-v28 = scope:New("TextLabel")
-v29 = {
+v25 = Children
+v26 = {}
+v27 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
+v28 = scope:New("UIStroke")({Name = "UIStroke", Thickness = 3, Color = Color3.fromRGB(255, 184, 84)})
+v29 = scope:New("TextLabel")
+v30 = {
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "AUTOMATIC",
@@ -1199,22 +1218,27 @@ v29 = {
     Size = UDim2.fromScale(0.9, 0.8),
     TextColor3 = Color3.fromRGB(255, 184, 84),
 }
-v20[1] = v21
-v20[2] = v25
-v20[3] = v28(v29)
-v19[Children] = v20
-v17[1] = v18(v19)
-v22[Children] = v17
-v15 = v15(v22)
-v22 = scope:New("UIListLayout")
-v16 = {Name = "UIListLayout", HorizontalAlignment = Enum.HorizontalAlignment.Center, SortOrder = Enum.SortOrder.LayoutOrder, VerticalAlignment = Enum.VerticalAlignment.Center}
-v13[1] = v14
-v13[2] = v15
-v13[3] = v22(v16)
-v12[Children] = v13
-v11 = v11(v12)
-v12 = scope:New("TextButton")
-v23 = {
+v26[1] = v27
+v26[2] = v28
+v26[3] = v29(v30)
+v24[v25] = v26
+v22[1] = v23(v24)
+v20[v21] = v22
+v19 = v19(v20)
+v20 = scope:New("UIListLayout")
+v21 = {
+    Name = "UIListLayout",
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    SortOrder = Enum.SortOrder.LayoutOrder,
+    VerticalAlignment = Enum.VerticalAlignment.Center,
+}
+v17[1] = v18
+v17[2] = v19
+v17[3] = v20(v21)
+v15[v16] = v17
+v14 = v14(v15)
+v15 = scope:New("TextButton")
+v16 = {
     Name = "Exit",
     AnchorPoint = Vector2.new(1, 0),
     BackgroundColor3 = Color3.fromRGB(50, 17, 17),
@@ -1228,13 +1252,17 @@ v23 = {
     TextScaled = true,
     TextTransparency = 1,
 }
-v14 = {}
-v15 = scope:New("UIStroke")
-v15 = v15({Name = "UIStroke", Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = Color3.fromRGB(255, 73, 73)})
-v22 = scope:New("UICorner")
-v22 = v22({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
-v16 = scope:New("TextLabel")
-v17 = {
+v17 = Children
+v18 = {}
+v19 = scope:New("UIStroke")({
+    Name = "UIStroke",
+    Thickness = 3,
+    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    Color = Color3.fromRGB(255, 73, 73),
+})
+v20 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
+v21 = scope:New("TextLabel")
+v22 = {
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "X",
@@ -1245,18 +1273,18 @@ v17 = {
     Size = UDim2.fromScale(0.85, 0.8),
     TextColor3 = Color3.fromRGB(255, 73, 73),
 }
-v14[1] = v15
-v14[2] = v22
-v14[3] = v16(v17)
-v23[Children] = v14
-v10[1] = v11
-v10[2] = v12(v23)
-v26[Children] = v10
-v3[1] = v4
-v3[2] = v5
-v3[3] = v27
-v3[4] = v6
-v3[5] = v7
-v3[6] = v8(v26)
-v2[Children] = v3
+v18[1] = v19
+v18[2] = v20
+v18[3] = v21(v22)
+v16[v17] = v18
+v13[1] = v14
+v13[2] = v15(v16)
+v11[v12] = v13
+v4[1] = v5
+v4[2] = v6
+v4[3] = v7
+v4[4] = v8
+v4[5] = v9
+v4[6] = v10(v11)
+v2[v3] = v4
 v1(v2)

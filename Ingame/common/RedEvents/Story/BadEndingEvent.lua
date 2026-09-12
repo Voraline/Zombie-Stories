@@ -1,66 +1,74 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Red = require(ReplicatedStorage.Packages.Red)
 local u9 = {StartHallucination = true, ShowSequence = true, Clear = true}
+
 local function sanitizeBoolean(p1) -- Line: 14
     if typeof(p1) == "boolean" then
         return p1
     end
     return nil
 end
+
 local function sanitizeString(p1) -- Line: 21
     local v1
     if typeof(p1) ~= "string" then
         return nil
     end
-    if 120 >= #p1 then
+    if not (120 < #p1) then
         v1 = p1
     else
         v1 = string.sub(p1, 1, 120)
     end
     return v1
 end
+
 local function sanitizeMessages(p1) -- Line: 31
-    local text, v1, v2, v3
+    local duration, duration_2, text, v1, v2, v3, v4
     if typeof(p1) ~= "table" then
         return {}
     end
-    local v4 = {}
+    local v5 = {}
     for i, v in ipairs(p1) do
         if 6 < i then
             break
         end
-        v1 = nil
         v2 = nil
+        v3 = nil
         if typeof(v) == "table" then
             text = v.text
             if typeof(text) == "string" then
                 if 120 < #text then
                     text = string.sub(text, 1, 120)
                 end
-                v1 = text
+                v2 = text
             else
-                v1 = nil
+                v2 = nil
             end
-            if typeof(v.duration) == "number" then
-                v2 = math.max(0.5, (math.min(v.duration, 10)))
+            duration = v.duration
+            if typeof(duration) == "number" then
+                duration_2 = v.duration
+                v1 = math.min(duration_2, 10)
+                v3 = math.max(0.5, v1)
             end
         elseif typeof(v) == "string" then
-            v3 = v
-            if typeof(v3) == "string" then
-                if 120 < #v3 then
-                    v3 = string.sub(v3, 1, 120)
+            v4 = v
+            if typeof(v4) == "string" then
+                if 120 < #v4 then
+                    v4 = string.sub(v4, 1, 120)
                 end
-                v1 = v3
+                v2 = v4
             else
-                v1 = nil
+                v2 = nil
             end
         end
-        if v1 then
-            table.insert(v4, {text = v1, duration = v2 or 3})
+        if v2 then
+            v1 = {text = v2, duration = v3 or 3}
+            table.insert(v5, v1)
         end
     end
-    return v4
+    return v5
 end
+
 local function sanitizeProfile(p1) -- Line: 65
     if typeof(p1) ~= "string" then
         return nil
@@ -75,29 +83,40 @@ local function sanitizeProfile(p1) -- Line: 65
     end
     return nil
 end
+
 return Red.SharedEvent("BadEndingEvent", function(p1) -- Line: 83 -- upvalues: u9 (val), sanitizeMessages (val)
     local v1, v2, v3, v4
     if typeof(p1) ~= "table" then
         return nil
     end
     local action = p1.action
-    if not (u9[action]) then
+    if not u9[action] then
         return nil
     end
     if action ~= "StartHallucination" then
         if action == "ShowSequence" then
-            v1 = if typeof(p1.fadeTime) == "number" then math.clamp(p1.fadeTime, 0, 5) else 1.5
+            v1 = 1.5
+            local fadeTime = p1.fadeTime
+            if typeof(fadeTime) == "number" then
+                local fadeTime_2 = p1.fadeTime
+                v1 = math.clamp(fadeTime_2, 0, 5)
+            end
             return {action = action, fadeTime = v1, messages = sanitizeMessages(p1.messages)}
         end
         return {action = action}
     end
-    v1 = if typeof(p1.intensity) == "number" then math.clamp(p1.intensity, 0, 5) else 1
+    v1 = 1
+    local intensity = p1.intensity
+    if typeof(intensity) == "number" then
+        local intensity_2 = p1.intensity
+        v1 = math.clamp(intensity_2, 0, 5)
+    end
     local profile = p1.profile
     if typeof(profile) == "string" then
         v4 = string.sub(profile, 1, 32)
         if v4 ~= "" then
             local v5 = string.lower(v4)
-            if not (string.match(v5, "^[%w_%-%?%.]+$")) then
+            if not string.match(v5, "^[%w_%-%?%.]+$") then
                 v2 = nil
             else
                 v2 = v5

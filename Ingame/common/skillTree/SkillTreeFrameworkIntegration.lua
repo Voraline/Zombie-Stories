@@ -9,13 +9,17 @@ return {
         local WeaponController = require(Controllers.WeaponController)
         local LocalPlayerController = require(Controllers.LocalPlayerController)
         return {
-            onOpen = function(p1) -- Line: 40 -- upvalues: CameraController (val), WeaponController (val), LocalPlayerController (val), UserInputService (upval), GamepadService (upval)
+            onOpen = function(p1) -- Line: 40
+                -- upvalues: CameraController (val), WeaponController (val), LocalPlayerController (val)
+                -- upvalues: UserInputService (upval), GamepadService (upval)
                 CameraController:SetEnabled(false)
                 CameraController:SetMouseUnlocked("Skilltree", true)
                 WeaponController:ForceUnequip(nil)
                 WeaponController:DisableSwapping()
                 LocalPlayerController:SetMovementEnabled(false)
-                if UserInputService:GetGamepadConnected(Enum.UserInputType.Gamepad1) then
+                local v1 = UserInputService
+                local Gamepad1 = Enum.UserInputType.Gamepad1
+                if v1:GetGamepadConnected(Gamepad1) then
                     GamepadService:EnableGamepadCursor(nil)
                 end
             end,

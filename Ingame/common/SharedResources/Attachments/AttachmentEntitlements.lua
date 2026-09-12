@@ -20,7 +20,10 @@ return {
         if not UniqueAwards then
             v1 = false
         else
-            v1 = not (UniqueAwards[EntitlementKey] == nil)
+            v1 = true
+            if UniqueAwards[EntitlementKey] == nil then
+                v1 = false
+            end
         end
         return v1
     end,

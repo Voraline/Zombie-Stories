@@ -2,32 +2,35 @@ local u2 = require("@self/AttachmentObject")
 local u5 = require("@game/ReplicatedStorage/common/Table")
 local u6 = {}
 u6.__index = u6
+
 function u6.new(p1, p2) -- Line: 15 -- upvalues: u6 (val)
-    local AttachmentNodeData, BaseAttachments
     local v1 = {IsRoot = true}
-    setmetatable(v1, u6)
-    local v2 = {}
-    v1.Nodes = v2
+    local v2 = u6
+    setmetatable(v1, v2)
+    local v3 = {}
+    v1.Nodes = v3
     v1.AttachmentNodeData = p1.AttachmentNodeData
     if not v1.AttachmentNodeData then
-        warn(("[AttachmentsRoot] Missing AttachmentNodeData for weapon '%s'. Check if the config has BaseConfig defined or if the weapon name matches the item database."):format(p1.WeaponName or "unknown"))
+        v3 = warn
+        local WeaponName = p1.WeaponName
+        v3(("[AttachmentsRoot] Missing AttachmentNodeData for weapon '%s'. Check if the config has BaseConfig defined or if the weapon name matches the item database."):format(WeaponName or "unknown"))
         return v1
     end
-    v2 = {}
-    AttachmentNodeData = v1.AttachmentNodeData
-    local v3 = nil
+    v3 = {}
+    local AttachmentNodeData = v1.AttachmentNodeData
+    v2 = nil
     local v4 = nil
-    for i, j in AttachmentNodeData, v3, v4 do
-        v2[j.Name] = i
+    for i, j in AttachmentNodeData, v2, v4 do
+        v3[j.Name] = i
         v1:AddNode(i)
     end
     if p1.BaseAttachments then
         local v5
-        BaseAttachments = p1.BaseAttachments
-        v3 = nil
+        local BaseAttachments = p1.BaseAttachments
+        v2 = nil
         v4 = nil
-        for k, n in BaseAttachments, v3, v4 do
-            v5 = v2[k]
+        for k, n in BaseAttachments, v2, v4 do
+            v5 = v3[k]
             if not v5 then
                 warn(("No node found with the name '%s'"):format(k))
             else
@@ -40,35 +43,52 @@ function u6.new(p1, p2) -- Line: 15 -- upvalues: u6 (val)
     end
     return v1
 end
+
 function u6:AddNode(p2) -- Line: 61
     self.Nodes[p2] = {}
 end
-function u6.RemoveNode(p1, p2) -- Line: 68
-    p1.Nodes[p2] = nil
+
+function u6:RemoveNode(p2) -- Line: 68
+    self.Nodes[p2] = nil
 end
+
 function u6:SetNodeAttachment(p2, p3) -- Line: 73 -- upvalues: u2 (val)
-    local v1 = self.Nodes[p2]
-    if not v1 then
-        return
-    end
+    local v1
     local AttachmentNodeData = self:GetAttachmentNodeData()
-    if p3 > #AttachmentNodeData[p2].PotentialAttachments then
+    local v2 = AttachmentNodeData
+    if v2 then
+        v2 = AttachmentNodeData[p2]
+    end
+    if not v2 then
+        self:RemoveNode(p2)
+        v1 = warn
+        local v3 = tostring(p2)
+        v1(("[AttachmentsRoot] Node '%s' no longer exists on this weapon; unequipping its attachment."):format(v3))
+        return
+    end
+    v1 = self.Nodes[p2]
+    if v1 then
+        if p3 <= #v2.PotentialAttachments then
+            if v2.PotentialAttachments[p3] then
+                v1.ConnectedAttachment = u2.new(p3, p2, self.AttachmentNodeData, self)
+                return
+            end
+            v1.ConnectedAttachment = nil
+            return
+        end
         warn(("index '%d' is not within the range of potential attachments"):format(p3))
-        return
     end
-    if AttachmentNodeData[p2].PotentialAttachments[p3] then
-        v1.ConnectedAttachment = u2.new(p3, p2, self.AttachmentNodeData, self)
-        return
-    end
-    v1.ConnectedAttachment = nil
 end
-function u6:GetAttachmentNodeData() -- Line: 90
+
+function u6:GetAttachmentNodeData() -- Line: 100
     return self.AttachmentNodeData
 end
-function u6:GetNodes() -- Line: 95
+
+function u6:GetNodes() -- Line: 105
     return self.Nodes
 end
-function u6:GetNodeIDFromName(p2) -- Line: 100
+
+function u6:GetNodeIDFromName(p2) -- Line: 110
     local AttachmentNodeData = self.AttachmentNodeData
     local v1 = nil
     local v2 = nil
@@ -79,38 +99,45 @@ function u6:GetNodeIDFromName(p2) -- Line: 100
     end
     return nil
 end
-function u6.GetAttachmentFromNodeName(p1, p2) -- Line: 110
+
+function u6.GetAttachmentFromNodeName(p1, p2) -- Line: 120
     local NodeIDFromName = p1:GetNodeIDFromName(p2)
-    if not NodeIDFromName then
-        return nil
-    end
-    local v1 = p1:GetNodes()[NodeIDFromName]
-    if v1 then
-        return v1.ConnectedAttachment
+    if NodeIDFromName then
+        local v1 = p1:GetNodes()[NodeIDFromName]
+        if v1 then
+            return v1.ConnectedAttachment
+        end
     end
     return nil
 end
-function u6.Serialize(p1) -- Line: 122
+
+function u6.Serialize(p1) -- Line: 132
     local readObject
     local v1 = {}
-    function readObject(p1, p2) -- Line: 125 -- upvalues: readObject (val)
-        local ConnectedAttachment, v1, v2
+
+    function readObject(p1, p2) -- Line: 135 -- upvalues: readObject (val)
+        local ConnectedAttachment, v1, v2, v3
         for i, j in p1:GetNodes() do
             v1 = tostring(i)
             ConnectedAttachment = j.ConnectedAttachment
             if ConnectedAttachment then
                 v2 = {}
-                p2[v1] = {ConnectedAttachment:GetAttachmentIndex(), v2}
+                v3 = {ConnectedAttachment:GetAttachmentIndex(), v2}
+                p2[v1] = v3
                 readObject(ConnectedAttachment, v2)
             end
         end
     end
+
     readObject(p1, v1)
     return v1
 end
-function u6.GetDisplayName(p1, p2) -- Line: 151 -- upvalues: u5 (val)
-    local scan, u2
-    function scan(p1) -- Line: 154 -- upvalues: u5 (upval), u2 (ref), scan (val)
+
+function u6.GetDisplayName(p1, p2) -- Line: 161 -- upvalues: u5 (val)
+    local scan
+    local u2 = p2
+
+    function scan(p1) -- Line: 164 -- upvalues: u5 (upval), u2 (ref), scan (val)
         local AttachmentData, ConnectedAttachment
         local v1 = u5.keys(p1:GetNodes())
         table.sort(v1)
@@ -129,39 +156,64 @@ function u6.GetDisplayName(p1, p2) -- Line: 151 -- upvalues: u5 (val)
             end
         end
     end
+
     scan(p1)
-    return p2
+    return u2
 end
-function u6.Deserialize(p1, p2) -- Line: 175 -- upvalues: u5 (val)
-    local convertIDToInteger, readNode, v1, v2
-    local v3 = u5.deepCopy(p2)
-    function convertIDToInteger(p1) -- Line: 179 -- upvalues: u5 (upval), convertIDToInteger (val)
-        local v1
-        local v2 = u5.keys(p1)
-        local v3 = nil
+
+function u6.Deserialize(p1, p2) -- Line: 185 -- upvalues: u5 (val)
+    local convertIDToInteger, readNode
+    local v1 = u5.deepCopy(p2)
+
+    function convertIDToInteger(p1) -- Line: 189 -- upvalues: u5 (upval), convertIDToInteger (val)
+        local v1, v2, v3
+        local v4 = u5.keys(p1)
+        local v5 = nil
+        local v6 = nil
+        local v7 = p1
+        for i, j in v4, v5, v6 do
+            v1 = v7[j]
+            v7[tonumber(j)] = v1
+            v7[j] = nil
+            v2 = convertIDToInteger
+            v3 = v1[2]
+            if not v3 then
+                v3 = {}
+            end
+            v2(v3)
+        end
+    end
+
+    convertIDToInteger(v1)
+
+    function readNode(p1, p2, p3) -- Line: 200 -- upvalues: readNode (val)
+        local v1 = p3[1]
+        p2:SetNodeAttachment(p1, v1)
+        local v2 = p2:GetNodes()[p1]
+        local ConnectedAttachment = v2
+        if ConnectedAttachment then
+            ConnectedAttachment = v2.ConnectedAttachment
+        end
+        if not ConnectedAttachment then
+            return
+        end
+        local v3 = p3[2]
+        if not v3 then
+            v3 = {}
+        end
+        v1 = nil
         local v4 = nil
-        for i, j in v2, v3, v4 do
-            v1 = p1[j]
-            p1[tonumber(j)] = v1
-            p1[j] = nil
-            convertIDToInteger(v1[2])
+        for i, j in v3, v1, v4 do
+            readNode(i, ConnectedAttachment, j)
         end
     end
-    convertIDToInteger(v3)
-    function readNode(p1, p2, p3) -- Line: 190 -- upvalues: readNode (val)
-        p2:SetNodeAttachment(p1, p3[1])
-        local v1 = p3[2]
-        local v2 = nil
-        local v3 = nil
-        for i, j in v1, v2, v3 do
-            readNode(i, p2:GetNodes()[p1].ConnectedAttachment, j)
-        end
-    end
-    v1 = v3
+
+    local v2 = v1
+    local v3 = nil
     local v4 = nil
-    v2 = nil
-    for i, j in v1, v4, v2 do
+    for i, j in v2, v3, v4 do
         readNode(i, p1, j)
     end
 end
+
 return u6

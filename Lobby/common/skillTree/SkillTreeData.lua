@@ -1,4 +1,3 @@
-local skills
 game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -9,6 +8,7 @@ if RunService:IsServer() then
     game:GetService("ServerScriptService")
     require("@game/ServerScriptService/common/zap")
     local u35 = {}
+
     function u23.initializePlayer(p1) -- Line: 37 -- upvalues: u35 (val), u22 (val)
         local v1
         u35[p1] = {}
@@ -20,9 +20,11 @@ if RunService:IsServer() then
             v1[i] = 0
         end
     end
+
     function u23.cleanupPlayer(p1) -- Line: 47 -- upvalues: u35 (val)
         u35[p1] = nil
     end
+
     function u23.getSkillRank(p1, p2) -- Line: 54 -- upvalues: u35 (val)
         local v1 = u35[p1]
         if not v1 then
@@ -30,12 +32,14 @@ if RunService:IsServer() then
         end
         return v1[p2] or 0
     end
+
     function u23.setSkillRank(p1, p2, p3) -- Line: 63 -- upvalues: u35 (val)
         local v1 = u35[p1]
         if v1 then
             v1[p2] = p3
         end
     end
+
     function u23.getAllSkillRanks(p1) -- Line: 73 -- upvalues: u35 (val)
         local v1 = u35[p1]
         if not v1 then
@@ -43,103 +47,109 @@ if RunService:IsServer() then
         end
         return v1
     end
+
     function u23.getReloadSpeedMult(p1) -- Line: 85 -- upvalues: u23 (val)
         return 1 / (1 + 0.04 * u23.getSkillRank(p1, "fastHands"))
     end
+
     function u23.getRecoilMult(p1) -- Line: 93 -- upvalues: u23 (val)
         return 1 - 0.04 * u23.getSkillRank(p1, "steadyAim")
     end
+
     function u23.getSwapSpeedMult(p1) -- Line: 101 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "sleightSwitch")
-        return 1 + 0.1 * v1
+        return 1 + 0.1 * (u23.getSkillRank(p1, "sleightSwitch"))
     end
+
     function u23.getMaxHPMult(p1) -- Line: 109 -- upvalues: u23 (val)
         local v1 = u23.getSkillRank(p1, "thickSkin")
         local v2 = u23.getSkillRank(p1, "core2")
         return 1 + 0.1 * v1 + 0.1 * v2
     end
+
     function u23.getDamageReductionMult(p1) -- Line: 118 -- upvalues: u23 (val)
         return 1 - 0.03 * u23.getSkillRank(p1, "grit")
     end
+
     function u23.getAmmoCapacityMult(p1) -- Line: 126 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "deepPockets")
-        return 1 + 0.08 * v1
+        return 1 + 0.08 * (u23.getSkillRank(p1, "deepPockets"))
     end
+
     function u23.getInteractSpeedMult(p1) -- Line: 134 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "quickInteract")
-        return 1 + 0.05 * v1
+        return 1 + 0.05 * (u23.getSkillRank(p1, "quickInteract"))
     end
+
     function u23.getMeleeSwingSpeedMult(p1) -- Line: 142 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "meleeTempo")
-        return 1 + 0.1 * v1
+        return 1 + 0.1 * (u23.getSkillRank(p1, "meleeTempo"))
     end
+
     function u23.getDownedTimeMult(p1) -- Line: 150 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "ironWill")
-        return 1 + 0.15 * v1
+        return 1 + 0.15 * (u23.getSkillRank(p1, "ironWill"))
     end
+
     function u23.getHeadshotDamageMult(p1) -- Line: 158 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "core3")
-        return 1 + 0.05 * v1
+        return 1 + 0.05 * (u23.getSkillRank(p1, "core3"))
     end
+
     function u23.getXPBonusMult(p1) -- Line: 166 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "core1")
-        return 1 + 0.05 * v1
+        return 1 + 0.05 * (u23.getSkillRank(p1, "core1"))
     end
+
     function u23.getAdrenalineStamina(p1) -- Line: 174 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "adrenaline")
-        return 5 * v1
+        return 5 * (u23.getSkillRank(p1, "adrenaline"))
     end
+
     function u23.getParryWindowBonus(p1) -- Line: 182 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "parryMaster")
-        return 0.1 * v1
+        return 0.1 * (u23.getSkillRank(p1, "parryMaster"))
     end
+
     function u23.getSpartanCooldownMult(p1) -- Line: 190 -- upvalues: u23 (val)
         return 1 - 0.1 * u23.getSkillRank(p1, "theSpartan")
     end
+
     function u23.hasFury(p1) -- Line: 199 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "fury")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "fury"))
+        return v1
     end
+
     function u23.hasDeadEye(p1) -- Line: 203 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "deadEye")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "deadEye"))
+        return v1
     end
+
     function u23.hasQuickDraw(p1) -- Line: 207 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "quickDraw")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "quickDraw"))
+        return v1
     end
+
     function u23.hasSecondChance(p1) -- Line: 211 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "secondChance")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "secondChance"))
+        return v1
     end
+
     function u23.hasSwanSong(p1) -- Line: 215 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "swanSong")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "swanSong"))
+        return v1
     end
+
     function u23.hasSecondWind(p1) -- Line: 219 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "secondWind")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "secondWind"))
+        return v1
     end
+
     function u23.hasLastStand(p1) -- Line: 223 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "lastStand")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "lastStand"))
+        return v1
     end
+
     function u23.hasTheSpartan(p1) -- Line: 227 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "theSpartan")
-        local v2 = 1 <= v1
-        return v2
+        local v1 = 1 <= (u23.getSkillRank(p1, "theSpartan"))
+        return v1
     end
+
     function u23.getExtraDowns(p1) -- Line: 235 -- upvalues: u23 (val)
-        local v1 = u23.getSkillRank(p1, "core4")
-        return v1 + u23.getSkillRank(p1, "secondChance")
+        return (u23.getSkillRank(p1, "core4")) + u23.getSkillRank(p1, "secondChance")
     end
+
     return u23
 end
 local Packages = ReplicatedStorage:WaitForChild("Packages")
@@ -149,17 +159,19 @@ local v2 = require("@game/ReplicatedStorage/common/Signal")
 local v3 = Fusion.scoped(Fusion)
 u23.Scope = v3
 local u83 = {}
-skills = u22.skills
+local skills = u22.skills
 local v4 = nil
 local v5 = nil
 for i in skills, v4, v5 do
-    u83[i] = v3:Value(0)
+    u83[i] = (v3:Value(0))
 end
 u23.SkillRanks = u83
 u23.Loaded = v3:Value(false)
+
 function u23.getSkillRankValue(p1) -- Line: 268 -- upvalues: u83 (val)
     return u83[p1]
 end
+
 function u23.getSkillRank(p1) -- Line: 275 -- upvalues: u83 (val), Fusion (val)
     local v1
     local v2 = u83[p1]
@@ -173,12 +185,14 @@ function u23.getSkillRank(p1) -- Line: 275 -- upvalues: u83 (val), Fusion (val)
     end
     return v1
 end
+
 local function setSkillRank(p1, p2) -- Line: 283 -- upvalues: u83 (val)
     local v1 = u83[p1]
     if v1 then
         v1:set(p2)
     end
 end
+
 u23.ReloadSpeedMult = v3:Computed(function(p1) -- Line: 295 -- upvalues: u83 (val)
     return 1 / (1 + 0.04 * (p1(u83.fastHands) or 0))
 end)
@@ -190,7 +204,10 @@ u23.SwapSpeedMult = v3:Computed(function(p1) -- Line: 307 -- upvalues: u83 (val)
 end)
 u23.MaxHPMult = v3:Computed(function(p1) -- Line: 313 -- upvalues: u83 (val)
     local v1 = p1(u83.thickSkin) or 0
-    return 1 + 0.1 * v1 + 0.1 * (p1(u83.core2) or 0)
+    local v2 = u83
+    local core2 = v2.core2
+    local v3 = p1(core2)
+    return 1 + 0.1 * v1 + 0.1 * (v3 or 0)
 end)
 u23.DamageReductionMult = v3:Computed(function(p1) -- Line: 320 -- upvalues: u83 (val)
     return 1 - 0.03 * (p1(u83.grit) or 0)
@@ -223,69 +240,61 @@ u23.SpartanCooldownMult = v3:Computed(function(p1) -- Line: 374 -- upvalues: u83
     return 1 - 0.1 * (p1(u83.theSpartan) or 0)
 end)
 u23.HasFury = v3:Computed(function(p1) -- Line: 383 -- upvalues: u83 (val)
-    local v1 = p1(u83.fury) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.fury) or 0)
+    return v1
 end)
 u23.HasDeadEye = v3:Computed(function(p1) -- Line: 387 -- upvalues: u83 (val)
-    local v1 = p1(u83.deadEye) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.deadEye) or 0)
+    return v1
 end)
 u23.HasQuickDraw = v3:Computed(function(p1) -- Line: 391 -- upvalues: u83 (val)
-    local v1 = p1(u83.quickDraw) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.quickDraw) or 0)
+    return v1
 end)
 u23.HasSecondChance = v3:Computed(function(p1) -- Line: 395 -- upvalues: u83 (val)
-    local v1 = p1(u83.secondChance) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.secondChance) or 0)
+    return v1
 end)
 u23.HasSwanSong = v3:Computed(function(p1) -- Line: 399 -- upvalues: u83 (val)
-    local v1 = p1(u83.swanSong) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.swanSong) or 0)
+    return v1
 end)
 u23.HasSecondWind = v3:Computed(function(p1) -- Line: 403 -- upvalues: u83 (val)
-    local v1 = p1(u83.secondWind) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.secondWind) or 0)
+    return v1
 end)
 u23.HasLastStand = v3:Computed(function(p1) -- Line: 407 -- upvalues: u83 (val)
-    local v1 = p1(u83.lastStand) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.lastStand) or 0)
+    return v1
 end)
 u23.HasTheSpartan = v3:Computed(function(p1) -- Line: 411 -- upvalues: u83 (val)
-    local v1 = p1(u83.theSpartan) or 0
-    local v2 = 1 <= v1
-    return v2
+    local v1 = 1 <= (p1(u83.theSpartan) or 0)
+    return v1
 end)
 u23.ExtraDowns = v3:Computed(function(p1) -- Line: 416 -- upvalues: u83 (val)
-    local v1 = p1(u83.core4) or 0
-    return v1 + (p1(u83.secondChance) or 0)
+    return (p1(u83.core4) or 0) + (p1(u83.secondChance) or 0)
 end)
 u23.DesperateSprintThreshold = v3:Computed(function(p1) -- Line: 423 -- upvalues: u83 (val)
     return 0.05 * (p1(u83.desperateSprint) or 0)
 end)
 v4 = require("./config/EconomyConfig")
 u23.SP = v3:Value(0)
-u23.SPCap = v3:Value(v4.BASE_SP_CAP)
+local BASE_SP_CAP = v4.BASE_SP_CAP
+u23.SPCap = v3:Value(BASE_SP_CAP)
 u23.SPSpent = v3:Value(0)
 u23.XPBar = v3:Value(0)
 u23.DailyEarned = v3:Value(0)
-u23.DailyEarnCap = v3:Value(v4.BASE_DAILY_EARN_CAP)
+local BASE_DAILY_EARN_CAP = v4.BASE_DAILY_EARN_CAP
+u23.DailyEarnCap = v3:Value(BASE_DAILY_EARN_CAP)
 u23.PrestigeLevel = v3:Value(0)
 u23.ZBucks = v3:Value(0)
 u23.ZBucksInvested = v3:Value(0)
 u23.XPPerSP = v4.SP_XP_PER_SP
 u23.XPChanged = v2.new()
 u23.AtSPCap = v3:Computed(function(p1) -- Line: 451 -- upvalues: u23 (val)
-    local v1 = p1(u23.SP)
-    local v2 = v1 + p1(u23.SPSpent)
-    local v3 = p1(u23.SPCap) <= v2
-    return v3
+    local v1 = (p1(u23.SP)) + p1(u23.SPSpent)
+    local v2 = p1(u23.SPCap) <= v1
+    return v2
 end)
 u23.AtDailyCap = v3:Computed(function(p1) -- Line: 456 -- upvalues: u23 (val)
     local v1 = p1(u23.DailyEarned)
@@ -321,10 +330,15 @@ local Sound_2 = Instance.new("Sound")
 Sound_2.SoundId = "rbxassetid://118207534374651"
 Sound_2.Parent = SoundService
 v1.UpdateSkillRank.On(function(p1) -- Line: 488 -- upvalues: u83 (val), Sound (val), Sound_2 (val)
-    print((("[SkillTreeData] Skill %* updated to rank %*"):format(p1.SkillId, p1.Rank)))
-    local v1 = u83[p1.SkillId]
-    if v1 then
-        v1:set(p1.Rank)
+    local v1 = print
+    local SkillId = p1.SkillId
+    local Rank = p1.Rank
+    v1((("[SkillTreeData] Skill %* updated to rank %*"):format(SkillId, Rank)))
+    local SkillId_2 = p1.SkillId
+    local Rank_2 = p1.Rank
+    local v2 = u83[SkillId_2]
+    if v2 then
+        v2:set(Rank_2)
     end
     Sound:Play()
     Sound_2:Play()
@@ -333,17 +347,49 @@ local u273 = nil
 local u274 = nil
 v1.SyncSkillTreeEconomy.On(function(p1) -- Line: 499 -- upvalues: u273 (ref), u274 (ref), u23 (val)
     local v1 = u273
-    u23.SP:set(p1.SP)
-    u23.SPCap:set(p1.SPCap)
-    u23.SPSpent:set(p1.SPSpent)
-    u23.XPBar:set(p1.XPBar)
-    u23.DailyEarned:set(p1.DailyEarned)
-    u23.DailyEarnCap:set(p1.DailyEarnCap)
-    u23.PrestigeLevel:set(p1.PrestigeLevel)
-    u23.ZBucks:set(p1.ZBucks)
-    u23.ZBucksInvested:set(p1.ZBucksInvested)
+    local v2 = u274
+    local v3 = u23
+    local SP_2 = v3.SP
+    local SP_3 = p1.SP
+    SP_2:set(SP_3)
+    v3 = u23
+    local SPCap = v3.SPCap
+    local SPCap_2 = p1.SPCap
+    SPCap:set(SPCap_2)
+    v3 = u23
+    local SPSpent = v3.SPSpent
+    local SPSpent_2 = p1.SPSpent
+    SPSpent:set(SPSpent_2)
+    v3 = u23
+    local XPBar_2 = v3.XPBar
+    local XPBar_3 = p1.XPBar
+    XPBar_2:set(XPBar_3)
+    v3 = u23
+    local DailyEarned = v3.DailyEarned
+    local DailyEarned_2 = p1.DailyEarned
+    DailyEarned:set(DailyEarned_2)
+    v3 = u23
+    local DailyEarnCap = v3.DailyEarnCap
+    local DailyEarnCap_2 = p1.DailyEarnCap
+    DailyEarnCap:set(DailyEarnCap_2)
+    v3 = u23
+    local PrestigeLevel = v3.PrestigeLevel
+    local PrestigeLevel_2 = p1.PrestigeLevel
+    PrestigeLevel:set(PrestigeLevel_2)
+    v3 = u23
+    local ZBucks = v3.ZBucks
+    local ZBucks_2 = p1.ZBucks
+    ZBucks:set(ZBucks_2)
+    v3 = u23
+    local ZBucksInvested = v3.ZBucksInvested
+    local ZBucksInvested_2 = p1.ZBucksInvested
+    ZBucksInvested:set(ZBucksInvested_2)
     if v1 ~= nil and p1.XPBar ~= v1 then
-        u23.XPChanged:Fire(v1, p1.XPBar, u274, p1.SP)
+        v3 = u23
+        local XPChanged = v3.XPChanged
+        local XPBar = p1.XPBar
+        local SP = p1.SP
+        XPChanged:Fire(v1, XPBar, v2, SP)
     end
     u273 = p1.XPBar
     u274 = p1.SP
@@ -363,7 +409,10 @@ task.spawn(function() -- Line: 524 -- upvalues: u23 (val)
     end
     Net.OnClientEvent:Connect(function(p1, p2) -- Line: 541 -- upvalues: u23 (upval)
         if p1 == "UpdateZBucks" then
-            u23.ZBucks:set(tonumber(p2) or 0)
+            local v1 = u23
+            local ZBucks = v1.ZBucks
+            local v2 = tonumber(p2)
+            ZBucks:set(v2 or 0)
         end
     end)
 end)

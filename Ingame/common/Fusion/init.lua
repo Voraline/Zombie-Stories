@@ -1,5 +1,5 @@
 require("@self/PubTypes")
-local v1 = {
+return (require("@self/Utility/restrictRead")("Fusion", {
     version = {major = 0, minor = 2, isRelease = true},
     New = require("@self/Instances/New"),
     Hydrate = require("@self/Instances/Hydrate"),
@@ -19,5 +19,4 @@ local v1 = {
     Spring = require("@self/Animation/Spring"),
     cleanup = require("@self/Utility/cleanup"),
     doNothing = require("@self/Utility/doNothing"),
-}
-return (require("@self/Utility/restrictRead")("Fusion", v1))
+}))

@@ -1,21 +1,23 @@
 local Players = game:GetService("Players")
-local Fusion = require(game:GetService("ReplicatedStorage").Packages.Fusion)
+local Packages = (game:GetService("ReplicatedStorage")).Packages
+local Fusion = require(Packages.Fusion)
 local Children = Fusion.Children
 local OnEvent = Fusion.OnEvent
 return function(p1) -- Line: 22 -- upvalues: Children (val), OnEvent (val), Players (val)
     local scope = p1.scope
-    local v1 = scope:Computed(function(a1) -- Line: 26 -- upvalues: p1 (val)
+    local v1 = scope:Computed(function(p1_2) -- Line: 26 -- upvalues: p1 (val)
         local IsOpen = p1.IsOpen
         if IsOpen == nil then
             return true
         end
-        return not a1(IsOpen)
+        return not p1_2(IsOpen)
     end)
     local v2 = scope:New("ScreenGui")
     local v3 = {Name = "SkillTreeToggleGui", ZIndexBehavior = Enum.ZIndexBehavior.Sibling, ResetOnSpawn = false}
-    local v4 = {}
-    local v5 = scope:New("TextButton")
-    local v6 = {
+    local v4 = Children
+    local v5 = {}
+    local v6 = scope:New("TextButton")
+    local v7 = {
         Name = "TextButton",
         BackgroundColor3 = Color3.fromRGB(49, 183, 255),
         BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -31,27 +33,37 @@ return function(p1) -- Line: 22 -- upvalues: Children (val), OnEvent (val), Play
         Visible = v1,
     }
     local Activated = OnEvent("Activated")
-    v6[Activated] = function() -- Line: 60 -- upvalues: p1 (val)
+
+    v7[Activated] = function() -- Line: 60 -- upvalues: p1 (val)
         if p1.OnOpen then
             p1.OnOpen()
         end
     end
-    local v7 = {}
-    local v8 = scope:New("UICorner")
-    v8 = v8({Name = "UICorner"})
-    local v9 = scope:New("UIPadding")
-    v9 = v9({Name = "UIPadding", PaddingBottom = UDim.new(0.1, 0), PaddingLeft = UDim.new(0.1, 0), PaddingRight = UDim.new(0.1, 0)})
-    local v10 = scope:New("UIStroke")
-    v10 = v10({Name = "UIStroke", Thickness = 1.5})
-    local v11 = scope:New("UIStroke")
-    local v12 = {Name = "UIStroke2", Thickness = 1.5, Transparency = 0.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border}
-    v7[1] = v8
-    v7[2] = v9
-    v7[3] = v10
-    v7[4] = v11(v12)
-    v6[Children] = v7
-    v4[1] = v5(v6)
-    v3[Children] = v4
+
+    local v8 = Children
+    local v9 = {}
+    local v10 = scope:New("UICorner")({Name = "UICorner"})
+    local v11 = scope:New("UIPadding")({
+        Name = "UIPadding",
+        PaddingBottom = UDim.new(0.1, 0),
+        PaddingLeft = UDim.new(0.1, 0),
+        PaddingRight = UDim.new(0.1, 0),
+    })
+    local v12 = scope:New("UIStroke")({Name = "UIStroke", Thickness = 1.5})
+    local v13 = scope:New("UIStroke")
+    local v14 = {
+        Name = "UIStroke2",
+        Thickness = 1.5,
+        Transparency = 0.5,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    }
+    v9[1] = v10
+    v9[2] = v11
+    v9[3] = v12
+    v9[4] = v13(v14)
+    v7[v8] = v9
+    v5[1] = v6(v7)
+    v3[v4] = v5
     v2 = v2(v3)
     v2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     return v2

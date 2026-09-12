@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local Packages = ReplicatedStorage.Packages
+local Children = (require(Packages.Fusion)).Children
 local Theme = require(ReplicatedStorage.common.ZS_Framework.UI.Theme)
 local u18 = require("./BuyButton")
 return function(p1) -- Line: 21 -- upvalues: Theme (val), Children (val), u18 (val)
@@ -13,11 +14,10 @@ return function(p1) -- Line: 21 -- upvalues: Theme (val), Children (val), u18 (v
         LayoutOrder = 5,
         Size = UDim2.fromScale(1, 0.3),
     }
-    local v3 = {}
-    local v4 = scope:New("UISizeConstraint")
-    v4 = v4({MinSize = Vector2.new(120, 52)})
-    local v5 = scope:New("UIListLayout")
-    v5 = v5({
+    local v3 = Children
+    local v4 = {}
+    local v5 = scope:New("UISizeConstraint")({MinSize = Vector2.new(120, 52)})
+    local v6 = scope:New("UIListLayout")({
         Name = "UIListLayout",
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Center,
@@ -25,13 +25,13 @@ return function(p1) -- Line: 21 -- upvalues: Theme (val), Children (val), u18 (v
         SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Center,
     })
-    local v6 = scope:New("UIPadding")
-    v6 = v6({Name = "UIPadding", PaddingBottom = UDim.new(0.1, 0), PaddingTop = UDim.new(0.1, 0)})
-    local v7 = {scope = scope, OnClick = p1.OnBuy, Enabled = p1.BuyEnabled}
-    v3[1] = v4
-    v3[2] = v5
-    v3[3] = v6
-    v3[4] = u18(v7)
-    v2[Children] = v3
+    local v7 = scope:New("UIPadding")({Name = "UIPadding", PaddingBottom = UDim.new(0.1, 0), PaddingTop = UDim.new(0.1, 0)})
+    local v8 = u18
+    local v9 = {scope = scope, OnClick = p1.OnBuy, Enabled = p1.BuyEnabled}
+    v4[1] = v5
+    v4[2] = v6
+    v4[3] = v7
+    v4[4] = v8(v9)
+    v2[v3] = v4
     return v1(v2)
 end

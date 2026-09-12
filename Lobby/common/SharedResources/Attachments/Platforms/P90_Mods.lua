@@ -1,3 +1,4 @@
+local PotentialAttachments_2
 local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
 local v1 = {
     {Name = "Charm", PotentialAttachments = {}},
@@ -25,6 +26,7 @@ local v7 = require("../Extensions/MiscRail")
 v1[8].PotentialAttachments = v7.PotentialAttachments
 v1[10] = {
     Name = "Bottom Rail",
+    RuntimeDisabled = true,
     PotentialAttachments = {
         AttachmentProperties["Angled Grip"],
         AttachmentProperties["Vertical Grip"],
@@ -47,6 +49,7 @@ local PotentialAttachments = v1[8].PotentialAttachments
 local v8 = nil
 local v9 = nil
 for i, j in PotentialAttachments, v8, v9 do
-    table.insert(v1[10].PotentialAttachments, j)
+    PotentialAttachments_2 = v1[10].PotentialAttachments
+    table.insert(PotentialAttachments_2, j)
 end
 return v1

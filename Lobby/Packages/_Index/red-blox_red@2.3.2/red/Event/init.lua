@@ -2,6 +2,7 @@ local RunService = game:GetService("RunService")
 local Identifier = require(script.Parent.Identifier)
 local Server = require(script.Server)
 local Client = require(script.Client)
+
 local function Server_2(p1) -- Line: 21 -- upvalues: RunService (val), Server (val)
     local v1 = RunService:IsServer()
     assert(v1, "Server events can only be accessed from the server")
@@ -10,6 +11,7 @@ local function Server_2(p1) -- Line: 21 -- upvalues: RunService (val), Server (v
     end
     return p1.ServerEvent
 end
+
 local function Client_2(p1) -- Line: 31 -- upvalues: RunService (val), Client (val)
     local v1 = RunService:IsClient()
     assert(v1, "Client events can only be accessed from the client")
@@ -18,6 +20,7 @@ local function Client_2(p1) -- Line: 31 -- upvalues: RunService (val), Client (v
     end
     return p1.ClientEvent
 end
+
 return function(p1, p2) -- Line: 46 -- upvalues: Identifier (val), Server_2 (val), Client_2 (val)
     local Name, v1
     if type(p1) ~= "string" then

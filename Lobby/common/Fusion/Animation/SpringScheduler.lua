@@ -7,6 +7,7 @@ local updateAll = require(Parent.Dependencies.updateAll)
 local v1 = {}
 local u24 = {}
 local u26 = os.clock()
+
 function v1.add(p1) -- Line: 24 -- upvalues: u26 (ref), u24 (val)
     p1._lastSchedule = u26
     p1._startDisplacements = {}
@@ -17,15 +18,19 @@ function v1.add(p1) -- Line: 24 -- upvalues: u26 (ref), u24 (val)
     end
     u24[p1] = true
 end
+
 function v1.remove(p1) -- Line: 39 -- upvalues: u24 (val)
     u24[p1] = nil
 end
-RunService:BindToRenderStep("__FusionSpringScheduler", Enum.RenderPriority.First.Value, function() -- Line: 44 -- upvalues: u26 (ref), u24 (val), springCoefficients (val), packType (val), updateAll (val)
-    local _springPositions, _springVelocities, _startDisplacements, _startVelocities, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10
-    local v11 = {}
+
+local Value = Enum.RenderPriority.First.Value
+RunService:BindToRenderStep("__FusionSpringScheduler", Value, function() -- Line: 44 -- upvalues: u26 (ref), u24 (val), springCoefficients (val), packType (val), updateAll (val)
+    local _springPositions, _springVelocities, _startDisplacements, _startVelocities, v1, v2, v3, v4, v5, v6, v7, v8, v9
+    local v10 = {}
     u26 = os.clock()
     for k in pairs(u24) do
-        v7, v8, v9, v10 = springCoefficients(u26 - k._lastSchedule, k._currentDamping, k._currentSpeed)
+        v6 = springCoefficients
+        v6, v7, v8, v9 = v6(u26 - k._lastSchedule, k._currentDamping, k._currentSpeed)
         _springPositions = k._springPositions
         _springVelocities = k._springVelocities
         _startDisplacements = k._startDisplacements
@@ -34,27 +39,23 @@ RunService:BindToRenderStep("__FusionSpringScheduler", Enum.RenderPriority.First
         for i, v in ipairs(k._springGoals) do
             v2 = _startDisplacements[i]
             v3 = _startVelocities[i]
-            v4 = v2 * v7 + v3 * v8
-            v5 = v2 * v9 + v3 * v10
-            v6 = math.abs(v4)
-            if 0.0001 < v6 then
+            v4 = v2 * v6 + v3 * v7
+            v5 = v2 * v8 + v3 * v9
+            if 0.0001 < (math.abs(v4)) or 0.0001 < (math.abs(v5)) then
                 v1 = true
-            else
-                v6 = math.abs(v5)
-                if 0.0001 >= v6 then end
             end
             _springPositions[i] = v4 + v
             _springVelocities[i] = v5
         end
         if not v1 then
-            v11[k] = true
+            v10[k] = true
         end
     end
     for k2 in pairs(u24) do
         k2._currentValue = packType(k2._springPositions, k2._currentType)
         updateAll(k2)
     end
-    for k3 in pairs(v11) do
+    for k3 in pairs(v10) do
         u24[k3] = nil
     end
 end)

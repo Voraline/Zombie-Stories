@@ -1,4 +1,4 @@
-local v1 = {
+return {
     Ammo = 17,
     StoredAmmo = 102,
     AmmoType = nil,
@@ -51,18 +51,27 @@ local v1 = {
     BulletCasing = "pistol",
     WorldScaleValue = 1,
     NewSkinsSystem = true,
+    NewSkinsSystemBlacklist = {["High Table G17"] = true, ["Cyber G17"] = true},
+    UseAltCameraReload = true,
+    DynamicFOVOffsetConstant = 2,
+    AimDynamicFOVOffsetConstant = 0.5,
+    Offset = CFrame.new(0.0500000007, -0.0500000007, -0.0500000007, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    SprintOffset = CFrame.new(
+        -0.300000012,
+        0,
+        -0.300000012,
+        0.962250173,
+        -0.0841859728,
+        0.258819044,
+        -0.0299755037,
+        0.912392259,
+        0.408217907,
+        -0.270510703,
+        -0.400565982,
+        0.875426054
+    ),
+    AimOffset = CFrame.new(0, 0, 0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    VerticalRecoil = 3,
+    HorizontalRecoil = 3,
+    AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/G17_Mods"),
 }
-local v2 = {}
-v2["High Table G17"] = true
-v2["Cyber G17"] = true
-v1.NewSkinsSystemBlacklist = v2
-v1.UseAltCameraReload = true
-v1.DynamicFOVOffsetConstant = 2
-v1.AimDynamicFOVOffsetConstant = 0.5
-v1.Offset = CFrame.new(0.0500000007, -0.0500000007, -0.0500000007, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-v1.SprintOffset = CFrame.new(-0.300000012, 0, -0.300000012, 0.962250173, -0.0841859728, 0.258819044, -0.0299755037, 0.912392259, 0.408217907, -0.270510703, -0.400565982, 0.875426054)
-v1.AimOffset = CFrame.new(0, 0, 0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-v1.VerticalRecoil = 3
-v1.HorizontalRecoil = 3
-v1.AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/G17_Mods")
-return v1

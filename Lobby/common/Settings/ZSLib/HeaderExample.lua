@@ -11,10 +11,8 @@ local v1 = {
     Size = UDim2.fromScale(1, 0.065),
 }
 local v2 = {}
-local UICorner = New("UICorner")
-local v3 = UICorner({Name = "UICorner", CornerRadius = UDim.new(0.3, 0)})
-local TextLabel = New("TextLabel")
-local v4 = TextLabel({
+local v3 = New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.3, 0)})
+local v4 = New("TextLabel")({
     Name = "TextLabel",
     BackgroundTransparency = 1,
     Text = "SETTINGS",
@@ -60,8 +58,7 @@ local v7 = {
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
 local v8 = {}
-local ImageLabel_2 = New("ImageLabel")
-local v9 = ImageLabel_2({
+local v9 = New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -90,10 +87,7 @@ local v10 = {
     TextSize = 14,
     TextWrapped = true,
 }
-local v11 = {}
-local UITextSizeConstraint = New("UITextSizeConstraint")
-v11[1] = UITextSizeConstraint({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v10[Children] = v11
+v10[Children] = {New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
 v8[1] = v9
 v8[2] = TextLabel_2(v10)
 v7[Children] = v8

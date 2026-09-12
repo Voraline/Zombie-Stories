@@ -7,21 +7,12 @@ if TeleportPresenter then
     TeleportPresenter = ZSTeleport:FindFirstChild("TeleportPresenter")
 end
 if TeleportPresenter and TeleportPresenter:IsA("ModuleScript") then
-    local u33, v1
-    v1, u33 = pcall(require, TeleportPresenter)
-    if not v1 then
-        if not v1 then
-            warn("[TeleportPresenter] Controller failed to load: " .. tostring(u33))
+    local success, result = pcall(require, TeleportPresenter)
+    if not success or not result or not result.IsEnabled then
+        if not success then
+            warn("[TeleportPresenter] Controller failed to load: " .. tostring(result))
         end
-    elseif not u33 then
-        if not v1 then
-            warn("[TeleportPresenter] Controller failed to load: " .. tostring(u33))
-        end
-    elseif not u33.IsEnabled then
-        if not v1 then
-            warn("[TeleportPresenter] Controller failed to load: " .. tostring(u33))
-        end
-    elseif u33.IsEnabled() then
+    elseif result.IsEnabled() then
         local LocalPlayer = Players.LocalPlayer
         local PlayerGui = LocalPlayer
         if PlayerGui then
@@ -32,15 +23,15 @@ if TeleportPresenter and TeleportPresenter:IsA("ModuleScript") then
             ZSTeleportCard = PlayerGui:FindFirstChild("ZSTeleportCard")
         end
         if not ZSTeleportCard then
-            u33.Arm("Generic")
+            result.Arm("Generic")
         end
-        TeleportService.TeleportInitFailed:Connect(function(p1, p2, p3) -- Line: 23 -- upvalues: Players (val), u33 (val)
+        TeleportService.TeleportInitFailed:Connect(function(p1, p2, p3) -- Line: 23 -- upvalues: Players (val), result (val)
             if p1 == Players.LocalPlayer then
-                u33.Dismiss("TeleportInitFailed: " .. tostring(p3 or p2))
+                result.Dismiss("TeleportInitFailed: " .. tostring(p3 or p2))
             end
         end)
-    elseif not v1 then
-        warn("[TeleportPresenter] Controller failed to load: " .. tostring(u33))
+    elseif not success then
+        warn("[TeleportPresenter] Controller failed to load: " .. tostring(result))
     end
 end
 return {}

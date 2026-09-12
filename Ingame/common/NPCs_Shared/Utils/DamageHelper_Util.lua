@@ -1,6 +1,7 @@
 local deepCopy
 local u0 = {}
 local u1 = {}
+
 function deepCopy(p1) -- Line: 6 -- upvalues: deepCopy (val)
     local v1 = {}
     for k, v in pairs(p1) do
@@ -11,9 +12,10 @@ function deepCopy(p1) -- Line: 6 -- upvalues: deepCopy (val)
     end
     return v1
 end
+
 return {
     GetHPList = function(p1, p2) -- Line: 20 -- upvalues: u1 (val)
-        if not (u1[p2]) then
+        if not u1[p2] then
             local Attribute, Attribute_2
             local v1 = {}
             for i, j in p2:GetChildren() do
@@ -34,28 +36,29 @@ return {
             v1 = p2
         else
             local v2 = {HPDir = {}}
-            if not (p2:FindFirstChild("Hitboxes")) then
-                v1 = p2
-            elseif not (p2.Hitboxes:FindFirstChild("Armor")) then
+            if not p2:FindFirstChild("Hitboxes") or not p2.Hitboxes:FindFirstChild("Armor") then
                 v1 = p2
             else
-                local Attribute, Attribute_2
+                local Attribute, Attribute_2, HPDir, v3, v4
                 v1 = p2
                 for i, j in p2.Hitboxes.Armor:GetChildren() do
-                    if not (j:GetAttribute("ArmorHealth")) then
+                    if not j:GetAttribute("ArmorHealth") then
                         warn(j, "does not have a set armor health. Setting to 25")
                         j:SetAttribute("ArmorHealth", 25)
                     end
-                    if not (j:GetAttribute("ArmorLevel")) then
+                    if not j:GetAttribute("ArmorLevel") then
                         warn(j, "does not have a set armor level. Setting to 1")
                         j:SetAttribute("ArmorLevel", 1)
                     end
-                    table.insert(v2.HPDir, {HP = j:GetAttribute("ArmorHealth"), Lvl = j:GetAttribute("ArmorLevel")})
+                    HPDir = v2.HPDir
+                    v3 = {HP = j:GetAttribute("ArmorHealth"), Lvl = j:GetAttribute("ArmorLevel")}
+                    table.insert(HPDir, v3)
+                    v4 = #v2.HPDir
                     for k, n in j:GetChildren() do
                         Attribute = n:GetAttribute("uid")
                         assert(Attribute, "uid doesn't exist!")
                         Attribute_2 = n:GetAttribute("uid")
-                        v2[Attribute_2] = {#v2.HPDir, j.Name}
+                        v2[Attribute_2] = {v4, j.Name}
                     end
                 end
             end

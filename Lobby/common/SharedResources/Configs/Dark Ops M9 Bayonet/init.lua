@@ -1,1 +1,0 @@
-return {BaseConfig = "Scalpel"}

@@ -4,9 +4,12 @@ game:GetService("ReplicatedStorage")
 local u12 = require("@game/ReplicatedStorage/common/Signal")
 local v1 = {}
 local v2 = game.GameId == 1970013852
-if not (RunService:IsStudio()) then end
+if not RunService:IsStudio() then end
 local v3 = os.date("*t")
-local v4 = if v3.month == 12 then 20 <= v3.day else false
+local v4 = false
+if v3.month == 12 then
+    v4 = 20 <= v3.day
+end
 local Attribute = workspace:GetAttribute("PlaceType")
 local v5 = Attribute == "Lobby"
 local v6 = Attribute == "Arcade"
@@ -66,19 +69,21 @@ v1.LocalState = {
 }
 v1.Signals = {}
 local u114 = {ActiveModifiers = true}
+
 function deepTraverse(p1, p2) -- Line: 106 -- upvalues: u114 (val), deepTraverse (val), u12 (val)
     local v1 = p1
     local v2 = nil
     local v3 = nil
     local v4 = p2
     for i, j in v1, v2, v3 do
-        if type(j) ~= "table" then
-            v4[i] = u12.new()
-        elseif not (u114[i]) then
+        if type(j) ~= "table" or u114[i] then
+            v4[i] = (u12.new())
+        else
             v4[i] = {}
             deepTraverse(j, v4[i])
         end
     end
 end
+
 deepTraverse(v1.Data, v1.Signals)
 return v1

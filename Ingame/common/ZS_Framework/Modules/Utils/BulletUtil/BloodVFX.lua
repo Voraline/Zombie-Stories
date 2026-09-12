@@ -4,11 +4,10 @@ return function() -- Line: 3
     local ParticleEmitter = Instance.new("ParticleEmitter")
     ParticleEmitter.Name = "Dots"
     ParticleEmitter.Acceleration = Vector3.new(0, -25, 0)
-    local v1 = {}
-    local v2 = ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15))
-    v1[1] = v2
-    v1[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 15))
-    ParticleEmitter.Color = ColorSequence.new(v1)
+    ParticleEmitter.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 15)),
+    })
     ParticleEmitter.Drag = 1
     ParticleEmitter.EmissionDirection = Enum.NormalId.Front
     ParticleEmitter.Enabled = false
@@ -17,37 +16,29 @@ return function() -- Line: 3
     ParticleEmitter.LightInfluence = 1
     ParticleEmitter.Rate = 30
     ParticleEmitter.RotSpeed = NumberRange.new(-100, 100)
-    v1 = {}
-    v2 = NumberSequenceKeypoint.new(0, 0.5, 0.125)
-    v1[1] = v2
-    v1[2] = NumberSequenceKeypoint.new(1, 0)
-    ParticleEmitter.Size = NumberSequence.new(v1)
+    ParticleEmitter.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.5, 0.125), NumberSequenceKeypoint.new(1, 0)})
     ParticleEmitter.Speed = NumberRange.new(8, 16)
     ParticleEmitter.SpreadAngle = Vector2.new(360, 360)
-    v1 = {}
-    v2 = NumberSequenceKeypoint.new(0, 0)
+    local new_3 = NumberSequence.new
+    local v1 = {}
+    local v2 = NumberSequenceKeypoint.new(0, 0)
     local v3 = NumberSequenceKeypoint.new(0.502, 0.0932, 0.298)
     v1[1] = v2
     v1[2] = v3
     v1[3] = NumberSequenceKeypoint.new(1, 0)
-    ParticleEmitter.Squash = NumberSequence.new(v1)
+    ParticleEmitter.Squash = new_3(v1)
     ParticleEmitter.Texture = "rbxassetid://13632303835"
-    v1 = {}
-    v2 = NumberSequenceKeypoint.new(0, 0.6)
-    v1[1] = v2
-    v1[2] = NumberSequenceKeypoint.new(1, 0.6)
-    ParticleEmitter.Transparency = NumberSequence.new(v1)
+    ParticleEmitter.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.6), NumberSequenceKeypoint.new(1, 0.6)})
     ParticleEmitter.VelocityInheritance = 1
     ParticleEmitter.ZOffset = 5
     ParticleEmitter.Parent = Attachment
     local ParticleEmitter_2 = Instance.new("ParticleEmitter")
     ParticleEmitter_2.Name = "Smoke"
     ParticleEmitter_2.Acceleration = Vector3.new(0, -50, 0)
-    v2 = {}
-    v3 = ColorSequenceKeypoint.new(0, Color3.fromRGB(111, 111, 111))
-    v2[1] = v3
-    v2[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(111, 111, 111))
-    ParticleEmitter_2.Color = ColorSequence.new(v2)
+    ParticleEmitter_2.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(111, 111, 111)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(111, 111, 111)),
+    })
     ParticleEmitter_2.EmissionDirection = Enum.NormalId.Front
     ParticleEmitter_2.Enabled = false
     ParticleEmitter_2.FlipbookMode = Enum.ParticleFlipbookMode.OneShot
@@ -56,16 +47,18 @@ return function() -- Line: 3
     ParticleEmitter_2.Rate = 10
     ParticleEmitter_2.RotSpeed = NumberRange.new(-40, 270)
     ParticleEmitter_2.Rotation = NumberRange.new(-360, 360)
+    local new_6 = NumberSequence.new
     v2 = {}
     v3 = NumberSequenceKeypoint.new(0, 0)
     local v4 = NumberSequenceKeypoint.new(0.31, 2.5, 0.807)
     v2[1] = v3
     v2[2] = v4
     v2[3] = NumberSequenceKeypoint.new(1, 4.66)
-    ParticleEmitter_2.Size = NumberSequence.new(v2)
+    ParticleEmitter_2.Size = new_6(v2)
     ParticleEmitter_2.Speed = NumberRange.new(15, 20)
     ParticleEmitter_2.SpreadAngle = Vector2.new(360, 360)
     ParticleEmitter_2.Texture = "rbxassetid://15265619203"
+    local new_7 = NumberSequence.new
     v2 = {}
     v3 = NumberSequenceKeypoint.new(0, 0.75, 0.1)
     v4 = NumberSequenceKeypoint.new(0.0556, 0.789, 0.1)
@@ -103,7 +96,7 @@ return function() -- Line: 3
     v2[17] = v3
     v2[18] = v4
     v2[19] = NumberSequenceKeypoint.new(1, 1, 0.1)
-    ParticleEmitter_2.Transparency = NumberSequence.new(v2)
+    ParticleEmitter_2.Transparency = new_7(v2)
     ParticleEmitter_2.VelocityInheritance = 1
     ParticleEmitter_2.ZOffset = 5
     ParticleEmitter_2.Parent = Attachment

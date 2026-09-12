@@ -6,15 +6,15 @@ return Red.SharedEvent("Drill", function(p1) -- Line: 14 -- upvalues: u6 (val), 
         return nil
     end
     local action = p1.action
-    if not (u6[action]) then
+    if not u6[action] then
         return nil
     end
     if action == "Disable" then
         return {action = action}
     end
     local state = p1.state
-    if typeof(state) ~= "string" or not (u7[state]) then
-        return nil
+    if typeof(state) == "string" and u7[state] then
+        return {action = action, state = state}
     end
-    return {action = action, state = state}
+    return nil
 end)

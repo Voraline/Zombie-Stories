@@ -1,4 +1,9 @@
-local u0 = {"Good luck out there, operative.", "Return when you have something new for the archive.", "Remember what you read. It may keep you alive.", "Until next time, operative."}
+local u0 = {
+    "Good luck out there, operative.",
+    "Return when you have something new for the archive.",
+    "Remember what you read. It may keep you alive.",
+    "Until next time, operative.",
+}
 local u6 = Random.new()
 local u7 = nil
 return {
@@ -17,12 +22,21 @@ return {
                     end
                     if #u0 == 1 then
                         v1 = 1
-                    elseif not u7 then
-                        v1 = u6:NextInteger(1, #u0)
                     else
-                        v1 = u6:NextInteger(1, #u0 - 1)
-                        if u7 <= v1 then
-                            v1 = v1 + 1
+                        local v2, v3
+                        if not u7 then
+                            v2 = u6
+                            local v4 = u0
+                            v3 = #v4
+                            v1 = v2:NextInteger(1, v3)
+                        else
+                            v2 = u6
+                            local v5 = u0
+                            v3 = #v5 - 1
+                            v1 = v2:NextInteger(1, v3)
+                            if u7 <= v1 then
+                                v1 = v1 + 1
+                            end
                         end
                     end
                     u7 = v1

@@ -1,4 +1,3 @@
-local v1
 local function createKillZombieQuest(p1) -- Line: 12
     return {
         Type = "KillZombie",
@@ -13,8 +12,12 @@ local function createKillZombieQuest(p1) -- Line: 12
         },
     }
 end
+
 local function createCompleteStoryQuest(p1) -- Line: 35
-    local v1 = if p1.Props and p1.Props.Class == "RandomClass" then {Type = "SelectedClass", Amount = 500 * (p1.RewardMultiplier or 1)} else nil
+    local v1 = nil
+    if p1.Props and p1.Props.Class == "RandomClass" then
+        v1 = {Type = "SelectedClass", Amount = 500 * (p1.RewardMultiplier or 1)}
+    end
     local v2 = {Type = "CompleteStory", Title = p1.Title or "Complete %0d Stories"}
     local TitleFormatKeys = p1.TitleFormatKeys
     if not TitleFormatKeys then
@@ -31,7 +34,8 @@ local function createCompleteStoryQuest(p1) -- Line: 35
     }
     return v2
 end
-v1 = {}
+
+local v1 = {}
 local v2 = {}
 local v3 = createKillZombieQuest({
     RewardMultiplier = 1,
@@ -67,20 +71,19 @@ local v7 = createCompleteStoryQuest({
     RewardMultiplier = 1,
     Range = {Min = 1, Max = 3},
 })
-local v8 = {
+v2[1] = v3
+v2[2] = v4
+v2[3] = v5
+v2[4] = v6
+v2[5] = v7
+v2[6] = (createCompleteStoryQuest({
     RewardMultiplier = 2,
     Title = "Complete %0d Stories as %s Class",
     Description = "Complete story chapters using a specific class",
     Range = {Min = 1, Max = 2},
     Props = {Class = "RandomClass"},
     TitleFormatKeys = {"Goal", "Class"},
-}
-v2[1] = v3
-v2[2] = v4
-v2[3] = v5
-v2[4] = v6
-v2[5] = v7
-v2[6] = (createCompleteStoryQuest(v8))
+}))
 v1.Daily = v2
 v2 = {}
 v3 = createCompleteStoryQuest({
@@ -107,7 +110,11 @@ v6 = createKillZombieQuest({
     Range = {Min = 500, Max = 1000},
     Props = {Headshot = true},
 })
-local v9 = {
+v2[1] = v3
+v2[2] = v4
+v2[3] = v5
+v2[4] = v6
+v2[5] = (createCompleteStoryQuest({
     Range = 1,
     RewardMultiplier = 2.5,
     Title = "Complete a Story with the Selected Modifiers",
@@ -116,12 +123,7 @@ local v9 = {
         Modifiers = {Min = 3, Max = 5},
     },
     DescriptionFormatKeys = {"Modifiers"},
-}
-v2[1] = v3
-v2[2] = v4
-v2[3] = v5
-v2[4] = v6
-v2[5] = (createCompleteStoryQuest(v9))
+}))
 v1.Weekly = v2
 v2 = {}
 v3 = createCompleteStoryQuest({
@@ -159,11 +161,11 @@ v7 = createCompleteStoryQuest({
     Props = {Class = "Support"},
     TitleFormatKeys = {"Goal", "Class"},
 })
-v9 = createKillZombieQuest({
+local v8 = createKillZombieQuest({
     RewardMultiplier = 0.6,
     Range = {Min = 10000, Max = 20000},
 })
-v8 = createKillZombieQuest({
+local v9 = createKillZombieQuest({
     Title = "Headshot %0d Zombies",
     Description = "Kill zombies with headshots",
     RewardMultiplier = 0.85,
@@ -171,7 +173,14 @@ v8 = createKillZombieQuest({
     Range = {Min = 2500, Max = 5000},
     Props = {Headshot = true},
 })
-local v10 = {
+v2[1] = v3
+v2[2] = v4
+v2[3] = v5
+v2[4] = v6
+v2[5] = v7
+v2[6] = v8
+v2[7] = v9
+v2[8] = (createCompleteStoryQuest({
     Title = "Complete %0d Stories with %0d Modifiers",
     Description = "Complete story chapters with the required number of modifiers",
     RewardMultiplier = 1.25,
@@ -180,14 +189,6 @@ local v10 = {
         ModifierCount = {Min = 1, Max = 4},
     },
     Range = {Min = 2, Max = 4},
-}
-v2[1] = v3
-v2[2] = v4
-v2[3] = v5
-v2[4] = v6
-v2[5] = v7
-v2[6] = v9
-v2[7] = v8
-v2[8] = (createCompleteStoryQuest(v10))
+}))
 v1.Monthly = v2
 return v1

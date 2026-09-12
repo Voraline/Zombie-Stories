@@ -1,1 +1,6 @@
-return {Name = "heatmapclear", Description = "Clears the player-position heatmap from your client.", Group = "Debug", Args = {}}
+return {
+    Name = "heatmapclear",
+    Description = "Clears the player-position heatmap from your client.",
+    Group = "Debug",
+    Args = {},
+}

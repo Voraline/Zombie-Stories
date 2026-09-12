@@ -4,16 +4,24 @@ local Workspace = game:GetService("Workspace")
 local Theme = require(ReplicatedStorage.common.ZS_Framework.UI.Theme)
 local u21 = {}
 u21.__index = u21
+
 local function formatRemaining(p1) -- Line: 10
-    local v1 = math.max(0, (math.ceil(p1)))
-    local v2 = math.floor(v1 / 3600)
-    local v3 = math.floor(v1 % 3600 / 60)
-    return string.format("%02d:%02d:%02d", v2, v3, v1 % 60)
+    local v1 = math.ceil(p1)
+    local v2 = math.max(0, v1)
+    local v3 = v2 / 3600
+    local v4 = math.floor(v3)
+    v1 = v2 % 3600 / 60
+    v3 = math.floor(v1)
+    v1 = v2 % 60
+    return string.format("%02d:%02d:%02d", v4, v3, v1)
 end
-function u21.new(p1, p2) -- Line: 18 -- upvalues: u21 (val), Theme (val), RunService (val), Workspace (val), formatRemaining (val)
+
+function u21.new(p1, p2) -- Line: 18
+    -- upvalues: u21 (val), Theme (val), RunService (val), Workspace (val), formatRemaining (val)
     local Label
     local v1 = {}
-    local u5 = setmetatable(v1, u21)
+    local v2 = u21
+    local u5 = setmetatable(v1, v2)
     local Deadline = p2
     if Deadline then
         Deadline = p2.Deadline
@@ -23,6 +31,9 @@ function u21.new(p1, p2) -- Line: 18 -- upvalues: u21 (val), Theme (val), RunSer
         Label = "LIVE EVENT STARTS IN"
     else
         Label = p2.Label
+        if not Label then
+            Label = "LIVE EVENT STARTS IN"
+        end
     end
     u5._label = Label
     u5._message = nil
@@ -40,6 +51,9 @@ function u21.new(p1, p2) -- Line: 18 -- upvalues: u21 (val), Theme (val), RunSer
             Position = UDim2.fromScale(0.5, 0.04)
         else
             Position = p2.Position
+            if not Position then
+                Position = UDim2.fromScale(0.5, 0.04)
+            end
         end
         Frame.Position = Position
         if not p2 then
@@ -92,45 +106,57 @@ function u21.new(p1, p2) -- Line: 18 -- upvalues: u21 (val), Theme (val), RunSer
         u5._visibilityObjects = {Frame}
     else
         u5._timerObject = u5._adoptedTimer
-        u5._visibilityObjects = {u5._adoptedTimer}
+        v1 = {u5._adoptedTimer}
+        u5._visibilityObjects = v1
     end
     u5._lastSecond = nil
-    u5._connection = RunService.Heartbeat:Connect(function() -- Line: 81 -- upvalues: u5 (val), Workspace (upval), formatRemaining (upval), Theme (upval)
+    v1 = RunService
+    local Heartbeat = v1.Heartbeat
+    u5._connection = Heartbeat:Connect(function() -- Line: 81 -- upvalues: u5 (val), Workspace (upval), formatRemaining (upval), Theme (upval)
         if u5._message then
             return
         end
-        local v1 = math.max(0, u5._deadline - Workspace:GetServerTimeNow())
-        local v2 = math.ceil(v1)
-        if v2 ~= u5._lastSecond then
-            local v3
-            u5._lastSecond = v2
+        local v1 = u5
+        local v2 = v1._deadline - (Workspace:GetServerTimeNow())
+        local v3 = math.max(0, v2)
+        local v4 = math.ceil(v3)
+        if v4 ~= u5._lastSecond then
+            u5._lastSecond = v4
+            local _timerObject = u5._timerObject
             if not u5._adoptedTimer then
-                local v4 = math.max(0, (math.ceil(v1)))
-                local v5 = math.floor(v4 / 3600)
-                local v6 = math.floor(v4 % 3600 / 60)
-                v3 = string.format("%02d:%02d:%02d", v5, v6, v4 % 60)
+                local v5 = math.ceil(v3)
+                local v6 = math.max(0, v5)
+                local v7 = v6 / 3600
+                local v8 = math.floor(v7)
+                v5 = v6 % 3600 / 60
+                v7 = math.floor(v5)
+                v5 = v6 % 60
+                v1 = string.format("%02d:%02d:%02d", v8, v7, v5)
             else
-                v3 = string.format("%s\n%s", u5._label, formatRemaining(v1))
+                v1 = string.format("%s\n%s", u5._label, formatRemaining(v3))
             end
-            u5._timerObject.Text = v3
+            _timerObject.Text = v1
             if not u5._adoptedTimer then
                 local InsufficientFunds
-                if v1 > 60 then
+                local _timerObject_2 = u5._timerObject
+                if not (v3 <= 60) then
                     InsufficientFunds = Theme.Menu.Text
                 else
                     InsufficientFunds = Theme.Colors.InsufficientFunds
                 end
-                u5._timerObject.TextColor3 = InsufficientFunds
+                _timerObject_2.TextColor3 = InsufficientFunds
             end
         end
     end)
     return u5
 end
+
 function u21.SetDeadline(p1, p2) -- Line: 103
     p1._deadline = p2
     p1._message = nil
     p1._lastSecond = nil
 end
+
 function u21.SetLabel(p1, p2) -- Line: 109
     p1._label = p2
     p1._lastSecond = nil
@@ -138,15 +164,18 @@ function u21.SetLabel(p1, p2) -- Line: 109
         p1._labelObject.Text = p2
     end
 end
+
 function u21.ShowMessage(p1, p2) -- Line: 117
     p1._message = p2
     p1._timerObject.Text = p2
 end
+
 function u21.SetVisible(p1, p2) -- Line: 122
     for i, v in ipairs(p1._visibilityObjects) do
         v.Visible = p2
     end
 end
+
 function u21:Destroy() -- Line: 128
     if self._connection then
         self._connection:Disconnect()
@@ -157,4 +186,5 @@ function u21:Destroy() -- Line: 128
         self._frame = nil
     end
 end
+
 return u21

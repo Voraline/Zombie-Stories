@@ -1,19 +1,23 @@
-local v1 = {}
-local EggTouched = require(game.ReplicatedStorage.common.RedEvents.Events.EggTouched)
+local RedEvents = game.ReplicatedStorage.common.RedEvents
+local EggTouched = require(RedEvents.Events.EggTouched)
 local StarterGui = game:GetService("StarterGui")
 local u16 = require("@game/ReplicatedStorage/common/Events/Easter2025/EggData")
+
 local function makeThumbUrl(p1) -- Line: 7
-    local v1 = tonumber(p1:match("%d+"))
-    if not v1 then
+    local v1 = p1:match("%d+")
+    local v2 = tonumber(v1)
+    if not v2 then
         return ""
     end
-    return ("rbxthumb://type=Asset&id=%d&w=150&h=150"):format(v1)
+    return ("rbxthumb://type=Asset&id=%d&w=150&h=150"):format(v2)
 end
+
 local function eggTouchRegistered(p1) -- Line: 15 -- upvalues: u16 (val), StarterGui (val)
     local v1, v2
-    local v3 = tonumber(u16.EggConfigs[p1].ImageId:match("%d+"))
-    if v3 then
-        v2 = ("rbxthumb://type=Asset&id=%d&w=150&h=150"):format(v3)
+    local v3 = u16.EggConfigs[p1].ImageId:match("%d+")
+    local v4 = tonumber(v3)
+    if v4 then
+        v2 = ("rbxthumb://type=Asset&id=%d&w=150&h=150"):format(v4)
     else
         v2 = ""
     end
@@ -31,9 +35,17 @@ local function eggTouchRegistered(p1) -- Line: 15 -- upvalues: u16 (val), Starte
         Sound:Destroy()
     end)
     print("Client: Egg touched for chapter " .. v1 .. ". Complete the chapter to claim your badge!")
-    StarterGui:SetCore("SendNotification", {Title = "Egg Collected!", Duration = 10, Text = "Please complete the chapter to claim your badge and skin for " .. v1, Icon = v2})
+    v4 = StarterGui
+    local v5 = {
+        Title = "Egg Collected!",
+        Duration = 10,
+        Text = "Please complete the chapter to claim your badge and skin for " .. v1,
+        Icon = v2,
+    }
+    v4:SetCore("SendNotification", v5)
 end
+
 EggTouched:SetClientListener(function(p1) -- Line: 40 -- upvalues: eggTouchRegistered (val)
     eggTouchRegistered(p1)
 end)
-return v1
+return {}

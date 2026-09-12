@@ -35,6 +35,7 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
     end)
     local v7 = scope:Spring(v6, 30, 1)
     v4 = p1.Description ~= nil
+
     local function toggle() -- Line: 73 -- upvalues: p1 (val), peek (upval), Value (val)
         if p1.ButtonSound then
             p1.ButtonSound:Play()
@@ -45,16 +46,19 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
             p1.OnChanged(v1)
         end
     end
+
     local v8 = scope:New("Frame")
-    local v9 = {Name = p1.Name or "Toggle"}
+    local v9 = {}
+    v9.Name = p1.Name or "Toggle"
     local Size = p1.Size
     if not Size then
+        local new = UDim2.new
         if not v4 then
             v1 = 44
         else
             v1 = 56
         end
-        Size = UDim2.new(1, 0, 0, v1)
+        Size = new(1, 0, 0, v1)
     end
     v9.Size = Size
     local Position = p1.Position
@@ -78,23 +82,30 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
     v9.BackgroundColor3 = u13.Menu.Panel
     v9.BackgroundTransparency = 0
     v9.Parent = p1.Parent
+    local Children = scope.Children
     local v10 = {}
-    local v11 = scope:New("UICorner")
-    v11 = v11({CornerRadius = UDim.new(0, u13.Menu.CornerRadius)})
-    local v12 = scope:New("UIStroke")
-    v12 = v12({ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = u13.Menu.Border, Thickness = u13.Menu.StrokeThickness})
-    v1 = scope:New("UIGradient")
-    v1 = v1({Color = u13.Menu.Shade, Rotation = u13.Menu.ShadeRotation})
-    local v13 = scope:New("UIPadding")
-    v13 = v13({PaddingLeft = UDim.new(0, 12), PaddingRight = UDim.new(0, 12), PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 6)})
+    local v11 = scope:New("UICorner")({CornerRadius = UDim.new(0, u13.Menu.CornerRadius)})
+    local v12 = scope:New("UIStroke")({
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+        Color = u13.Menu.Border,
+        Thickness = u13.Menu.StrokeThickness,
+    })
+    v1 = scope:New("UIGradient")({Color = u13.Menu.Shade, Rotation = u13.Menu.ShadeRotation})
+    local v13 = scope:New("UIPadding")({
+        PaddingLeft = UDim.new(0, 12),
+        PaddingRight = UDim.new(0, 12),
+        PaddingTop = UDim.new(0, 6),
+        PaddingBottom = UDim.new(0, 6),
+    })
     local v14 = scope:New("TextLabel")
     local v15 = {Name = "Label", BackgroundTransparency = 1, TextScaled = true}
+    local new_2 = Vector2.new
     if not v4 then
         v3 = 0.5
     else
         v3 = 0
     end
-    v15.AnchorPoint = Vector2.new(0, v3)
+    v15.AnchorPoint = new_2(0, v3)
     if not v4 then
         v2 = UDim2.fromScale(0, 0.5)
     else
@@ -111,8 +122,7 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
     if not v4 then
         v15 = nil
     else
-        v15 = scope:New("TextLabel")
-        v15 = v15({
+        v15 = scope:New("TextLabel")({
             Name = "Description",
             BackgroundTransparency = 1,
             TextScaled = true,
@@ -139,12 +149,14 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
         ZIndex = ZIndex + 1,
     }
     v16[OnEvent("Activated")] = toggle
-    local Children = scope.Children
+    local Children_2 = scope.Children
     local v17 = {}
-    local v18 = scope:New("UICorner")
-    v18 = v18({CornerRadius = UDim.new(0.17, 0)})
-    local v19 = scope:New("UIStroke")
-    v19 = v19({ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = u13.Menu.Border, Thickness = u13.Menu.StrokeThickness})
+    local v18 = scope:New("UICorner")({CornerRadius = UDim.new(0.17, 0)})
+    local v19 = scope:New("UIStroke")({
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+        Color = u13.Menu.Border,
+        Thickness = u13.Menu.StrokeThickness,
+    })
     local v20 = scope:New("Frame")
     local v21 = {
         Name = "Fill",
@@ -153,14 +165,11 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
         BackgroundTransparency = v7,
         ZIndex = ZIndex + 1,
     }
-    local Children_2 = scope.Children
-    local v22 = {}
-    local v23 = scope:New("UICorner")
-    v22[1] = v23({CornerRadius = UDim.new(0.17, 0)})
-    v21[Children_2] = v22
+    local Children_3 = scope.Children
+    v21[Children_3] = {scope:New("UICorner")({CornerRadius = UDim.new(0.17, 0)})}
     v20 = v20(v21)
     v21 = scope:New("Frame")
-    local v24 = {
+    local v22 = {
         Name = "Knob",
         AnchorPoint = Vector2.new(1, 0.5),
         Position = v5,
@@ -169,16 +178,13 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
         BackgroundColor3 = u13.Menu.Text,
         ZIndex = ZIndex + 2,
     }
-    local Children_3 = scope.Children
-    v23 = {}
-    local v25 = scope:New("UICorner")
-    v23[1] = v25({CornerRadius = UDim.new(1, 0)})
-    v24[Children_3] = v23
+    local Children_4 = scope.Children
+    v22[Children_4] = {scope:New("UICorner")({CornerRadius = UDim.new(1, 0)})}
     v17[1] = v18
     v17[2] = v19
     v17[3] = v20
-    v17[4] = v21(v24)
-    v16[Children] = v17
+    v17[4] = v21(v22)
+    v16[Children_2] = v17
     v10[1] = v11
     v10[2] = v12
     v10[3] = v1
@@ -186,6 +192,6 @@ return function(p1) -- Line: 49 -- upvalues: u13 (val), peek (val), OnEvent (val
     v10[5] = v14
     v10[6] = v15
     v10[7] = v2(v16)
-    v9[scope.Children] = v10
+    v9[Children] = v10
     return v8(v9)
 end

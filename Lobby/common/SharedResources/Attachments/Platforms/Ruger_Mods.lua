@@ -1,13 +1,14 @@
+local PotentialAttachments_2
 local AttachmentProperties = require(script.Parent.Parent:WaitForChild("AttachmentProperties"))
 local v1 = {
     {Name = "Charm", PotentialAttachments = {}},
     {Name = "Sticker", PotentialAttachments = {}},
     {Name = "Sticker 2", PotentialAttachments = {}},
+    [5] = {Name = "Optic", PotentialAttachments = {}},
+    [6] = {Name = "Muzzle", PotentialAttachments = {}},
+    [8] = {Name = "Misc Rail", PotentialAttachments = {}},
+    [9] = {Name = "Top Rail", PotentialAttachments = {}},
 }
-v1[5] = {Name = "Optic", PotentialAttachments = {}}
-v1[6] = {Name = "Muzzle", PotentialAttachments = {}}
-v1[8] = {Name = "Misc Rail", PotentialAttachments = {}}
-v1[9] = {Name = "Top Rail", PotentialAttachments = {}}
 local v2 = require("../Extensions/Charm")
 v1[1].PotentialAttachments = v2.PotentialAttachments
 local v3 = require("../Extensions/Sticker")
@@ -44,6 +45,7 @@ local PotentialAttachments = v1[8].PotentialAttachments
 local v7 = nil
 local v8 = nil
 for i, j in PotentialAttachments, v7, v8 do
-    table.insert(v1[7].PotentialAttachments, j)
+    PotentialAttachments_2 = v1[7].PotentialAttachments
+    table.insert(PotentialAttachments_2, j)
 end
 return v1

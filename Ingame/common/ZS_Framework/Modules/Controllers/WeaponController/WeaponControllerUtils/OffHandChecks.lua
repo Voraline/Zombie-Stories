@@ -21,15 +21,12 @@ return {
         if p1 == p2 then
             return false, "SameAsCurrentWeapon"
         end
-        if not p1.Ammo or p1.Ammo <= 0 then
-            return false, "NoAmmo"
-        end
-        if not p1.Config.IsFullyActivated then
+        if p1.Ammo and not (p1.Ammo <= 0) then
+            if p1.Config.IsFullyActivated and p1.Config.IsFullyActivated(p1.Config) then
+                return false, "AlreadyActivated"
+            end
             return true, nil
         end
-        if p1.Config.IsFullyActivated(p1.Config) then
-            return false, "AlreadyActivated"
-        end
-        return true, nil
+        return false, "NoAmmo"
     end,
 }

@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Red = require(ReplicatedStorage.Packages.Red)
+
 local function sanitizeSequence(p1) -- Line: 5
     if typeof(p1) ~= "table" then
         return nil
@@ -16,8 +17,8 @@ local function sanitizeSequence(p1) -- Line: 5
     end
     return v1
 end
+
 return Red.SharedEvent("PrayerGrounds", function(p1) -- Line: 25 -- upvalues: sanitizeSequence (val)
-    local tileId
     if typeof(p1) ~= "table" then
         return nil
     end
@@ -36,25 +37,18 @@ return Red.SharedEvent("PrayerGrounds", function(p1) -- Line: 25 -- upvalues: sa
         end
         return {action = action, sequence = v1, resetDelay = resetDelay}
     end
-    if action == "Disable" or action == "PuzzleComplete" then
-        return {action = action}
-    end
-    if action == "CorrectTile" then
-        tileId = p1.tileId
+    if action ~= "Disable" and action ~= "PuzzleComplete" then
+        if action ~= "CorrectTile" and action ~= "WrongTile" then
+            if action == "RequestState" then
+                return {action = action}
+            end
+            return nil
+        end
+        local tileId = p1.tileId
         if typeof(tileId) ~= "string" then
             return nil
         end
         return {action = action, tileId = tileId}
     end
-    if action ~= "WrongTile" then
-        if action == "RequestState" then
-            return {action = action}
-        end
-        return nil
-    end
-    tileId = p1.tileId
-    if typeof(tileId) ~= "string" then
-        return nil
-    end
-    return {action = action, tileId = tileId}
+    return {action = action}
 end)

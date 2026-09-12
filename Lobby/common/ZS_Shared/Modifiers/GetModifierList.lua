@@ -1,30 +1,33 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local peek = require(ReplicatedStorage.Packages.Fusion).peek
+local peek = (require(ReplicatedStorage.Packages.Fusion)).peek
 local ModifierData = require(ReplicatedStorage.common.ZS_Shared.Data.ModifierData)
 return function(p1) -- Line: 7 -- upvalues: ModifierData (val), peek (val)
-    local v1, v2
+    local v1
     local u1 = {}
+
     local function turnOnModifier(p1) -- Line: 23 -- upvalues: ModifierData (upval), u1 (val)
         local v1 = ModifierData[p1]
-        if not v1 or not (u1[p1]) then
-            return false
-        end
-        local v2 = u1
-        local v3 = nil
-        local v4 = nil
-        for i, j in v2, v3, v4 do
-            if ModifierData[i].Grouping == v1.Grouping then
-                j.IsActive:set(false)
+        if v1 and u1[p1] then
+            local v2 = u1
+            local v3 = nil
+            local v4 = nil
+            for i, j in v2, v3, v4 do
+                if ModifierData[i].Grouping == v1.Grouping then
+                    j.IsActive:set(false)
+                end
             end
+            u1[p1].IsActive:set(true)
+            return true
         end
-        u1[p1].IsActive:set(true)
-        return true
+        return false
     end
-    v1 = ModifierData
-    v2 = nil
+
+    local v2 = ModifierData
     local v3 = nil
-    for i, j in v1, v2, v3 do
-        u1[i] = {IsLocked = p1:Value(false), IsActive = p1:Value(false)}
+    local v4 = nil
+    for i, j in v2, v3, v4 do
+        v1 = {IsLocked = p1:Value(false), IsActive = p1:Value(false)}
+        u1[i] = v1
     end
     return {
         ModifierList = u1,
@@ -44,7 +47,7 @@ return function(p1) -- Line: 7 -- upvalues: ModifierData (val), peek (val)
             if not v1 then
                 return false
             end
-            if not (peek(v1.IsActive)) then
+            if not peek(v1.IsActive) then
                 return (turnOnModifier(p1))
             end
             v1.IsActive:set(false)

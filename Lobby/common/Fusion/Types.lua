@@ -1,2 +1,3 @@
-require(script.Parent.PubTypes)
+local Parent = script.Parent
+require(Parent.PubTypes)
 return nil

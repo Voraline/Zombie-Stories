@@ -1,4 +1,5 @@
-require(script.Parent.Types)
+local Parent = script.Parent
+require(Parent.Types)
 local u5 = nil
 return {
     setDebugger = function(p1) -- Line: 26 -- upvalues: u5 (ref)

@@ -1,7 +1,12 @@
 local LiveEventSchedule = require(script.Parent.Parent.Data.LiveEventSchedule)
 local v1 = {
     {RewardId = "WATCH_COMPLETE", Type = "ZBucks", Amount = 1000, DisplayName = "1,000 Z$"},
-    {RewardId = "WATCH_CHARM", Type = "Entitlement", EntitlementKey = "RatCharm", DisplayName = "Rat Charm"},
+    {
+        RewardId = "WATCH_CHARM",
+        Type = "Entitlement",
+        EntitlementKey = "RatCharm",
+        DisplayName = "Rat Charm",
+    },
 }
 return {
     Id = "LIVEEVENT_S1",

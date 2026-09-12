@@ -44,50 +44,60 @@ return function(p1) -- Line: 1
             return
         end
         u60 = true
-        menuJanitor:add(p1.toggled:Connect(function() -- Line: 53 -- upvalues: p1 (upval)
-            local v1 = #p1.menuIcons
-            if 0 < v1 then
+        local v2 = p1
+        v2 = v2.toggled:Connect(function() -- Line: 53 -- upvalues: p1 (upval)
+            if 0 < #p1.menuIcons then
                 p1.updateSize:Fire()
             end
-        end))
-        local v2 = {
+        end)
+        menuJanitor:add(v2)
+        local v3 = p1
+        _, u30 = v3:modifyTheme({
             {"Menu", "Active", true},
-        }
-        _, u30 = p1:modifyTheme(v2)
+        })
         task.defer(function() -- Line: 63 -- upvalues: menuJanitor (val), p1 (upval), u30 (val)
-            menuJanitor:add(function() -- Line: 64 -- upvalues: p1 (upval), u30 (upval)
-                p1:removeModification(u30)
+            local v1 = menuJanitor
+            v1:add(function() -- Line: 64 -- upvalues: p1 (upval), u30 (upval)
+                local v1 = p1
+                local v2 = u30
+                v1:removeModification(v2)
             end)
         end)
-        local X = ScrollingFrame.AbsoluteCanvasSize.X
+        v2 = ScrollingFrame
+        local X = v2.AbsoluteCanvasSize.X
+
         local function rightAlignCanvas() -- Line: 73 -- upvalues: p1 (upval), ScrollingFrame (upval), X (ref)
             if p1.alignment == "Right" then
                 local X_2 = ScrollingFrame.AbsoluteCanvasSize.X
                 local v1 = X - X_2
                 X = X_2
-                ScrollingFrame.CanvasPosition = Vector2.new(ScrollingFrame.CanvasPosition.X - v1, 0)
+                local v2 = ScrollingFrame
+                v2.CanvasPosition = Vector2.new(ScrollingFrame.CanvasPosition.X - v1, 0)
             end
         end
-        menuJanitor:add(p1.selected:Connect(rightAlignCanvas))
-        local PropertyChangedSignal = ScrollingFrame:GetPropertyChangedSignal("AbsoluteCanvasSize")
-        menuJanitor:add(PropertyChangedSignal:Connect(rightAlignCanvas))
-        local v3 = p1:getStateGroup()
-        local v4 = u63.getThemeValue(v3, "IconImage", "Image", "Deselected")
-        if v4 == u63.getThemeValue(v3, "IconImage", "Image", "Selected") then
-            local v5 = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+
+        local v4 = p1.selected:Connect(rightAlignCanvas)
+        menuJanitor:add(v4)
+        v4 = (ScrollingFrame:GetPropertyChangedSignal("AbsoluteCanvasSize")):Connect(rightAlignCanvas)
+        menuJanitor:add(v4)
+        local v5 = p1:getStateGroup()
+        if (u63.getThemeValue(v5, "IconImage", "Image", "Deselected")) == u63.getThemeValue(v5, "IconImage", "Image", "Selected") then
+            local v6 = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
             p1:removeModificationWith("IconLabel", "Text", "Viewing")
             p1:removeModificationWith("IconLabel", "Image", "Viewing")
-            p1:modifyTheme({
-                {"IconLabel", "FontFace", v5, "Selected"},
+            local v7 = p1
+            local v8 = {
+                {"IconLabel", "FontFace", v6, "Selected"},
                 {"IconLabel", "Text", "X", "Selected"},
                 {"IconLabel", "TextSize", 20, "Selected"},
                 {"IconLabel", "TextStrokeTransparency", 0.8, "Selected"},
                 {"IconImage", "Image", "", "Selected"},
-            })
+            }
+            v7:modifyTheme(v8)
         end
         local u130 = p1:getInstance("IconSpot")
         local u135 = p1:getInstance("MenuGap")
-        menuJanitor:add(p1.alignmentChanged:Connect(function() -- Line: 105 -- upvalues: p1 (upval), u130 (val), u135 (val)
+        local v9 = p1.alignmentChanged:Connect(function() -- Line: 105 -- upvalues: p1 (upval), u130 (val), u135 (val)
             if p1.alignment == "Right" then
                 u130.LayoutOrder = 99999
                 u135.LayoutOrder = 99998
@@ -95,7 +105,8 @@ return function(p1) -- Line: 1
             end
             u130.LayoutOrder = -99999
             u135.LayoutOrder = -99998
-        end))
+        end)
+        menuJanitor:add(v9)
         if p1.alignment ~= "Right" then
             u130.LayoutOrder = -99999
             u135.LayoutOrder = -99998
@@ -103,13 +114,13 @@ return function(p1) -- Line: 1
             u130.LayoutOrder = 99999
             u135.LayoutOrder = 99998
         end
-        local AttributeChangedSignal = ScrollingFrame:GetAttributeChangedSignal("MenuCanvasWidth")
-        AttributeChangedSignal:Connect(function() -- Line: 120 -- upvalues: ScrollingFrame (upval)
+        ;(ScrollingFrame:GetAttributeChangedSignal("MenuCanvasWidth")):Connect(function() -- Line: 120 -- upvalues: ScrollingFrame (upval)
             local Attribute = ScrollingFrame:GetAttribute("MenuCanvasWidth")
             local Y = ScrollingFrame.CanvasSize.Y
             ScrollingFrame.CanvasSize = UDim2.new(0, Attribute, Y.Scale, Y.Offset)
         end)
-        menuJanitor:add(p1.updateMenu:Connect(function() -- Line: 125 -- upvalues: ScrollingFrame (upval), u46 (upval)
+        v9 = p1
+        v9 = v9.updateMenu:Connect(function() -- Line: 125 -- upvalues: ScrollingFrame (upval), u46 (upval)
             local v1, v2
             local Attribute = ScrollingFrame:GetAttribute("MaxIcons")
             if not Attribute then
@@ -118,47 +129,56 @@ return function(p1) -- Line: 1
             local v3 = {}
             for k, v in pairs(ScrollingFrame:GetChildren()) do
                 if v:GetAttribute("WidgetUID") and v.Visible then
-                    table.insert(v3, {v, v.AbsolutePosition.X})
+                    v1 = {v, v.AbsolutePosition.X}
+                    table.insert(v3, v1)
                 end
             end
             table.sort(v3, function(p1, p2) -- Line: 137
                 local v1 = p1[2] < p2[2]
                 return v1
             end)
-            v1 = 0
-            local v4 = Attribute
-            local v5 = 1
-            for i = 1, v4, v5 do
+            local v4 = 0
+            local v5 = Attribute
+            for i = 1, v5 do
                 v2 = v3[i]
                 if not v2 then
                     break
                 end
-                v1 = v1 + (v2[1].AbsoluteSize.X + u46.Padding.Offset)
+                v4 = v4 + (v2[1].AbsoluteSize.X + u46.Padding.Offset)
             end
-            ScrollingFrame:SetAttribute("MenuWidth", v1)
-        end))
+            ScrollingFrame:SetAttribute("MenuWidth", v4)
+        end)
+        menuJanitor:add(v9)
+
         local function startMenuUpdate() -- Line: 152 -- upvalues: p1 (upval)
             task.delay(0.1, function() -- Line: 153 -- upvalues: p1 (upval)
                 p1.startMenuUpdate:Fire()
             end)
         end
-        menuJanitor:add(ScrollingFrame.ChildAdded:Connect(startMenuUpdate))
-        menuJanitor:add(ScrollingFrame.ChildRemoved:Connect(startMenuUpdate))
-        local AttributeChangedSignal_2 = ScrollingFrame:GetAttributeChangedSignal("MaxIcons")
-        menuJanitor:add(AttributeChangedSignal_2:Connect(startMenuUpdate))
-        local AttributeChangedSignal_3 = ScrollingFrame:GetAttributeChangedSignal("MaxWidth")
-        menuJanitor:add(AttributeChangedSignal_3:Connect(startMenuUpdate))
+
+        local X_2 = p1:getInstance("IconButton").AbsoluteSize.X
+        local v10 = ScrollingFrame.ChildAdded:Connect(startMenuUpdate)
+        menuJanitor:add(v10)
+        v10 = ScrollingFrame.ChildRemoved:Connect(startMenuUpdate)
+        menuJanitor:add(v10)
+        v10 = (ScrollingFrame:GetAttributeChangedSignal("MaxIcons")):Connect(startMenuUpdate)
+        menuJanitor:add(v10)
+        v10 = (ScrollingFrame:GetAttributeChangedSignal("MaxWidth")):Connect(startMenuUpdate)
+        menuJanitor:add(v10)
         task.delay(0.1, function() -- Line: 153 -- upvalues: p1 (upval)
             p1.startMenuUpdate:Fire()
         end)
     end)
-    p1.menuSet:Connect(function(a1) -- Line: 167 -- upvalues: p1 (val), iconModule (val)
+    p1.menuSet:Connect(function(p1_2) -- Line: 167 -- upvalues: p1 (val), iconModule (val)
         for k, v in pairs(p1.menuIcons) do
             iconModule.getIconByUID(v):destroy()
         end
-        if type(a1) == "table" then
-            for k2, i in pairs(a1) do
-                i:joinMenu(p1)
+        local v1 = #p1_2
+        if type(p1_2) == "table" then
+            local v2
+            for k2, i in pairs(p1_2) do
+                v2 = p1
+                i:joinMenu(v2)
             end
         end
     end)

@@ -1,58 +1,81 @@
 local Spawn = require(script.Parent.Spawn)
+
 local function IsComplete(p1) -- Line: 20
     local v1 = p1.ValueList ~= nil
     return v1
 end
+
 local function IsPending(p1) -- Line: 24
     local v1 = p1.ValueList == nil
     return v1
 end
+
 local function Expect(p1, p2) -- Line: 28
-    assert(p1.ValueList, p2)
-    return table.unpack(p1.ValueList)
+    local ValueList = p1.ValueList
+    assert(ValueList, p2)
+    local ValueList_2 = p1.ValueList
+    return table.unpack(ValueList_2)
 end
+
 local function Unwrap(p1) -- Line: 34
     return p1:Expect("Attempt to unwrap pending future!")
 end
+
 local function UnwrapOr(p1, ...) -- Line: 38
-    if p1.ValueList then
-        return table.unpack(p1.ValueList)
+    if not p1.ValueList then
+        return ...
     end
-    return ...
+    local ValueList = p1.ValueList
+    return table.unpack(ValueList)
 end
+
 local function UnwrapOrElse(p1, p2) -- Line: 46
-    if p1.ValueList then
-        return table.unpack(p1.ValueList)
+    if not p1.ValueList then
+        return p2()
     end
-    return p2()
+    local ValueList = p1.ValueList
+    return table.unpack(ValueList)
 end
+
 local function After(p1, p2) -- Line: 54 -- upvalues: Spawn (val)
-    if p1.ValueList then
-        Spawn(p2, table.unpack(p1.ValueList))
+    if not p1.ValueList then
+        local AfterList = p1.AfterList
+        table.insert(AfterList, p2)
         return
     end
-    table.insert(p1.AfterList, p2)
+    local v1 = Spawn
+    local ValueList = p1.ValueList
+    v1(p2, table.unpack(ValueList))
 end
+
 local function Await(p1) -- Line: 62
     if p1.ValueList then
-        return table.unpack(p1.ValueList)
+        local ValueList = p1.ValueList
+        return table.unpack(ValueList)
     end
-    table.insert(p1.YieldList, coroutine.running())
+    local YieldList = p1.YieldList
+    local v1 = coroutine.running()
+    table.insert(YieldList, v1)
     return coroutine.yield()
 end
-local function Future(p1, ...) -- Line: 72 -- upvalues: IsComplete (val), IsPending (val), Expect (val), Unwrap (val), UnwrapOr (val), UnwrapOrElse (val), After (val), Await (val), Spawn (val)
-    local v1 = {AfterList = {}}
-    local v2 = {}
-    v1.YieldList = v2
-    v1.IsComplete = IsComplete
-    v1.IsPending = IsPending
-    v1.Expect = Expect
-    v1.Unwrap = Unwrap
-    v1.UnwrapOr = UnwrapOr
-    v1.UnwrapOrElse = UnwrapOrElse
-    v1.After = After
-    v1.Await = Await
-    Spawn(function(p1, p2, ...) -- Line: 90 -- upvalues: Spawn (upval)
+
+local function Future(p1, ...) -- Line: 72
+    -- upvalues: IsComplete (val), IsPending (val), Expect (val), Unwrap (val), UnwrapOr (val), UnwrapOrElse (val)
+    -- upvalues: After (val), Await (val), Spawn (val)
+    local v1 = {
+        AfterList = {},
+        YieldList = {},
+        IsComplete = IsComplete,
+        IsPending = IsPending,
+        Expect = Expect,
+        Unwrap = Unwrap,
+        UnwrapOr = UnwrapOr,
+        UnwrapOrElse = UnwrapOrElse,
+        After = After,
+        Await = Await,
+    }
+    local v2 = Spawn
+    v2(function(p1, p2, ...) -- Line: 90 -- upvalues: Spawn (upval)
         local v1 = {p2(...)}
         p1.ValueList = v1
         local YieldList = p1.YieldList
@@ -70,6 +93,7 @@ local function Future(p1, ...) -- Line: 72 -- upvalues: IsComplete (val), IsPend
     end, v1, p1, ...)
     return v1
 end
+
 return {
     new = Future,
     Try = function(p1, ...) -- Line: 106 -- upvalues: Future (val)

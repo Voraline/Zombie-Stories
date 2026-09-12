@@ -1,8 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Fusion = require(ReplicatedStorage.Packages.Fusion)
+local Children = Fusion.Children
+local OnEvent = Fusion.OnEvent
+local peek = Fusion.peek
 local u14 = require("./GenericButton")
 return function(p1) -- Line: 47 -- upvalues: u14 (val)
     local TextScaled
+    local scope = p1.scope
+    local v1 = p1.Text or "X"
     local Font = p1.Font
     if not Font then
         Font = Enum.Font.GothamBold
@@ -12,6 +17,7 @@ return function(p1) -- Line: 47 -- upvalues: u14 (val)
     else
         TextScaled = true
     end
+    local v2 = p1.TextSize or 14
     local Position = p1.Position
     if not Position then
         Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -28,6 +34,8 @@ return function(p1) -- Line: 47 -- upvalues: u14 (val)
     if not TextColor3 then
         TextColor3 = Color3.fromRGB(255, 255, 255)
     end
+    local v3 = p1.TextTransparency or 0
+    local v4 = p1.TextWrapped or false
     local TextXAlignment = p1.TextXAlignment
     if not TextXAlignment then
         TextXAlignment = Enum.TextXAlignment.Center
@@ -40,16 +48,19 @@ return function(p1) -- Line: 47 -- upvalues: u14 (val)
     if not TextTruncate then
         TextTruncate = Enum.TextTruncate.None
     end
+    local v5 = p1.TextStrokeTransparency or 1
     local TextStrokeColor3 = p1.TextStrokeColor3
     if not TextStrokeColor3 then
         TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     end
+    local v6 = p1.BackgroundTransparency or 1
     local BackgroundColor3 = p1.BackgroundColor3
     if not BackgroundColor3 then
         BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     end
-    return u14({
-        scope = p1.scope,
+    local v7 = u14
+    return v7({
+        scope = scope,
         isHovering = p1.isHovering,
         isHeldDown = p1.isHeldDown,
         Disabled = p1.Disabled,
@@ -62,22 +73,22 @@ return function(p1) -- Line: 47 -- upvalues: u14 (val)
         OutlineEnabled = p1.OutlineEnabled,
         RippleColor3 = p1.RippleColor3,
         RippleDuration = p1.RippleDuration,
-        Text = p1.Text or "X",
+        Text = v1,
         Font = Font,
         TextScaled = TextScaled,
-        TextSize = p1.TextSize or 14,
+        TextSize = v2,
         Position = Position,
         Size = Size,
         AnchorPoint = AnchorPoint,
         TextColor3 = TextColor3,
-        TextTransparency = p1.TextTransparency or 0,
-        TextWrapped = p1.TextWrapped or false,
+        TextTransparency = v3,
+        TextWrapped = v4,
         TextXAlignment = TextXAlignment,
         TextYAlignment = TextYAlignment,
         TextTruncate = TextTruncate,
-        TextStrokeTransparency = p1.TextStrokeTransparency or 1,
+        TextStrokeTransparency = v5,
         TextStrokeColor3 = TextStrokeColor3,
-        BackgroundTransparency = p1.BackgroundTransparency or 1,
+        BackgroundTransparency = v6,
         BackgroundColor3 = BackgroundColor3,
         Visible = p1.Visible,
         UIAspectRatio = 1,

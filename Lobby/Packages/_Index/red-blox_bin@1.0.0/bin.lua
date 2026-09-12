@@ -2,7 +2,8 @@ local Spawn = require(script.Parent.Spawn)
 return function() -- Line: 5 -- upvalues: Spawn (val)
     local u0 = {}
     return function(p1) -- Line: 8 -- upvalues: u0 (val)
-        table.insert(u0, p1)
+        local v1 = u0
+        table.insert(v1, p1)
         return p1
     end, function() -- Line: 12 -- upvalues: u0 (val), Spawn (upval)
         local v1 = u0

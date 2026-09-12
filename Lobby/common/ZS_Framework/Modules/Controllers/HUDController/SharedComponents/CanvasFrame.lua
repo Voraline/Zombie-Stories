@@ -29,6 +29,7 @@ return function(p1) -- Line: 17 -- upvalues: Children (val)
     v4.Position = v1
     v4.Size = UDim2.fromScale(0.5, 1)
     v4.Visible = p1.visible
+    v1 = Children
     local v5 = {}
     local v6 = scope:New("ImageLabel")
     local v7 = {Name = "RedGlowImage"}
@@ -51,9 +52,11 @@ return function(p1) -- Line: 17 -- upvalues: Children (val)
     v7.Rotation = p1.rotation
     v7.Size = UDim2.fromScale(2, 1)
     v7.ZIndex = 2
+    v2 = Children
     local v8 = {}
     local v9 = scope:New("UIGradient")
     local v10 = {Name = "UIGradient", Rotation = p1.gradientRotation}
+    local new = NumberSequence.new
     local v11 = {}
     local v12 = NumberSequenceKeypoint.new(0, 0)
     local v13 = NumberSequenceKeypoint.new(0.5, 0)
@@ -62,10 +65,10 @@ return function(p1) -- Line: 17 -- upvalues: Children (val)
     v11[2] = v13
     v11[3] = v14
     v11[4] = NumberSequenceKeypoint.new(1, 1)
-    v10.Transparency = NumberSequence.new(v11)
+    v10.Transparency = new(v11)
     v8[1] = v9(v10)
-    v7[Children] = v8
+    v7[v2] = v8
     v5[1] = v6(v7)
-    v4[Children] = v5
+    v4[v1] = v5
     return v3(v4)
 end

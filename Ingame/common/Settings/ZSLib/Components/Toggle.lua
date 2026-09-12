@@ -7,7 +7,8 @@ local u16 = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWe
 return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek (val), u16 (val)
     local Visible, v1
     local scope = p1.scope
-    local u5 = scope:Value(p1.Default)
+    local Default = p1.Default
+    local u5 = scope:Value(Default)
     local v2 = scope:Computed(function(p1) -- Line: 28 -- upvalues: u5 (val)
         if p1(u5) then
             return (UDim2.new(1, 0, 0.5, 0))
@@ -38,6 +39,7 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         Visible = p1.Visible
     end
     v6.Visible = Visible
+    v1 = Children
     local v7 = {}
     local v8 = scope:New("Frame")
     local v9 = {
@@ -48,11 +50,11 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromScale(0.99, 0.85),
     }
-    local v10 = {}
-    local v11 = scope:New("UICorner")
-    v11 = v11({})
-    local v12 = scope:New("ImageButton")
-    local v13 = {
+    local v10 = Children
+    local v11 = {}
+    local v12 = scope:New("UICorner")({})
+    local v13 = scope:New("ImageButton")
+    local v14 = {
         Name = "Toggle",
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundTransparency = 1,
@@ -65,7 +67,8 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         SliceCenter = Rect.new(7, 7, 7, 7),
     }
     local MouseButton1Click = OnEvent("MouseButton1Click")
-    v13[MouseButton1Click] = function() -- Line: 70 -- upvalues: p1 (val), peek (upval), u5 (val)
+
+    v14[MouseButton1Click] = function() -- Line: 70 -- upvalues: p1 (val), peek (upval), u5 (val)
         if p1.ButtonSound then
             p1.ButtonSound:Play()
         end
@@ -75,9 +78,11 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
             p1.OnChanged(v1)
         end
     end
-    local v14 = {}
-    local v15 = scope:New("Frame")
-    local v16 = {
+
+    local v15 = Children
+    local v16 = {}
+    local v17 = scope:New("Frame")
+    local v18 = {
         Name = "Back",
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Color3.new(1, 1, 1),
@@ -85,13 +90,11 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         Position = UDim2.fromScale(0, 0.5),
         Size = UDim2.fromScale(1, 1),
     }
-    local v17 = {}
-    local v18 = scope:New("UICorner")
-    v17[1] = v18({CornerRadius = UDim.new(0.17, 0)})
-    v16[Children] = v17
-    v15 = v15(v16)
-    v16 = scope:New("Frame")
-    local v19 = {
+    local v19 = Children
+    v18[v19] = {scope:New("UICorner")({CornerRadius = UDim.new(0.17, 0)})}
+    v17 = v17(v18)
+    v18 = scope:New("Frame")
+    v19 = {
         Name = "Fill",
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundTransparency = 1,
@@ -100,18 +103,17 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         Size = v5,
         ZIndex = 2,
     }
-    v18 = {}
-    local v20 = scope:New("Frame")
-    local v21 = {Name = "Frame", BackgroundColor3 = Color3.fromRGB(255, 184, 84), Size = UDim2.fromScale(100, 1)}
-    local v22 = {}
-    local v23 = scope:New("UICorner")
-    v22[1] = v23({CornerRadius = UDim.new(0.17, 0)})
-    v21[Children] = v22
-    v18[1] = v20(v21)
-    v19[Children] = v18
-    v16 = v16(v19)
+    local v20 = Children
+    local v21 = {}
+    local v22 = scope:New("Frame")
+    local v23 = {Name = "Frame", BackgroundColor3 = Color3.fromRGB(255, 184, 84), Size = UDim2.fromScale(100, 1)}
+    local v24 = Children
+    v23[v24] = {scope:New("UICorner")({CornerRadius = UDim.new(0.17, 0)})}
+    v21[1] = v22(v23)
+    v19[v20] = v21
+    v18 = v18(v19)
     v19 = scope:New("Frame")
-    v17 = {
+    v20 = {
         Name = "Slide",
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundColor3 = Color3.new(1, 1, 1),
@@ -119,17 +121,15 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         Size = UDim2.fromScale(0.4, 1),
         ZIndex = 3,
     }
-    v20 = {}
-    v21 = scope:New("UICorner")
-    v20[1] = v21({CornerRadius = UDim.new(0.2, 0)})
-    v17[Children] = v20
-    v14[1] = v15
-    v14[2] = v16
-    v14[3] = v19(v17)
-    v13[Children] = v14
-    v12 = v12(v13)
-    v13 = scope:New("TextLabel")
-    local v24 = {
+    v21 = Children
+    v20[v21] = {scope:New("UICorner")({CornerRadius = UDim.new(0.2, 0)})}
+    v16[1] = v17
+    v16[2] = v18
+    v16[3] = v19(v20)
+    v14[v15] = v16
+    v13 = v13(v14)
+    v14 = scope:New("TextLabel")
+    v15 = {
         Name = "Label",
         BackgroundTransparency = 1,
         TextScaled = true,
@@ -141,12 +141,11 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
         TextColor3 = Color3.new(1, 1, 1),
         TextXAlignment = Enum.TextXAlignment.Left,
     }
-    v13 = v13(v24)
+    v14 = v14(v15)
     if not v2 then
-        v24 = nil
+        v15 = nil
     else
-        v24 = scope:New("TextLabel")
-        v24 = v24({
+        v15 = scope:New("TextLabel")({
             Name = "DescriptionLabel",
             BackgroundTransparency = 1,
             TextScaled = true,
@@ -161,14 +160,15 @@ return function(p1) -- Line: 24 -- upvalues: Children (val), OnEvent (val), peek
             TextXAlignment = Enum.TextXAlignment.Left,
         })
     end
-    v10[1] = v11
-    v10[2] = v12
-    v10[3] = v13
-    v10[4] = v24
-    v9[Children] = v10
+    v11[1] = v12
+    v11[2] = v13
+    v11[3] = v14
+    v11[4] = v15
+    v9[v10] = v11
     v7[1] = v8(v9)
-    v6[Children] = v7
-    return v4(v6), function(p1) -- Line: 160 -- upvalues: u5 (val)
+    v6[v1] = v7
+    v4 = v4(v6)
+    return v4, function(p1) -- Line: 160 -- upvalues: u5 (val)
         u5:set(p1)
     end
 end

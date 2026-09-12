@@ -12,25 +12,26 @@ local BindableEvent_2 = Instance.new("BindableEvent")
 local BindableEvent_3 = Instance.new("BindableEvent")
 local u34 = require("@game/ReplicatedStorage/common/Settings")
 local peek = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
-local u45 = {
-    HasLanded = true,
-    Climbing = false,
-    GetOff = false,
-    Jumped = BindableEvent.Event,
-    Landed = BindableEvent_2.Event,
-    Respawned = BindableEvent_3.Event,
-    JumpPower = 30,
-    Animations = {},
-    hpUpdated = function(p1, p2) end,
-    SetJumpPower = function(p1, p2) -- Line: 43
-        p1.JumpPower = p2
-        if p1.Humanoid then
-            p1.Humanoid.JumpPower = p2
-        end
-    end,
-}
-function ConEvents(p1) -- Line: 51 -- upvalues: Humanoid (ref), u45 (val), Children (val), BindableEvent (val), BindableEvent_2 (val), LocalPlayer (val), BindableEvent_3 (val), ConEvents (val), peek (val), u34 (val)
-    local Animator
+local u45 = {HasLanded = true, Climbing = false, GetOff = false}
+u45.Jumped = BindableEvent.Event
+u45.Landed = BindableEvent_2.Event
+u45.Respawned = BindableEvent_3.Event
+u45.JumpPower = 30
+u45.Animations = {}
+
+function u45.hpUpdated(p1, p2) end
+
+function u45.SetJumpPower(p1, p2) -- Line: 43
+    p1.JumpPower = p2
+    if p1.Humanoid then
+        p1.Humanoid.JumpPower = p2
+    end
+end
+
+function ConEvents(p1) -- Line: 51
+    -- upvalues: Humanoid (ref), u45 (val), Children (val), BindableEvent (val), BindableEvent_2 (val)
+    -- upvalues: LocalPlayer (val), BindableEvent_3 (val), ConEvents (val), peek (val), u34 (val)
+    local Animations, Name, v1
     if not Humanoid then
         Humanoid = p1:WaitForChild("Humanoid")
     end
@@ -49,30 +50,35 @@ function ConEvents(p1) -- Line: 51 -- upvalues: Humanoid (ref), u45 (val), Child
         if not HumanoidRootPart then
             HumanoidRootPart = p1:FindFirstChild("HumanoidRootPart")
         end
-        if not HumanoidRootPart or not (HumanoidRootPart:IsA("BasePart")) then
-            warn("[HumanoidUtil] Cannot attach BuoyancySensor; character has no suitable body part")
+        if HumanoidRootPart and HumanoidRootPart:IsA("BasePart") then
+            local BuoyancySensor = Instance.new("BuoyancySensor")
+            BuoyancySensor.Parent = HumanoidRootPart
+            u45.WaterSensor = BuoyancySensor
             return
         end
-        local BuoyancySensor = Instance.new("BuoyancySensor")
-        BuoyancySensor.Parent = HumanoidRootPart
-        u45.WaterSensor = BuoyancySensor
+        warn("[HumanoidUtil] Cannot attach BuoyancySensor; character has no suitable body part")
     end)
     for k, v in pairs(Children) do
-        Animator = Humanoid:WaitForChild("Animator")
-        u45.Animations[v.Name] = Animator:LoadAnimation(v)
+        v1 = u45
+        Animations = v1.Animations
+        Name = v.Name
+        Animations[Name] = ((Humanoid:WaitForChild("Animator")):LoadAnimation(v))
     end
-    Humanoid.Jumping:Connect(function() -- Line: 79 -- upvalues: u45 (upval), BindableEvent (upval)
+    local v2 = Humanoid
+    v2.Jumping:Connect(function() -- Line: 79 -- upvalues: u45 (upval), BindableEvent (upval)
         if u45.HasLanded then
             BindableEvent:Fire()
         end
         u45.HasLanded = false
     end)
-    Humanoid.Running:Connect(function() -- Line: 85 -- upvalues: u45 (upval)
+    v2 = Humanoid
+    v2.Running:Connect(function() -- Line: 85 -- upvalues: u45 (upval)
         if u45.Climbing == true then
             u45.Climbing = false
         end
     end)
-    Humanoid.StateChanged:Connect(function(p1, p2) -- Line: 91 -- upvalues: u45 (upval), BindableEvent_2 (upval)
+    v2 = Humanoid
+    v2.StateChanged:Connect(function(p1, p2) -- Line: 91 -- upvalues: u45 (upval), BindableEvent_2 (upval)
         if p2 == Enum.HumanoidStateType.Freefall then
             u45.HasLanded = false
             return
@@ -84,33 +90,47 @@ function ConEvents(p1) -- Line: 51 -- upvalues: Humanoid (ref), u45 (val), Child
             u45.HasLanded = true
         end
     end)
-    Humanoid.Climbing:Connect(function() -- Line: 102 -- upvalues: u45 (upval)
+    v2 = Humanoid
+    v2.Climbing:Connect(function() -- Line: 102 -- upvalues: u45 (upval)
         u45.Climbing = true
     end)
-    Humanoid.Seated:Connect(function(p1) -- Line: 106 -- upvalues: u45 (upval)
+    v2 = Humanoid
+    v2.Seated:Connect(function(p1) -- Line: 106 -- upvalues: u45 (upval)
         if p1 == true then
             u45.HasLanded = false
             return
         end
         u45.GetOff = true
     end)
-    Humanoid.Died:Connect(function() -- Line: 114 -- upvalues: u45 (upval), p1 (ref), LocalPlayer (upval), Humanoid (upval), BindableEvent_3 (upval), ConEvents (upval)
+    v2 = Humanoid
+    v2.Died:Connect(function() -- Line: 114
+        -- upvalues: u45 (upval), p1 (ref), LocalPlayer (upval), Humanoid (upval), BindableEvent_3 (upval)
+        -- upvalues: ConEvents (upval)
         u45.Alive = false
         u45.WaterSensor = nil
         p1 = LocalPlayer.CharacterAdded:Wait()
         Humanoid = p1:WaitForChild("Humanoid")
-        BindableEvent_3:Fire(Humanoid)
+        local v1 = BindableEvent_3
+        local v2 = Humanoid
+        v1:Fire(v2)
         ConEvents()
     end)
-    Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
-    Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-    Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+    v2 = Humanoid
+    local Swimming = Enum.HumanoidStateType.Swimming
+    v2:SetStateEnabled(Swimming, false)
+    v2 = Humanoid
+    local Ragdoll = Enum.HumanoidStateType.Ragdoll
+    v2:SetStateEnabled(Ragdoll, false)
+    v2 = Humanoid
+    local FallingDown = Enum.HumanoidStateType.FallingDown
+    v2:SetStateEnabled(FallingDown, false)
     Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
     u45.Humanoid = Humanoid
     Humanoid.UseJumpPower = true
     Humanoid.JumpPower = u45.JumpPower
     Humanoid.AutoJumpEnabled = peek(u34.Controls.AutoJump) or false
 end
+
 if not Character then
     task.defer(function() -- Line: 138 -- upvalues: Character (ref), LocalPlayer (val), Humanoid (ref), ConEvents (val)
         if Character then

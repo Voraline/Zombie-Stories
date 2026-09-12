@@ -1,1 +1,6 @@
-return {Name = "heatmapflush", Description = "Flushes this server's pending player-position heatmap samples.", Group = "Debug", Args = {}}
+return {
+    Name = "heatmapflush",
+    Description = "Flushes this server's pending player-position heatmap samples.",
+    Group = "Debug",
+    Args = {},
+}

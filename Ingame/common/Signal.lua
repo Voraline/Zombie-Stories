@@ -1,28 +1,34 @@
 local u0 = nil
+
 local function acquireRunnerThreadAndCallEventHandler(p1, ...) -- Line: 34 -- upvalues: u0 (ref)
+    local v1 = u0
     u0 = nil
     p1(...)
-    u0 = u0
+    u0 = v1
 end
+
 local function runEventHandlerInFreeThread() -- Line: 45 -- upvalues: acquireRunnerThreadAndCallEventHandler (val)
     while true do
         acquireRunnerThreadAndCallEventHandler(coroutine.yield())
     end
 end
+
 local u3 = {}
 u3.__index = u3
+
 function u3.new(p1, p2) -- Line: 60 -- upvalues: u3 (val)
     local v1 = {_connected = true, _next = false, _signal = p1, _fn = p2}
-    return (setmetatable(v1, u3))
+    local v2 = u3
+    return (setmetatable(v1, v2))
 end
+
 function u3:Disconnect() -- Line: 69
-    local _handlerListHead
     self._connected = false
     if self._signal._handlerListHead == self then
         self._signal._handlerListHead = self._next
         return
     end
-    _handlerListHead = self._signal._handlerListHead
+    local _handlerListHead = self._signal._handlerListHead
     while _handlerListHead do
         if _handlerListHead._next == self then
             break
@@ -33,22 +39,28 @@ function u3:Disconnect() -- Line: 69
         _handlerListHead._next = self._next
     end
 end
-setmetatable(u3, {
+
+local v1 = {
     __index = function(p1, p2) -- Line: 91
-        local v1 = ("Attempt to get Connection::%s (not a valid member)"):format((tostring(p2)))
-        error(v1, 2)
+        local v1 = error
+        local v2 = tostring(p2)
+        v1(("Attempt to get Connection::%s (not a valid member)"):format(v2), 2)
     end,
     __newindex = function(p1, p2, p3) -- Line: 94
-        local v1 = ("Attempt to set Connection::%s (not a valid member)"):format((tostring(p2)))
-        error(v1, 2)
+        local v1 = error
+        local v2 = tostring(p2)
+        v1(("Attempt to set Connection::%s (not a valid member)"):format(v2), 2)
     end,
-})
+}
+setmetatable(u3, v1)
 local u12 = {}
 u12.__index = u12
+
 function u12.new() -- Line: 103 -- upvalues: u12 (val)
-    local v1 = {_handlerListHead = false}
-    return (setmetatable(v1, u12))
+    local v1 = u12
+    return (setmetatable({_handlerListHead = false}, v1))
 end
+
 function u12:Connect(p2) -- Line: 109 -- upvalues: u3 (val)
     local v1 = u3.new(self, p2)
     if not self._handlerListHead then
@@ -59,12 +71,15 @@ function u12:Connect(p2) -- Line: 109 -- upvalues: u3 (val)
     self._handlerListHead = v1
     return v1
 end
+
 function u12.connect(p1, p2) -- Line: 120
     return p1:Connect(p2)
 end
+
 function u12.DisconnectAll(p1) -- Line: 126
     p1._handlerListHead = false
 end
+
 function u12.Fire(p1, ...) -- Line: 134 -- upvalues: u0 (ref), runEventHandlerInFreeThread (val)
     local _handlerListHead = p1._handlerListHead
     while _handlerListHead do
@@ -78,29 +93,40 @@ function u12.Fire(p1, ...) -- Line: 134 -- upvalues: u0 (ref), runEventHandlerIn
         _handlerListHead = _handlerListHead._next
     end
 end
+
 function u12.Wait(p1) -- Line: 151
     local u2 = coroutine.running()
     local u3 = nil
-    return coroutine.yield()
+    local v1 = p1:Connect(function(...) -- Line: 154 -- upvalues: u3 (ref), u2 (val)
+        u3:Disconnect()
+        task.spawn(u2, ...)
+    end)
+    v1 = coroutine.yield()
+    return v1
 end
+
 function u12.Once(p1, p2) -- Line: 163
     local u2 = nil
-    u2 = p1:Connect(function(...) -- Line: 165 -- upvalues: u2 (ref), p2 (val)
+    u2 = (p1:Connect(function(...) -- Line: 165 -- upvalues: u2 (ref), p2 (val)
         if u2._connected then
             u2:Disconnect()
         end
         p2(...)
-    end)
+    end))
     return u2
 end
-setmetatable(u12, {
+
+local v2 = {
     __index = function(p1, p2) -- Line: 176
-        local v1 = ("Attempt to get Signal::%s (not a valid member)"):format((tostring(p2)))
-        error(v1, 2)
+        local v1 = error
+        local v2 = tostring(p2)
+        v1(("Attempt to get Signal::%s (not a valid member)"):format(v2), 2)
     end,
     __newindex = function(p1, p2, p3) -- Line: 179
-        local v1 = ("Attempt to set Signal::%s (not a valid member)"):format((tostring(p2)))
-        error(v1, 2)
+        local v1 = error
+        local v2 = tostring(p2)
+        v1(("Attempt to set Signal::%s (not a valid member)"):format(v2), 2)
     end,
-})
+}
+setmetatable(u12, v2)
 return u12

@@ -1,10 +1,13 @@
 local HttpService = game:GetService("HttpService")
 local CollectionService = game:GetService("CollectionService")
+local common = game.ReplicatedStorage.common
+local LocalPlayer = game.Players.LocalPlayer
+local RedEvents = game.ReplicatedStorage.common.RedEvents
 local u22 = require("@self/Pathfinder")
-local Signal = require(game.ReplicatedStorage.common.Signal)
+local Signal = require(common.Signal)
 local u55 = nil
 local u34 = game:GetService("RunService"):IsServer()
-local ReplicateObjective = require(game.ReplicatedStorage.common.RedEvents.General.ReplicateObjective)
+local ReplicateObjective = require(RedEvents.General.ReplicateObjective)
 local u39 = {}
 local u40 = {
     Type = true,
@@ -24,11 +27,13 @@ local u40 = {
     CompleteSoundId = true,
 }
 if not u34 then
-    u55 = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.HUDController.HUDElements.Objectives)
+    local HUDController = (game:GetService("ReplicatedStorage")).common.ZS_Framework.Modules.Controllers.HUDController
+    u55 = require(HUDController.HUDElements.Objectives)
 end
 local u56 = {}
 u56.__index = u56
 u56.Completed = Signal.new()
+
 function u56.__index(p1, p2) -- Line: 136 -- upvalues: u40 (val), u56 (val)
     local v1 = rawget(p1, p2)
     if u40[p2] then
@@ -39,6 +44,7 @@ function u56.__index(p1, p2) -- Line: 136 -- upvalues: u40 (val), u56 (val)
     end
     return u56[p2]
 end
+
 function u56.__newindex(p1, p2, p3) -- Line: 148 -- upvalues: u40 (val), u56 (val)
     local v1 = rawget(p1, p2)
     if u40[p2] then
@@ -52,8 +58,10 @@ function u56.__newindex(p1, p2, p3) -- Line: 148 -- upvalues: u40 (val), u56 (va
     u56[p2] = p3
     return p1
 end
-function u56.new(p1, p2) -- Line: 167 -- upvalues: HttpService (val), u34 (val), u39 (val), ReplicateObjective (val), u56 (val), u55 (ref)
-    local v1, v2
+
+function u56.new(p1, p2) -- Line: 167
+    -- upvalues: HttpService (val), u34 (val), u39 (val), ReplicateObjective (val), u56 (val), u55 (ref)
+    local MarkerPositions_4, Parts, v1, v2
     if not p2 then
         v1 = HttpService:GenerateGUID(false)
     else
@@ -67,39 +75,45 @@ function u56.new(p1, p2) -- Line: 167 -- upvalues: HttpService (val), u34 (val),
     v3 = p1.Text ~= nil
     assert(v3, "Must pass text in the propertyTable")
     p1.MarkerParts = formatMarkerParts(p1.MarkerParts, v1)
-    local v4 = {
-        Type = p1.Type,
-        Text = p1.Text,
-        IsPrimary = p1.IsPrimary,
-        MarkerMap = p1.MarkerMap,
-        MarkerPositions = p1.MarkerPositions,
-        MarkerParts = p1.MarkerParts,
-        Location = p1.Location,
-        Progress = p1.Progress,
-        ProgressTotal = p1.ProgressTotal or 1,
-        ImageID = p1.ImageID,
-        AccentColor = p1.AccentColor,
-        ProgressFormat = p1.ProgressFormat,
-        NewSoundId = p1.NewSoundId,
-        CompleteSoundId = p1.CompleteSoundId,
-    }
+    local v4 = {}
+    v4.Type = p1.Type
+    v4.Text = p1.Text
+    v4.IsPrimary = p1.IsPrimary
+    v4.MarkerMap = p1.MarkerMap
+    v4.MarkerPositions = p1.MarkerPositions
+    v4.MarkerParts = p1.MarkerParts
+    v4.Location = p1.Location
+    v4.Progress = p1.Progress
+    v4.ProgressTotal = p1.ProgressTotal or 1
+    v4.ImageID = p1.ImageID
+    v4.AccentColor = p1.AccentColor
+    v4.ProgressFormat = p1.ProgressFormat
+    v4.NewSoundId = p1.NewSoundId
+    v4.CompleteSoundId = p1.CompleteSoundId
     if not p1.ProgressTotal then
-        if v4.Type == "kill" then
+        if v4.Type == "kill" or v4.Type == "collect" or v4.Type == "find" then
             if not v4.ProgressFormat then
                 v4.ProgressFormat = ""
             end
-        elseif v4.Type ~= "collect" and v4.Type ~= "find" and v4.Type ~= "interact" then
+        elseif v4.Type == "interact" and not v4.ProgressFormat then
+            v4.ProgressFormat = ""
         end
     end
     if v4.MarkerPositions then
         v3 = true
-        if typeof(v4.MarkerPositions) ~= "table" then
-            if typeof(v4.MarkerPositions) ~= "Vector3" then
+        local MarkerPositions = v4.MarkerPositions
+        if typeof(MarkerPositions) ~= "table" then
+            local MarkerPositions_3 = v4.MarkerPositions
+            if typeof(MarkerPositions_3) ~= "Vector3" then
                 v3 = false
             end
-        elseif not (v4.MarkerPositions[1]) then
+        elseif not v4.MarkerPositions[1] then
             v3 = false
-        elseif typeof(v4.MarkerPositions[1]) == "Vector3" then
+        else
+            local v5 = v4.MarkerPositions[1]
+            if typeof(v5) ~= "Vector3" then
+                v3 = false
+            end
         end
         if not v3 then
             error("MarkerPositions must be of type Vector3 or array of Vector3")
@@ -109,12 +123,16 @@ function u56.new(p1, p2) -- Line: 167 -- upvalues: HttpService (val), u34 (val),
         assert(v2, "MarkerParts table needs a count")
         v4.MarkerParts.Parts = getUnreplicatedParts(v1, v4.MarkerParts.Count)
     end
-    if v4.Type == "kill" then
+    if v4.Type == "kill" or v4.Type == "find" or v4.Type == "collect" or v4.Type == "interact" then
         if not v4.Progress then
             v4.Progress = 0
         end
-    elseif v4.Type ~= "find" and v4.Type ~= "collect" and v4.Type ~= "interact" and v4.Type ~= "money" and p1.Type ~= "move" then
-        error("Type must be either kill, find, collect, interact, or move")
+    elseif v4.Type ~= "money" then
+        if p1.Type ~= "move" then
+            error("Type must be either kill, find, collect, interact, or move")
+        end
+    elseif not v4.Progress then
+        v4.Progress = 0
     end
     if u34 then
         v3 = {_Destroyed = false, _Identifier = v1, _ServerProperties = {}, Properties = v4}
@@ -129,75 +147,102 @@ function u56.new(p1, p2) -- Line: 167 -- upvalues: HttpService (val), u34 (val),
         if TargetPlayers then
             v3._ServerProperties.TargetPlayers = TargetPlayers
         end
-        return (setmetatable(v3, u56))
+        local v6 = u56
+        return (setmetatable(v3, v6))
     end
-    v3 = {_Destroyed = false, _Identifier = v1, Properties = v4}
+    v3 = {_Destroyed = false}
+    v3._Identifier = v1
+    v3.Properties = v4
     v2 = v1 == nil
     v3._IsLocal = v2
-    setmetatable(v3, u56)
+    local v7 = u56
+    setmetatable(v3, v7)
     u39[v3._Identifier] = v3
     u55:AddObjective(v4, v1)
     if not v4.Location then
         if not v4.MarkerMap then
             if v4.MarkerParts then
-                v3:AddMarkers(v4.MarkerParts.Parts)
+                Parts = v4.MarkerParts.Parts
+                v3:AddMarkers(Parts)
             end
             if v4.MarkerPositions then
-                v3:AddMarkers(v4.MarkerPositions)
+                MarkerPositions_4 = v4.MarkerPositions
+                v3:AddMarkers(MarkerPositions_4)
             end
         else
             v3:_UpdateMarkerMap()
         end
     elseif not v4.MarkerMap then
-        v3:AddMarker(v4.Location)
+        local Location = v4.Location
+        v3:AddMarker(Location)
+    elseif not v4.MarkerMap then
+        if v4.MarkerParts then
+            Parts = v4.MarkerParts.Parts
+            v3:AddMarkers(Parts)
+        end
+        if v4.MarkerPositions then
+            MarkerPositions_4 = v4.MarkerPositions
+            v3:AddMarkers(MarkerPositions_4)
+        end
+    else
+        v3:_UpdateMarkerMap()
     end
     if v4.Type == "move" then
         v3:_RunMoveProgressUpdates()
     end
     return v3
 end
+
 function u56:AddMarker(p2) -- Line: 302 -- upvalues: u55 (ref)
-    local v1 = u55:AddMarker(self.Properties, p2, nil, self._Identifier)
+    local v1 = u55
+    local Properties = self.Properties
+    local _Identifier = self._Identifier
+    v1 = v1:AddMarker(Properties, p2, nil, _Identifier)
     if typeof(p2) == "Vector3" then
         if not self._MarkerPositionIdentifiers then
             self._MarkerPositionIdentifiers = {}
         end
-        table.insert(self._MarkerPositionIdentifiers, v1)
+        local _MarkerPositionIdentifiers = self._MarkerPositionIdentifiers
+        table.insert(_MarkerPositionIdentifiers, v1)
         return v1
     end
     if typeof(p2) == "Instance" then
         if not self._MarkerPartIdentifiers then
             self._MarkerPartIdentifiers = {}
         end
-        table.insert(self._MarkerPartIdentifiers, v1)
+        local _MarkerPartIdentifiers = self._MarkerPartIdentifiers
+        table.insert(_MarkerPartIdentifiers, v1)
     end
     return v1
 end
+
 function u56:AddMarkers(p2) -- Line: 324
     local v1 = true
     if typeof(p2) == "Vector3" then
         self:AddMarker(p2)
-    elseif typeof(p2) ~= "table" then
-        v1 = false
-    elseif not (p2[1]) then
+    elseif typeof(p2) ~= "table" or not p2[1] then
         v1 = false
     else
-        local v2, v3, v4
-        if typeof(p2[1]) == "Vector3" then
-            v2 = p2
-            v3 = nil
-            v4 = nil
-            for k, n in v2, v3, v4 do
-                self:AddMarker(n)
+        local v2, v3
+        local v4 = p2[1]
+        if typeof(v4) ~= "Vector3" then
+            v4 = p2[1]
+            if typeof(v4) ~= "Instance" then
+                v1 = false
+            else
+                v2 = p2
+                v4 = nil
+                v3 = nil
+                for i, j in v2, v4, v3 do
+                    self:AddMarker(j)
+                end
             end
-        elseif typeof(p2[1]) ~= "Instance" then
-            v1 = false
         else
             v2 = p2
-            v3 = nil
             v4 = nil
-            for i, j in v2, v3, v4 do
-                self:AddMarker(j)
+            v3 = nil
+            for k, n in v2, v4, v3 do
+                self:AddMarker(n)
             end
         end
     end
@@ -205,6 +250,7 @@ function u56:AddMarkers(p2) -- Line: 324
         error("Markers must be of type Vector3, {Vector3}, or {BasePart}")
     end
 end
+
 function u56.AppendPlayer(p1, p2) -- Line: 351
     local v1 = {}
     local TargetPlayers = p1._ServerProperties.TargetPlayers
@@ -217,28 +263,34 @@ function u56.AppendPlayer(p1, p2) -- Line: 351
         for i, j in value, v2, v3 do
             table.insert(v1, j)
         end
-        if not (table.find(TargetPlayers.value, p2)) then
+        if not table.find(TargetPlayers.value, p2) then
             table.insert(v1, p2)
         end
     end
     p1.TargetPlayers = v1
 end
+
 function u56:Destroy(p2) -- Line: 368 -- upvalues: u56 (val), u34 (val), ReplicateObjective (val), u39 (val), u55 (ref)
+    local v1
     if p2 then
         u56.Completed:Fire(self)
     end
     if u34 then
-        local v1 = {Type = "Destroy", Identifier = self._Identifier, WasCompleted = p2 or false}
+        v1 = {Type = "Destroy", Identifier = self._Identifier, WasCompleted = p2 or false}
         if not self._ServerProperties.TargetPlayers then
             ReplicateObjective:FireAllClients(v1)
         else
-            ReplicateObjective:FireClients(self._ServerProperties.TargetPlayers, v1)
+            local v2 = ReplicateObjective
+            local TargetPlayers = self._ServerProperties.TargetPlayers
+            v2:FireClients(TargetPlayers, v1)
         end
         u39[self._Identifier] = nil
         return
     end
     if not self._Destroyed then
-        u55:RemoveObjective(self._Identifier, p2)
+        v1 = u55
+        local _Identifier = self._Identifier
+        v1:RemoveObjective(_Identifier, p2)
         self:_IterateMarkers(function(p1) -- Line: 390 -- upvalues: u55 (upval)
             u55:RemoveMarker(p1)
         end)
@@ -247,12 +299,15 @@ function u56:Destroy(p2) -- Line: 368 -- upvalues: u56 (val), u34 (val), Replica
         self._Destroyed = true
     end
 end
+
 function u56.Remove(p1) -- Line: 403
     p1:Destroy()
 end
+
 function u56.Complete(p1) -- Line: 408
     p1:Destroy(true)
 end
+
 function u56:_UpdateMarkerMap() -- Line: 412 -- upvalues: u55 (ref), u22 (val)
     self:_IterateMarkers(function(p1) -- Line: 414 -- upvalues: u55 (upval)
         u55:RemoveMarker(p1)
@@ -261,17 +316,21 @@ function u56:_UpdateMarkerMap() -- Line: 412 -- upvalues: u55 (ref), u22 (val)
         self:_StopMarkerPathfinding()
         return
     end
-    u22:Init(self.Properties.MarkerMap)
+    local v1 = u22
+    local MarkerMap = self.Properties.MarkerMap
+    v1:Init(MarkerMap)
     self:_RunMarkerPathfinding()
 end
+
 function u56:_RunMarkerPathfinding() -- Line: 426 -- upvalues: u55 (ref), u22 (val)
-    assert(self.Properties.MarkerMap, "This objective has node map for markers")
+    local MarkerMap = self.Properties.MarkerMap
+    assert(MarkerMap, "This objective has node map for markers")
     local u7 = tick()
     self._PathfindingCode = u7
     task.defer(function() -- Line: 431 -- upvalues: u7 (val), self (val), u55 (upval), u22 (upval)
-        local Character, HumanoidRootPart, Location, Position, Position_2, v1
+        local Character, HumanoidRootPart, Location, Location_2, Position, Position_2, v1, v2, v3
         local LocalPlayer = game.Players.LocalPlayer
-        local v2 = nil
+        local v4 = nil
         while task.wait(0.2) do
             if u7 ~= self._PathfindingCode then
                 break
@@ -293,37 +352,42 @@ function u56:_RunMarkerPathfinding() -- Line: 426 -- upvalues: u55 (ref), u22 (v
                     Position_2 = Location.Position
                 end
             end
-            self:_IterateMarkers(function(p1) -- Line: 456 -- upvalues: u55 (upval)
+            v2 = self
+            v2:_IterateMarkers(function(p1) -- Line: 456 -- upvalues: u55 (upval)
                 u55:RemoveMarker(p1)
             end)
             if Position and Position_2 then
-                v1 = u22:FindPath(Position, Position_2)
-                if not v1 then
-                    v1 = {}
-                end
-                if 1 <= #v1 then
-                    if (Position - v1[1]).Magnitude < 10 then
-                        v2 = table.remove(v1, 1)
-                    elseif v2 == v1[1] then
-                        table.remove(v1, 1)
+                v2 = u22:FindPath(Position, Position_2) or {}
+                if 1 <= #v2 then
+                    if (Position - v2[1]).Magnitude < 10 then
+                        v4 = table.remove(v2, 1)
+                    elseif v4 == v2[1] then
+                        table.remove(v2, 1)
                     end
                 end
-                if #v1 ~= 0 then
-                    self:AddMarker(v1[1])
+                if #v2 ~= 0 then
+                    v3 = self
+                    v1 = v2[1]
+                    v3:AddMarker(v1)
                 else
-                    self:AddMarker(self.Properties.Location)
+                    v3 = self
+                    v1 = self
+                    Location_2 = v1.Properties.Location
+                    v3:AddMarker(Location_2)
                 end
             end
         end
     end)
 end
+
 function u56:_StopMarkerPathfinding() -- Line: 487
     self._PathfindingCode = nil
 end
+
 function u56:_RunMoveProgressUpdates() -- Line: 491 -- upvalues: u55 (ref)
     self._IsMoveProgressRunning = true
     task.defer(function() -- Line: 493 -- upvalues: self (val), u55 (upval)
-        local Character, HumanoidRootPart, Location, Position, Position_2
+        local Character, HumanoidRootPart, Location, Position, Position_2, _Identifier, v1, v2, v3, v4
         local LocalPlayer = game.Players.LocalPlayer
         while task.wait(0.2) do
             if not self._IsMoveProgressRunning then
@@ -347,123 +411,219 @@ function u56:_RunMoveProgressUpdates() -- Line: 491 -- upvalues: u55 (ref)
                 end
             end
             if Position and Position_2 then
-                u55:UpdateProgress(self._Identifier, (math.floor((Position - Position_2).Magnitude * 0.28)))
+                v1 = u55
+                v2 = self
+                _Identifier = v2._Identifier
+                v4 = (Position - Position_2).Magnitude * 0.28
+                v3 = math.floor(v4)
+                v1:UpdateProgress(_Identifier, v3)
             end
         end
     end)
 end
+
 function u56:_StopMoveProgressUpdates() -- Line: 522
     self._IsMoveProgressRunning = nil
 end
+
 function u56:_SetProperty(p2, p3) -- Line: 526 -- upvalues: u40 (val), u34 (val), ReplicateObjective (val), u55 (ref)
-    local TargetPlayers, u70, v1
-    if not (u40[p2]) then
-        return
-    end
-    if p2 ~= "TargetPlayers" then
-        self.Properties[p2] = p3
-    end
-    if u34 then
-        local v2, v3
-        if p2 ~= "MarkerParts" then
-            u70 = p3
-        else
-            u70 = formatMarkerParts(p3, self._Identifier)
-        end
+    if u40[p2] then
+        local v1, v2, v3, v4, v5
         if p2 ~= "TargetPlayers" then
-            v3 = {Type = "PropertyChanged", Identifier = self._Identifier, Index = p2, Value = u70}
-            if not self._ServerProperties.TargetPlayers then
-                ReplicateObjective:FireAllClients(v3)
-            else
-                ReplicateObjective:FireClients(self._ServerProperties.TargetPlayers, v3)
-            end
-            return
+            self.Properties[p2] = p3
         end
-        v3 = nil
-        TargetPlayers = self._ServerProperties.TargetPlayers
-        if not TargetPlayers then
-            v2 = self
-        else
-            local value
-            v1 = u70
-            local v4 = nil
-            local v5 = nil
-            v2 = self
-            for m, i5 in v1, v4, v5 do
-                if not (table.find(TargetPlayers.value, i5)) then
-                    if not v3 then
-                        v3 = {}
+        if u34 then
+            if p2 == "MarkerParts" then
+                p3 = formatMarkerParts(p3, self._Identifier)
+            end
+            if p2 == "TargetPlayers" then
+                local v6
+                v1 = nil
+                local TargetPlayers = self._ServerProperties.TargetPlayers
+                if not TargetPlayers then
+                    v6 = self
+                else
+                    local v7, v8
+                    v3 = p3
+                    v4 = nil
+                    v5 = nil
+                    v6 = self
+                    for i6, i7 in v3, v4, v5 do
+                        if not table.find(TargetPlayers.value, i7) then
+                            if not v1 then
+                                v1 = {}
+                            end
+                            table.insert(v1, i7)
+                        end
                     end
-                    table.insert(v3, i5)
+                    local value = TargetPlayers.value
+                    v4 = nil
+                    v5 = nil
+                    for i8, i9 in value, v4, v5 do
+                        if not table.find(p3, i9) then
+                            v7 = ReplicateObjective
+                            v8 = {Type = "Destroy", WasCompleted = false, Identifier = v6._Identifier}
+                            v7:FireClient(i9, v8)
+                        end
+                    end
                 end
-            end
-            value = TargetPlayers.value
-            v4 = nil
-            v5 = nil
-            for i6, i7 in value, v4, v5 do
-                if not (table.find(u70, i7)) then
-                    ReplicateObjective:FireClient(i7, {Type = "Destroy", WasCompleted = false, Identifier = v2._Identifier})
+                v6._ServerProperties.TargetPlayers = p3
+                if v1 then
+                    v3 = {Type = "Add", PropertyTable = v6.Properties, Identifier = v6._Identifier}
+                    ReplicateObjective:FireClients(v1, v3)
                 end
+                return
             end
-        end
-        v2._ServerProperties.TargetPlayers = u70
-        if v3 then
-            ReplicateObjective:FireClients(v3, {Type = "Add", PropertyTable = v2.Properties, Identifier = v2._Identifier})
-        end
-        return
-    end
-    if p2 == "Text" then
-        self:_IterateMarkers(function(p1) -- Line: 593 -- upvalues: u55 (upval), p3 (ref)
-            u55:SetMarkerText(p1, p3)
-        end)
-    else
-        local v6
-        if p2 ~= "MarkerPositions" then
-            if p2 ~= "MarkerParts" then
-                if p2 == "Progress" then
-                    u55:UpdateProgress(self._Identifier, p3)
+            v1 = {Type = "PropertyChanged", Identifier = self._Identifier, Index = p2, Value = p3}
+            if not self._ServerProperties.TargetPlayers then
+                ReplicateObjective:FireAllClients(v1)
+            else
+                v2 = ReplicateObjective
+                local TargetPlayers_2 = self._ServerProperties.TargetPlayers
+                v2:FireClients(TargetPlayers_2, v1)
+            end
+        elseif p2 == "Text" then
+            self:_IterateMarkers(function(p1) -- Line: 593 -- upvalues: u55 (upval), p3 (ref)
+                local v1 = u55
+                local v2 = p3
+                v1:SetMarkerText(p1, v2)
+            end)
+        else
+            local Parts, _Identifier, _Identifier_2, _Identifier_3, _MarkerPartIdentifiers, v9
+            if p2 ~= "MarkerPositions" then
+                if p2 ~= "MarkerParts" then
+                    if p2 == "Progress" then
+                        v1 = u55
+                        _Identifier = self._Identifier
+                        v4 = p3
+                        v1:UpdateProgress(_Identifier, v4)
+                    elseif p2 == "ProgressTotal" then
+                        v1 = u55
+                        _Identifier_2 = self._Identifier
+                        v5 = p3
+                        v1:UpdateProgress(_Identifier_2, nil, v5)
+                    elseif p2 == "IsPrimary" then
+                        v1 = u55
+                        _Identifier_3 = self._Identifier
+                        v4 = p3
+                        v1:SetIsPrimary(_Identifier_3, v4)
+                    elseif p2 == "MarkerMap" then
+                        self:_UpdateMarkerMap()
+                    elseif p2 == "Location" and not self.Properties.MarkerMap and p3 ~= nil then
+                        v3 = p3
+                        self:AddMarker(v3)
+                    end
+                elseif not self.MarkerMap then
+                    v9 = formatMarkerParts(p3, self._Identifier)
+                    self.Properties[p2] = v9
+                    v9.Parts = getUnreplicatedParts(self._Identifier, v9.Count)
+                    if self._MarkerPartIdentifiers then
+                        _MarkerPartIdentifiers = self._MarkerPartIdentifiers
+                        v2 = nil
+                        v3 = nil
+                        for i, j in _MarkerPartIdentifiers, v2, v3 do
+                            u55:RemoveMarker(j)
+                        end
+                    end
+                    Parts = v9.Parts
+                    self:AddMarkers(Parts)
+                elseif p2 == "Progress" then
+                    v1 = u55
+                    _Identifier = self._Identifier
+                    v4 = p3
+                    v1:UpdateProgress(_Identifier, v4)
                 elseif p2 == "ProgressTotal" then
-                    u55:UpdateProgress(self._Identifier, nil, p3)
+                    v1 = u55
+                    _Identifier_2 = self._Identifier
+                    v5 = p3
+                    v1:UpdateProgress(_Identifier_2, nil, v5)
                 elseif p2 == "IsPrimary" then
-                    u55:SetIsPrimary(self._Identifier, p3)
+                    v1 = u55
+                    _Identifier_3 = self._Identifier
+                    v4 = p3
+                    v1:SetIsPrimary(_Identifier_3, v4)
                 elseif p2 == "MarkerMap" then
                     self:_UpdateMarkerMap()
                 elseif p2 == "Location" and not self.Properties.MarkerMap and p3 ~= nil then
-                    self:AddMarker(p3)
+                    v3 = p3
+                    self:AddMarker(v3)
                 end
             elseif not self.MarkerMap then
-                local _MarkerPartIdentifiers
-                u70 = formatMarkerParts(p3, self._Identifier)
-                self.Properties[p2] = u70
-                u70.Parts = getUnreplicatedParts(self._Identifier, u70.Count)
-                if self._MarkerPartIdentifiers then
-                    _MarkerPartIdentifiers = self._MarkerPartIdentifiers
-                    v6 = nil
-                    v1 = nil
-                    for i, j in _MarkerPartIdentifiers, v6, v1 do
-                        u55:RemoveMarker(j)
+                if self._MarkerPositionIdentifiers then
+                    local _MarkerPositionIdentifiers = self._MarkerPositionIdentifiers
+                    v2 = nil
+                    v3 = nil
+                    for m, i5 in _MarkerPositionIdentifiers, v2, v3 do
+                        u55:RemoveMarker(i5)
                     end
                 end
-                self:AddMarkers(u70.Parts)
-            end
-        elseif not self.MarkerMap then
-            local _MarkerPositionIdentifiers
-            if self._MarkerPositionIdentifiers then
-                _MarkerPositionIdentifiers = self._MarkerPositionIdentifiers
-                v6 = nil
-                v1 = nil
-                for k, n in _MarkerPositionIdentifiers, v6, v1 do
-                    u55:RemoveMarker(n)
+                v3 = p3
+                self:AddMarkers(v3)
+            elseif p2 ~= "MarkerParts" then
+                if p2 == "Progress" then
+                    v1 = u55
+                    _Identifier = self._Identifier
+                    v4 = p3
+                    v1:UpdateProgress(_Identifier, v4)
+                elseif p2 == "ProgressTotal" then
+                    v1 = u55
+                    _Identifier_2 = self._Identifier
+                    v5 = p3
+                    v1:UpdateProgress(_Identifier_2, nil, v5)
+                elseif p2 == "IsPrimary" then
+                    v1 = u55
+                    _Identifier_3 = self._Identifier
+                    v4 = p3
+                    v1:SetIsPrimary(_Identifier_3, v4)
+                elseif p2 == "MarkerMap" then
+                    self:_UpdateMarkerMap()
+                elseif p2 == "Location" and not self.Properties.MarkerMap and p3 ~= nil then
+                    v3 = p3
+                    self:AddMarker(v3)
                 end
+            elseif not self.MarkerMap then
+                v9 = formatMarkerParts(p3, self._Identifier)
+                self.Properties[p2] = v9
+                v9.Parts = getUnreplicatedParts(self._Identifier, v9.Count)
+                if self._MarkerPartIdentifiers then
+                    _MarkerPartIdentifiers = self._MarkerPartIdentifiers
+                    v2 = nil
+                    v3 = nil
+                    for k, n in _MarkerPartIdentifiers, v2, v3 do
+                        u55:RemoveMarker(n)
+                    end
+                end
+                Parts = v9.Parts
+                self:AddMarkers(Parts)
+            elseif p2 == "Progress" then
+                v1 = u55
+                _Identifier = self._Identifier
+                v4 = p3
+                v1:UpdateProgress(_Identifier, v4)
+            elseif p2 == "ProgressTotal" then
+                v1 = u55
+                _Identifier_2 = self._Identifier
+                v5 = p3
+                v1:UpdateProgress(_Identifier_2, nil, v5)
+            elseif p2 == "IsPrimary" then
+                v1 = u55
+                _Identifier_3 = self._Identifier
+                v4 = p3
+                v1:SetIsPrimary(_Identifier_3, v4)
+            elseif p2 == "MarkerMap" then
+                self:_UpdateMarkerMap()
+            elseif p2 == "Location" and not self.Properties.MarkerMap and p3 ~= nil then
+                v3 = p3
+                self:AddMarker(v3)
             end
-            self:AddMarkers(p3)
         end
     end
 end
+
 function u56:_IterateMarkers(p2) -- Line: 637
-    local _MarkerPartIdentifiers, _MarkerPositionIdentifiers, v1, v2
+    local v1, v2
     if self._MarkerPositionIdentifiers then
-        _MarkerPositionIdentifiers = self._MarkerPositionIdentifiers
+        local _MarkerPositionIdentifiers = self._MarkerPositionIdentifiers
         v1 = nil
         v2 = nil
         for i, j in _MarkerPositionIdentifiers, v1, v2 do
@@ -471,7 +631,7 @@ function u56:_IterateMarkers(p2) -- Line: 637
         end
     end
     if self._MarkerPartIdentifiers then
-        _MarkerPartIdentifiers = self._MarkerPartIdentifiers
+        local _MarkerPartIdentifiers = self._MarkerPartIdentifiers
         v1 = nil
         v2 = nil
         for k, n in _MarkerPartIdentifiers, v1, v2 do
@@ -479,6 +639,7 @@ function u56:_IterateMarkers(p2) -- Line: 637
         end
     end
 end
+
 function getUnreplicatedPart(p1) -- Line: 650 -- upvalues: CollectionService (val)
     local v1 = CollectionService:GetTagged(p1)[1]
     while v1 == nil do
@@ -486,22 +647,21 @@ function getUnreplicatedPart(p1) -- Line: 650 -- upvalues: CollectionService (va
     end
     return v1
 end
+
 function getUnreplicatedParts(p1, p2) -- Line: 658 -- upvalues: CollectionService (val)
-    local v1, v2, v3
-    v1, v2 = p1, p2
-    while true do
-        v3 = CollectionService:GetTagged(v1)
-        if #v3 < v2 then
-            CollectionService:GetInstanceAddedSignal(v1):Wait()
+    local v1
+    local v2, v3 = p1, p2
+    repeat
+        v1 = CollectionService:GetTagged(v2)
+        if #v1 < v3 then
+            CollectionService:GetInstanceAddedSignal(v2):Wait()
         end
-        if v2 <= #v3 then
-            break
-        end
-    end
-    return v3
+    until v3 <= #v1
+    return v1
 end
+
 function formatMarkerParts(p1, p2) -- Line: 669 -- upvalues: CollectionService (val)
-    local Parts, v1, v2
+    local v1, v2
     if not p1 then
         return nil
     end
@@ -518,26 +678,53 @@ function formatMarkerParts(p1, p2) -- Line: 669 -- upvalues: CollectionService (
                 Count = 1,
                 Parts = {p1},
             }
+        elseif p1.Parts then
+            v1 = p1
+        else
+            error("MarkerParts must be {BasePart} or BasePart")
+            v1 = p1
         end
     elseif not p1.Parts then
-        v2 = if typeof(p1[1]) == "Instance" then p1[1]:IsA("BasePart") else false
+        v2 = false
+        local v3 = p1[1]
+        if typeof(v3) == "Instance" then
+            v2 = p1[1]:IsA("BasePart")
+        end
         assert(v2, "MarkerParts table must be an array of BaseParts")
         v1 = {Parts = p1, Count = #p1}
+    elseif typeof(p1) ~= "Instance" then
+        if p1.Parts then
+            v1 = p1
+        else
+            error("MarkerParts must be {BasePart} or BasePart")
+            v1 = p1
+        end
+    elseif p1:IsA("BasePart") then
+        v1 = {
+            Count = 1,
+            Parts = {p1},
+        }
+    elseif p1.Parts then
+        v1 = p1
+    else
+        error("MarkerParts must be {BasePart} or BasePart")
+        v1 = p1
     end
     if typeof(v1) == "Instance" then
         CollectionService:AddTag(v1, p2)
         return v1
     end
     if typeof(v1) == "table" then
-        Parts = v1.Parts
+        local Parts = v1.Parts
         v2 = nil
-        local v3 = nil
-        for i, j in Parts, v2, v3 do
+        local v4 = nil
+        for i, j in Parts, v2, v4 do
             CollectionService:AddTag(j, p2)
         end
     end
     return v1
 end
+
 if not u34 then
     ReplicateObjective:SetClientListener(function(p1) -- Line: 722 -- upvalues: u56 (val), u39 (val)
         local v1
@@ -550,27 +737,31 @@ if not u34 then
             if not v1 then
                 return
             end
-            v1:Destroy(p1.WasCompleted)
+            local WasCompleted = p1.WasCompleted
+            v1:Destroy(WasCompleted)
             return
         end
         if p1.Type == "PropertyChanged" then
             v1 = u39[p1.Identifier]
             if v1 then
-                v1:_SetProperty(p1.Index, p1.Value)
+                local Index = p1.Index
+                local Value = p1.Value
+                v1:_SetProperty(Index, Value)
             end
         end
     end)
     ReplicateObjective:FireServer()
 else
     ReplicateObjective:SetServerListener(function(p1, p2) -- Line: 706 -- upvalues: u39 (val), ReplicateObjective (val)
-        local v1 = u39
-        local v2 = nil
+        local v1
+        local v2 = u39
         local v3 = nil
-        local v4 = p1
-        for i, j in v1, v2, v3 do
-            if not j._ServerProperties.TargetPlayers then
-                ReplicateObjective:FireClient(v4, {Type = "Add", PropertyTable = j.Properties, Identifier = i})
-            elseif not (table.find(j._ServerProperties.TargetPlayers, v4)) then
+        local v4 = nil
+        local v5 = p1
+        for i, j in v2, v3, v4 do
+            if not j._ServerProperties.TargetPlayers or table.find(j._ServerProperties.TargetPlayers, v5) then
+                v1 = {Type = "Add", PropertyTable = j.Properties, Identifier = i}
+                ReplicateObjective:FireClient(v5, v1)
             end
         end
     end)

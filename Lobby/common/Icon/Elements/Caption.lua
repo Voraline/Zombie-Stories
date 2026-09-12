@@ -1,5 +1,5 @@
 return function(p1) -- Line: 1
-    local AbsoluteSize, KeyboardEnabled, u269, v1, v2
+    local KeyboardEnabled, u269, v1, v2
     local u4 = p1:getInstance("ClickRegion")
     local CanvasGroup = Instance.new("CanvasGroup")
     CanvasGroup.Name = "Caption"
@@ -122,50 +122,50 @@ return function(p1) -- Line: 1
     ImageLabel_2.Position = UDim2.fromOffset(0, 5)
     ImageLabel_2.Size = UDim2.new(1, 0, 0, 48)
     ImageLabel_2.Parent = CanvasGroup
-    local PropertyChangedSignal = Frame:GetPropertyChangedSignal("AbsoluteSize")
-    PropertyChangedSignal:Connect(function() -- Line: 147 -- upvalues: ImageLabel_2 (val), Frame (val)
+    ;(Frame:GetPropertyChangedSignal("AbsoluteSize")):Connect(function() -- Line: 147 -- upvalues: ImageLabel_2 (val), Frame (val)
         ImageLabel_2.Size = UDim2.new(1, 0, 0, Frame.AbsoluteSize.Y + 8)
     end)
     local captionJanitor = p1.captionJanitor
     _, u269 = p1:clipOutside(CanvasGroup)
     u269.AutomaticSize = Enum.AutomaticSize.None
-    local PropertyChangedSignal_2 = CanvasGroup:GetPropertyChangedSignal("AbsoluteSize")
-    captionJanitor:add(PropertyChangedSignal_2:Connect(function() -- Line: 157 -- upvalues: CanvasGroup (val), u269 (val)
+    local v3 = (CanvasGroup:GetPropertyChangedSignal("AbsoluteSize")):Connect(function() -- Line: 157 -- upvalues: CanvasGroup (val), u269 (val)
         local AbsoluteSize = CanvasGroup.AbsoluteSize
         u269.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
-    end))
-    AbsoluteSize = CanvasGroup.AbsoluteSize
+    end)
+    captionJanitor:add(v3)
+    local AbsoluteSize = CanvasGroup.AbsoluteSize
     u269.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
     local u288 = false
     local Header = CanvasGroup.Box.Header
     local UserInputService = game:GetService("UserInputService")
-    local function updateHotkey(a1) -- Line: 170 -- upvalues: UserInputService (val), CanvasGroup (val), p1 (val), Header (val), TextLabel (val), Frame_2 (val)
+
+    local function updateHotkey(p1_2) -- Line: 170
+        -- upvalues: UserInputService (val), CanvasGroup (val), p1 (val), Header (val), TextLabel (val), Frame_2 (val)
         local KeyboardEnabled = UserInputService.KeyboardEnabled
         local v1 = CanvasGroup:GetAttribute("CaptionText") or ""
         local v2 = v1 == "_hotkey_"
-        if KeyboardEnabled then
-            Header.Text = v1
-            Header.Visible = not v2
-            if a1 then
-                TextLabel.Text = a1.Name
-                Frame_2.Visible = true
-            end
-            if not KeyboardEnabled then
-                Frame_2.Visible = false
-            end
-            return
-        elseif v2 then
+        if not KeyboardEnabled and v2 then
             p1:setCaption()
             return
         end
+        Header.Text = v1
+        Header.Visible = not v2
+        if p1_2 then
+            TextLabel.Text = p1_2.Name
+            Frame_2.Visible = true
+        end
+        if not KeyboardEnabled then
+            Frame_2.Visible = false
+        end
     end
-    local AttributeChangedSignal = CanvasGroup:GetAttributeChangedSignal("CaptionText")
-    AttributeChangedSignal:Connect(updateHotkey)
+
+    ;(CanvasGroup:GetAttributeChangedSignal("CaptionText")):Connect(updateHotkey)
     local Quad = Enum.EasingStyle.Quad
     local u310 = TweenInfo.new(0.2, Quad, Enum.EasingDirection.In)
     local u315 = TweenInfo.new(0.2, Quad, Enum.EasingDirection.Out)
     local TweenService = game:GetService("TweenService")
     local RunService = game:GetService("RunService")
+
     local function getCaptionPosition(p1) -- Line: 196 -- upvalues: u288 (ref)
         local v1, v2
         if p1 == nil then
@@ -180,7 +180,10 @@ return function(p1) -- Line: 1
         end
         return UDim2.new(0.5, 0, 1, v2)
     end
-    local function updatePosition(p1) -- Line: 203 -- upvalues: u288 (ref), ImageLabel (val), CanvasGroup (val), u4 (val), u269 (val), u310 (val), u315 (val), TweenService (val), RunService (val)
+
+    local function updatePosition(p1) -- Line: 203
+        -- upvalues: u288 (ref), ImageLabel (val), CanvasGroup (val), u4 (val), u269 (val), u310 (val), u315 (val)
+        -- upvalues: TweenService (val), RunService (val)
         local v1, v2, v3, v4
         if not u288 then
             return
@@ -201,6 +204,7 @@ return function(p1) -- Line: 1
         else
             v3 = 10
         end
+        local v6 = UDim2.new(0.5, 0, 1, v3)
         if v1 == nil then
             v2 = u288
         else
@@ -217,12 +221,16 @@ return function(p1) -- Line: 1
             CanvasGroup.AutomaticSize = Enum.AutomaticSize.Y
             CanvasGroup.Size = UDim2.fromOffset(AbsoluteSize.X, AbsoluteSize.Y)
         else
-            ImageLabel.Position = UDim2.fromOffset(0, ImageLabel.Position.Y.Offset)
+            v2 = ImageLabel
+            local Offset = v2.Position.Y.Offset
+            ImageLabel.Position = UDim2.fromOffset(0, Offset)
             CanvasGroup.AutomaticSize = Enum.AutomaticSize.XY
             CanvasGroup.Size = UDim2.fromOffset(32, 53)
         end
         local u61 = nil
-        local function updateCaret() -- Line: 232 -- upvalues: u4 (upval), CanvasGroup (upval), ImageLabel (upval), u61 (ref)
+
+        local function updateCaret() -- Line: 232
+            -- upvalues: u4 (upval), CanvasGroup (upval), ImageLabel (upval), u61 (ref)
             local v1 = u4.AbsolutePosition.X - CanvasGroup.AbsolutePosition.X + u4.AbsoluteSize.X / 2 - ImageLabel.AbsoluteSize.X / 2
             local Offset = ImageLabel.Position.Y.Offset
             local v2 = UDim2.fromOffset(v1, Offset)
@@ -233,7 +241,8 @@ return function(p1) -- Line: 1
             end
             ImageLabel.Position = v2
         end
-        u269.Position = UDim2.new(0.5, 0, 1, v3)
+
+        u269.Position = v6
         updateCaret()
         if not v1 then
             v4 = u315
@@ -243,19 +252,24 @@ return function(p1) -- Line: 1
                 v4 = u315
             end
         end
-        local v6 = TweenService:Create(u269, v4, {Position = v5})
+        local v7 = TweenService
+        local v8 = u269
+        local v9 = {Position = v5}
+        v7 = v7:Create(v8, v4, v9)
         local u90 = RunService.Heartbeat:Connect(updateCaret)
-        v6:Play()
-        v6.Completed:Once(function() -- Line: 255 -- upvalues: u90 (val)
+        v7:Play()
+        v7.Completed:Once(function() -- Line: 255 -- upvalues: u90 (val)
             u90:Disconnect()
         end)
     end
-    local PropertyChangedSignal_3 = u4:GetPropertyChangedSignal("AbsoluteSize")
-    captionJanitor:add(PropertyChangedSignal_3:Connect(function() -- Line: 260 -- upvalues: updatePosition (val)
+
+    local v4 = (u4:GetPropertyChangedSignal("AbsoluteSize")):Connect(function() -- Line: 260 -- upvalues: updatePosition (val)
         updatePosition()
-    end))
+    end)
+    captionJanitor:add(v4)
     updatePosition(false)
-    captionJanitor:add(p1.toggleKeyAdded:Connect(updateHotkey))
+    v4 = p1.toggleKeyAdded:Connect(updateHotkey)
+    captionJanitor:add(v4)
     for k, v in pairs(p1.bindedToggleKeys) do
         KeyboardEnabled = UserInputService.KeyboardEnabled
         v1 = CanvasGroup:GetAttribute("CaptionText") or ""
@@ -276,15 +290,16 @@ return function(p1) -- Line: 1
         Frame_2.Visible = false
         break
     end
-    captionJanitor:add(p1.fakeToggleKeyChanged:Connect(updateHotkey))
+    v4 = p1.fakeToggleKeyChanged:Connect(updateHotkey)
+    captionJanitor:add(v4)
     local fakeToggleKey = p1.fakeToggleKey
     if fakeToggleKey then
         local KeyboardEnabled_2 = UserInputService.KeyboardEnabled
-        local v3 = CanvasGroup:GetAttribute("CaptionText") or ""
-        local v4 = v3 == "_hotkey_"
-        if KeyboardEnabled_2 then
-            Header.Text = v3
-            Header.Visible = not v4
+        v4 = CanvasGroup:GetAttribute("CaptionText") or ""
+        local v5 = v4 == "_hotkey_"
+        if KeyboardEnabled_2 or not v5 then
+            Header.Text = v4
+            Header.Visible = not v5
             if fakeToggleKey then
                 TextLabel.Text = fakeToggleKey.Name
                 Frame_2.Visible = true
@@ -292,20 +307,21 @@ return function(p1) -- Line: 1
             if not KeyboardEnabled_2 then
                 Frame_2.Visible = false
             end
-        elseif v4 then
+        else
             p1:setCaption()
         end
     end
-    local function setCaptionEnabled(a1) -- Line: 276 -- upvalues: u288 (ref), p1 (val), u310 (val), u315 (val), TweenService (val), CanvasGroup (val), updatePosition (val), UserInputService (val), Header (val), Frame_2 (val)
+
+    local function setCaptionEnabled(p1_2) -- Line: 276
+        -- upvalues: u288 (ref), p1 (val), u310 (val), u315 (val), TweenService (val), CanvasGroup (val)
+        -- upvalues: updatePosition (val), UserInputService (val), Header (val), Frame_2 (val)
         local v1, v2, v3
-        if u288 == a1 then
+        if u288 == p1_2 then
             return
         end
         local joinedFrame = p1.joinedFrame
-        if not joinedFrame then
-            v1 = a1
-        elseif not (string.match(joinedFrame.Name, "Dropdown")) then
-            v1 = a1
+        if not joinedFrame or not string.match(joinedFrame.Name, "Dropdown") then
+            v1 = p1_2
         else
             v1 = false
         end
@@ -319,34 +335,33 @@ return function(p1) -- Line: 1
             v3 = u315
         else
             v3 = u310
+            if not v3 then
+                v3 = u315
+            end
         end
-        TweenService:Create(CanvasGroup, v3, {GroupTransparency = v2}):Play()
+        local v4 = TweenService
+        local v5 = CanvasGroup
+        local v6 = {GroupTransparency = v2}
+        v4:Create(v5, v3, v6):Play()
         updatePosition()
         local KeyboardEnabled = UserInputService.KeyboardEnabled
-        local v4 = CanvasGroup:GetAttribute("CaptionText") or ""
-        local v5 = v4 == "_hotkey_"
-        if KeyboardEnabled then
-            Header.Text = v4
-            Header.Visible = not v5
-            if not KeyboardEnabled then
-                Frame_2.Visible = false
-            end
-            return
-        end
-        if v5 then
+        v5 = CanvasGroup:GetAttribute("CaptionText") or ""
+        local v7 = v5 == "_hotkey_"
+        if not KeyboardEnabled and v7 then
             p1:setCaption()
             return
         end
-        Header.Text = v4
-        Header.Visible = not v5
+        Header.Text = v5
+        Header.Visible = not v7
         if not KeyboardEnabled then
             Frame_2.Visible = false
         end
     end
+
     local iconModule = require(p1.iconModule)
-    captionJanitor:add(p1.stateChanged:Connect(function(a1) -- Line: 298 -- upvalues: iconModule (val), p1 (val), setCaptionEnabled (val)
+    local v6 = p1.stateChanged:Connect(function(p1_2) -- Line: 298 -- upvalues: iconModule (val), p1 (val), setCaptionEnabled (val)
         local v1, v2
-        if a1 ~= "Viewing" then
+        if p1_2 ~= "Viewing" then
             iconModule.captionLastClosedClock = os.clock()
             setCaptionEnabled(false)
             return
@@ -360,7 +375,7 @@ return function(p1) -- Line: 1
                 v1 = 999
             end
         end
-        if v1 >= 0.3 then
+        if not (v1 < 0.3) then
             v2 = 0.5
         else
             v2 = 0
@@ -370,6 +385,7 @@ return function(p1) -- Line: 1
                 setCaptionEnabled(true)
             end
         end)
-    end))
+    end)
+    captionJanitor:add(v6)
     return CanvasGroup
 end

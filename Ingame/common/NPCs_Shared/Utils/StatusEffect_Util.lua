@@ -1,15 +1,20 @@
 local RunService = game:GetService("RunService")
 local u8 = RunService:IsServer()
 RunService:IsClient()
+local StatusEffects = script.Parent.Parent.StatusEffects
 local u16 = {}
 local u17 = {}
+
 local function createIconLabel(p1) -- Line: 14
     if p1.Label then
         return p1.Label
     end
+    local Icon = p1.Icon
+    local ShowPotency = p1.ShowPotency
+    local ShowCount = p1.ShowCount
     local ImageLabel = Instance.new("ImageLabel")
     ImageLabel.Name = "ImageLabel"
-    ImageLabel.Image = "rbxassetid://" .. p1.Icon
+    ImageLabel.Image = "rbxassetid://" .. Icon
     ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
     ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     ImageLabel.BackgroundTransparency = 1
@@ -35,7 +40,7 @@ local function createIconLabel(p1) -- Line: 14
     TextLabel.BorderSizePixel = 0
     TextLabel.Position = UDim2.fromScale(1, 1.15)
     TextLabel.Size = UDim2.fromScale(0.45, 0.45)
-    TextLabel.Visible = p1.ShowCount
+    TextLabel.Visible = ShowCount
     TextLabel.Parent = ImageLabel
     local TextLabel_2 = Instance.new("TextLabel")
     TextLabel_2.Name = "Potency"
@@ -53,24 +58,27 @@ local function createIconLabel(p1) -- Line: 14
     TextLabel_2.BorderSizePixel = 0
     TextLabel_2.Position = UDim2.fromScale(0, 1.15)
     TextLabel_2.Size = UDim2.fromScale(0.45, 0.45)
-    TextLabel_2.Visible = p1.ShowPotency
+    TextLabel_2.Visible = ShowPotency
     TextLabel_2.Parent = ImageLabel
     p1.Label = ImageLabel
     p1.AddConnection(ImageLabel, "Destroy")
     return ImageLabel
 end
+
 function u16.GetIconLabel(p1) -- Line: 81 -- upvalues: createIconLabel (val)
     return (createIconLabel(p1))
 end
+
 function u16.GetStatusEffect(p1) -- Line: 85 -- upvalues: u17 (val)
     return u17[p1]
 end
+
 function u16.ConstructEffect(p1, p2, p3) -- Line: 89 -- upvalues: u16 (val)
     local v1 = u16.GetStatusEffect(p1)
-    local BaseEffect = u16.GetStatusEffect("BaseEffect")
-    local v2 = BaseEffect(p3, p2)
+    local v2 = u16.GetStatusEffect("BaseEffect")(p3, p2)
     return (v1(p3, v2))
 end
+
 function u16.ApplyEffect(p1, p2, p3) -- Line: 97 -- upvalues: u16 (val), u8 (val)
     if not p1.CurrentEffects then
         p1.CurrentEffects = {}
@@ -85,7 +93,7 @@ function u16.ApplyEffect(p1, p2, p3) -- Line: 97 -- upvalues: u16 (val), u8 (val
         end)
     end
     local v1 = p1.CurrentEffects[p2]
-    if not (p1.CurrentEffects[p2]) then
+    if not p1.CurrentEffects[p2] then
         local v2 = u16.ConstructEffect(p2, p1, p3)
         local StartPotency = p3.StartPotency
         if not StartPotency then
@@ -97,25 +105,35 @@ function u16.ApplyEffect(p1, p2, p3) -- Line: 97 -- upvalues: u16 (val), u8 (val
             StartCount = v2.Count
         end
         v2.Count = StartCount
+
         function v2.clearFunc() -- Line: 116 -- upvalues: p1 (val), p2 (val)
             if p1.CurrentEffects and not p1.IsDead then
-                p1:RemoveEffect(p2)
+                local v1 = p1
+                local v2 = p2
+                v1:RemoveEffect(v2)
             end
         end
+
         p1.CurrentEffects[p2] = v2
         p1.StatusUpdated:Fire("Apply", v2)
     elseif u8 then
+        local v3
         if p3.Count then
-            v1.Count = math.clamp(p1.CurrentEffects[p2].Count + (p3.Count or 1), 0, v1.CountCeiling or 99)
+            v3 = p1.CurrentEffects[p2].Count + (p3.Count or 1)
+            local CountCeiling = v1.CountCeiling
+            v1.Count = math.clamp(v3, 0, CountCeiling or 99)
         end
         if p3.Potency then
-            v1.Potency = math.clamp(p1.CurrentEffects[p2].Potency + (p3.Potency or 1), 0, v1.PotencyCeiling or 99)
+            v3 = p1.CurrentEffects[p2].Potency + (p3.Potency or 1)
+            local PotencyCeiling = v1.PotencyCeiling
+            v1.Potency = math.clamp(v3, 0, PotencyCeiling or 99)
         end
     end
     if v1 and u8 then
         v1:UpdateIcon()
     end
 end
+
 function u16:RemoveEffect(p2) -- Line: 140
     if self.CurrentEffects then
         local v1 = self.CurrentEffects[p2]
@@ -126,7 +144,8 @@ function u16:RemoveEffect(p2) -- Line: 140
         end
     end
 end
-for i, j in script.Parent.Parent.StatusEffects:GetChildren() do
-    u17[j.Name] = require(j)
+
+for i, j in StatusEffects:GetChildren() do
+    u17[j.Name] = (require(j))
 end
 return u16

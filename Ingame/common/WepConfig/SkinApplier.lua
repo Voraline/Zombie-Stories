@@ -26,15 +26,21 @@ local function findClosestPart2(p1, p2, p3, p4) -- Line: 2
     end
     return v1
 end
+
 local function split(p1, p2) -- Line: 34
-    local v1 = {}
-    for i in p1:gmatch((("([^%s]+)"):format(p2))) do
-        table.insert(v1, (tonumber(i)))
+    local v1
+    local v2 = {}
+    local v3 = ("([^%s]+)"):format(p2)
+    for i in p1:gmatch(v3) do
+        v1 = tonumber(i)
+        table.insert(v2, v1)
     end
-    return unpack(v1)
+    return unpack(v2)
 end
+
 local HttpService = game:GetService("HttpService")
 local v1 = {}
+
 local function WeldTogether(p1, p2, p3, p4, p5) -- Line: 48
     local v1 = Instance.new(p3 or "Weld")
     v1.Name = p1.Name .. ":" .. p2.Name
@@ -42,11 +48,14 @@ local function WeldTogether(p1, p2, p3, p4, p5) -- Line: 48
     v1.Part1 = p2
     if not p5 then
         v1.C0 = CFrame.new()
-        v1.C1 = p2.CFrame:toObjectSpace(p1.CFrame)
+        local CFrame_2 = p2.CFrame
+        local CFrame_3 = p1.CFrame
+        v1.C1 = CFrame_2:toObjectSpace(CFrame_3)
     end
     v1.Parent = p4 or p1
     return v1
 end
+
 local function ApplyAttributes(p1, p2) -- Line: 69
     for i, j in p1:GetAttributes() do
         if i ~= "Skin" then
@@ -54,25 +63,28 @@ local function ApplyAttributes(p1, p2) -- Line: 69
         end
     end
 end
+
 function v1.ApplyFolder(p1, p2, p3) -- Line: 94 -- upvalues: ApplyAttributes (val)
-    local Model, PrimaryPart, PrimaryPart_2, Weld_2, Weld_3, v1, v2, v3, v4
-    if not (p3:GetAttribute("DontHideGun")) then
+    local CFrame_5, CFrame_6, PrimaryPart, PrimaryPart_2, Weld_2, Weld_3, v1, v2
+    if not p3:GetAttribute("DontHideGun") then
         p2.Weapon:ClearAllChildren()
     end
-    v2, v1 = p3, p2
+    local v3, v4 = p3, p2
     for i, j in p3:GetChildren() do
         if j:IsA("Model") then
-            v3 = j:Clone()
-            if not (v3:GetAttribute("CustomWelded")) then
-                for k, n in v3:QueryDescendants("BasePart") do
-                    if n ~= v3.PrimaryPart then
-                        PrimaryPart = v3.PrimaryPart
+            v1 = j:Clone()
+            if not v1:GetAttribute("CustomWelded") then
+                for k, n in v1:QueryDescendants("BasePart") do
+                    if n ~= v1.PrimaryPart then
+                        PrimaryPart = v1.PrimaryPart
                         Weld_2 = Instance.new("Weld")
                         Weld_2.Name = PrimaryPart.Name .. ":" .. n.Name
                         Weld_2.Part0 = PrimaryPart
                         Weld_2.Part1 = n
                         Weld_2.C0 = CFrame.new()
-                        Weld_2.C1 = n.CFrame:toObjectSpace(PrimaryPart.CFrame)
+                        CFrame_5 = n.CFrame
+                        CFrame_6 = PrimaryPart.CFrame
+                        Weld_2.C1 = CFrame_5:toObjectSpace(CFrame_6)
                         Weld_2.Parent = PrimaryPart
                     end
                     n.Anchored = false
@@ -81,50 +93,54 @@ function v1.ApplyFolder(p1, p2, p3) -- Line: 94 -- upvalues: ApplyAttributes (va
                     n.CanQuery = false
                 end
             end
-            v4 = v1.KeyParts[v3.Name]
-            PrimaryPart_2 = v3.PrimaryPart
+            v2 = v4.KeyParts[v1.Name]
+            PrimaryPart_2 = v1.PrimaryPart
             Weld_3 = Instance.new("Weld")
-            Weld_3.Name = PrimaryPart_2.Name .. ":" .. v4.Name
+            Weld_3.Name = PrimaryPart_2.Name .. ":" .. v2.Name
             Weld_3.Part0 = PrimaryPart_2
-            Weld_3.Part1 = v4
+            Weld_3.Part1 = v2
             Weld_3.Parent = PrimaryPart_2
-            for m, i5 in v3:GetChildren() do
+            for m, i5 in v1:GetChildren() do
                 if i5.Name == "Override" then
-                    i5.Name = v4.Name
-                    v4.Name = "Overidden"
-                    i5.Parent = v4.Parent
-                elseif i5 ~= v3.PrimaryPart then
-                    i5.Parent = v1.Weapon
+                    i5.Name = v2.Name
+                    v2.Name = "Overidden"
+                    i5.Parent = v2.Parent
+                elseif i5 ~= v1.PrimaryPart then
+                    i5.Parent = v4.Weapon
                 end
             end
-            v3.Parent = v1.Weapon
+            v1.Parent = v4.Weapon
         end
     end
-    ApplyAttributes(v2, v1)
-    if v1:FindFirstChild("Animations") and v2:FindFirstChild("Animations") then
-        for i6, i7 in v1.Animations:GetChildren() do
-            v3 = v2.Animations:FindFirstChild(i7.Name)
-            if v3 then
-                v4 = v3:Clone()
-                v4.Parent = i7.Parent
+    ApplyAttributes(v3, v4)
+    if v4:FindFirstChild("Animations") and v3:FindFirstChild("Animations") then
+        local Animations, Name
+        for i6, i7 in v4.Animations:GetChildren() do
+            Animations = v3.Animations
+            Name = i7.Name
+            v1 = Animations:FindFirstChild(Name)
+            if v1 then
+                v2 = v1:Clone()
+                v2.Parent = i7.Parent
                 i7:Destroy()
             end
         end
     end
-    v1.Parent = workspace
-    local GlobalParts = v1:FindFirstChild("GlobalParts")
-    local GlobalParts_2 = v2:FindFirstChild("GlobalParts")
-    local Handle = v2:FindFirstChild("Handle")
+    v4.Parent = workspace
+    local GlobalParts = v4:FindFirstChild("GlobalParts")
+    local GlobalParts_2 = v3:FindFirstChild("GlobalParts")
+    local Handle = v3:FindFirstChild("Handle")
     if GlobalParts_2 and GlobalParts and Handle and Handle.PrimaryPart then
-        local Part1, Weld, v5, v6
+        local BasePoints, CFrame_3, CFrame_4, Name_2, Part1, Weld, v5, v6
         local v7 = GlobalParts_2:Clone()
         local v8 = Handle.PrimaryPart:Clone()
-        Model = Instance.new("Model")
+        local Model = Instance.new("Model")
         v8.Parent = Model
         v7.Parent = Model
         Model.PrimaryPart = v8
-        local Handle_2 = v1.KeyParts.Handle
-        Model:PivotTo(Handle_2.CFrame)
+        local Handle_2 = v4.KeyParts.Handle
+        local CFrame_2 = Handle_2.CFrame
+        Model:PivotTo(CFrame_2)
         v7.Parent = nil
         Model:Destroy()
         local v9 = {}
@@ -141,15 +157,17 @@ function v1.ApplyFolder(p1, p2, p3) -- Line: 94 -- upvalues: ApplyAttributes (va
                             v9[i9.Name] = Part1
                             break
                         end
-                        if not (v9[i9.Name]) then
+                        if not v9[i9.Name] then
                             v9[i9.Name] = Part1
                         end
                     end
                 end
             end
-            v5 = v7.BasePoints:FindFirstChild(i9.Name)
+            BasePoints = v7.BasePoints
+            Name_2 = i9.Name
+            v5 = BasePoints:FindFirstChild(Name_2)
             if v5 then
-                if not (v9[i9.Name]) then
+                if not v9[i9.Name] then
                     v6 = Handle_2
                 else
                     v6 = v9[i9.Name]
@@ -159,15 +177,18 @@ function v1.ApplyFolder(p1, p2, p3) -- Line: 94 -- upvalues: ApplyAttributes (va
                 Weld.Part0 = v6
                 Weld.Part1 = v5
                 Weld.C0 = CFrame.new()
-                Weld.C1 = v5.CFrame:toObjectSpace(v6.CFrame)
+                CFrame_3 = v5.CFrame
+                CFrame_4 = v6.CFrame
+                Weld.C1 = CFrame_3:toObjectSpace(CFrame_4)
                 Weld.Parent = v6
                 v5.Parent = i9.Parent
                 i9:Destroy()
             end
         end
     end
-    v1.Parent = nil
+    v4.Parent = nil
 end
+
 function v1.DecodeSkin(p1, p2, p3) -- Line: 202 -- upvalues: ApplyAttributes (val), HttpService (val), split (val)
     local Attribute_2
     ApplyAttributes(p3, p2)
@@ -194,7 +215,7 @@ function v1.DecodeSkin(p1, p2, p3) -- Line: 202 -- upvalues: ApplyAttributes (va
                 if v.Transparency then
                     j.Transparency = v.Transparency
                 end
-                if not (j:IsA("UnionOperation")) or not v.UsePartColor then
+                if not j:IsA("UnionOperation") or not v.UsePartColor then
                     break
                 end
                 j.UsePartColor = v.UsePartColor
@@ -203,57 +224,69 @@ function v1.DecodeSkin(p1, p2, p3) -- Line: 202 -- upvalues: ApplyAttributes (va
         end
     end
 end
+
 function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
-    local BulletEjection, Name
     local v1 = p3:Clone()
     v1.Parent = workspace.Ignore
-    if not (p2.KeyParts:FindFirstChild("BulletEjection", true)) then
-        BulletEjection = v1.KeyParts:FindFirstChild("BulletEjection", true)
+    if not p2.KeyParts:FindFirstChild("BulletEjection", true) then
+        local BulletEjection = v1.KeyParts:FindFirstChild("BulletEjection", true)
         if BulletEjection then
             local v2 = BulletEjection:Clone()
             v2.Parent = p2.KeyParts.Handle
         end
     end
-    if not (p2:FindFirstChild("Animations")) then
+    if not p2:FindFirstChild("Animations") then
         v1.Animations:Clone().Parent = p2
     elseif p2:FindFirstChild("Animations") then
-        local v3
+        local Animations, Name, v3
         for i, j in v1:WaitForChild("Animations"):GetChildren() do
-            if j.Name ~= "3P" and j.Name ~= "Idle" and j.Name ~= "Shoot" and not (p2.Animations:FindFirstChild(j.Name)) then
-                v3 = j:Clone()
-                v3.Parent = p2.Animations
+            if j.Name ~= "3P" and j.Name ~= "Idle" and j.Name ~= "Shoot" then
+                Animations = p2.Animations
+                Name = j.Name
+                if not Animations:FindFirstChild(Name) then
+                    v3 = j:Clone()
+                    v3.Parent = p2.Animations
+                end
             end
         end
     end
     local GlobalParts = v1:FindFirstChild("GlobalParts")
     local GlobalParts_2 = p2:FindFirstChild("GlobalParts")
     if GlobalParts then
-        local Handle, Handle_2, Part1, Weld_2, v4
-        p2:PivotTo(v1.PrimaryPart.CFrame)
-        local v5 = GlobalParts:Clone()
-        local v6 = {}
+        local CFrame_5, CFrame_6, Handle_2, KeyParts, Name_6, Part1, Weld_2, v4, v5
+        local CFrame_2 = v1.PrimaryPart.CFrame
+        p2:PivotTo(CFrame_2)
+        local v6 = GlobalParts:Clone()
+        local v7 = {}
         if not GlobalParts_2 then
             v4 = p2
         else
-            if v5:FindFirstChild("BasePoints") and GlobalParts_2:FindFirstChild("BasePoints") then
+            local Name_3
+            if v6:FindFirstChild("BasePoints") and GlobalParts_2:FindFirstChild("BasePoints") then
+                local BasePoints, Name_2
                 v4 = p2
                 for k, n in GlobalParts_2.BasePoints:GetChildren() do
-                    if v5.BasePoints:FindFirstChild(n.Name) then
-                        v6[n.Name] = false
-                        v5.BasePoints[n.Name]:Destroy()
+                    BasePoints = v6.BasePoints
+                    Name_2 = n.Name
+                    if BasePoints:FindFirstChild(Name_2) then
+                        v7[n.Name] = false
+                        v6.BasePoints[n.Name]:Destroy()
                     end
-                    n.Parent = v5.BasePoints
+                    n.Parent = v6.BasePoints
                 end
             end
-            for m, i5 in v5:GetChildren() do
-                if i5.Name ~= "BasePoints" and i5:IsA("Folder") and GlobalParts_2:FindFirstChild(i5.Name) then
-                    i5:Destroy()
+            for m, i5 in v6:GetChildren() do
+                if i5.Name ~= "BasePoints" and i5:IsA("Folder") then
+                    Name_3 = i5.Name
+                    if GlobalParts_2:FindFirstChild(Name_3) then
+                        i5:Destroy()
+                    end
                 end
             end
         end
         for i6, i7 in GlobalParts:QueryDescendants("BasePart") do
-            if v6[i7.Name] ~= false then
-                Name = nil
+            if v7[i7.Name] ~= false then
+                Name_6 = nil
                 for i8, i9 in i7:GetJoints() do
                     if i9:IsA("JointInstance") then
                         if i9.Part0 ~= i7 then
@@ -263,24 +296,26 @@ function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
                         end
                         if Part1 then
                             if Part1.Name ~= "Handle" then
-                                Name = Part1.Name
+                                Name_6 = Part1.Name
                                 break
                             end
-                            if not Name then
-                                Name = Part1.Name
+                            if not Name_6 then
+                                Name_6 = Part1.Name
                             end
                         end
                     end
                 end
-                if Name then
-                    v6[i7.Name] = Name
+                if Name_6 then
+                    v7[i7.Name] = Name_6
                 end
             end
         end
-        for i10, i11 in v5:QueryDescendants("BasePart") do
+        for i10, i11 in v6:QueryDescendants("BasePart") do
             i11:BreakJoints()
-            if v6[i11.Name] then
-                Handle_2 = v4.KeyParts:FindFirstChild(v6[i11.Name])
+            if v7[i11.Name] then
+                KeyParts = v4.KeyParts
+                v5 = v7[i11.Name]
+                Handle_2 = KeyParts:FindFirstChild(v5)
                 if not Handle_2 then
                     Handle_2 = v4.KeyParts.Handle
                 end
@@ -289,12 +324,14 @@ function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
                 Weld_2.Part0 = Handle_2
                 Weld_2.Part1 = i11
                 Weld_2.C0 = CFrame.new()
-                Weld_2.C1 = i11.CFrame:toObjectSpace(Handle_2.CFrame)
+                CFrame_5 = i11.CFrame
+                CFrame_6 = Handle_2.CFrame
+                Weld_2.C1 = CFrame_5:toObjectSpace(CFrame_6)
                 Weld_2.Parent = Handle_2
             end
         end
         if GlobalParts_2 then
-            for i12, i13 in v5:GetChildren() do
+            for i12, i13 in v6:GetChildren() do
                 if i13.Name ~= "BasePoints" then
                     i13.Parent = GlobalParts_2
                 else
@@ -303,13 +340,13 @@ function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
                     end
                 end
             end
-            v5:Destroy()
+            v6:Destroy()
         else
-            v5.Parent = v4
-            GlobalParts_2 = v5
+            v6.Parent = v4
+            GlobalParts_2 = v6
         end
         if GlobalParts_2 and GlobalParts_2:FindFirstChild("ToWeapon") then
-            local Weld
+            local CFrame_3, CFrame_4, Handle, Name_4, Weapon, Weld
             for i16, i17 in GlobalParts_2.ToWeapon:QueryDescendants("BasePart") do
                 Handle = v4.KeyParts.Handle
                 Weld = Instance.new("Weld")
@@ -317,11 +354,15 @@ function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
                 Weld.Part0 = Handle
                 Weld.Part1 = i17
                 Weld.C0 = CFrame.new()
-                Weld.C1 = i17.CFrame:toObjectSpace(Handle.CFrame)
+                CFrame_3 = i17.CFrame
+                CFrame_4 = Handle.CFrame
+                Weld.C1 = CFrame_3:toObjectSpace(CFrame_4)
                 Weld.Parent = Handle
             end
             for i18, i19 in GlobalParts_2.ToWeapon:GetChildren() do
-                if v4.Weapon:FindFirstChild(i19.Name) then
+                Weapon = v4.Weapon
+                Name_4 = i19.Name
+                if Weapon:FindFirstChild(Name_4) then
                     for i20, i21 in i19:GetChildren() do
                         i21.Parent = v4.Weapon[i19.Name]
                     end
@@ -334,9 +375,10 @@ function v1.AddGlobalParts(p1, p2, p3) -- Line: 244
     end
     v1:Destroy()
 end
+
 function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
-    local BasePart, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
-    if not (p3:GetAttribute("DontHideGun")) then
+    local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
+    if not p3:GetAttribute("DontHideGun") then
         p2.Weapon:ClearAllChildren()
     end
     p2.Parent = workspace
@@ -344,7 +386,7 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
     if not Geometry then
         v11, v1 = p3, p2
     else
-        local AttachmentWeld, Attribute, Handle, PrimaryPart, PrimaryPart_2, Weld, Weld_2
+        local AttachmentWeld, Attribute, CFrame_2, CFrame_4, CFrame_5, CFrame_6, CFrame_7, Enabled, Handle, PrimaryPart, PrimaryPart_2, Transparency, Weld, Weld_2
         v1, v11 = p2, p3
         for i, j in Geometry:GetChildren() do
             if j:IsA("Model") then
@@ -366,36 +408,46 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
                     end
                 elseif AttachmentWeld:IsA("BasePart") then
                     v12.PrimaryPart = AttachmentWeld
+                elseif not v12.PrimaryPart then
+                    for m, i5 in v12:GetDescendants() do
+                        if i5:IsA("BasePart") then
+                            v12.PrimaryPart = i5
+                            break
+                        end
+                    end
                 end
                 Attribute = v12:GetAttribute("VisibilityRule")
                 v6 = Attribute == "Replace"
                 if not v6 then
                     if v12.PrimaryPart then
-                        v12:PivotTo(Handle.CFrame * v12:GetPivot())
+                        v9 = Handle.CFrame * (v12:GetPivot())
+                        v12:PivotTo(v9)
                     end
                 elseif v12.PrimaryPart then
-                    v12:PivotTo(Handle.CFrame)
+                    CFrame_2 = Handle.CFrame
+                    v12:PivotTo(CFrame_2)
                 end
-                if v12.PrimaryPart and not (v12:GetAttribute("CustomWelded")) then
-                    for m, i5 in v12:GetDescendants() do
-                        if i5:IsA("BasePart") then
-                            if i5 ~= v12.PrimaryPart then
+                if v12.PrimaryPart and not v12:GetAttribute("CustomWelded") then
+                    for i6, i7 in v12:GetDescendants() do
+                        if i7:IsA("BasePart") then
+                            if i7 ~= v12.PrimaryPart then
                                 PrimaryPart = v12.PrimaryPart
                                 Weld = Instance.new("Weld")
-                                Weld.Name = PrimaryPart.Name .. ":" .. i5.Name
+                                Weld.Name = PrimaryPart.Name .. ":" .. i7.Name
                                 Weld.Part0 = PrimaryPart
-                                Weld.Part1 = i5
+                                Weld.Part1 = i7
                                 Weld.C0 = CFrame.new()
-                                Weld.C1 = i5.CFrame:toObjectSpace(PrimaryPart.CFrame)
+                                CFrame_4 = i7.CFrame
+                                CFrame_5 = PrimaryPart.CFrame
+                                Weld.C1 = CFrame_4:toObjectSpace(CFrame_5)
                                 Weld.Parent = PrimaryPart
                             end
-                            if not v6 then
-                                i5.Anchored = false
-                            elseif i5 == v12.PrimaryPart then
+                            if not v6 or i7 ~= v12.PrimaryPart then
+                                i7.Anchored = false
                             end
-                            i5.CanCollide = false
-                            i5.CanTouch = false
-                            i5.CanQuery = false
+                            i7.CanCollide = false
+                            i7.CanTouch = false
+                            i7.CanQuery = false
                         end
                     end
                 end
@@ -407,24 +459,36 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
                     Weld_2.Part0 = v7
                     Weld_2.Part1 = PrimaryPart_2
                     Weld_2.C0 = CFrame.new()
-                    Weld_2.C1 = PrimaryPart_2.CFrame:toObjectSpace(v7.CFrame)
+                    CFrame_6 = PrimaryPart_2.CFrame
+                    CFrame_7 = v7.CFrame
+                    Weld_2.C1 = CFrame_6:toObjectSpace(CFrame_7)
                     Weld_2.Parent = v7
                 end
                 v12.Parent = v1.Weapon
                 if Attribute == "Show" then
-                    for i6, i7 in v12:GetDescendants() do
-                        if i7:IsA("BasePart") then
-                            i7:SetAttribute("VisibilityOrigTransparency", i7.Transparency)
-                            i7.Transparency = 1
-                        elseif not (i7:IsA("Decal")) and not (i7:IsA("Texture")) then
-                            if i7:IsA("Beam") then
-                                i7:SetAttribute("VisibilityOrigEnabled", i7.Enabled)
-                                i7.Enabled = false
-                            elseif not (i7:IsA("ParticleEmitter")) then
-                            end
+                    for i8, i9 in v12:GetDescendants() do
+                        if i9:IsA("BasePart") or i9:IsA("Decal") or i9:IsA("Texture") then
+                            Transparency = i9.Transparency
+                            i9:SetAttribute("VisibilityOrigTransparency", Transparency)
+                            i9.Transparency = 1
+                        elseif i9:IsA("Beam") or i9:IsA("ParticleEmitter") then
+                            Enabled = i9.Enabled
+                            i9:SetAttribute("VisibilityOrigEnabled", Enabled)
+                            i9.Enabled = false
                         end
                     end
-                elseif not v6 then
+                elseif v6 then
+                    for i10, i11 in v12:GetDescendants() do
+                        if i11:IsA("BasePart") or i11:IsA("Decal") or i11:IsA("Texture") then
+                            Transparency = i11.Transparency
+                            i11:SetAttribute("VisibilityOrigTransparency", Transparency)
+                            i11.Transparency = 1
+                        elseif i11:IsA("Beam") or i11:IsA("ParticleEmitter") then
+                            Enabled = i11.Enabled
+                            i11:SetAttribute("VisibilityOrigEnabled", Enabled)
+                            i11.Enabled = false
+                        end
+                    end
                 end
             end
         end
@@ -434,22 +498,26 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
     if BasePoints and GlobalParts then
         local BasePoints_2 = GlobalParts:FindFirstChild("BasePoints")
         if BasePoints_2 then
-            local C0, Handle_2, Weld_3, Weld_4, Weld_5
-            for i8, i9 in BasePoints:GetChildren() do
-                if i9:IsA("BasePart") then
-                    v4 = BasePoints_2:FindFirstChild(i9.Name)
-                    v5 = i9:GetAttribute("WeldTarget") or "Handle"
+            local C0, CFrame_8, CFrame_9, Handle_2, Name, Weld_3, Weld_4, Weld_5
+            for i12, i13 in BasePoints:GetChildren() do
+                if i13:IsA("BasePart") then
+                    Name = i13.Name
+                    v4 = BasePoints_2:FindFirstChild(Name)
+                    v5 = i13:GetAttribute("WeldTarget") or "Handle"
                     Handle_2 = v1.KeyParts:FindFirstChild(v5)
                     if not Handle_2 then
                         Handle_2 = v1.KeyParts.Handle
                     end
-                    Weld_3 = i9:FindFirstChildWhichIsA("Weld")
+                    Weld_3 = i13:FindFirstChildWhichIsA("Weld")
                     if not Weld_3 then
                         C0 = CFrame.new()
                     else
                         C0 = Weld_3.C0
+                        if not C0 then
+                            C0 = CFrame.new()
+                        end
                     end
-                    v9 = i9:Clone()
+                    v9 = i13:Clone()
                     v9.Anchored = false
                     v9.CanCollide = false
                     v9.CanTouch = false
@@ -464,7 +532,9 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
                     Weld_5.Part0 = Handle_2
                     Weld_5.Part1 = v9
                     Weld_5.C0 = CFrame.new()
-                    Weld_5.C1 = v9.CFrame:toObjectSpace(Handle_2.CFrame)
+                    CFrame_8 = v9.CFrame
+                    CFrame_9 = Handle_2.CFrame
+                    Weld_5.C1 = CFrame_8:toObjectSpace(CFrame_9)
                     Weld_5.Parent = Handle_2
                     v9.Parent = BasePoints_2
                     if v4 then
@@ -477,13 +547,16 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
     end
     local Animations = v11:FindFirstChild("Animations")
     if Animations and v1:FindFirstChild("Animations") then
-        for i10, i11 in Animations:GetChildren() do
-            if i11:IsA("Animation") then
-                v4 = v1.Animations:FindFirstChild(i11.Name)
+        local Animations_2, Name_2
+        for i14, i15 in Animations:GetChildren() do
+            if i15:IsA("Animation") then
+                Animations_2 = v1.Animations
+                Name_2 = i15.Name
+                v4 = Animations_2:FindFirstChild(Name_2)
                 if v4 then
                     v4:Destroy()
                 end
-                v5 = i11:Clone()
+                v5 = i15:Clone()
                 v5.Parent = v1.Animations
             end
         end
@@ -495,24 +568,27 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
         Author = true,
         Category = true,
     }
-    for i12, i13 in v11:GetAttributes() do
-        if not (v13[i12]) then
-            v1:SetAttribute(i12, i13)
+    for i16, i17 in v11:GetAttributes() do
+        if not v13[i16] then
+            v1:SetAttribute(i16, i17)
         end
     end
     local KeyPartOverrides = v11:FindFirstChild("KeyPartOverrides")
     if KeyPartOverrides then
         local Attribute_2 = KeyPartOverrides:GetAttribute("BarrelOffset")
         local Attribute_3 = KeyPartOverrides:GetAttribute("BarrelSize")
-        if Attribute_2 then
+        if Attribute_2 or Attribute_3 then
             local Barrel = v1.KeyParts:FindFirstChild("Barrel")
             if Barrel then
-                local CFrame
+                local CFrame_10
                 local BulletEjection = Barrel:FindFirstChild("BulletEjection")
-                if not BulletEjection then
-                    CFrame = nil
-                elseif BulletEjection:IsA("BasePart") then
-                    CFrame = BulletEjection.CFrame
+                if not BulletEjection or not BulletEjection:IsA("BasePart") then
+                    CFrame_10 = nil
+                else
+                    CFrame_10 = BulletEjection.CFrame
+                    if not CFrame_10 then
+                        CFrame_10 = nil
+                    end
                 end
                 if Attribute_2 then
                     Barrel.CFrame = Barrel.CFrame * Attribute_2
@@ -520,19 +596,20 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
                 if Attribute_3 then
                     Barrel.Size = Attribute_3
                 end
-                if BulletEjection and CFrame then
+                if BulletEjection and CFrame_10 then
                     BulletEjection:BreakJoints()
-                    BulletEjection.CFrame = CFrame
+                    BulletEjection.CFrame = CFrame_10
                     local Weld_6 = Instance.new("Weld")
                     Weld_6.Name = Barrel.Name .. ":" .. BulletEjection.Name
                     Weld_6.Part0 = Barrel
                     Weld_6.Part1 = BulletEjection
                     Weld_6.C0 = CFrame.new()
-                    Weld_6.C1 = BulletEjection.CFrame:toObjectSpace(Barrel.CFrame)
+                    local CFrame_11 = BulletEjection.CFrame
+                    local CFrame_12 = Barrel.CFrame
+                    Weld_6.C1 = CFrame_11:toObjectSpace(CFrame_12)
                     Weld_6.Parent = Barrel
                 end
             end
-        elseif not Attribute_3 then
         end
         local Attribute_4 = KeyPartOverrides:GetAttribute("AimPartOffset")
         if Attribute_4 then
@@ -540,61 +617,63 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
         end
     end
     if Geometry then
-        local Attribute_5, Weapon, isDefault, v14
+        local Attribute_5, Enabled_2, Transparency_2, Weapon, isDefault, name, v14
         v12 = {}
-        for i14, i15 in Geometry:GetChildren() do
-            if i15:IsA("Model") then
-                Attribute_5 = i15:GetAttribute("OptionGroup")
+        for i18, i19 in Geometry:GetChildren() do
+            if i19:IsA("Model") then
+                Attribute_5 = i19:GetAttribute("OptionGroup")
                 if Attribute_5 and Attribute_5 ~= "" then
-                    if not (v12[Attribute_5]) then
+                    if not v12[Attribute_5] then
                         v12[Attribute_5] = {}
                     end
-                    table.insert(v12[Attribute_5], {name = i15.Name, isDefault = i15:GetAttribute("OptionGroupDefault") or false})
+                    v9 = v12[Attribute_5]
+                    v10 = {name = i19.Name, isDefault = i19:GetAttribute("OptionGroupDefault") or false}
+                    table.insert(v9, v10)
                 end
             end
         end
         v2 = v12
         v3 = nil
         v4 = nil
-        for i16, i17 in v2, v3, v4 do
+        for i20, i21 in v2, v3, v4 do
             v7 = false
-            v8 = i17
+            v8 = i21
             v9 = nil
             v10 = nil
-            for i18, i19 in v8, v9, v10 do
-                if i19.isDefault then
+            for i22, i23 in v8, v9, v10 do
+                if i23.isDefault then
                     v7 = true
                     break
                 end
             end
-            v8 = i17
+            v8 = i21
             v9 = nil
             v10 = nil
-            for i20, i21 in v8, v9, v10 do
+            for i24, i25 in v8, v9, v10 do
                 if not v7 then
-                    isDefault = i20 == 1
+                    isDefault = i24 == 1
                 else
-                    isDefault = i21.isDefault
+                    isDefault = i25.isDefault
                 end
                 if not isDefault then
                     Weapon = v1:FindFirstChild("Weapon")
                     v14 = Weapon
                     if v14 then
-                        v14 = Weapon:FindFirstChild(i21.name)
+                        name = i25.name
+                        v14 = Weapon:FindFirstChild(name)
                     end
                     if v14 then
-                        for i22, i23 in v14:GetDescendants() do
-                            if i23:IsA("BasePart") then
-                                i23:SetAttribute("OptionGroupHidden", true)
-                                i23:SetAttribute("OrigTransparency", i23.Transparency)
-                                i23.Transparency = 1
-                            elseif not (i23:IsA("Decal")) and not (i23:IsA("Texture")) then
-                                if i23:IsA("Beam") then
-                                    i23:SetAttribute("OptionGroupHidden", true)
-                                    i23:SetAttribute("OrigEnabled", i23.Enabled)
-                                    i23.Enabled = false
-                                elseif not (i23:IsA("ParticleEmitter")) then
-                                end
+                        for i26, i27 in v14:GetDescendants() do
+                            if i27:IsA("BasePart") or i27:IsA("Decal") or i27:IsA("Texture") then
+                                i27:SetAttribute("OptionGroupHidden", true)
+                                Transparency_2 = i27.Transparency
+                                i27:SetAttribute("OrigTransparency", Transparency_2)
+                                i27.Transparency = 1
+                            elseif i27:IsA("Beam") or i27:IsA("ParticleEmitter") then
+                                i27:SetAttribute("OptionGroupHidden", true)
+                                Enabled_2 = i27.Enabled
+                                i27:SetAttribute("OrigEnabled", Enabled_2)
+                                i27.Enabled = false
                             end
                         end
                     end
@@ -603,39 +682,55 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
         end
     end
     if Geometry then
-        local Attribute_6
+        local Attribute_6, BasePart, Name_3
         local Weapon_2 = v1:FindFirstChild("Weapon")
         v2 = {}
-        for i24, i25 in Geometry:GetChildren() do
-            if i25:IsA("Model") then
+        for i28, i29 in Geometry:GetChildren() do
+            if i29:IsA("Model") then
                 v8 = Weapon_2
                 if v8 then
-                    v8 = Weapon_2:FindFirstChild(i25.Name)
+                    Name_3 = i29.Name
+                    v8 = Weapon_2:FindFirstChild(Name_3)
                 end
                 if not v8 then
-                    Attribute_6 = i25:GetAttribute("LockedNodes")
+                    Attribute_6 = i29:GetAttribute("LockedNodes")
                     if Attribute_6 and Attribute_6 ~= "" then
-                        for i26, i27 in string.split(Attribute_6, ",") do
-                            v2[i27] = true
+                        for i30, i31 in string.split(Attribute_6, ",") do
+                            v2[i31] = true
                         end
                     end
                 else
                     BasePart = v8:FindFirstChildWhichIsA("BasePart", true)
-                    if BasePart and BasePart:GetAttribute("OptionGroupHidden") then end
+                    if not BasePart then
+                        Attribute_6 = i29:GetAttribute("LockedNodes")
+                        if Attribute_6 and Attribute_6 ~= "" then
+                            for i32, i33 in string.split(Attribute_6, ",") do
+                                v2[i33] = true
+                            end
+                        end
+                    elseif not BasePart:GetAttribute("OptionGroupHidden") then
+                        Attribute_6 = i29:GetAttribute("LockedNodes")
+                        if Attribute_6 and Attribute_6 ~= "" then
+                            for i34, i35 in string.split(Attribute_6, ",") do
+                                v2[i35] = true
+                            end
+                        end
+                    end
                 end
             end
         end
-        if not (next(v2)) then
+        if not next(v2) then
             v1:SetAttribute("SkinLockedNodes", nil)
         else
             v3 = {}
             v4 = v2
             v5 = nil
             v6 = nil
-            for i28 in v4, v5, v6 do
-                table.insert(v3, i28)
+            for i36 in v4, v5, v6 do
+                table.insert(v3, i36)
             end
-            v1:SetAttribute("SkinLockedNodes", table.concat(v3, ","))
+            v7 = table.concat(v3, ",")
+            v1:SetAttribute("SkinLockedNodes", v7)
         end
     end
     if Geometry then
@@ -645,31 +740,67 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
             BasePoints_3 = GlobalParts_2:FindFirstChild("BasePoints")
         end
         if BasePoints_3 then
-            local BasePart_2, Weapon_3, v15, v16, v17, v18, v19, v20, v21
+            local BasePart_2, Name_4, Weapon_3, v15, v16, v17, v18, v19, v20, v21, v22
             v3 = {}
-            for i29, i30 in Geometry:GetChildren() do
-                if i30:IsA("Model") then
+            for i37, i38 in Geometry:GetChildren() do
+                if i38:IsA("Model") then
                     Weapon_3 = v1:FindFirstChild("Weapon")
                     v10 = Weapon_3
                     if v10 then
-                        v10 = Weapon_3:FindFirstChild(i30.Name)
+                        Name_4 = i38.Name
+                        v10 = Weapon_3:FindFirstChild(Name_4)
                     end
                     if not v10 then
-                        for i31, i32 in i30:GetAttributes() do
-                            if string.sub(i31, 1, 13) == "NodeOverride_" then
-                                v17 = string.sub(i31, 14)
-                                v19 = tostring(i32)
-                                v18 = string.split(v19, ",")
-                                if #v18 == 3 then
-                                    v20 = tonumber(v18[1]) or 0
-                                    v21 = tonumber(v18[2]) or 0
-                                    v3[v17] = Vector3.new(v20, v21, tonumber(v18[3]) or 0)
+                        for i39, i40 in i38:GetAttributes() do
+                            if string.sub(i39, 1, 13) == "NodeOverride_" then
+                                v16 = string.sub(i39, 14)
+                                v17 = string.split(tostring(i40), ",")
+                                if #v17 == 3 then
+                                    v20 = v17[1]
+                                    v18 = tonumber(v20) or 0
+                                    v21 = v17[2]
+                                    v19 = tonumber(v21) or 0
+                                    v22 = v17[3]
+                                    v21 = tonumber(v22)
+                                    v3[v16] = (Vector3.new(v18, v19, v21 or 0))
                                 end
                             end
                         end
                     else
                         BasePart_2 = v10:FindFirstChildWhichIsA("BasePart", true)
-                        if BasePart_2 and BasePart_2:GetAttribute("OptionGroupHidden") then end
+                        if not BasePart_2 then
+                            for i41, i42 in i38:GetAttributes() do
+                                if string.sub(i41, 1, 13) == "NodeOverride_" then
+                                    v16 = string.sub(i41, 14)
+                                    v17 = string.split(tostring(i42), ",")
+                                    if #v17 == 3 then
+                                        v20 = v17[1]
+                                        v18 = tonumber(v20) or 0
+                                        v21 = v17[2]
+                                        v19 = tonumber(v21) or 0
+                                        v22 = v17[3]
+                                        v21 = tonumber(v22)
+                                        v3[v16] = (Vector3.new(v18, v19, v21 or 0))
+                                    end
+                                end
+                            end
+                        elseif not BasePart_2:GetAttribute("OptionGroupHidden") then
+                            for i43, i44 in i38:GetAttributes() do
+                                if string.sub(i43, 1, 13) == "NodeOverride_" then
+                                    v16 = string.sub(i43, 14)
+                                    v17 = string.split(tostring(i44), ",")
+                                    if #v17 == 3 then
+                                        v20 = v17[1]
+                                        v18 = tonumber(v20) or 0
+                                        v21 = v17[2]
+                                        v19 = tonumber(v21) or 0
+                                        v22 = v17[3]
+                                        v21 = tonumber(v22)
+                                        v3[v16] = (Vector3.new(v18, v19, v21 or 0))
+                                    end
+                                end
+                            end
+                        end
                     end
                 end
             end
@@ -680,20 +811,20 @@ function v1.ApplyCreatorSkin(p1, p2, p3) -- Line: 377
             v5 = v3
             v6 = nil
             v7 = nil
-            for i33, i34 in v5, v6, v7 do
-                v10 = BasePoints_3:FindFirstChild(i33)
+            for i45, i46 in v5, v6, v7 do
+                v10 = BasePoints_3:FindFirstChild(i45)
                 if v10 and v10:IsA("BasePart") then
                     if not Handle_3 then
-                        v15 = i34
+                        v15 = i46
                     else
-                        v15 = Handle_3.CFrame:VectorToWorldSpace(i34)
+                        v15 = Handle_3.CFrame:VectorToWorldSpace(i46)
                     end
-                    v16 = CFrame.new(v10.CFrame.Position + v15)
-                    v10.CFrame = v16 * v10.CFrame.Rotation
+                    v10.CFrame = (CFrame.new(v10.CFrame.Position + v15)) * v10.CFrame.Rotation
                 end
             end
         end
     end
     v1.Parent = nil
 end
+
 return v1

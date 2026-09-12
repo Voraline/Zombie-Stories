@@ -15,16 +15,13 @@ local u0 = {
     SKILL_TREE_VERSION = 1,
     IS_BETA = true,
 }
+
 function u0.getPrestigeStats(p1) -- Line: 51 -- upvalues: u0 (val)
     local BASE_SP_CAP = u0.BASE_SP_CAP
     local BASE_DAILY_EARN_CAP = u0.BASE_DAILY_EARN_CAP
     local v1 = p1
-    local v2 = 1
-    for i = 1, v1, v2 do
-        if i <= 5 then
-            BASE_SP_CAP = BASE_SP_CAP + 2
-            BASE_DAILY_EARN_CAP = BASE_DAILY_EARN_CAP + 1
-        elseif i > 15 then
+    for i = 1, v1 do
+        if i <= 5 or not (i <= 15) then
             BASE_SP_CAP = BASE_SP_CAP + 2
             BASE_DAILY_EARN_CAP = BASE_DAILY_EARN_CAP + 1
         else
@@ -33,7 +30,9 @@ function u0.getPrestigeStats(p1) -- Line: 51 -- upvalues: u0 (val)
     end
     return {spCap = BASE_SP_CAP, dailyEarnCap = math.max(BASE_DAILY_EARN_CAP, 10)}
 end
+
 function u0.getPrestigeZBucksCost(p1) -- Line: 78
     return p1 * 500 + 1000
 end
+
 return u0

@@ -15,6 +15,7 @@ local springCoefficients = require(Parent.Animation.springCoefficients)
 local nicknames = require(Parent.Utility.nicknames)
 local v1 = {type = "State", kind = "Spring", timeliness = "eager"}
 local u63 = table.freeze({__index = v1})
+
 function v1.addVelocity(p1, p2) -- Line: 148 -- upvalues: evaluate (val), External (val), unpackType (val), change (val)
     evaluate(p1, false)
     local v1 = typeof(p2)
@@ -34,9 +35,11 @@ function v1.addVelocity(p1, p2) -- Line: 148 -- upvalues: evaluate (val), Extern
     p1._stopwatch:unpause()
     change(p1)
 end
+
 function v1.get(p1) -- Line: 168 -- upvalues: External (val)
     return External.logError("stateGetWasRemoved")
 end
+
 function v1.setPosition(p1, p2) -- Line: 174 -- upvalues: evaluate (val), External (val), unpackType (val), change (val)
     evaluate(p1, false)
     local v1 = typeof(p2)
@@ -49,6 +52,7 @@ function v1.setPosition(p1, p2) -- Line: 174 -- upvalues: evaluate (val), Extern
     p1._stopwatch:unpause()
     change(p1)
 end
+
 function v1.setVelocity(p1, p2) -- Line: 190 -- upvalues: evaluate (val), External (val), unpackType (val), change (val)
     evaluate(p1, false)
     local v1 = typeof(p2)
@@ -61,7 +65,10 @@ function v1.setVelocity(p1, p2) -- Line: 190 -- upvalues: evaluate (val), Extern
     p1._stopwatch:unpause()
     change(p1)
 end
-function v1._evaluate(p1) -- Line: 206 -- upvalues: castToState (val), peek (val), External (val), depend (val), springCoefficients (val), packType (val), unpackType (val)
+
+function v1._evaluate(p1) -- Line: 206
+    -- upvalues: castToState (val), peek (val), External (val), depend (val), springCoefficients (val), packType (val)
+    -- upvalues: unpackType (val)
     local v1, v2, v3, v4, v5
     local v6 = castToState(p1._goal)
     if v6 == nil then
@@ -82,39 +89,34 @@ function v1._evaluate(p1) -- Line: 206 -- upvalues: castToState (val), peek (val
     if v9 then
         v4 = v7
         v1 = p1
-    elseif v10 > 0 then
-        local v11, v12, v13, v14, v15, v16, v17
+    elseif not (v10 <= 0) then
+        local v11, v12, v13, v14, v15, v16, v17, v18
         v5, v2, v3, v11 = springCoefficients(v10, p1._activeDamping, p1._activeSpeed)
-        local v18 = false
+        local v19 = false
         local _activeNumSprings = p1._activeNumSprings
-        local v19 = 1
         v1 = p1
-        for i = 1, _activeNumSprings, v19 do
-            v12 = v1._activeTargetP[i]
-            v13 = v1._activeStartV[i]
-            v14 = v1._activeStartP[i] - v12
-            v15 = v14 * v5 + v13 * v2
-            v16 = v14 * v3 + v13 * v11
-            if v15 ~= v15 then
+        for i = 1, _activeNumSprings do
+            v12 = v1._activeStartP[i]
+            v13 = v1._activeTargetP[i]
+            v14 = v1._activeStartV[i]
+            v15 = v12 - v13
+            v16 = v15 * v5 + v14 * v2
+            v17 = v15 * v3 + v14 * v11
+            if v16 ~= v16 or v17 ~= v17 then
                 External.logWarn("springNanMotion")
-                v15 = 0
                 v16 = 0
-            elseif v16 == v16 then
+                v17 = 0
             end
-            v17 = math.abs(v15)
-            if 1e-05 < v17 then
-                v18 = true
-            else
-                v17 = math.abs(v16)
-                if 1e-05 >= v17 then end
+            if 1e-05 < (math.abs(v16)) or 1e-05 < (math.abs(v17)) then
+                v19 = true
             end
-            v1._activeLatestP[i] = v15 + v12
-            v1._activeLatestV[i] = v16
+            v18 = v16 + v13
+            v1._activeLatestP[i] = v18
+            v1._activeLatestV[i] = v17
         end
-        if not v18 then
+        if not v19 then
             local _activeNumSprings_2 = v1._activeNumSprings
-            v19 = 1
-            for j = 1, _activeNumSprings_2, v19 do
+            for j = 1, _activeNumSprings_2 do
                 v1._activeLatestP[j] = v1._activeTargetP[j]
             end
         end
@@ -125,7 +127,7 @@ function v1._evaluate(p1) -- Line: 206 -- upvalues: castToState (val), peek (val
     end
     v5 = peek(v1._speed)
     v2 = peek(v1._damping)
-    if v9 then
+    if v9 or v7 ~= v1._activeGoal or v5 ~= v1._activeSpeed or v2 ~= v1._activeDamping then
         v1._activeTargetP = unpackType(v7, v8)
         v1._activeNumSprings = #v1._activeTargetP
         if not v9 then
@@ -143,18 +145,19 @@ function v1._evaluate(p1) -- Line: 206 -- upvalues: castToState (val), peek (val
         v1._activeSpeed = v5
         _stopwatch:zero()
         _stopwatch:unpause()
-    elseif v7 == v1._activeGoal and v5 == v1._activeSpeed and v2 == v1._activeDamping then
     end
     v1._EXTREMELY_DANGEROUS_usedAsValue = v4
     v3 = _EXTREMELY_DANGEROUS_usedAsValue ~= v4
     return v3
 end
+
 table.freeze(v1)
-return function(p1, p2, p3, p4) -- Line: 60 -- upvalues: castToState (val), External (val), Stopwatch (val), ExternalTime (val), peek (val), u63 (val), nicknames (val), checkLifetime (val), evaluate (val)
+return function(p1, p2, p3, p4) -- Line: 60
+    -- upvalues: castToState (val), External (val), Stopwatch (val), ExternalTime (val), peek (val), u63 (val)
+    -- upvalues: nicknames (val), checkLifetime (val), evaluate (val)
     local v1 = os.clock()
-    if typeof(p1) ~= "table" then
+    if typeof(p1) ~= "table" or castToState(p1) ~= nil then
         External.logError("scopeMissing", nil, "Springs", "myScope:Spring(goalState, speed, damping)")
-    elseif castToState(p1) == nil then
     end
     local v2 = castToState(p2)
     local v3 = nil
@@ -164,7 +167,7 @@ return function(p1, p2, p3, p4) -- Line: 60 -- upvalues: castToState (val), Exte
     end
     local v4 = p3 or 10
     local v5 = p4 or 1
-    local u64 = setmetatable({
+    local v6 = {
         validity = "invalid",
         _activeDamping = -1,
         _activeNumSprings = 0,
@@ -184,26 +187,44 @@ return function(p1, p2, p3, p4) -- Line: 60 -- upvalues: castToState (val), Exte
         _goal = p2,
         _speed = v4,
         _stopwatch = v3,
-    }, u63)
-    local function v6() -- Line: 107 -- upvalues: u64 (val)
+    }
+    local v7 = u63
+    local u64 = setmetatable(v6, v7)
+
+    function v6() -- Line: 107 -- upvalues: u64 (val)
         u64.scope = nil
         for k in pairs(u64.dependencySet) do
             k.dependentSet[u64] = nil
         end
     end
+
     u64.oldestTask = v6
     nicknames[u64.oldestTask] = "Spring"
     table.insert(p1, v6)
     if v2 ~= nil then
         checkLifetime.bOutlivesA(p1, u64.oldestTask, v2.scope, v2.oldestTask, checkLifetime.formatters.animationGoal)
     end
-    local v7 = castToState(v4)
+    v7 = castToState(v4)
     if v7 ~= nil then
-        checkLifetime.bOutlivesA(p1, u64.oldestTask, v7.scope, v7.oldestTask, checkLifetime.formatters.parameter, "speed")
+        checkLifetime.bOutlivesA(
+            p1,
+            u64.oldestTask,
+            v7.scope,
+            v7.oldestTask,
+            checkLifetime.formatters.parameter,
+            "speed"
+        )
     end
     local v8 = castToState(v5)
     if v8 ~= nil then
-        checkLifetime.bOutlivesA(p1, u64.oldestTask, v8.scope, v8.oldestTask, checkLifetime.formatters.parameter, "damping")
+        checkLifetime.bOutlivesA(
+            p1,
+            u64.oldestTask,
+            v8.scope,
+            v8.oldestTask,
+            checkLifetime.formatters.parameter,
+            "damping"
+        )
     end
     evaluate(u64, true)
     return u64

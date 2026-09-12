@@ -1,7 +1,6 @@
 game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
-local v1 = require("@game/ReplicatedStorage/common/zap")
-v1.RenderExplosionEvent.On(function(p1) -- Line: 8 -- upvalues: Debris (val)
+;(require("@game/ReplicatedStorage/common/zap")).RenderExplosionEvent.On(function(p1) -- Line: 8 -- upvalues: Debris (val)
     local Explosion = Instance.new("Explosion")
     Explosion.Position = p1.Position
     Explosion.BlastRadius = p1.BlastRadius or 10

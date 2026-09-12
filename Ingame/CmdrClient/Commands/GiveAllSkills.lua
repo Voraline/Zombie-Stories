@@ -4,6 +4,11 @@ return {
     Group = "Debug",
     Aliases = {"maxskills"},
     Args = {
-        {Type = "player", Name = "target", Description = "The player to give all skills to", Optional = true},
+        {
+            Type = "player",
+            Name = "target",
+            Description = "The player to give all skills to",
+            Optional = true,
+        },
     },
 }

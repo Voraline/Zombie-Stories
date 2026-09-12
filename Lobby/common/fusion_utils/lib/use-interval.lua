@@ -13,7 +13,28 @@ return function(p1, p2, p3, p4) -- Line: 14 -- upvalues: u12 (val), RunService (
         v1 = p4
     end
     local u11 = 0
-    local u12 = nil
+    local u12_2 = nil
+    local v2 = u12
+    local v3 = RunService
+    local Heartbeat = v3.Heartbeat
+    v2 = v2(u6, Heartbeat, function(p1) -- Line: 28 -- upvalues: u11 (ref), peek (val), p2 (val), u12_2 (ref), u8 (ref), u6 (val), p3 (val)
+        u11 = u11 + p1
+        local v1 = peek
+        local v2 = p2
+        v1 = v1(v2)
+        if typeof(v1) ~= "number" then
+            return u12_2()
+        end
+        if u11 < peek(p2) then
+            return
+        end
+        u11 = 0
+        if u8 then
+            u8:doCleanup()
+        end
+        u8 = u6:innerScope()
+        p3(u8)
+    end)
     if v1 then
         u8 = u6:innerScope()
         u17(u6, p3, u8)

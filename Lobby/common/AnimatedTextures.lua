@@ -12,13 +12,14 @@ return {
         return v1
     end,
     update = function(p1) -- Line: 26
-        local v1 = math.rad(os.clock() * 1) % 6.283185307179586 / 6.283185307179586 * 20
-        local v2 = p1
-        local v3 = nil
+        local v1 = (os.clock()) * 1
+        local v2 = math.rad(v1) % 6.283185307179586 / 6.283185307179586 * 20
+        local v3 = p1
         local v4 = nil
-        for i, j in v2, v3, v4 do
-            j.OffsetStudsU = v1
-            j.OffsetStudsV = v1
+        local v5 = nil
+        for i, j in v3, v4, v5 do
+            j.OffsetStudsU = v2
+            j.OffsetStudsV = v2
         end
     end,
 }

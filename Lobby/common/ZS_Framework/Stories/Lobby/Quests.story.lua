@@ -8,9 +8,12 @@ return {
     fusion = Fusion,
     controls = u13,
     story = function(p1) -- Line: 16 -- upvalues: fusion_utils (val), u16 (val), u13 (val)
-        local v1 = p1.scope:innerScope(fusion_utils)
-        return u16({
-            scope = v1,
+        local scope = p1.scope
+        local v1 = fusion_utils
+        local v2 = scope:innerScope(v1)
+        local v3 = u16
+        return v3({
+            scope = v2,
             Parent = p1.target,
             OnClickClose = function() -- Line: 23 -- upvalues: u13 (upval)
                 u13.Visible = false
@@ -67,6 +70,26 @@ return {
                             Rewards = {
                                 ZBucks = {Amount = 100},
                                 ClassXP = {Amount = 50, Type = "Medic"},
+                            },
+                        },
+                        Quest6 = {
+                            Title = "Complete a Story with the Selected Modifiers",
+                            Description = "Super Quick Attack Zombies, Extra Zombies, Take More Damage, Fast Zombies",
+                            IsCompleted = false,
+                            IsClaimed = false,
+                            LayoutOrder = 2,
+                            Progress = {Current = 0, Goal = 1},
+                            Props = {
+                                Modifiers = {
+                                    SuperQuickAttackZombies = true,
+                                    ExtraZombies = true,
+                                    TakeMoreDamage = true,
+                                    FastZombies = true,
+                                },
+                            },
+                            Rewards = {
+                                ZBucks = {Amount = 250},
+                                ClassXP = {Amount = 125, Type = "Assault"},
                             },
                         },
                         Quest5 = {

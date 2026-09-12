@@ -11,10 +11,30 @@ local v1 = {
     Icon = "http://www.roblox.com/asset/?id=6023426957",
 }
 local v2 = {}
-v2[ResponseType.Success] = {Icon = "http://www.roblox.com/asset/?id=6023426957", Title = "Form Submitted", Text = "Thank you ? Your feedback is appreciated!", Duration = 5}
-v2[ResponseType.Error] = {Icon = "http://www.roblox.com/asset/?id=6023426957", Title = "Feedback Form Unavailable", Text = "Please try again later or contact the developer.", Duration = 5}
-v2[ResponseType.RateLimit] = {Icon = "http://www.roblox.com/asset/?id=6023426957", Title = "Slow Down", Text = "Please wait before trying again.", Duration = 3}
-v2[ResponseType.NotAllowed] = {Icon = "http://www.roblox.com/asset/?id=6023426957", Title = "Not Allowed", Text = "You have already submitted this form.", Duration = 3}
+v2[ResponseType.Success] = {
+    Icon = "http://www.roblox.com/asset/?id=6023426957",
+    Title = "Form Submitted",
+    Text = "Thank you ? Your feedback is appreciated!",
+    Duration = 5,
+}
+v2[ResponseType.Error] = {
+    Icon = "http://www.roblox.com/asset/?id=6023426957",
+    Title = "Feedback Form Unavailable",
+    Text = "Please try again later or contact the developer.",
+    Duration = 5,
+}
+v2[ResponseType.RateLimit] = {
+    Icon = "http://www.roblox.com/asset/?id=6023426957",
+    Title = "Slow Down",
+    Text = "Please wait before trying again.",
+    Duration = 3,
+}
+v2[ResponseType.NotAllowed] = {
+    Icon = "http://www.roblox.com/asset/?id=6023426957",
+    Title = "Not Allowed",
+    Text = "You have already submitted this form.",
+    Duration = 3,
+}
 v1.Notifications = v2
 v2 = {}
 v2[RemoteType.FetchFormData] = 1

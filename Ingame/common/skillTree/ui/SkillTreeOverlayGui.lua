@@ -1,22 +1,29 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local Children = (require(ReplicatedStorage.Packages.Fusion)).Children
 local UIKit = require(ReplicatedStorage.common.ZS_Framework.UI.UIKit)
 local Theme = require(ReplicatedStorage.common.ZS_Framework.UI.Theme)
 local EconomyConfig = require(ReplicatedStorage.common.skillTree.config.EconomyConfig)
 local fusion_utils = require(ReplicatedStorage.common.fusion_utils)
 local u40 = Vector2.new(1280, 720)
-local u41 = {Accent = Theme.Menu.Accent, Fill = Color3.fromRGB(48, 36, 22)}
-local v1 = {}
-local v2 = ColorSequenceKeypoint.new(0, Color3.fromRGB(92, 68, 34))
-v1[1] = v2
-v1[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(48, 36, 22))
-u41.Gradient = ColorSequence.new(v1)
+local u41 = {}
+u41.Accent = Theme.Menu.Accent
+u41.Fill = Color3.fromRGB(48, 36, 22)
+local new = ColorSequence.new
+local v1 = {
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(92, 68, 34)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(48, 36, 22)),
+}
+u41.Gradient = new(v1)
+
 local function commaFormat(p1) -- Line: 25
-    return tostring((math.floor(p1))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+    local v1 = math.floor(p1)
+    return tostring(v1):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
 end
+
 local function actionButton(p1, p2) -- Line: 51 -- upvalues: UIKit (val), Theme (val)
-    return UIKit.CategoryButton({
+    local v1 = UIKit
+    return v1.CategoryButton({
         Selected = true,
         TextMaxSize = 15,
         scope = p1,
@@ -33,65 +40,115 @@ local function actionButton(p1, p2) -- Line: 51 -- upvalues: UIKit (val), Theme 
         OnClick = p2.OnClick,
     })
 end
-return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), EconomyConfig (val), Players (val), Children (val), Theme (val), UIKit (val), actionButton (val), u41 (val)
-    local v1
+
+return function(p1) -- Line: 80
+    -- upvalues: fusion_utils (val), u40 (val), EconomyConfig (val), Players (val), Children (val), Theme (val)
+    -- upvalues: UIKit (val), actionButton (val), u41 (val)
     local scope = p1.scope
     local u5 = scope:Value(false)
     local u8 = fusion_utils.useViewport()
     local u12 = scope:Computed(function(p1) -- Line: 84 -- upvalues: u8 (val), u40 (upval)
         local v1 = p1(u8)
-        if v1.X <= 0 or v1.Y <= 0 then
-            return 1
+        if not (v1.X <= 0) and not (v1.Y <= 0) then
+            local v2 = v1.X / u40.X
+            local Y = v1.Y
+            local v3 = u40
+            local v4 = Y / v3.Y
+            local v5 = math.min(1, v2, v4)
+            return (math.max(0.55, v5))
         end
-        local v2 = v1.X / u40.X
-        return (math.max(0.55, (math.min(1, v2, v1.Y / u40.Y))))
+        return 1
     end)
     local u16 = scope:Computed(function(p1) -- Line: 91 -- upvalues: u8 (val)
         local v1 = p1(u8)
-        local v2 = if v1.X > 900 then v1.Y <= 500 else true
+        local v2 = true
+        if not (v1.X <= 900) then
+            v2 = v1.Y <= 500
+        end
         return v2
     end)
-    v1 = scope:Computed(function(a1) -- Line: 95 -- upvalues: p1 (val)
-        return (("SKILL POINTS: %*"):format((tostring((math.floor((a1(p1.SP))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))))
+    local v1 = scope:Computed(function(p1_2) -- Line: 95 -- upvalues: p1 (val)
+        local v1 = p1
+        local SP = v1.SP
+        local v2 = p1_2(SP)
+        local v3 = math.floor(v2)
+        v3 = tostring(v3):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        return (("SKILL POINTS: %*"):format(v3))
     end)
-    local v2 = scope:Computed(function(a1) -- Line: 98 -- upvalues: p1 (val)
-        local v1 = tostring((math.floor((a1(p1.SPSpent))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
-        return (("INVESTED: %* / %*"):format(v1, (tostring((math.floor((a1(p1.SPCap))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))))
+    local v2 = scope:Computed(function(p1_2) -- Line: 98 -- upvalues: p1 (val)
+        local v1 = p1
+        local SPSpent = v1.SPSpent
+        local v2 = p1_2(SPSpent)
+        local v3 = math.floor(v2)
+        local v4 = tostring(v3):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        v3 = p1
+        local SPCap = v3.SPCap
+        v1 = p1_2(SPCap)
+        local v5 = math.floor(v1)
+        v5 = tostring(v5):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        return (("INVESTED: %* / %*"):format(v4, v5))
     end)
-    local v3 = scope:Computed(function(a1) -- Line: 101 -- upvalues: p1 (val), EconomyConfig (upval)
-        local v1 = a1(p1.PrestigeLevel)
-        return (("Prestige (%* Z$)"):format((tostring((math.floor((EconomyConfig.getPrestigeZBucksCost(v1))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))))
+    local v3 = scope:Computed(function(p1_2) -- Line: 101 -- upvalues: p1 (val), EconomyConfig (upval)
+        local v1 = p1_2(p1.PrestigeLevel)
+        local v2 = EconomyConfig
+        v2 = v2.getPrestigeZBucksCost(v1)
+        local v3 = math.floor(v2)
+        v3 = tostring(v3):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        return (("Prestige (%* Z$)"):format(v3))
     end)
-    local v4 = scope:Computed(function(a1) -- Line: 105 -- upvalues: p1 (val), EconomyConfig (upval)
-        local v1
-        local v2 = a1(p1.PrestigeLevel)
-        local v3 = math.floor(math.min(v2 * EconomyConfig.XP_BOOST_PER_PRESTIGE, EconomyConfig.MAX_XP_BOOST) * 100 + 0.5)
-        local v4 = math.floor((a1(p1.XPBonusMult) - 1) * 100 + 0.5)
-        if v2 ~= 0 then
-            v1 = ("Prestige: %* (+%*%% XP)"):format(v2, v3)
+    local v4 = scope:Computed(function(p1_2) -- Line: 105 -- upvalues: p1 (val), EconomyConfig (upval)
+        local v1 = p1_2(p1.PrestigeLevel)
+        local v2 = v1 * EconomyConfig.XP_BOOST_PER_PRESTIGE
+        local v3 = EconomyConfig
+        local MAX_XP_BOOST = v3.MAX_XP_BOOST
+        local v4 = (math.min(v2, MAX_XP_BOOST)) * 100 + 0.5
+        local v5 = math.floor(v4)
+        local v6 = p1
+        local XPBonusMult = v6.XPBonusMult
+        local v7 = ((p1_2(XPBonusMult)) - 1) * 100 + 0.5
+        v4 = math.floor(v7)
+        if v1 ~= 0 then
+            v7 = ("Prestige: %* (+%*%% XP)"):format(v1, v5)
         else
-            v1 = ("Prestige: None (%*%% XP)"):format(v3)
+            v7 = ("Prestige: None (%*%% XP)"):format(v5)
         end
         if 0 < v4 then
-            v1 = v1 .. (" (+%*%%)"):format(v4)
+            v7 = v7 .. (" (+%*%%)"):format(v4)
         end
-        return v1
+        return v7
     end)
-    local v5 = scope:Computed(function(a1) -- Line: 116 -- upvalues: p1 (val), EconomyConfig (upval)
+    local v5 = scope:Computed(function(p1_2) -- Line: 116 -- upvalues: p1 (val), EconomyConfig (upval)
         local v1
-        if a1(p1.AtSPCap) then
+        if p1_2(p1.AtSPCap) then
             v1 = " (Max)"
-        elseif not (a1(p1.AtDailyCap)) then
+        elseif not p1_2(p1.AtDailyCap) then
             v1 = ""
         else
             v1 = " (Daily Max)"
         end
-        local v2 = tostring((math.floor((a1(p1.XPBar))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
-        return (("Skill XP: %* / %*%*"):format(v2, tostring((math.floor(EconomyConfig.SP_XP_PER_SP))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""), v1))
+        local v2 = p1
+        local XPBar = v2.XPBar
+        local v3 = p1_2(XPBar)
+        local v4 = math.floor(v3)
+        local v5 = tostring(v4):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        v2 = EconomyConfig
+        local SP_XP_PER_SP = v2.SP_XP_PER_SP
+        local v6 = math.floor(SP_XP_PER_SP)
+        v6 = tostring(v6):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        return (("Skill XP: %* / %*%*"):format(v5, v6, v1))
     end)
-    local v6 = scope:Computed(function(a1) -- Line: 120 -- upvalues: p1 (val)
-        local v1 = tostring((math.floor((a1(p1.DailyEarned))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
-        return (("Daily: %* / %* SP"):format(v1, (tostring((math.floor((a1(p1.DailyEarnCap))))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))))
+    local v6 = scope:Computed(function(p1_2) -- Line: 120 -- upvalues: p1 (val)
+        local v1 = p1
+        local DailyEarned = v1.DailyEarned
+        local v2 = p1_2(DailyEarned)
+        local v3 = math.floor(v2)
+        local v4 = tostring(v3):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        v3 = p1
+        local DailyEarnCap = v3.DailyEarnCap
+        v1 = p1_2(DailyEarnCap)
+        local v5 = math.floor(v1)
+        v5 = tostring(v5):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+        return (("Daily: %* / %* SP"):format(v4, v5))
     end)
     local v7 = scope:New("ScreenGui")
     local v8 = {
@@ -103,9 +160,10 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Enabled = false,
     }
-    local v9 = {}
-    local v10 = scope:New("Frame")
-    local v11 = {
+    local v9 = Children
+    local v10 = {}
+    local v11 = scope:New("Frame")
+    local v12 = {
         Name = "ReferenceSurface",
         AnchorPoint = Vector2.zero,
         Position = UDim2.fromScale(0, 0),
@@ -116,11 +174,11 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }
-    local v12 = {}
-    local v13 = scope:New("UIScale")
-    v13 = v13({Scale = u12})
-    local v14 = scope:New("Frame")
-    local v15 = {
+    local v13 = Children
+    local v14 = {}
+    local v15 = scope:New("UIScale")({Scale = u12})
+    local v16 = scope:New("Frame")
+    local v17 = {
         Name = "Header",
         Size = UDim2.new(1, 0, 0, 58),
         Position = UDim2.fromOffset(0, 0),
@@ -128,15 +186,17 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         BorderSizePixel = 0,
         ZIndex = Theme.ZIndex.Header,
     }
-    local v16 = {}
-    local v17 = scope:New("UIStroke")
-    v17 = v17({Color = Theme.Menu.HeaderStroke, Thickness = Theme.Stroke.Medium})
-    local v18 = scope:New("UIGradient")
-    v18 = v18({Color = Theme.Menu.Shade, Rotation = Theme.Menu.ShadeRotation})
-    local v19 = scope:New("Frame")
-    v19 = v19({BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = Theme.Menu.Accent})
-    local v20 = scope:New("TextLabel")
-    v20 = v20({
+    local v18 = Children
+    local v19 = {}
+    local v20 = scope:New("UIStroke")({Color = Theme.Menu.HeaderStroke, Thickness = Theme.Stroke.Medium})
+    local v21 = scope:New("UIGradient")({Color = Theme.Menu.Shade, Rotation = Theme.Menu.ShadeRotation})
+    local v22 = scope:New("Frame")({
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 2),
+        Position = UDim2.new(0, 0, 1, -2),
+        BackgroundColor3 = Theme.Menu.Accent,
+    })
+    local v23 = scope:New("TextLabel")({
         Name = "Title",
         BackgroundTransparency = 1,
         Text = "SKILL TREE",
@@ -148,7 +208,8 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = Theme.ZIndex.Header + 1,
     })
-    local v21 = UIKit.Badge({
+    local v24 = UIKit
+    v24 = v24.Badge({
         Name = "BetaLabel",
         TextSize = 14,
         scope = scope,
@@ -175,7 +236,9 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextColor3 = Theme.Menu.Text,
         ZIndex = Theme.ZIndex.Header + 1,
     })
-    local v22 = {
+    local v25 = UIKit
+    local CloseButton = v25.CloseButton
+    local v26 = {
         Name = "Close",
         scope = scope,
         Position = UDim2.new(1, -20, 0.5, 0),
@@ -184,15 +247,17 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         ZIndex = Theme.ZIndex.Header + 2,
         OnClick = p1.OnExit,
     }
-    v16[1] = v17
-    v16[2] = v18
-    v16[3] = v19
-    v16[4] = v20
-    v16[5] = v21
-    v16[6] = UIKit.CloseButton(v22)
-    v15[Children] = v16
-    v14 = v14(v15)
-    local v23 = {
+    v19[1] = v20
+    v19[2] = v21
+    v19[3] = v22
+    v19[4] = v23
+    v19[5] = v24
+    v19[6] = CloseButton(v26)
+    v17[v18] = v19
+    v16 = v16(v17)
+    v17 = UIKit
+    local Card = v17.Card
+    v18 = {
         Name = "EconomyPanel",
         scope = scope,
         Position = UDim2.fromOffset(20, 76),
@@ -200,13 +265,15 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         BackgroundColor3 = Theme.Menu.Panel,
         ZIndex = Theme.ZIndex.Content,
     }
-    v16 = {}
-    v17 = scope:New("UIPadding")
-    v17 = v17({PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 12), PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14)})
-    v18 = scope:New("UIListLayout")
-    v18 = v18({Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder})
-    v19 = scope:New("TextLabel")
-    v19 = v19({
+    v19 = {}
+    v20 = scope:New("UIPadding")({
+        PaddingTop = UDim.new(0, 12),
+        PaddingBottom = UDim.new(0, 12),
+        PaddingLeft = UDim.new(0, 14),
+        PaddingRight = UDim.new(0, 14),
+    })
+    v21 = scope:New("UIListLayout")({Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder})
+    v22 = scope:New("TextLabel")({
         LayoutOrder = 1,
         BackgroundTransparency = 1,
         TextSize = 18,
@@ -216,8 +283,7 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextColor3 = Theme.Colors.Rarity.Mythical,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    v20 = scope:New("TextLabel")
-    v20 = v20({
+    v23 = scope:New("TextLabel")({
         LayoutOrder = 2,
         BackgroundTransparency = 1,
         TextSize = 18,
@@ -227,8 +293,7 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextColor3 = Theme.Menu.AccentCyan,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    v21 = scope:New("TextLabel")
-    v21 = v21({
+    v24 = scope:New("TextLabel")({
         LayoutOrder = 3,
         BackgroundTransparency = 1,
         TextSize = 16,
@@ -238,7 +303,8 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextColor3 = Theme.Menu.TextMuted,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    local v24 = UIKit.ProgressBar({
+    v25 = UIKit
+    v25 = v25.ProgressBar({
         LayoutOrder = 4,
         scope = scope,
         Size = UDim2.new(1, 0, 0, 28),
@@ -246,8 +312,7 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         Max = EconomyConfig.SP_XP_PER_SP,
         Text = v5,
     })
-    v22 = scope:New("TextLabel")
-    v22 = v22({
+    v26 = scope:New("TextLabel")({
         LayoutOrder = 5,
         BackgroundTransparency = 1,
         TextSize = 16,
@@ -257,7 +322,9 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         TextColor3 = Theme.Menu.TextMuted,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    local v25 = {
+    local v27 = UIKit
+    local Currency = v27.Currency
+    local v28 = {
         LayoutOrder = 6,
         ShowPlus = true,
         PaddingLeft = 10,
@@ -268,36 +335,40 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         StrokeColor3 = Theme.Menu.NavigationColors.Play.Accent,
         OnClick = p1.OnZBucks,
     }
-    v16[1] = v17
-    v16[2] = v18
-    v16[3] = v19
-    v16[4] = v20
-    v16[5] = v21
-    v16[6] = v24
-    v16[7] = v22
-    v16[8] = UIKit.Currency(v25)
-    v23.Children = v16
-    v15 = UIKit.Card(v23)
-    v23 = scope:New("Frame")
-    v16 = {
+    v19[1] = v20
+    v19[2] = v21
+    v19[3] = v22
+    v19[4] = v23
+    v19[5] = v24
+    v19[6] = v25
+    v19[7] = v26
+    v19[8] = Currency(v28)
+    v18.Children = v19
+    v17 = Card(v18)
+    v18 = scope:New("Frame")
+    v19 = {
         Name = "ActionButtons",
         Position = UDim2.new(1, -20, 0, 76),
         AnchorPoint = Vector2.new(1, 0),
         Size = UDim2.fromOffset(210, 156),
         BackgroundTransparency = 1,
     }
-    v18 = {}
-    v19 = scope:New("UIListLayout")
-    v19 = v19({Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder})
-    v20 = actionButton(scope, {
-        Name = "Respec",
-        LayoutOrder = 1,
-        Text = ("Respec (%* Z$)"):format((tostring((math.floor(EconomyConfig.RESPEC_ZBUCKS_COST))):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))),
-        Visible = p1.RespecVisible,
-        Colors = Theme.Menu.NavigationColors.Loadout,
-        OnClick = p1.OnRespec,
-    })
-    v21 = actionButton(scope, {
+    v20 = Children
+    v21 = {}
+    v22 = scope:New("UIListLayout")({Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder})
+    v23 = actionButton
+    v25 = {Name = "Respec", LayoutOrder = 1}
+    local v29 = EconomyConfig
+    local RESPEC_ZBUCKS_COST = v29.RESPEC_ZBUCKS_COST
+    local v30 = math.floor(RESPEC_ZBUCKS_COST)
+    v30 = tostring(v30):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+    v25.Text = ("Respec (%* Z$)"):format(v30)
+    v25.Visible = p1.RespecVisible
+    v25.Colors = Theme.Menu.NavigationColors.Loadout
+    v25.OnClick = p1.OnRespec
+    v23 = v23(scope, v25)
+    v24 = actionButton
+    v24 = v24(scope, {
         Name = "Prestige",
         LayoutOrder = 2,
         Text = v3,
@@ -305,7 +376,9 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         Colors = Theme.Menu.NavigationColors.Shop,
         OnClick = p1.OnPrestige,
     })
-    v22 = {
+    v25 = UIKit
+    local CategoryButton = v25.CategoryButton
+    v26 = {
         Name = "Help",
         LayoutOrder = 3,
         Text = "?  HOW TO EARN SP",
@@ -322,20 +395,21 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
             u5:set(true)
         end,
     }
-    v18[1] = v19
-    v18[2] = v20
-    v18[3] = v21
-    v18[4] = UIKit.CategoryButton(v22)
-    v16[Children] = v18
-    v12[1] = v13
-    v12[2] = v14
-    v12[3] = v15
-    v12[4] = v23(v16)
-    v11[Children] = v12
-    v9[1] = v10(v11)
-    v8[Children] = v9
+    v21[1] = v22
+    v21[2] = v23
+    v21[3] = v24
+    v21[4] = CategoryButton(v26)
+    v19[v20] = v21
+    v14[1] = v15
+    v14[2] = v16
+    v14[3] = v17
+    v14[4] = v18(v19)
+    v12[v13] = v14
+    v10[1] = v11(v12)
+    v8[v9] = v10
     local u502 = v7(v8)
-    UIKit.Modal({
+    v8 = UIKit
+    v8.Modal({
         Name = "SkillTreeHelp",
         Dismissable = true,
         Title = "HOW TO EARN SKILL POINTS",
@@ -345,11 +419,15 @@ return function(p1) -- Line: 80 -- upvalues: fusion_utils (val), u40 (val), Econ
         Open = u5,
         TextColor = Theme.Menu.TextMuted,
         Buttons = {
-            {Text = "GOT IT", Color = Theme.Menu.NavigationColors.Map.Accent, BackgroundColor = Theme.Menu.NavigationColors.Map.Fill, GradientColor = Theme.Menu.NavigationColors.Map.Gradient},
+            {
+                Text = "GOT IT",
+                Color = Theme.Menu.NavigationColors.Map.Accent,
+                BackgroundColor = Theme.Menu.NavigationColors.Map.Fill,
+                GradientColor = Theme.Menu.NavigationColors.Map.Gradient,
+            },
         },
     })
-    local PropertyChangedSignal = u502:GetPropertyChangedSignal("Enabled")
-    PropertyChangedSignal:Connect(function() -- Line: 355 -- upvalues: u502 (val), u5 (val)
+    ;(u502:GetPropertyChangedSignal("Enabled")):Connect(function() -- Line: 355 -- upvalues: u502 (val), u5 (val)
         if not u502.Enabled then
             u5:set(false)
         end

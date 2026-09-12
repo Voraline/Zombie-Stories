@@ -49,18 +49,22 @@ return function(p1) -- Line: 27 -- upvalues: u13 (val), OnEvent (val), peek (val
         ZIndex = ZIndex,
     }
     local Activated = OnEvent("Activated")
+
     v6[Activated] = function() -- Line: 60 -- upvalues: p1 (val), u10 (val), peek (upval)
         if p1.ButtonSound then
             p1.ButtonSound:Play()
         end
-        u10:set(not peek(u10))
+        local v1 = u10
+        local v2 = peek
+        local v3 = u10
+        v2 = v2(v3)
+        v1:set(not v2)
     end
+
     local Children_2 = scope.Children
     local v7 = {}
-    local v8 = scope:New("UICorner")
-    v8 = v8({CornerRadius = u13.Menu.CornerScale})
-    local v9 = scope:New("TextLabel")
-    v9 = v9({
+    local v8 = scope:New("UICorner")({CornerRadius = u13.Menu.CornerScale})
+    local v9 = scope:New("TextLabel")({
         Name = "Label",
         BackgroundTransparency = 1,
         TextScaled = true,

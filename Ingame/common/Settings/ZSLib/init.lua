@@ -10,18 +10,19 @@ local Button = require(script.Components.Button)
 local Bind = require(script.Components.Bind)
 local BindsHeader = require(script.Components.BindsHeader)
 local u50 = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (val), u50 (val), Header (val), Toggle (val), NumberSlider (val), Button (val), Dropdown (val), Bind (val), BindsHeader (val)
+
+function v1.Init(p1, p2, p3) -- Line: 22
+    -- upvalues: Fusion (val), Children (val), u50 (val), Header (val), Toggle (val), NumberSlider (val), Button (val)
+    -- upvalues: Dropdown (val), Bind (val), BindsHeader (val)
     local u6 = Fusion.scoped(Fusion)
-    local v1 = u6:New("Sound")
-    local v2 = {Name = "button", SoundId = "rbxassetid://129190194679291", Parent = p2}
-    local u12 = v1(v2)
-    local Tabs = p2:WaitForChild("Tabs")
-    local Frame = Tabs:WaitForChild("Frame")
+    local u12 = u6:New("Sound")({Name = "button", SoundId = "rbxassetid://129190194679291", Parent = p2})
+    local Frame = (p2:WaitForChild("Tabs")):WaitForChild("Frame")
     local Container = p2:WaitForChild("Container")
     local u25 = nil
     local u26 = {}
     local u27 = {}
     local u28 = {}
+
     function u27.SetContainer(p1, p2) -- Line: 38 -- upvalues: u28 (val), u25 (ref), u26 (val)
         for k, v in pairs(u28) do
             v.Visible = false
@@ -43,12 +44,22 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             u25.Visible = false
         end
     end
-    function u27.Tab(p1, p2) -- Line: 57 -- upvalues: u6 (val), Children (upval), u50 (upval), u26 (val), Container (val), u28 (val), u12 (val), u27 (val), Frame (val), Header (upval), Toggle (upval), NumberSlider (upval), Button (upval), Dropdown (upval), u25 (ref), Bind (upval), BindsHeader (upval)
+
+    function u27.Tab(p1, p2) -- Line: 57
+        -- upvalues: u6 (val), Children (upval), u50 (upval), u26 (val), Container (val), u28 (val), u12 (val)
+        -- upvalues: u27 (val), Frame (val), Header (upval), Toggle (upval), NumberSlider (upval), Button (upval)
+        -- upvalues: Dropdown (upval), u25 (ref), Bind (upval), BindsHeader (upval)
         local v1 = u6:New("TextButton")
-        local v2 = {Name = "Button", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.3), SizeConstraint = Enum.SizeConstraint.RelativeXX}
-        local v3 = {}
-        local v4 = u6:New("Frame")
-        local v5 = {
+        local v2 = {
+            Name = "Button",
+            BackgroundTransparency = 1,
+            Size = UDim2.fromScale(1, 0.3),
+            SizeConstraint = Enum.SizeConstraint.RelativeXX,
+        }
+        local v3 = Children
+        local v4 = {}
+        local v5 = u6:New("Frame")
+        local v6 = {
             Name = "Frame",
             AnchorPoint = Vector2.new(0.5, 0.5),
             BackgroundColor3 = Color3.new(),
@@ -56,13 +67,12 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             Position = UDim2.fromScale(0.5, 0.5),
             Size = UDim2.new(0.95, -8, 0.85, -8),
         }
-        local v6 = {}
-        local v7 = u6:New("UICorner")
-        v7 = v7({CornerRadius = UDim.new(0.2, 0)})
-        local v8 = u6:New("UIStroke")
-        v8 = v8({Thickness = 4, Color = Color3.fromRGB(144, 144, 144)})
-        local v9 = u6:New("TextLabel")
-        local v10 = {
+        local v7 = Children
+        local v8 = {}
+        local v9 = u6:New("UICorner")({CornerRadius = UDim.new(0.2, 0)})
+        local v10 = u6:New("UIStroke")({Thickness = 4, Color = Color3.fromRGB(144, 144, 144)})
+        local v11 = u6:New("TextLabel")
+        local v12 = {
             Name = "Label",
             BackgroundTransparency = 1,
             TextScaled = true,
@@ -73,17 +83,18 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             Text = p2,
             TextColor3 = Color3.new(1, 1, 1),
         }
-        v6[1] = v7
-        v6[2] = v8
-        v6[3] = v9(v10)
-        v5[Children] = v6
-        v3[1] = v4(v5)
-        v2[Children] = v3
+        v8[1] = v9
+        v8[2] = v10
+        v8[3] = v11(v12)
+        v6[v7] = v8
+        v4[1] = v5(v6)
+        v2[v3] = v4
         v1 = v1(v2)
-        table.insert(u26, v1)
+        v3 = u26
+        table.insert(v3, v1)
         local u97 = {UIElements = {}}
-        local v11 = u6:New("ScrollingFrame")
-        v3 = {
+        v3 = u6:New("ScrollingFrame")
+        v4 = {
             Name = p2,
             AnchorPoint = Vector2.new(0.5, 0.5),
             BackgroundTransparency = 1,
@@ -98,40 +109,46 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             TopImage = "",
             Visible = false,
         }
-        v5 = {}
-        local v12 = u6:New("UIListLayout")
-        v5[1] = v12({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})
-        v3[Children] = v5
-        local u145 = v11(v3)
+        v5 = Children
+        v4[v5] = {u6:New("UIListLayout")({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})}
+        local u145 = v3(v4)
         local UIListLayout = u145:FindFirstChild("UIListLayout")
-        local PropertyChangedSignal = UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize")
-        PropertyChangedSignal:Connect(function() -- Line: 127 -- upvalues: u145 (val), UIListLayout (val)
+        ;(UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize")):Connect(function() -- Line: 127 -- upvalues: u145 (val), UIListLayout (val)
             u145.CanvasSize = UDim2.fromOffset(0, UIListLayout.AbsoluteContentSize.Y)
         end)
         u145.Parent = Container
-        table.insert(u28, u145)
+        v6 = u28
+        table.insert(v6, u145)
         v1.MouseButton1Click:Connect(function() -- Line: 134 -- upvalues: u12 (upval), u27 (upval), u97 (val)
             u12:Play()
-            u27:SetContainer(u97)
+            local v1 = u27
+            local v2 = u97
+            v1:SetContainer(v2)
         end)
         u97.ContainerUI = u145
         u97.TabButton = v1
         v1.Parent = Frame
         local u169 = 0
         local u170 = nil
-        function u97.Header(p1, p2) -- Line: 146 -- upvalues: u169 (ref), Header (upval), u6 (upval), u12 (upval), u145 (val), u170 (ref), u97 (val)
-            local v1, v2
+
+        function u97.Header(p1, p2) -- Line: 146
+            -- upvalues: u169 (ref), Header (upval), u6 (upval), u12 (upval), u145 (val), u170 (ref), u97 (val)
+            local v1
             u169 = u169 + 1
-            v1, v2 = Header({scope = u6, Text = p2, LayoutOrder = u169, ButtonSound = u12})
-            v1.Parent = u145
-            u170 = v2
-            u97.UIElements[p2] = v1
-            return v1, v2
+            local v2 = Header
+            v2, v1 = v2({scope = u6, Text = p2, LayoutOrder = u169, ButtonSound = u12})
+            v2.Parent = u145
+            u170 = v1
+            u97.UIElements[p2] = v2
+            return v2, v1
         end
-        function u97.Toggle(p1, p2, p3, p4, p5) -- Line: 160 -- upvalues: u169 (ref), Toggle (upval), u6 (upval), u12 (upval), u170 (ref), u145 (val), u97 (val)
-            local v1, v2
+
+        function u97.Toggle(p1, p2, p3, p4, p5) -- Line: 160
+            -- upvalues: u169 (ref), Toggle (upval), u6 (upval), u12 (upval), u170 (ref), u145 (val), u97 (val)
+            local v1
             u169 = u169 + 1
-            v1, v2 = Toggle({
+            local v2 = Toggle
+            v2, v1 = v2({
                 scope = u6,
                 Text = p2,
                 Default = p3,
@@ -141,14 +158,17 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
                 ButtonSound = u12,
                 Visible = u170,
             })
-            v1.Parent = u145
-            u97.UIElements[p2] = v1
-            return v2
+            v2.Parent = u145
+            u97.UIElements[p2] = v2
+            return v1
         end
-        function u97.Number(p1, p2, p3, p4, p5, p6, p7) -- Line: 178 -- upvalues: u169 (ref), NumberSlider (upval), u6 (upval), u170 (ref), u145 (val), u97 (val)
-            local v1, v2
+
+        function u97.Number(p1, p2, p3, p4, p5, p6, p7) -- Line: 178
+            -- upvalues: u169 (ref), NumberSlider (upval), u6 (upval), u170 (ref), u145 (val), u97 (val)
+            local v1
             u169 = u169 + 1
-            v1, v2 = NumberSlider({
+            local v2 = NumberSlider
+            v2, v1 = v2({
                 scope = u6,
                 Text = p2,
                 Default = p3,
@@ -159,13 +179,16 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
                 LayoutOrder = u169,
                 Visible = u170,
             })
-            v1.Parent = u145
-            u97.UIElements[p2] = v1
-            return v2
+            v2.Parent = u145
+            u97.UIElements[p2] = v2
+            return v1
         end
-        function u97.Button(p1, p2, p3, p4, p5, p6, p7, p8) -- Line: 197 -- upvalues: u169 (ref), Button (upval), u6 (upval), u12 (upval), u170 (ref), u145 (val), u97 (val)
+
+        function u97.Button(p1, p2, p3, p4, p5, p6, p7, p8) -- Line: 197
+            -- upvalues: u169 (ref), Button (upval), u6 (upval), u12 (upval), u170 (ref), u145 (val), u97 (val)
             u169 = u169 + 1
-            local v1 = Button({
+            local v1 = Button
+            v1 = v1({
                 scope = u6,
                 Text = p2,
                 ButtonText = p3,
@@ -182,10 +205,14 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             u97.UIElements[p2] = v1
             return v1
         end
-        function u97.Dropdown(p1, p2, p3, p4, p5, p6) -- Line: 218 -- upvalues: u169 (ref), Dropdown (upval), u6 (upval), u12 (upval), u170 (ref), u25 (upval), Container (upval), u145 (val), u97 (val)
-            local v1, v2, v3
+
+        function u97.Dropdown(p1, p2, p3, p4, p5, p6) -- Line: 218
+            -- upvalues: u169 (ref), Dropdown (upval), u6 (upval), u12 (upval), u170 (ref), u25 (upval)
+            -- upvalues: Container (upval), u145 (val), u97 (val)
+            local v1, v2
             u169 = u169 + 1
-            v1, v2, v3 = Dropdown({
+            local v3 = Dropdown
+            v3, v1, v2 = v3({
                 scope = u6,
                 Text = p2,
                 Options = p3,
@@ -199,14 +226,17 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
                     u25 = p1
                 end,
             })
-            v2.Parent = Container
-            v1.Parent = u145
-            u97.UIElements[p2] = v1
-            return v3
+            v1.Parent = Container
+            v3.Parent = u145
+            u97.UIElements[p2] = v3
+            return v2
         end
-        function u97.Bind(p1, p2, p3) -- Line: 242 -- upvalues: u169 (ref), Bind (upval), u6 (upval), u170 (ref), u145 (val), u97 (val)
+
+        function u97.Bind(p1, p2, p3) -- Line: 242
+            -- upvalues: u169 (ref), Bind (upval), u6 (upval), u170 (ref), u145 (val), u97 (val)
             u169 = u169 + 1
-            local v1 = Bind({
+            local v1 = Bind
+            v1 = v1({
                 scope = u6,
                 Text = p2,
                 Description = p3,
@@ -217,14 +247,20 @@ function v1.Init(p1, p2, p3) -- Line: 22 -- upvalues: Fusion (val), Children (va
             u97.UIElements[p2] = v1
             return v1
         end
-        function u97.BindsHeader(p1) -- Line: 257 -- upvalues: u169 (ref), BindsHeader (upval), u6 (upval), u145 (val), u97 (val)
+
+        function u97.BindsHeader(p1) -- Line: 257
+            -- upvalues: u169 (ref), BindsHeader (upval), u6 (upval), u145 (val), u97 (val)
             u169 = u169 + 1
-            local v1 = BindsHeader({scope = u6, LayoutOrder = u169})
+            local v1 = BindsHeader
+            v1 = v1({scope = u6, LayoutOrder = u169})
             v1.Parent = u145
             u97.UIElements.BindsHeader = v1
         end
+
         return u97
     end
+
     return u27
 end
+
 return v1

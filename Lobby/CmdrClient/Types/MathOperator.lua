@@ -1,4 +1,5 @@
 return function(p1) -- Line: 1
+    local MakeEnumType = p1.Cmdr.Util.MakeEnumType
     local v1 = {}
     local v2 = {
         Name = "+",
@@ -42,5 +43,6 @@ return function(p1) -- Line: 1
     v1[4] = v5
     v1[5] = v6
     v1[6] = v7
-    p1:RegisterType("mathOperator", p1.Cmdr.Util.MakeEnumType("Math Operator", v1))
+    local v8 = MakeEnumType("Math Operator", v1)
+    p1:RegisterType("mathOperator", v8)
 end

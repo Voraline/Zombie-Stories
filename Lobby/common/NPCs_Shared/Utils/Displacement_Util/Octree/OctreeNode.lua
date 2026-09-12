@@ -1,39 +1,50 @@
 local u2 = require("./OctreeRegionUtil")
 local u3 = {ClassName = "OctreeNode"}
 u3.__index = u3
+
 function u3.new(p1, p2) -- Line: 35 -- upvalues: u3 (val)
-    local v1 = setmetatable({}, u3)
-    local v2 = p1
-    if not v2 then
-        v2 = error("No octree")
+    local v1 = u3
+    local v2 = setmetatable({}, v1)
+    local v3 = p1
+    if not v3 then
+        v3 = error("No octree")
     end
-    v1._octree = v2
-    v2 = p2
-    if not v2 then
-        v2 = error("No object")
+    v2._octree = v3
+    v3 = p2
+    if not v3 then
+        v3 = error("No object")
     end
-    v1._object = v2
-    v1._currentLowestRegion = nil
-    v1._position = nil
-    return v1
+    v2._object = v3
+    v2._currentLowestRegion = nil
+    v2._position = nil
+    return v2
 end
+
 function u3:KNearestNeighborsSearch(p2, p3) -- Line: 62
-    return self._octree:KNearestNeighborsSearch(self._position, p2, p3)
+    local _octree = self._octree
+    local _position = self._position
+    return _octree:KNearestNeighborsSearch(_position, p2, p3)
 end
+
 function u3.GetObject(p1) -- Line: 77
     return p1._object
 end
+
 function u3:RadiusSearch(p2) -- Line: 88
-    return self._octree:RadiusSearch(self._position, p2)
+    local _octree = self._octree
+    local _position = self._position
+    return _octree:RadiusSearch(_position, p2)
 end
+
 function u3.GetPosition(p1) -- Line: 97
     return p1._position
 end
+
 function u3.GetRawPosition(p1) -- Line: 108
     return p1._px, p1._py, p1._pz
 end
+
 function u3.SetPosition(p1, p2) -- Line: 126 -- upvalues: u2 (val)
-    local OrCreateLowestSubRegion
     if p1._position == p2 then
         return
     end
@@ -44,20 +55,10 @@ function u3.SetPosition(p1, p2) -- Line: 126 -- upvalues: u2 (val)
     p1._py = y
     p1._pz = z
     p1._position = p2
-    if not p1._currentLowestRegion then
-        OrCreateLowestSubRegion = p1._octree:GetOrCreateLowestSubRegion(x, y, z)
-        if not p1._currentLowestRegion then
-            u2.addNode(OrCreateLowestSubRegion, p1)
-        else
-            u2.moveNode(p1._currentLowestRegion, OrCreateLowestSubRegion, p1)
-        end
-        p1._currentLowestRegion = OrCreateLowestSubRegion
+    if p1._currentLowestRegion and u2.inRegionBounds(p1._currentLowestRegion, x, y, z) then
         return
     end
-    if u2.inRegionBounds(p1._currentLowestRegion, x, y, z) then
-        return
-    end
-    OrCreateLowestSubRegion = p1._octree:GetOrCreateLowestSubRegion(x, y, z)
+    local OrCreateLowestSubRegion = p1._octree:GetOrCreateLowestSubRegion(x, y, z)
     if not p1._currentLowestRegion then
         u2.addNode(OrCreateLowestSubRegion, p1)
     else
@@ -65,9 +66,11 @@ function u3.SetPosition(p1, p2) -- Line: 126 -- upvalues: u2 (val)
     end
     p1._currentLowestRegion = OrCreateLowestSubRegion
 end
+
 function u3.Destroy(p1) -- Line: 163 -- upvalues: u2 (val)
     if p1._currentLowestRegion then
         u2.removeNode(p1._currentLowestRegion, p1)
     end
 end
+
 return u3

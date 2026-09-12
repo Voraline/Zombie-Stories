@@ -8,8 +8,10 @@ return {
     DarkGray = Color3.fromRGB(95, 99, 104),
     DefaultTheme = Color3.fromRGB(103, 58, 183),
     GetContrastColor = function(p1) -- Line: 4 -- upvalues: u9 (val), u4 (val)
-        local v1 = p1.R * 255 * 0.299 + p1.G * 255 * 0.587 + p1.B * 255 * 0.114
-        if 186 < v1 then
+        local v1 = p1.R * 255
+        local v2 = p1.G * 255
+        local v3 = p1.B * 255
+        if 186 < v1 * 0.299 + v2 * 0.587 + v3 * 0.114 then
             return u9
         end
         return u4

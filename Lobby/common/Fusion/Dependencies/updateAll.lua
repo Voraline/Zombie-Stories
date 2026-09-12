@@ -1,4 +1,5 @@
-require(script.Parent.Parent.PubTypes)
+local Parent_2 = script.Parent.Parent
+require(Parent_2.PubTypes)
 return function(p1) -- Line: 17
     local dependentSet_2, dependentSet_3, v1, v2, v3
     local v4 = {}

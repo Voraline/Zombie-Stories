@@ -9,12 +9,14 @@ return function(p1, p2) -- Line: 16 -- upvalues: u2 (val), u19 (val), RunService
     local peek = p1.peek
     local u12 = v1.createMotion(p2)
     local u16 = p1:Value(p2)
-    u19(p1, RunService.Heartbeat, function(p1) -- Line: 26 -- upvalues: u12 (val), peek (val), u16 (val)
+    local v2 = u19
+    local v3 = RunService
+    local Heartbeat = v3.Heartbeat
+    v2(p1, Heartbeat, function(p1) -- Line: 26 -- upvalues: u12 (val), peek (val), u16 (val)
         local v1 = u12:step(p1)
         if v1 ~= peek(u16) then
             u16:set(v1)
         end
     end)
-    local v2 = u14(u16)
-    return v2, u12
+    return (u14(u16)), u12
 end

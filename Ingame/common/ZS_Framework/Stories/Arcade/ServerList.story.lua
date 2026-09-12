@@ -6,6 +6,8 @@ return {
     fusion = Fusion,
     controls = {Visible = true},
     story = function(p1) -- Line: 14 -- upvalues: u12 (val)
-        u12.new({target = p1.target, scope = p1.scope})
+        local scope = p1.scope
+        local v1 = u12
+        v1.new({target = p1.target, scope = scope})
     end,
 }

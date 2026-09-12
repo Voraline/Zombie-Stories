@@ -4,6 +4,11 @@ return {
     Group = "Debug",
     Aliases = {"simxp"},
     Args = {
-        {Type = "integer", Name = "amount", Description = "Amount of SP XP to simulate (default: 10)", Optional = true},
+        {
+            Type = "integer",
+            Name = "amount",
+            Description = "Amount of SP XP to simulate (default: 10)",
+            Optional = true,
+        },
     },
 }

@@ -5,43 +5,47 @@ local peek = Fusion.peek
 local u13 = require("../Theme")
 local ButtonFeedback = require(script.Parent.ButtonFeedback)
 local UISounds = require(script.Parent.UISounds)
-return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val), UISounds (val), ButtonFeedback (val)
-    local Children, Disabled, Selected, Visible, v1
+return function(p1) -- Line: 63 -- upvalues: u13 (val), OnEvent (val), peek (val), UISounds (val), ButtonFeedback (val)
+    local Disabled, Selected, Visible, v1
     local scope = p1.scope
     local ZIndex = p1.ZIndex
     if not ZIndex then
         ZIndex = u13.ZIndex.Content
     end
-    if type(p1.Selected) ~= "boolean" then
+    local Selected_2 = p1.Selected
+    if type(Selected_2) ~= "boolean" then
         Selected = p1.Selected
         if not Selected then
             Selected = scope:Value(false)
         end
     else
-        Selected = scope:Value(p1.Selected)
+        local Selected_3 = p1.Selected
+        Selected = scope:Value(Selected_3)
     end
-    if type(p1.Disabled) ~= "boolean" then
+    local Disabled_2 = p1.Disabled
+    if type(Disabled_2) ~= "boolean" then
         Disabled = p1.Disabled
         if not Disabled then
             Disabled = scope:Value(false)
         end
     else
-        Disabled = scope:Value(p1.Disabled)
+        local Disabled_3 = p1.Disabled
+        Disabled = scope:Value(Disabled_3)
     end
     local AccentColor3 = p1.AccentColor3
     if not AccentColor3 then
         AccentColor3 = u13.Menu.Accent
     end
     local u44 = scope:Value(false)
-    local v2 = scope:Computed(function(a1) -- Line: 74 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val), u44 (val)
+    local v2 = scope:Computed(function(p1_2) -- Line: 75 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val), u44 (val)
         local v1
-        if a1(Disabled) then
+        if p1_2(Disabled) then
             local DisabledBackgroundColor3 = p1.DisabledBackgroundColor3
             if not DisabledBackgroundColor3 then
                 DisabledBackgroundColor3 = u13.Menu.PanelInset
             end
             v1 = DisabledBackgroundColor3
-        elseif not (a1(Selected)) then
+        elseif not p1_2(Selected) then
             local UnselectedBackgroundColor3 = p1.UnselectedBackgroundColor3
             if not UnselectedBackgroundColor3 then
                 UnselectedBackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -54,32 +58,33 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
             end
             v1 = SelectedBackgroundColor3
         end
-        local v2 = a1(v1)
-        if a1(Disabled) or not (a1(u44)) then
-            return v2
+        local v2 = p1_2(v1)
+        if not p1_2(Disabled) and p1_2(u44) then
+            local v3 = Color3.new(0, 0, 0)
+            return (v2:Lerp(v3, 0.14))
         end
-        local v3 = Color3.new(0, 0, 0)
-        return (v2:Lerp(v3, 0.14))
+        return v2
     end)
-    local v3 = scope:Computed(function(a1) -- Line: 86 -- upvalues: Disabled (val), p1 (val), Selected (val)
-        if a1(Disabled) then
+    local v3 = scope:Computed(function(p1_2) -- Line: 87 -- upvalues: Disabled (val), p1 (val), Selected (val)
+        if p1_2(Disabled) then
             return p1.DisabledBackgroundTransparency or 0.35
         end
-        if a1(Selected) then
+        if p1_2(Selected) then
             return p1.SelectedBackgroundTransparency or 0
         end
         return p1.UnselectedBackgroundTransparency or 0.8
     end)
-    local v4 = scope:Computed(function(a1) -- Line: 94 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val), AccentColor3 (val), u44 (val)
+    local v4 = scope:Computed(function(p1_2) -- Line: 95
+        -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val), AccentColor3 (val), u44 (val)
         local SelectedStrokeColor3, v1
-        if a1(Disabled) then
+        if p1_2(Disabled) then
             local DisabledStrokeColor3 = p1.DisabledStrokeColor3
             if not DisabledStrokeColor3 then
                 DisabledStrokeColor3 = u13.Menu.Border
             end
             return DisabledStrokeColor3
         end
-        local v2 = a1(Selected)
+        local v2 = p1_2(Selected)
         if not v2 then
             SelectedStrokeColor3 = p1.UnselectedStrokeColor3
             if not SelectedStrokeColor3 then
@@ -96,21 +101,21 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
         else
             v1 = p1.SelectedStrokeHoverColor3 or SelectedStrokeColor3
         end
-        if a1(u44) then
-            return (a1(v1))
+        if p1_2(u44) then
+            return (p1_2(v1))
         end
-        return (a1(SelectedStrokeColor3))
+        return (p1_2(SelectedStrokeColor3))
     end)
-    local v5 = scope:Computed(function(a1) -- Line: 107 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val)
+    local v5 = scope:Computed(function(p1_2) -- Line: 108 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val)
         local SelectedStrokeThickness
-        if a1(Disabled) then
+        if p1_2(Disabled) then
             local DisabledStrokeThickness = p1.DisabledStrokeThickness
             if not DisabledStrokeThickness then
                 DisabledStrokeThickness = u13.Stroke.Medium
             end
             return DisabledStrokeThickness
         end
-        if a1(Selected) then
+        if p1_2(Selected) then
             SelectedStrokeThickness = p1.SelectedStrokeThickness
             if not SelectedStrokeThickness then
                 return u13.Stroke.Medium
@@ -123,16 +128,16 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
         end
         return SelectedStrokeThickness
     end)
-    local v6 = scope:Computed(function(a1) -- Line: 115 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val)
+    local v6 = scope:Computed(function(p1_2) -- Line: 116 -- upvalues: Disabled (val), p1 (val), u13 (upval), Selected (val)
         local SelectedTextColor3
-        if a1(Disabled) then
+        if p1_2(Disabled) then
             local DisabledTextColor3 = p1.DisabledTextColor3
             if not DisabledTextColor3 then
                 DisabledTextColor3 = u13.Menu.TextMuted
             end
             return DisabledTextColor3
         end
-        if a1(Selected) then
+        if p1_2(Selected) then
             SelectedTextColor3 = p1.SelectedTextColor3
             if not SelectedTextColor3 then
                 return u13.Menu.Text
@@ -175,26 +180,33 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
             Text = p1.Text,
             Font = u13.Menu.Fonts.Button,
             TextColor3 = v6,
+            TextTransparency = p1.TextTransparency or 0,
             TextScaled = true,
             TextWrapped = false,
             TextTruncate = Enum.TextTruncate.AtEnd,
             ZIndex = ZIndex + 1,
         }
-        Children = scope.Children
+        local Children = scope.Children
         local v11 = {}
-        local v12 = scope:New("UIPadding")
-        v12 = v12({PaddingLeft = UDim.new(0, 6), PaddingRight = UDim.new(0, 6), PaddingTop = UDim.new(0, 4), PaddingBottom = UDim.new(0, 4)})
+        local v12 = scope:New("UIPadding")({
+            PaddingLeft = UDim.new(0, 6),
+            PaddingRight = UDim.new(0, 6),
+            PaddingTop = UDim.new(0, 4),
+            PaddingBottom = UDim.new(0, 4),
+        })
         local v13 = scope:New("UITextSizeConstraint")
         local v14 = {MaxTextSize = p1.TextMaxSize or 18}
         v11[1] = v12
         v11[2] = v13(v14)
         v10[Children] = v11
-        table.insert(v7, v1(v10))
+        v1 = v1(v10)
+        table.insert(v7, v1)
     end
     if p1.Children ~= nil then
-        table.insert(v7, p1.Children)
+        local Children_2 = p1.Children
+        table.insert(v7, Children_2)
     end
-    local u190 = nil
+    local u192 = nil
     v9 = scope:New("TextButton")
     v1 = {Name = p1.Name or "CategoryButton"}
     local Size = p1.Size
@@ -226,7 +238,8 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
     v1.BackgroundColor3 = v2
     v1.BackgroundTransparency = v3
     local Activated = OnEvent("Activated")
-    v1[Activated] = function() -- Line: 185 -- upvalues: peek (upval), Disabled (val), p1 (val), UISounds (upval)
+
+    v1[Activated] = function() -- Line: 187 -- upvalues: peek (upval), Disabled (val), p1 (val), UISounds (upval)
         if peek(Disabled) then
             return
         end
@@ -239,16 +252,20 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
             p1.OnClick()
         end
     end
+
     local MouseButton1Down = OnEvent("MouseButton1Down")
-    v1[MouseButton1Down] = function() -- Line: 194 -- upvalues: peek (upval), Disabled (val), ButtonFeedback (upval), u190 (ref)
-        if not (peek(Disabled)) then
-            ButtonFeedback.Ripple(u190)
+
+    v1[MouseButton1Down] = function() -- Line: 196 -- upvalues: peek (upval), Disabled (val), ButtonFeedback (upval), u192 (ref)
+        if not peek(Disabled) then
+            ButtonFeedback.Ripple(u192)
         end
     end
+
     local MouseEnter = OnEvent("MouseEnter")
-    v1[MouseEnter] = function() -- Line: 199 -- upvalues: u44 (val), peek (upval), Disabled (val), p1 (val), UISounds (upval)
+
+    v1[MouseEnter] = function() -- Line: 201 -- upvalues: u44 (val), peek (upval), Disabled (val), p1 (val), UISounds (upval)
         u44:set(true)
-        if not (peek(Disabled)) then
+        if not peek(Disabled) then
             local HoverSound = p1.HoverSound
             if not HoverSound then
                 HoverSound = UISounds.HoverSound
@@ -256,11 +273,15 @@ return function(p1) -- Line: 62 -- upvalues: u13 (val), OnEvent (val), peek (val
             HoverSound:Play()
         end
     end
+
     local MouseLeave = OnEvent("MouseLeave")
-    v1[MouseLeave] = function() -- Line: 205 -- upvalues: u44 (val)
+
+    v1[MouseLeave] = function() -- Line: 207 -- upvalues: u44 (val)
         u44:set(false)
     end
+
     v1[scope.Children] = v7
-    u190 = v9(v1)
-    return u190
+    v9 = v9(v1)
+    u192 = v9
+    return u192
 end

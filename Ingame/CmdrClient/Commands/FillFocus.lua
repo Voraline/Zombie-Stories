@@ -4,7 +4,17 @@ return {
     Group = "Debug",
     Aliases = {"ff"},
     Args = {
-        {Type = "player", Name = "target", Description = "The player to fill focus for. Defaults to yourself.", Optional = true},
-        {Type = "number", Name = "amount", Description = "Amount to fill (0-100%). Defaults to 100 (full).", Optional = true},
+        {
+            Type = "player",
+            Name = "target",
+            Description = "The player to fill focus for. Defaults to yourself.",
+            Optional = true,
+        },
+        {
+            Type = "number",
+            Name = "amount",
+            Description = "Amount to fill (0-100%). Defaults to 100 (full).",
+            Optional = true,
+        },
     },
 }

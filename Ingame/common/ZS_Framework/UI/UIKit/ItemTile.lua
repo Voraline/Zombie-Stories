@@ -9,8 +9,7 @@ return function(p1) -- Line: 69 -- upvalues: u11 (val), u14 (val)
     if not ZIndex then
         ZIndex = u11.ZIndex.Content
     end
-    local v1 = scope:New("ViewportFrame")
-    v1 = v1({
+    local v1 = scope:New("ViewportFrame")({
         Name = "ViewportFrame",
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(0.5, 0),
@@ -18,36 +17,37 @@ return function(p1) -- Line: 69 -- upvalues: u11 (val), u14 (val)
         Size = UDim2.fromScale(0.9, 0.62),
         ZIndex = ZIndex,
     })
-    local v2 = {scope = scope, Name = p1.Name or "ItemTile"}
+    local v2 = u14
+    local v3 = {scope = scope, Name = p1.Name or "ItemTile"}
     local Size = p1.Size
     if not Size then
         Size = UDim2.fromOffset(118, 132)
     end
-    v2.Size = Size
-    v2.Position = p1.Position
-    v2.AnchorPoint = p1.AnchorPoint
-    v2.LayoutOrder = p1.LayoutOrder
-    v2.ZIndex = ZIndex
-    v2.Parent = p1.Parent
-    v2.BackgroundColor3 = p1.BackgroundColor3
+    v3.Size = Size
+    v3.Position = p1.Position
+    v3.AnchorPoint = p1.AnchorPoint
+    v3.LayoutOrder = p1.LayoutOrder
+    v3.ZIndex = ZIndex
+    v3.Parent = p1.Parent
+    v3.BackgroundColor3 = p1.BackgroundColor3
     local BorderColor3 = p1.BorderColor3
     if not BorderColor3 then
         BorderColor3 = u11.Menu.Border
     end
-    v2.StrokeColor3 = BorderColor3
+    v3.StrokeColor3 = BorderColor3
     local StrokeThickness = p1.StrokeThickness
     if not StrokeThickness then
         StrokeThickness = u11.Menu.StrokeThickness
     end
-    v2.StrokeThickness = StrokeThickness
-    v2.OnClick = p1.OnClick
-    v2.InteractionEnabled = p1.InteractionEnabled
-    v2.HoverScale = p1.HoverScale
-    v2.HoverSheen = p1.HoverSheen
-    v2.OnHoverChanged = p1.OnHoverChanged
-    local v3 = {}
-    local v4 = scope:New("TextLabel")
-    local v5 = {
+    v3.StrokeThickness = StrokeThickness
+    v3.OnClick = p1.OnClick
+    v3.InteractionEnabled = p1.InteractionEnabled
+    v3.HoverScale = p1.HoverScale
+    v3.HoverSheen = p1.HoverSheen
+    v3.OnHoverChanged = p1.OnHoverChanged
+    local v4 = {}
+    local v5 = scope:New("TextLabel")
+    local v6 = {
         Name = "NameLabel",
         AnchorPoint = Vector2.new(0.5, 1),
         Position = UDim2.fromScale(0.5, 0.98),
@@ -60,60 +60,55 @@ return function(p1) -- Line: 69 -- upvalues: u11 (val), u14 (val)
     if not NameColor then
         NameColor = u11.Menu.Text
     end
-    v5.TextColor3 = NameColor
-    v5.TextScaled = true
-    v5.TextXAlignment = Enum.TextXAlignment.Center
-    v5.ZIndex = ZIndex + 1
+    v6.TextColor3 = NameColor
+    v6.TextScaled = true
+    v6.TextXAlignment = Enum.TextXAlignment.Center
+    v6.ZIndex = ZIndex + 1
     local Children = scope.Children
-    local v6 = {}
-    local v7 = scope:New("UIStroke")
-    v7 = v7({Thickness = 1, Color = u11.Menu.HeaderStroke})
-    local v8 = scope:New("UITextSizeConstraint")
-    v6[1] = v7
-    v6[2] = v8({MaxTextSize = 16})
-    v5[Children] = v6
-    v4 = v4(v5)
-    v5 = scope:New("TextLabel")
-    local v9 = {Name = "Equipped"}
+    local v7 = {}
+    local v8 = scope:New("UIStroke")({Thickness = 1, Color = u11.Menu.HeaderStroke})
+    local v9 = scope:New("UITextSizeConstraint")
+    v7[1] = v8
+    v7[2] = v9({MaxTextSize = 16})
+    v6[Children] = v7
+    v5 = v5(v6)
+    v6 = scope:New("TextLabel")
+    local v10 = {Name = "Equipped"}
     if p1.Equipped ~= nil then
         Equipped = p1.Equipped
     else
         Equipped = false
     end
-    v9.Visible = Equipped
-    v9.AnchorPoint = Vector2.new(1, 0)
-    v9.Position = UDim2.new(1, -4, 0, 4)
-    v9.Size = UDim2.fromOffset(22, 22)
-    v9.BackgroundColor3 = u11.Menu.Positive
-    v9.Text = "✓"
-    v9.Font = u11.Menu.Fonts.Button
-    v9.TextColor3 = u11.Menu.PanelInset
-    v9.TextScaled = true
-    v9.ZIndex = ZIndex + 2
+    v10.Visible = Equipped
+    v10.AnchorPoint = Vector2.new(1, 0)
+    v10.Position = UDim2.new(1, -4, 0, 4)
+    v10.Size = UDim2.fromOffset(22, 22)
+    v10.BackgroundColor3 = u11.Menu.Positive
+    v10.Text = "✓"
+    v10.Font = u11.Menu.Fonts.Button
+    v10.TextColor3 = u11.Menu.PanelInset
+    v10.TextScaled = true
+    v10.ZIndex = ZIndex + 2
     local Children_2 = scope.Children
-    v7 = {}
-    v8 = scope:New("UICorner")
-    v7[1] = v8({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
-    v9[Children_2] = v7
-    v5 = v5(v9)
-    v9 = scope:New("Frame")
-    v6 = {Name = "LockedFrame"}
+    v10[Children_2] = {scope:New("UICorner")({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})}
+    v6 = v6(v10)
+    v10 = scope:New("Frame")
+    v7 = {Name = "LockedFrame"}
     if p1.Locked ~= nil then
         Locked = p1.Locked
     else
         Locked = false
     end
-    v6.Visible = Locked
-    v6.Size = UDim2.fromScale(1, 1)
-    v6.BackgroundColor3 = u11.Menu.PanelInset
-    v6.BackgroundTransparency = 0.35
-    v6.ZIndex = ZIndex + 3
+    v7.Visible = Locked
+    v7.Size = UDim2.fromScale(1, 1)
+    v7.BackgroundColor3 = u11.Menu.PanelInset
+    v7.BackgroundTransparency = 0.35
+    v7.ZIndex = ZIndex + 3
     local Children_3 = scope.Children
-    v8 = {}
-    local v10 = scope:New("UICorner")
-    v10 = v10({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
-    local v11 = scope:New("TextLabel")
-    local v12 = {
+    v9 = {}
+    local v11 = scope:New("UICorner")({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
+    local v12 = scope:New("TextLabel")
+    local v13 = {
         Name = "UnlockLevelLabel",
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.fromScale(0.5, 0.5),
@@ -126,24 +121,23 @@ return function(p1) -- Line: 69 -- upvalues: u11 (val), u14 (val)
         ZIndex = ZIndex + 4,
     }
     local Children_4 = scope.Children
-    local v13 = {}
-    local v14 = scope:New("UIStroke")
-    v14 = v14({Thickness = 1, Color = u11.Menu.HeaderStroke})
-    local v15 = scope:New("UITextSizeConstraint")
-    v13[1] = v14
-    v13[2] = v15({MaxTextSize = 14})
-    v12[Children_4] = v13
-    v8[1] = v10
-    v8[2] = v11(v12)
-    v6[Children_3] = v8
-    v3[1] = v1
-    v3[2] = v4
-    v3[3] = v5
-    v3[4] = v9(v6)
-    v2.Children = v3
-    local v16 = u14(v2)
+    local v14 = {}
+    local v15 = scope:New("UIStroke")({Thickness = 1, Color = u11.Menu.HeaderStroke})
+    local v16 = scope:New("UITextSizeConstraint")
+    v14[1] = v15
+    v14[2] = v16({MaxTextSize = 14})
+    v13[Children_4] = v14
+    v9[1] = v11
+    v9[2] = v12(v13)
+    v7[Children_3] = v9
+    v4[1] = v1
+    v4[2] = v5
+    v4[3] = v6
+    v4[4] = v10(v7)
+    v3.Children = v4
+    v2 = v2(v3)
     if p1.RenderViewport then
         p1.RenderViewport(v1)
     end
-    return v16
+    return v2
 end

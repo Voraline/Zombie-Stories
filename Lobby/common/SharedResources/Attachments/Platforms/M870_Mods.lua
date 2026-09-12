@@ -3,9 +3,9 @@ local v1 = {
     {Name = "Charm", PotentialAttachments = {}},
     {Name = "Sticker", PotentialAttachments = {}},
     {Name = "Sticker 2", PotentialAttachments = {}},
+    [5] = {Name = "Optic", PotentialAttachments = {}},
+    [9] = {Name = "Top Rail", PotentialAttachments = {}},
 }
-v1[5] = {Name = "Optic", PotentialAttachments = {}}
-v1[9] = {Name = "Top Rail", PotentialAttachments = {}}
 local v2 = require("../Extensions/Charm")
 v1[1].PotentialAttachments = v2.PotentialAttachments
 local v3 = require("../Extensions/Sticker")

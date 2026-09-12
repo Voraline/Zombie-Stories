@@ -1,5 +1,9 @@
 local u0 = {Clearance = 0.075}
-local u2 = {Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), (Vector3.new(0, 0, 1))}
+local u2 = {}
+u2[1] = (Vector3.new(1, 0, 0))
+u2[2] = (Vector3.new(0, 1, 0))
+u2[3] = (Vector3.new(0, 0, 1))
+
 local function bounds(p1) -- Line: 9
     local v1 = Vector3.new((1 / 0), (1 / 0), (1 / 0))
     local v2 = -v1
@@ -12,72 +16,84 @@ local function bounds(p1) -- Line: 9
     end
     return v1, v2
 end
+
 function u0.collectCorners(p1, p2) -- Line: 19
-    local v1, v2, v3, v4, v5, v6
-    local v7 = {}
-    local v8 = p2
+    local CFrame, CFrame_2, v1, v2, v3, v4
+    local v5 = {}
+    local v6 = p2
     for i, j in p1:GetDescendants() do
         if j:IsA("BasePart") and j.Transparency < 1 then
-            v5 = v8.CFrame:ToObjectSpace(j.CFrame)
-            v6 = j.Size * 0.5
-            v1 = 1
-            v2 = 2
-            for k = -1, v1, v2 do
-                v3 = 1
-                v4 = 2
-                for n = -1, v3, v4 do
-                    table.insert(v7, v5:PointToWorldSpace(v6 * Vector3.new(k, n, -1)))
-                    table.insert(v7, v5:PointToWorldSpace(v6 * Vector3.new(k, n, 1)))
+            CFrame = v6.CFrame
+            CFrame_2 = j.CFrame
+            v3 = CFrame:ToObjectSpace(CFrame_2)
+            v4 = j.Size * 0.5
+            for k = -1, 1, 2 do
+                for n = -1, 1, 2 do
+                    v2 = v4 * (Vector3.new(k, n, -1))
+                    v1 = v3:PointToWorldSpace(v2)
+                    table.insert(v5, v1)
+                    v2 = v4 * (Vector3.new(k, n, 1))
+                    v1 = v3:PointToWorldSpace(v2)
+                    table.insert(v5, v1)
                 end
             end
         end
     end
-    return v7
+    return v5
 end
+
 local function meleeRotation(p1, p2) -- Line: 37 -- upvalues: bounds (val), u2 (val)
-    local v1, v2, v3, v4, v5
-    v3, v4 = bounds(p1)
-    local v6 = v4 - v3
-    local v7 = 1
-    local v8 = 3
-    local v9 = 1
-    for i = 2, v8, v9 do
-        v5 = v6:Dot(u2[i])
-        if v6:Dot(u2[v7]) + 1e-05 < v5 then
-            v7 = i
+    local v1, v2, v3, v4, v5, v6, v7, v8
+    local v9, v10 = bounds(p1)
+    local v11 = v10 - v9
+    local v12 = 1
+    for i = 2, 3 do
+        v4 = u2
+        v3 = v4[i]
+        v8 = v11:Dot(v3)
+        v6 = u2
+        v5 = v6[v12]
+        if v11:Dot(v5) + 1e-05 < v8 then
+            v12 = i
         end
     end
-    v8 = nil
-    v9 = 3
-    local v10 = 1
-    for j = 1, v9, v10 do
-        if j ~= v7 then
-            if not v8 then
-                v8 = j
+    local v13 = nil
+    for j = 1, 3 do
+        if j ~= v12 then
+            if not v13 then
+                v13 = j
             else
-                v2 = v6:Dot(u2[j])
-                if v2 >= v6:Dot(u2[v8]) - 1e-05 then end
+                v5 = u2
+                v4 = v5[j]
+                v2 = v11:Dot(v4)
+                v7 = u2
+                v6 = v7[v13]
+                if v2 < v11:Dot(v6) - 1e-05 then
+                    v13 = j
+                end
             end
         end
     end
-    v9 = u2[v7]
-    v10 = v4:Dot(v9)
-    v5 = -v3:Dot(v9)
-    if v10 + 1e-05 < v5 then
-        v9 = -v9
+    local v14 = u2[v12]
+    local v15 = v10:Dot(v14)
+    v8 = -v9:Dot(v14)
+    if v15 + 1e-05 < v8 then
+        v14 = -v14
     else
-        v2 = math.abs(v10 - v5)
-        if v2 <= 1e-05 and v1:VectorToWorldSpace(v9).Y < 0 then
-            v9 = -v9
+        v3 = v15 - v8
+        if (math.abs(v3)) <= 1e-05 and v1:VectorToWorldSpace(v14).Y < 0 then
+            v14 = -v14
         end
     end
-    v2 = u2[v8]
+    v2 = u2[v13]
     if v1:VectorToWorldSpace(v2).Z < 0 then
         v2 = -v2
     end
-    local v11 = v9:Cross(v2)
-    return CFrame.fromMatrix(Vector3.new(0, 0, 0), v11, v9, v2):Inverse()
+    local fromMatrix = CFrame.fromMatrix
+    v5 = v14:Cross(v2)
+    return fromMatrix(Vector3.new(0, 0, 0), v5, v14, v2):Inverse()
 end
+
 function u0.calculate(p1, p2, p3, p4) -- Line: 74 -- upvalues: meleeRotation (val), u0 (val)
     local v1, v2
     if #p1 == 0 then
@@ -98,9 +114,13 @@ function u0.calculate(p1, p2, p3, p4) -- Line: 74 -- upvalues: meleeRotation (va
     local v6 = nil
     local v7 = nil
     for i, j in v5, v6, v7 do
-        v1 = v3:PointToWorldSpace(j)
-        v4 = math.min(v4, v1:Dot(v2))
+        v1 = (v3:PointToWorldSpace(j)):Dot(v2)
+        v4 = math.min(v4, v1)
     end
-    return v3 + v2 * math.max(0, p2:Dot(v2) * 0.5 + u0.Clearance - v4)
+    v5 = (p2:Dot(v2)) * 0.5
+    local v8 = u0
+    local v9 = v5 + v8.Clearance - v4
+    return v3 + v2 * math.max(0, v9)
 end
+
 return u0

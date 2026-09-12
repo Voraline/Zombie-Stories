@@ -1,4 +1,4 @@
-local v1 = {
+return {
     Damage = 150,
     Multipliers = {Arms = 1, Torso = 1, Legs = 1, Head = 1.4},
     Penetration = 1,
@@ -70,20 +70,21 @@ local v1 = {
     NewSkinsSystemBlacklist = {},
     Parried = function(p1) -- Line: 144
         local Parry = p1.Viewmodel.Model.KeyParts.Parry
-        Parry.ParrySparks:Emit(math.random(10, 25))
+        local ParrySparks = Parry.ParrySparks
+        local v1 = math.random(10, 25)
+        ParrySparks:Emit(v1)
         Parry.Attachment.ParryLargeSparkParticles:Emit(1)
     end,
     Blocked = function(p1) -- Line: 150
-        p1.Viewmodel.Model.KeyParts.Parry.ParrySparks:Emit(math.random(10, 25))
+        local ParrySparks = p1.Viewmodel.Model.KeyParts.Parry.ParrySparks
+        local v1 = math.random(10, 25)
+        ParrySparks:Emit(v1)
     end,
     DynamicFOVOffsetConstant = 3,
     Offset = CFrame.new(),
     SprintOffset = CFrame.new(),
     CrouchAnimation = CFrame.new(),
+    BlockOffset = (CFrame.new(0, 0, 0)) * CFrame.Angles(0.17453292519943295, 0, 0.05235987755982989),
+    HolsterCF = (CFrame.new(0, -2, 3)) * CFrame.Angles(-0.4363323129985824, 0, 0),
+    AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/Hammer_Mods"),
 }
-local v2 = CFrame.new(0, 0, 0)
-v1.BlockOffset = v2 * CFrame.Angles(0.17453292519943295, 0, 0.05235987755982989)
-v2 = CFrame.new(0, -2, 3)
-v1.HolsterCF = v2 * CFrame.Angles(-0.4363323129985824, 0, 0)
-v1.AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/Hammer_Mods")
-return v1

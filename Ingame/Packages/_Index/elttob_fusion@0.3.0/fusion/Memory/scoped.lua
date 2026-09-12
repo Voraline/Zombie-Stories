@@ -8,7 +8,8 @@ return function(...) -- Line: 16 -- upvalues: scopePool (val), merge (val), Exte
     if not v1 then
         v1 = {}
     end
-    local v2 = setmetatable(v1, {__index = merge(false, {}, ...)})
-    ExternalDebug.trackScope(v2)
-    return v2
+    local v2 = {__index = merge(false, {}, ...)}
+    local v3 = setmetatable(v1, v2)
+    ExternalDebug.trackScope(v3)
+    return v3
 end

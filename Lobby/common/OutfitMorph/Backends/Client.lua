@@ -1,5 +1,6 @@
 local findFirstMatchingAttachment
 local u0 = {}
+
 local function weldAttachments(p1, p2) -- Line: 3
     local Weld = Instance.new("Weld")
     Weld.Part0 = p1.Parent
@@ -9,6 +10,7 @@ local function weldAttachments(p1, p2) -- Line: 3
     Weld.Parent = p1.Parent
     return Weld
 end
+
 function findFirstMatchingAttachment(p1, p2) -- Line: 13 -- upvalues: findFirstMatchingAttachment (val)
     local v1
     local v2 = p2
@@ -16,7 +18,7 @@ function findFirstMatchingAttachment(p1, p2) -- Line: 13 -- upvalues: findFirstM
         if v:IsA("Attachment") and v.Name == v2 then
             return v
         end
-        if not (v:IsA("Accoutrement")) and not (v:IsA("Tool")) then
+        if not v:IsA("Accoutrement") and not v:IsA("Tool") then
             v1 = findFirstMatchingAttachment(v, v2)
             if v1 then
                 return v1
@@ -25,6 +27,7 @@ function findFirstMatchingAttachment(p1, p2) -- Line: 13 -- upvalues: findFirstM
     end
     return nil
 end
+
 local function sourceFace(p1) -- Line: 27
     local Decal
     local Head = p1
@@ -47,8 +50,8 @@ local function sourceFace(p1) -- Line: 27
     end
     return Decal
 end
+
 local function applyPlayerFace(p1, p2, p3) -- Line: 32
-    local v1
     local Head = p1:FindFirstChild("Head")
     if not Head then
         return
@@ -64,14 +67,7 @@ local function applyPlayerFace(p1, p2, p3) -- Line: 32
     if Head_2 then
         Head_2 = p2:FindFirstChild("Head")
     end
-    if not Head_2 then
-        v1 = p2
-        if v1 then
-            v1 = p2:FindFirstChildOfClass("Decal")
-        end
-    else
-        v1 = Head_2:FindFirstChildOfClass("Decal")
-    end
+    local v1 = Head_2 and Head_2:FindFirstChildOfClass("Decal") or p2 and p2:FindFirstChildOfClass("Decal")
     if not v1 then
         return
     end
@@ -80,6 +76,7 @@ local function applyPlayerFace(p1, p2, p3) -- Line: 32
     end
     v1:Clone().Parent = Head
 end
+
 local function applyBodyColors(p1, p2) -- Line: 57
     local BodyColors = p2
     if BodyColors then
@@ -94,23 +91,27 @@ local function applyBodyColors(p1, p2) -- Line: 57
     end
     BodyColors:Clone().Parent = p1
 end
+
 local function cloneCharacterMeshes(p1, p2) -- Line: 70
+    local function cloneFrom(p1_2) -- Line: 71 -- upvalues: p1 (val)
+        local v1
+        for i, v in ipairs(p1_2:GetDescendants()) do
+            if v:IsA("CharacterMesh") then
+                v1 = v:Clone()
+                v1.Parent = p1
+            end
+        end
+    end
+
     for i, v in ipairs(p2:GetChildren()) do
         if v:IsA("CharacterMesh") then
             v:Clone().Parent = p1
         elseif v.Name == "R6" then
-            (function(a1) -- Line: 71 -- upvalues: p1 (val)
-                local v1
-                for i, v in ipairs(a1:GetDescendants()) do
-                    if v:IsA("CharacterMesh") then
-                        v1 = v:Clone()
-                        v1.Parent = p1
-                    end
-                end
-            end)(v)
+            cloneFrom(v)
         end
     end
 end
+
 function u0.AttachAccessory(p1, p2) -- Line: 88 -- upvalues: findFirstMatchingAttachment (val)
     for i, v in ipairs(p2:GetDescendants()) do
         if v:IsA("BasePart") then
@@ -136,6 +137,7 @@ function u0.AttachAccessory(p1, p2) -- Line: 88 -- upvalues: findFirstMatchingAt
         Weld.Parent = v1.Parent
     end
 end
+
 function u0.ApplyBaseAppearance(p1, p2) -- Line: 104 -- upvalues: applyPlayerFace (val)
     local AppearanceSource = p2.AppearanceSource
     if not AppearanceSource then
@@ -155,6 +157,7 @@ function u0.ApplyBaseAppearance(p1, p2) -- Line: 104 -- upvalues: applyPlayerFac
     applyPlayerFace(p1, AppearanceSource, p2.KeepPlayerFace)
     return true
 end
+
 function u0.ApplyPlayerAccessories(p1, p2) -- Line: 115 -- upvalues: u0 (val)
     local AppearanceSource = p2.AppearanceSource
     if not AppearanceSource then
@@ -167,22 +170,22 @@ function u0.ApplyPlayerAccessories(p1, p2) -- Line: 115 -- upvalues: u0 (val)
     end
     return true
 end
+
 function u0.ApplyFullAvatar(p1, p2) -- Line: 129 -- upvalues: u0 (val), cloneCharacterMeshes (val)
-    local v1, v2
     local AppearanceSource = p2.AppearanceSource
     if not AppearanceSource then
         return false, "appearance source unavailable"
     end
     u0.ApplyBaseAppearance(p1, p2)
-    v1, v2 = p1, p2
+    local v1, v2 = p1, p2
     for i, v in ipairs(AppearanceSource:GetChildren()) do
-        if v:IsA("Shirt") then
+        if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") then
             v:Clone().Parent = v1
-        elseif not (v:IsA("Pants")) and not (v:IsA("ShirtGraphic")) then
         end
     end
     cloneCharacterMeshes(v1, AppearanceSource)
     u0.ApplyPlayerAccessories(v1, v2)
     return true
 end
+
 return u0

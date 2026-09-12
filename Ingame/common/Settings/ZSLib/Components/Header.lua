@@ -22,9 +22,10 @@ return function(p1) -- Line: 25 -- upvalues: Children (val), OnEvent (val), peek
         Size = UDim2.fromScale(1, 0.09),
         SizeConstraint = Enum.SizeConstraint.RelativeXX,
     }
-    local v4 = {}
-    local v5 = scope:New("TextButton")
-    local v6 = {
+    local v4 = Children
+    local v5 = {}
+    local v6 = scope:New("TextButton")
+    local v7 = {
         Name = "Frame",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(255, 184, 84),
@@ -34,17 +35,22 @@ return function(p1) -- Line: 25 -- upvalues: Children (val), OnEvent (val), peek
         Text = "",
     }
     local MouseButton1Click = OnEvent("MouseButton1Click")
-    v6[MouseButton1Click] = function() -- Line: 50 -- upvalues: p1 (val), u5 (val), peek (upval)
+
+    v7[MouseButton1Click] = function() -- Line: 50 -- upvalues: p1 (val), u5 (val), peek (upval)
         if p1.ButtonSound then
             p1.ButtonSound:Play()
         end
-        u5:set(not peek(u5))
+        local v1 = u5
+        local v2 = peek
+        local v3 = u5
+        v2 = v2(v3)
+        v1:set(not v2)
     end
-    local v7 = {}
-    local v8 = scope:New("UICorner")
-    v8 = v8({})
-    local v9 = scope:New("TextLabel")
-    v9 = v9({
+
+    local v8 = Children
+    local v9 = {}
+    local v10 = scope:New("UICorner")({})
+    local v11 = scope:New("TextLabel")({
         Name = "Label",
         BackgroundTransparency = 1,
         TextScaled = true,
@@ -56,8 +62,8 @@ return function(p1) -- Line: 25 -- upvalues: Children (val), OnEvent (val), peek
         TextColor3 = Color3.new(1, 1, 1),
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    local v10 = scope:New("ImageLabel")
-    local v11 = {
+    local v12 = scope:New("ImageLabel")
+    local v13 = {
         Name = "Arrow",
         BackgroundTransparency = 1,
         Image = "rbxassetid://3926305904",
@@ -70,11 +76,11 @@ return function(p1) -- Line: 25 -- upvalues: Children (val), OnEvent (val), peek
         SizeConstraint = Enum.SizeConstraint.RelativeXX,
         Rotation = v2,
     }
-    v7[1] = v8
-    v7[2] = v9
-    v7[3] = v10(v11)
-    v6[Children] = v7
-    v4[1] = v5(v6)
-    v1[Children] = v4
+    v9[1] = v10
+    v9[2] = v11
+    v9[3] = v12(v13)
+    v7[v8] = v9
+    v5[1] = v6(v7)
+    v1[v4] = v5
     return v3(v1), u5
 end

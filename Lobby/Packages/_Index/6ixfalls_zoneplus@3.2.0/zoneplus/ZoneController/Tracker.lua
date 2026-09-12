@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local Heartbeat = game:GetService("RunService").Heartbeat
 local Signal = require(script.Parent.Parent.Signal)
 local Janitor = require(script.Parent.Parent.Janitor)
 local u23 = {}
@@ -16,6 +17,7 @@ u23.bodyPartsToIgnore = {
     LeftFoot = true,
     RightFoot = true,
 }
+
 function u23.getCombinedTotalVolumes() -- Line: 35 -- upvalues: u24 (val)
     local v1 = 0
     for k, v in pairs(u24) do
@@ -23,6 +25,7 @@ function u23.getCombinedTotalVolumes() -- Line: 35 -- upvalues: u24 (val)
     end
     return v1
 end
+
 function u23.getCharacterSize(p1) -- Line: 43
     local Head = p1
     if Head then
@@ -32,21 +35,21 @@ function u23.getCharacterSize(p1) -- Line: 43
     if HumanoidRootPart then
         HumanoidRootPart = p1:FindFirstChild("HumanoidRootPart")
     end
-    if not HumanoidRootPart or not Head then
-        return nil
+    if HumanoidRootPart and Head then
+        if not Head:IsA("BasePart") then
+            Head = HumanoidRootPart
+        end
+        local Y = Head.Size.Y
+        local Size = HumanoidRootPart.Size
+        return Size * Vector3.new(2, 2, 1) + Vector3.new(0, Y, 0), HumanoidRootPart.CFrame * CFrame.new(0, Y / 2 - Size.Y / 2, 0)
     end
-    if not (Head:IsA("BasePart")) then
-        Head = HumanoidRootPart
-    end
-    local Y = Head.Size.Y
-    local Size = HumanoidRootPart.Size
-    local v1 = Size * Vector3.new(2, 2, 1)
-    local v2 = v1 + Vector3.new(0, Y, 0)
-    return v2, HumanoidRootPart.CFrame * CFrame.new(0, Y / 2 - Size.Y / 2, 0)
+    return nil
 end
+
 function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players (val), u24 (val)
     local u1 = {}
-    setmetatable(u1, u23)
+    local v1 = u23
+    setmetatable(u1, v1)
     u1.name = p1
     u1.totalVolume = 0
     u1.parts = {}
@@ -69,6 +72,7 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
             end
             u1.characters = v1
         end
+
         local function playerAdded(p1) -- Line: 87 -- upvalues: updatePlayerCharacters (val), u1 (val)
             local function charAdded(p1) -- Line: 88 -- upvalues: updatePlayerCharacters (upval), u1 (upval)
                 local Humanoid = p1:WaitForChild("Humanoid", 3)
@@ -84,6 +88,7 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
                     end
                 end
             end
+
             if p1.Character then
                 charAdded(p1.Character)
             end
@@ -92,11 +97,13 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
                 u1.exitDetections[p1] = nil
             end)
         end
+
         Players.PlayerAdded:Connect(playerAdded)
         for k, v in pairs(Players:GetPlayers()) do
             playerAdded(v)
         end
-        Players.PlayerRemoving:Connect(function(p1) -- Line: 116 -- upvalues: updatePlayerCharacters (val), u1 (val)
+        v1 = Players
+        v1.PlayerRemoving:Connect(function(p1) -- Line: 116 -- upvalues: updatePlayerCharacters (val), u1 (val)
             updatePlayerCharacters()
             u1:update()
         end)
@@ -109,7 +116,9 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
             end
             u1:update()
         end
-        u23.itemAdded:Connect(function(p1) -- Line: 131 -- upvalues: u1 (val)
+
+        local v2 = u23
+        v2.itemAdded:Connect(function(p1) -- Line: 131 -- upvalues: u1 (val)
             if p1.isCharacter then
                 u1.characters[p1.item] = true
             elseif p1.isBasePart then
@@ -117,7 +126,8 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
             end
             u1:update()
         end)
-        u23.itemRemoved:Connect(function(p1) -- Line: 134 -- upvalues: u1 (val)
+        v2 = u23
+        v2.itemRemoved:Connect(function(p1) -- Line: 134 -- upvalues: u1 (val)
             u1.exitDetections[p1.item] = nil
             if p1.isCharacter then
                 u1.characters[p1.item] = nil
@@ -131,6 +141,7 @@ function u23.new(p1) -- Line: 60 -- upvalues: u23 (val), Janitor (val), Players 
     task.defer(u1.update, u1)
     return u1
 end
+
 function u23:_preventMultiFrameUpdates(p2, ...) -- Line: 148
     local _preventMultiDetails = self._preventMultiDetails
     if not _preventMultiDetails then
@@ -139,7 +150,8 @@ function u23:_preventMultiFrameUpdates(p2, ...) -- Line: 148
     self._preventMultiDetails = _preventMultiDetails
     local u10 = self._preventMultiDetails[p2]
     if not u10 then
-        self._preventMultiDetails[p2] = {calling = false, callsThisFrame = 0, updatedThisFrame = false}
+        u10 = {calling = false, callsThisFrame = 0, updatedThisFrame = false}
+        self._preventMultiDetails[p2] = u10
     end
     u10.callsThisFrame = u10.callsThisFrame + 1
     if u10.callsThisFrame ~= 1 then
@@ -147,15 +159,21 @@ function u23:_preventMultiFrameUpdates(p2, ...) -- Line: 148
     end
     local u18 = table.pack(...)
     task.defer(function() -- Line: 165 -- upvalues: u10 (ref), self (val), p2 (val), u18 (val)
+        local v1 = u10
+        local callsThisFrame = v1.callsThisFrame
         u10.callsThisFrame = 0
-        if 1 < u10.callsThisFrame then
-            self[p2](self, unpack(u18))
+        if 1 < callsThisFrame then
+            local v2 = self[p2]
+            local v3 = self
+            local v4 = u18
+            v2(v3, unpack(v4))
         end
     end)
     return false
 end
+
 function u23:update() -- Line: 177 -- upvalues: u23 (val), Janitor (val)
-    local Size, updateTrackerOnParentChanged, v1, v2, v3
+    local Size, items, items_2, janitor, parts, parts_2, updateTrackerOnParentChanged, v1, v2, v3, v4, v5
     if self:_preventMultiFrameUpdates("update") then
         return
     end
@@ -163,58 +181,76 @@ function u23:update() -- Line: 177 -- upvalues: u23 (val), Janitor (val)
     self.parts = {}
     self.partToItem = {}
     self.items = {}
-    local u102 = self
     for k, v in pairs(self.characters) do
-        v3 = u23.getCharacterSize(k)
-        if v3 then
-            u102.totalVolume = u102.totalVolume + v3.X * v3.Y * v3.Z
-            local totalVolume = u102.janitor:add(Janitor.new(), "destroy", "trackCharacterParts-" .. u102.name)
-            function updateTrackerOnParentChanged(p1) -- Line: 198 -- upvalues: totalVolume (ref), u102 (val)
-                local v1 = p1.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: p1 (val), totalVolume (upval), u102 (upval)
-                    if not (p1:IsDescendantOf(game)) and p1.Parent == nil and totalVolume ~= nil then
-                        totalVolume:destroy()
-                        totalVolume = nil
-                        u102:update()
+        v4 = u23.getCharacterSize(k)
+        if v4 then
+            v5 = v4.X * v4.Y * v4.Z
+            self.totalVolume = self.totalVolume + v5
+            janitor = self.janitor
+            v1 = Janitor
+            v1 = v1.new()
+            v2 = "trackCharacterParts-" .. self.name
+            local u82 = janitor:add(v1, "destroy", v2)
+
+            function updateTrackerOnParentChanged(p1) -- Line: 198 -- upvalues: u82 (ref), self (val)
+                local v1 = u82
+                local v2 = p1.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: p1 (val), u82 (upval), self (upval)
+                    local v1 = p1
+                    local v2 = game
+                    if not v1:IsDescendantOf(v2) and p1.Parent == nil and u82 ~= nil then
+                        u82:destroy()
+                        u82 = nil
+                        self:update()
                     end
                 end)
-                totalVolume:add(v1, "Disconnect")
+                v1:add(v2, "Disconnect")
             end
+
             for k2, i in pairs(k:GetChildren()) do
-                if i:IsA("BasePart") and not (u23.bodyPartsToIgnore[i.Name]) then
-                    u102.partToItem[i] = k
-                    table.insert(u102.parts, i)
-                    v2 = i.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: i (val), totalVolume (ref), u102 (val)
-                        if not (i:IsDescendantOf(game)) and i.Parent == nil and totalVolume ~= nil then
-                            totalVolume:destroy()
-                            totalVolume = nil
-                            u102:update()
+                if i:IsA("BasePart") and not u23.bodyPartsToIgnore[i.Name] then
+                    self.partToItem[i] = k
+                    parts_2 = self.parts
+                    table.insert(parts_2, i)
+                    v3 = i.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: i (val), u82 (ref), self (val)
+                        local v1 = i
+                        local v2 = game
+                        if not v1:IsDescendantOf(v2) and i.Parent == nil and u82 ~= nil then
+                            u82:destroy()
+                            u82 = nil
+                            self:update()
                         end
                     end)
-                    totalVolume:add(v2, "Disconnect")
+                    u82:add(v3, "Disconnect")
                 end
             end
-            v1 = k.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: k (val), totalVolume (ref), u102 (val)
-                if not (k:IsDescendantOf(game)) and k.Parent == nil and totalVolume ~= nil then
-                    totalVolume:destroy()
-                    totalVolume = nil
-                    u102:update()
+            v2 = k.AncestryChanged:Connect(function() -- Line: 199 -- upvalues: k (val), u82 (ref), self (val)
+                local v1 = k
+                local v2 = game
+                if not v1:IsDescendantOf(v2) and k.Parent == nil and u82 ~= nil then
+                    u82:destroy()
+                    u82 = nil
+                    self:update()
                 end
             end)
-            totalVolume:add(v1, "Disconnect")
-            table.insert(u102.items, k)
+            u82:add(v2, "Disconnect")
+            items_2 = self.items
+            table.insert(items_2, k)
         end
     end
-    for k3, j in pairs(u102.baseParts) do
+    for k3, j in pairs(self.baseParts) do
         Size = k3.Size
-        u102.totalVolume = u102.totalVolume + Size.X * Size.Y * Size.Z
-        totalVolume = u102.partToItem
-        totalVolume[k3] = k3
-        table.insert(u102.parts, k3)
-        table.insert(u102.items, k3)
+        v5 = Size.X * Size.Y * Size.Z
+        self.totalVolume = self.totalVolume + v5
+        self.partToItem[k3] = k3
+        parts = self.parts
+        table.insert(parts, k3)
+        items = self.items
+        table.insert(items, k3)
     end
-    u102.whitelistParams = OverlapParams.new()
-    u102.whitelistParams.FilterType = Enum.RaycastFilterType.Whitelist
-    u102.whitelistParams.MaxParts = #u102.parts
-    u102.whitelistParams.FilterDescendantsInstances = u102.parts
+    self.whitelistParams = OverlapParams.new()
+    self.whitelistParams.FilterType = Enum.RaycastFilterType.Whitelist
+    self.whitelistParams.MaxParts = #self.parts
+    self.whitelistParams.FilterDescendantsInstances = self.parts
 end
+
 return u23

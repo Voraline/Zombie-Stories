@@ -1,6 +1,5 @@
 game:GetService("ReplicatedStorage")
 local v1 = require("@game/ReplicatedStorage/common/ItemData")
-local v2 = require("@game/ReplicatedStorage/common/Assets/assets")
 return {
     ZBucks = {
         Image = "rbxassetid://123456789",
@@ -16,15 +15,38 @@ return {
         Sniper = {Image = "rbxassetid://4458692655", Text = "XP", TextOffset = -0.1},
         Medic = {Image = "rbxassetid://2706886795", Text = "XP", TextOffset = -0.1},
     },
-    SP = {LayoutOrder = 4, Image = v2.Images.SkillTree.skillPointIcon},
+    SP = {
+        LayoutOrder = 4,
+        Image = (require("@game/ReplicatedStorage/common/Assets/assets")).Images.SkillTree.skillPointIcon,
+    },
     Crate = {
         LayoutOrder = 3,
         Primary = {Text = "Primary", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.Primary.ImageId},
-        Secondary = {Text = "Secondary", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.Secondary.ImageId},
+        Secondary = {
+            Text = "Secondary",
+            TextRotation = -5,
+            TextOffset = -0.2,
+            Image = v1.LootBoxes.Secondary.ImageId,
+        },
         Melee = {Text = "Melee", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.Melee.ImageId},
         Arcade = {Text = "Arcade", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.Arcade.ImageId},
-        MythicalPrimary = {Text = "Primary", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.MythicalPrimary.ImageId},
-        MythicalSecondary = {Text = "Secondary", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.MythicalSecondary.ImageId},
-        MythicalMelee = {Text = "Melee", TextRotation = -5, TextOffset = -0.2, Image = v1.LootBoxes.MythicalMelee.ImageId},
+        MythicalPrimary = {
+            Text = "Primary",
+            TextRotation = -5,
+            TextOffset = -0.2,
+            Image = v1.LootBoxes.MythicalPrimary.ImageId,
+        },
+        MythicalSecondary = {
+            Text = "Secondary",
+            TextRotation = -5,
+            TextOffset = -0.2,
+            Image = v1.LootBoxes.MythicalSecondary.ImageId,
+        },
+        MythicalMelee = {
+            Text = "Melee",
+            TextRotation = -5,
+            TextOffset = -0.2,
+            Image = v1.LootBoxes.MythicalMelee.ImageId,
+        },
     },
 }

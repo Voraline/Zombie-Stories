@@ -1,5 +1,6 @@
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local common = game.ReplicatedStorage.common
 local u13 = {}
 local u14 = "MouseKeyboard"
 local u15 = {}
@@ -125,10 +126,12 @@ u81[Enum.UserInputType.MouseButton3] = "M3"
 local u250 = {"", "@2x", "@3x"}
 local u254 = {}
 u254.__index = u254
+
 function u254.new(p1, p2, p3, p4) -- Line: 148 -- upvalues: u254 (val), u13 (val)
-    local v1, v2, v3
-    local v4 = {}
-    setmetatable(v4, u254)
+    local v1, v2
+    local v3 = {}
+    local v4 = u254
+    setmetatable(v3, v4)
     local v5 = nil
     local v6 = nil
     if typeof(p1) ~= "EnumItem" then
@@ -149,55 +152,73 @@ function u254.new(p1, p2, p3, p4) -- Line: 148 -- upvalues: u254 (val), u13 (val
     else
         v2 = p3
     end
-    local v7 = if v1 ~= 1 then if v1 ~= 2 then v1 == 3 else true else true
+    local v7 = true
+    if v1 ~= 1 then
+        v7 = true
+        if v1 ~= 2 then
+            v7 = v1 == 3
+        end
+    end
     assert(v7, "Icon size must be 1, 2, or 3 (SMALL, MEDIUM, or LARGE)")
-    v3, v7 = createInputImage(v5, v2, v1)
-    v4.Type = v7
-    v4.UIObject = v3
-    v4.IconSize = v1
-    v4.Color = v2
-    v4.ActionName = v6
-    v4.Transparency = 0
-    v4.AutoUpdate = p4 or true or true
-    table.insert(u13, v4)
-    return v4
+    v4, v7 = createInputImage(v5, v2, v1)
+    v3.Type = v7
+    v3.UIObject = v4
+    v3.IconSize = v1
+    v3.Color = v2
+    v3.ActionName = v6
+    v3.Transparency = 0
+    v3.AutoUpdate = p4 or true or true
+    local v8 = u13
+    table.insert(v8, v3)
+    return v3
 end
+
 function u254.SetInputMethod(p1) -- Line: 183 -- upvalues: u14 (ref), u13 (val)
+    local v1
     u14 = p1
-    local v1 = u13
-    local v2 = nil
+    local v2 = u13
     local v3 = nil
-    for i, j in v1, v2, v3 do
+    local v4 = nil
+    for i, j in v2, v3, v4 do
         if j.AutoUpdate and j.ActionName then
-            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+            v1 = getActionInputDeviceCode(j.ActionName)
+            j:_ChangeInput(v1)
         end
     end
 end
+
 function u254.SetUseNativeControllerImages(p1) -- Line: 193 -- upvalues: u16 (ref), u13 (val)
+    local v1
     u16 = p1
-    local v1 = u13
-    local v2 = nil
+    local v2 = u13
     local v3 = nil
-    for i, j in v1, v2, v3 do
+    local v4 = nil
+    for i, j in v2, v3, v4 do
         if j.AutoUpdate and j.ActionName then
-            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+            v1 = getActionInputDeviceCode(j.ActionName)
+            j:_ChangeInput(v1)
         end
     end
 end
+
 function u254.GetUseNativeControllerImages() -- Line: 204 -- upvalues: u16 (ref)
     return u16
 end
+
 function u254.UpdateBind(p1, p2) -- Line: 208 -- upvalues: u15 (val), u13 (val)
+    local v1
     u15[p1] = p2
-    local v1 = u13
-    local v2 = nil
+    local v2 = u13
     local v3 = nil
-    for i, j in v1, v2, v3 do
+    local v4 = nil
+    for i, j in v2, v3, v4 do
         if j.AutoUpdate and j.ActionName == p1 then
-            j:_ChangeInput((getActionInputDeviceCode(j.ActionName)))
+            v1 = getActionInputDeviceCode(j.ActionName)
+            j:_ChangeInput(v1)
         end
     end
 end
+
 function u254:Destroy() -- Line: 218 -- upvalues: u13 (val)
     if self.UpdateConnection then
         self.UpdateConnection:Disconnect()
@@ -208,6 +229,7 @@ function u254:Destroy() -- Line: 218 -- upvalues: u13 (val)
         table.remove(u13, v1)
     end
 end
+
 function u254.SetColor(p1, p2) -- Line: 229
     p1.Color = p2
     if p1.Type == "UniqueImage" then
@@ -224,6 +246,7 @@ function u254.SetColor(p1, p2) -- Line: 229
         p1.UIObject.KeyImageLabel.ImageColor3 = p2
     end
 end
+
 function u254:SetTransparency(p2) -- Line: 242
     self.Transparency = p2
     if self.Type == "UniqueImage" then
@@ -240,17 +263,23 @@ function u254:SetTransparency(p2) -- Line: 242
         self.UIObject.KeyImageLabel.ImageTransparency = p2
     end
 end
+
 function u254.TweenTransparency(p1, p2, p3) -- Line: 255 -- upvalues: TweenService (val)
     local v1, v2
     local v3 = {}
     if p1.Type == "UniqueImage" then
-        table.insert(v3, p1.UIObject)
+        local UIObject = p1.UIObject
+        table.insert(v3, UIObject)
     elseif p1.Type == "KeyWithText" then
-        table.insert(v3, p1.UIObject.OutlineImageLabel)
-        table.insert(v3, p1.UIObject.KeyTextLabel)
+        local OutlineImageLabel = p1.UIObject.OutlineImageLabel
+        table.insert(v3, OutlineImageLabel)
+        local KeyTextLabel = p1.UIObject.KeyTextLabel
+        table.insert(v3, KeyTextLabel)
     elseif p1.Type == "KeyWithImage" then
-        table.insert(v3, p1.UIObject.OutlineImageLabel)
-        table.insert(v3, p1.UIObject.KeyImageLabel)
+        local OutlineImageLabel_2 = p1.UIObject.OutlineImageLabel
+        table.insert(v3, OutlineImageLabel_2)
+        local KeyImageLabel = p1.UIObject.KeyImageLabel
+        table.insert(v3, KeyImageLabel)
     end
     local v4 = {}
     local v5 = v3
@@ -258,7 +287,7 @@ function u254.TweenTransparency(p1, p2, p3) -- Line: 255 -- upvalues: TweenServi
     local v7 = nil
     local v8 = p2
     for i, j in v5, v6, v7 do
-        if not (j:IsA("ImageLabel")) then
+        if not j:IsA("ImageLabel") then
             v1 = {TextTransparency = v8}
         else
             v1 = {ImageTransparency = v8}
@@ -269,33 +298,48 @@ function u254.TweenTransparency(p1, p2, p3) -- Line: 255 -- upvalues: TweenServi
     end
     return v4
 end
+
 function u254:_ChangeInput(p2) -- Line: 284
-    local v1, v2
-    v1, v2 = createInputImage(p2, self.Color, self.IconSize)
+    local IconSize = self.IconSize
+    local Color = self.Color
+    local v1, v2 = createInputImage(p2, Color, IconSize)
     local UIObject = self.UIObject
     UIObject.BackgroundTransparency = 0.5
-    v1.Size = UIObject.Size
-    v1.Position = UIObject.Position
-    v1.AnchorPoint = UIObject.AnchorPoint
-    v1.SizeConstraint = UIObject.SizeConstraint
-    v1.AutomaticSize = UIObject.AutomaticSize
-    v1.Visible = UIObject.Visible
+    local Size = UIObject.Size
+    local Position = UIObject.Position
+    local AnchorPoint = UIObject.AnchorPoint
+    local SizeConstraint = UIObject.SizeConstraint
+    local AutomaticSize = UIObject.AutomaticSize
+    local Visible = UIObject.Visible
+    v1.Size = Size
+    v1.Position = Position
+    v1.AnchorPoint = AnchorPoint
+    v1.SizeConstraint = SizeConstraint
+    v1.AutomaticSize = AutomaticSize
+    v1.Visible = Visible
     v1.Parent = UIObject.Parent
     self.Type = v2
     self.UIObject = v1
-    self:SetTransparency(self.Transparency)
+    local Transparency = self.Transparency
+    self:SetTransparency(Transparency)
     UIObject:Destroy()
 end
+
 function addSizeSuffix(p1, p2) -- Line: 317 -- upvalues: u250 (val)
     local v1 = #p1 - 3
-    if string.sub(p1, v1, #p1) ~= ".png" then
+    local v2 = #p1
+    if string.sub(p1, v1, v2) ~= ".png" then
         return p1
     end
-    local v2 = string.sub(p1, 1, #p1 - 4)
-    local v3 = string.sub(p1, #p1 - 3)
-    return v2 .. u250[p2] .. v3
+    v2 = #p1 - 4
+    local v3 = string.sub(p1, 1, v2)
+    v2 = #p1 - 3
+    local v4 = string.sub(p1, v2)
+    return v3 .. u250[p2] .. v4
 end
-function createInputImage(p1, p2, p3) -- Line: 326 -- upvalues: u17 (val), u16 (ref), UserInputService (val), u58 (val), u81 (val)
+
+function createInputImage(p1, p2, p3) -- Line: 326
+    -- upvalues: u17 (val), u16 (ref), UserInputService (val), u58 (val), u81 (val)
     local v1, v2
     local v3 = u17[p1]
     if v3 then
@@ -361,6 +405,7 @@ function createInputImage(p1, p2, p3) -- Line: 326 -- upvalues: u17 (val), u16 (
     end
     return Frame, v2
 end
+
 function getActionInputDeviceCode(p1) -- Line: 401 -- upvalues: u15 (val), u14 (ref)
     local Mouse = nil
     local v1 = u15[p1]
@@ -393,4 +438,5 @@ function getActionInputDeviceCode(p1) -- Line: 401 -- upvalues: u15 (val), u14 (
     end
     return Enum.KeyCode.Unknown
 end
+
 return u254

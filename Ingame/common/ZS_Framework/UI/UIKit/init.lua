@@ -20,6 +20,7 @@ local UISounds = require(script.UISounds)
 local FadeGroup = require(script.FadeGroup)
 local ProgressBar = require(script.ProgressBar)
 local Badge = require(script.Badge)
+
 local function withDefaults(p1, p2) -- Line: 41
     local v1 = table.clone(p1)
     local v2 = p2
@@ -32,26 +33,28 @@ local function withDefaults(p1, p2) -- Line: 41
     end
     return v1
 end
+
 return {
     Theme = Theme,
     Button = function(p1) -- Line: 56 -- upvalues: GenericButton (val), Theme (val), UISounds (val)
-        local v1 = {
+        local v1 = GenericButton
+        local v2 = {
             Font = Theme.Fonts.Button,
             TextColor3 = Theme.Colors.TextPrimary,
             TextSize = Theme.FontSizes.Medium,
             ButtonSound = UISounds.ClickSound,
             HoverSound = UISounds.HoverSound,
         }
-        local v2 = table.clone(p1)
-        local v3 = v1
-        local v4 = nil
+        local v3 = table.clone(p1)
+        local v4 = v2
         local v5 = nil
-        for i, j in v3, v4, v5 do
-            if v2[i] == nil then
-                v2[i] = j
+        local v6 = nil
+        for i, j in v4, v5, v6 do
+            if v3[i] == nil then
+                v3[i] = j
             end
         end
-        return GenericButton(v2)
+        return v1(v3)
     end,
     CloseButton = function(p1) -- Line: 67 -- upvalues: Theme (val), UISounds (val), GenericExitButton (val)
         local BackgroundColor3
@@ -87,18 +90,15 @@ return {
         local TextStrokeColor3 = v6.TextStrokeColor3
         v6.Text = ""
         local v7 = {}
-        local v8 = p1.scope:New("UICorner")
-        v8 = v8({CornerRadius = UDim.new(0, 6)})
-        local v9 = p1.scope:New("UIGradient")
-        local v10 = {Rotation = 90}
-        local v11 = {}
-        local v12 = ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 42, 48))
-        v11[1] = v12
-        v11[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(62, 24, 29))
-        v10.Color = ColorSequence.new(v11)
-        v9 = v9(v10)
-        v10 = p1.scope:New("TextLabel")
-        v10 = v10({
+        local v8 = p1.scope:New("UICorner")({CornerRadius = UDim.new(0, 6)})
+        local v9 = p1.scope:New("UIGradient")({
+            Rotation = 90,
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 42, 48)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(62, 24, 29)),
+            }),
+        })
+        local v10 = p1.scope:New("TextLabel")({
             Name = "CloseGlyph",
             BackgroundTransparency = 1,
             Size = UDim2.fromScale(1, 1),

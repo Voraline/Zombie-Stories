@@ -6,8 +6,7 @@ return {
     Aliases = {},
     Args = {},
     ClientRun = function() -- Line: 9 -- upvalues: Players (val)
-        local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-        local Cmdr = PlayerGui:WaitForChild("Cmdr")
+        local Cmdr = (Players.LocalPlayer:WaitForChild("PlayerGui")):WaitForChild("Cmdr")
         local Frame = Cmdr:WaitForChild("Frame")
         if Cmdr and Frame then
             for k, v in pairs(Frame:GetChildren()) do

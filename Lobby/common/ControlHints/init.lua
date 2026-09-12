@@ -21,6 +21,7 @@ local v3 = nil
 for i, j in v1, v2, v3 do
     u67[j] = i
 end
+
 local function getIconId(p1, p2, p3) -- Line: 36 -- upvalues: Icons (val), BindUtil (val)
     local v1
     local v2 = p3 == true
@@ -55,12 +56,14 @@ local function getIconId(p1, p2, p3) -- Line: 36 -- upvalues: Icons (val), BindU
     end
     return ""
 end
+
 local function alive() -- Line: 57 -- upvalues: u59 (ref)
     if not u59 then
         return false
     end
     return not u59.States.IsDead
 end
+
 local function hasGun() -- Line: 62 -- upvalues: u59 (ref), u58 (ref)
     local v1
     if u59 then
@@ -68,13 +71,17 @@ local function hasGun() -- Line: 62 -- upvalues: u59 (ref), u58 (ref)
     else
         v1 = false
     end
-    if not v1 or not u58 then
-        return false
+    if v1 and u58 then
+        local CurrentWeapon = u58:GetCurrentWeapon()
+        local v2 = false
+        if CurrentWeapon ~= nil then
+            v2 = not CurrentWeapon.Config.IsMelee
+        end
+        return v2
     end
-    local CurrentWeapon = u58:GetCurrentWeapon()
-    local v2 = if CurrentWeapon ~= nil then not CurrentWeapon.Config.IsMelee else false
-    return v2
+    return false
 end
+
 local function hasMelee() -- Line: 68 -- upvalues: u59 (ref), u58 (ref)
     local v1
     if u59 then
@@ -82,36 +89,19 @@ local function hasMelee() -- Line: 68 -- upvalues: u59 (ref), u58 (ref)
     else
         v1 = false
     end
-    if not v1 or not u58 then
-        return false
+    if v1 and u58 then
+        local CurrentWeapon = u58:GetCurrentWeapon()
+        local v2 = false
+        if CurrentWeapon ~= nil then
+            v2 = CurrentWeapon.Config.IsMelee == true
+        end
+        return v2
     end
-    local CurrentWeapon = u58:GetCurrentWeapon()
-    local v2 = if CurrentWeapon ~= nil then CurrentWeapon.Config.IsMelee == true else false
-    return v2
+    return false
 end
+
 local u88 = {}
 local v4 = {
-    id = "Shoot",
-    label = "Shoot",
-    priority = 1,
-    actions = {"PrimaryAttack"},
-    condition = hasGun,
-}
-local v5 = {
-    id = "Aim",
-    label = "Aim",
-    priority = 2,
-    actions = {"SecondaryAttack"},
-    condition = hasGun,
-}
-local v6 = {
-    id = "Reload",
-    label = "Reload",
-    priority = 3,
-    actions = {"Reload"},
-    condition = hasGun,
-}
-local v7 = {
     id = "Firemode",
     label = "Fire Mode",
     priority = 4,
@@ -127,31 +117,28 @@ local v7 = {
             v1 = false
         elseif u58 then
             local CurrentWeapon = u58:GetCurrentWeapon()
-            v1 = if CurrentWeapon ~= nil then not CurrentWeapon.Config.IsMelee else false
-        end
-        if not v1 or not u58 then
-            return false
-        end
-        local CurrentWeapon_2 = u58:GetCurrentWeapon()
-        v2 = false
-        if CurrentWeapon_2 ~= nil then
-            v2 = false
-            if CurrentWeapon_2.Config.FireMode ~= nil then
-                local v3 = #CurrentWeapon_2.Config.FireMode
-                v2 = 1 < v3
+            v1 = false
+            if CurrentWeapon ~= nil then
+                v1 = not CurrentWeapon.Config.IsMelee
             end
+        else
+            v1 = false
         end
-        return v2
+        if v1 and u58 then
+            local CurrentWeapon_2 = u58:GetCurrentWeapon()
+            v2 = false
+            if CurrentWeapon_2 ~= nil then
+                v2 = false
+                if CurrentWeapon_2.Config.FireMode ~= nil then
+                    v2 = 1 < #CurrentWeapon_2.Config.FireMode
+                end
+            end
+            return v2
+        end
+        return false
     end,
 }
-local v8 = {
-    id = "Attack",
-    label = "Attack",
-    priority = 1,
-    actions = {"PrimaryAttack"},
-    condition = hasMelee,
-}
-local v9 = {
+local v5 = {
     id = "Charge",
     label = "Hold to Charge",
     priority = 3,
@@ -167,17 +154,25 @@ local v9 = {
             v1 = false
         elseif u58 then
             local CurrentWeapon = u58:GetCurrentWeapon()
-            v1 = if CurrentWeapon ~= nil then CurrentWeapon.Config.IsMelee == true else false
+            v1 = false
+            if CurrentWeapon ~= nil then
+                v1 = CurrentWeapon.Config.IsMelee == true
+            end
+        else
+            v1 = false
         end
-        if not v1 or not u58 then
-            return false
+        if v1 and u58 then
+            local CurrentWeapon_2 = u58:GetCurrentWeapon()
+            v2 = false
+            if CurrentWeapon_2 ~= nil then
+                v2 = CurrentWeapon_2.Config.ChargeTime ~= nil
+            end
+            return v2
         end
-        local CurrentWeapon_2 = u58:GetCurrentWeapon()
-        v2 = if CurrentWeapon_2 ~= nil then CurrentWeapon_2.Config.ChargeTime ~= nil else false
-        return v2
+        return false
     end,
 }
-local v10 = {
+local v6 = {
     id = "ToggleControlHints",
     label = "Toggle Controls",
     priority = 0,
@@ -186,11 +181,35 @@ local v10 = {
         return true
     end,
 }
-u88[1] = v4
-u88[2] = v5
-u88[3] = v6
-u88[4] = v7
-u88[5] = v8
+u88[1] = {
+    id = "Shoot",
+    label = "Shoot",
+    priority = 1,
+    actions = {"PrimaryAttack"},
+    condition = hasGun,
+}
+u88[2] = {
+    id = "Aim",
+    label = "Aim",
+    priority = 2,
+    actions = {"SecondaryAttack"},
+    condition = hasGun,
+}
+u88[3] = {
+    id = "Reload",
+    label = "Reload",
+    priority = 3,
+    actions = {"Reload"},
+    condition = hasGun,
+}
+u88[4] = v4
+u88[5] = {
+    id = "Attack",
+    label = "Attack",
+    priority = 1,
+    actions = {"PrimaryAttack"},
+    condition = hasMelee,
+}
 u88[6] = {
     id = "Block",
     label = "Block",
@@ -198,8 +217,8 @@ u88[6] = {
     actions = {"SecondaryAttack"},
     condition = hasMelee,
 }
-u88[7] = v9
-u88[8] = v10
+u88[7] = v5
+u88[8] = v6
 u88[9] = {
     id = "Ability",
     label = "Ability",
@@ -329,6 +348,7 @@ Frame_2.Parent = Frame
 local u288 = {}
 local u289 = {}
 local u290 = false
+
 local function resolveKeyCodes(p1, p2) -- Line: 209 -- upvalues: Settings (val), u60 (val), Sorting (val)
     local Gamepad, Keyboard, Mouse, gamepad_sort_index, v1, v2
     local v3 = {}
@@ -342,21 +362,21 @@ local function resolveKeyCodes(p1, p2) -- Line: 209 -- upvalues: Settings (val),
         if v2 then
             if v7 == "MouseKeyboard" then
                 Keyboard = v2.Keyboard
-                if Keyboard and not (v4[Keyboard]) then
+                if Keyboard and not v4[Keyboard] then
                     v4[Keyboard] = true
                     table.insert(v3, Keyboard)
                 end
                 Mouse = v2.Mouse
                 if Mouse then
                     v1 = u60[Mouse]
-                    if v1 and not (v4[v1]) then
+                    if v1 and not v4[v1] then
                         v4[v1] = true
                         table.insert(v3, v1)
                     end
                 end
             elseif v7 == "Gamepad" then
                 Gamepad = v2.Gamepad
-                if Gamepad and not (v4[Gamepad]) then
+                if Gamepad and not v4[Gamepad] then
                     v4[Gamepad] = true
                     table.insert(v3, Gamepad)
                 end
@@ -369,30 +389,29 @@ local function resolveKeyCodes(p1, p2) -- Line: 209 -- upvalues: Settings (val),
         gamepad_sort_index = Sorting.gamepad_sort_index
     end
     table.sort(v3, function(p1, p2) -- Line: 243 -- upvalues: gamepad_sort_index (val)
-        local v1
-        local v2 = gamepad_sort_index[p1] or (1 / 0)
-        if v2 < gamepad_sort_index[p2] or (1 / 0) then
-            v1 = true
-        else
-            v1 = false
-        end
+        local v1 = (gamepad_sort_index[p1] or (1 / 0)) < (gamepad_sort_index[p2] or (1 / 0))
         return v1
     end)
     return v3
 end
+
 local u295 = {IsShowing = false}
-function u295.Update(p1) -- Line: 256 -- upvalues: u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val), u295 (val), Icons (val), Frame (val), u288 (val), u289 (val), u88 (val), resolveKeyCodes (val), Frame_2 (val), getIconId (val), u67 (val), ContentProvider (val)
-    local ActionText, IconImage, Separator, hintDef, keyCodes, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12
+
+function u295.Update(p1) -- Line: 256
+    -- upvalues: u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val), u295 (val), Icons (val)
+    -- upvalues: Frame (val), u288 (val), u289 (val), u88 (val), resolveKeyCodes (val), Frame_2 (val), getIconId (val)
+    -- upvalues: u67 (val), ContentProvider (val)
+    local ActionText, IconImage, Separator, hintDef, keyCodes, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11
     if not u290 then
         return
     end
-    local v13 = BindUtil.getInputMethod()
-    if v13 == "Touch" or not (peek(Settings.Controls.ShowControlHints)) then
+    local v12 = BindUtil.getInputMethod()
+    if v12 == "Touch" or not peek(Settings.Controls.ShowControlHints) then
         ScreenGui.Enabled = false
         return
     end
     ScreenGui.Enabled = u295.IsShowing
-    if v13 ~= "Gamepad" then
+    if v12 ~= "Gamepad" then
         v6 = "keyboard"
     else
         v6 = Icons.GetGamepadType()
@@ -404,27 +423,28 @@ function u295.Update(p1) -- Line: 256 -- upvalues: u290 (ref), BindUtil (val), S
     end
     table.clear(u288)
     table.clear(u289)
-    local v14 = {}
-    local v15 = u88
+    local v13 = {}
+    local v14 = u88
+    local v15 = nil
     local v16 = nil
-    local v17 = nil
-    for k, n in v15, v16, v17 do
+    for k, n in v14, v15, v16 do
         if n.condition() then
-            v12 = resolveKeyCodes(n, v13)
-            if 0 < #v12 then
-                table.insert(v14, {hintDef = n, keyCodes = v12})
+            v11 = resolveKeyCodes(n, v12)
+            if 0 < #v11 then
+                v1 = {hintDef = n, keyCodes = v11}
+                table.insert(v13, v1)
             end
         end
     end
-    table.sort(v14, function(p1, p2) -- Line: 304
+    table.sort(v13, function(p1, p2) -- Line: 304
         local v1 = p1.hintDef.priority < p2.hintDef.priority
         return v1
     end)
     local u273 = {}
-    v16 = v14
-    v17 = nil
-    local v18 = nil
-    for m, i5 in v16, v17, v18 do
+    v15 = v13
+    v16 = nil
+    local v17 = nil
+    for m, i5 in v15, v16, v17 do
         hintDef = i5.hintDef
         keyCodes = i5.keyCodes
         v1 = Frame_2:Clone()
@@ -450,49 +470,52 @@ function u295.Update(p1) -- Line: 256 -- upvalues: u290 (ref), BindUtil (val), S
             end
             v4 = IconImage.LayoutOrder + 1
             v5 = #keyCodes
-            v7 = 1
-            for i6 = 2, v5, v7 do
-                v8 = Separator:Clone()
-                v8.Name = "Separator" .. i6 - 1
-                v8.Text = "/"
+            for i6 = 2, v5 do
+                v7 = Separator:Clone()
+                v7.Name = "Separator" .. i6 - 1
+                v7.Text = "/"
+                v7.LayoutOrder = v4
+                v7.Visible = true
+                v7.Parent = v1
+                v4 = v4 + 1
+                v8 = IconImage:Clone()
+                v8.Name = "IconImage" .. i6
+                v9 = getIconId(keyCodes[i6], v6, false)
+                v10 = getIconId(keyCodes[i6], v6, true)
+                v8.Image = v9
                 v8.LayoutOrder = v4
                 v8.Visible = true
                 v8.Parent = v1
                 v4 = v4 + 1
-                v9 = IconImage:Clone()
-                v9.Name = "IconImage" .. i6
-                v10 = getIconId(keyCodes[i6], v6, false)
-                v11 = getIconId(keyCodes[i6], v6, true)
-                v9.Image = v10
-                v9.LayoutOrder = v4
-                v9.Visible = true
-                v9.Parent = v1
-                v4 = v4 + 1
+                if v9 ~= "" then
+                    table.insert(u273, v9)
+                end
                 if v10 ~= "" then
                     table.insert(u273, v10)
-                end
-                if v11 ~= "" then
-                    table.insert(u273, v11)
                 end
             end
         end
         v1.Visible = true
         v1.Parent = Frame
-        table.insert(u288, {hintDef = hintDef, keyCodes = keyCodes, frame = v1})
+        v2 = {hintDef = hintDef, keyCodes = keyCodes, frame = v1}
+        v4 = u288
+        table.insert(v4, v2)
         v3 = keyCodes
         v4 = nil
         v5 = nil
         for i7, i8 in v3, v4, v5 do
-            if not (u289[i8]) then
+            if not u289[i8] then
                 u289[i8] = {}
             end
-            table.insert(u289[i8], v1)
-            v8 = u67[i8]
-            if v8 then
-                if not (u289[v8]) then
-                    u289[v8] = {}
+            v8 = u289[i8]
+            table.insert(v8, v1)
+            v7 = u67[i8]
+            if v7 then
+                if not u289[v7] then
+                    u289[v7] = {}
                 end
-                table.insert(u289[v8], v1)
+                v9 = u289[v7]
+                table.insert(v9, v1)
             end
         end
     end
@@ -508,15 +531,25 @@ function u295.Update(p1) -- Line: 256 -- upvalues: u290 (ref), BindUtil (val), S
                 ImageLabel.Image = j
                 ImageLabel.Parent = Folder
             end
-            ContentProvider:PreloadAsync(Folder:GetChildren())
+            v1 = ContentProvider
+            local Children = Folder:GetChildren()
+            v1:PreloadAsync(Children)
             Folder:Destroy()
         end)
     end
 end
+
 function u295.Toggle(p1) -- Line: 404 -- upvalues: Settings (val), peek (val)
-    Settings.Controls.ShowControlHints:set(not peek(Settings.Controls.ShowControlHints))
+    local v1 = Settings
+    local ShowControlHints = v1.Controls.ShowControlHints
+    local v2 = peek
+    local v3 = Settings
+    v2 = v2(v3.Controls.ShowControlHints)
+    ShowControlHints:set(not v2)
 end
-local function updateIconsForKey(p1, p2) -- Line: 409 -- upvalues: BindUtil (val), Icons (val), u289 (val), u288 (val), u67 (val), getIconId (val)
+
+local function updateIconsForKey(p1, p2) -- Line: 409
+    -- upvalues: BindUtil (val), Icons (val), u289 (val), u288 (val), u67 (val), getIconId (val)
     local keyCodes, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11
     if BindUtil.getInputMethod() ~= "Gamepad" then
         v11 = "keyboard"
@@ -549,7 +582,10 @@ local function updateIconsForKey(p1, p2) -- Line: 409 -- upvalues: BindUtil (val
                             end
                             v9 = j:FindFirstChild(v8)
                             if v9 then
-                                v10 = if i7 ~= v1 then u67[i7] == v1 else true
+                                v10 = true
+                                if i7 ~= v1 then
+                                    v10 = u67[i7] == v1
+                                end
                                 if v10 then
                                     v9.Image = getIconId(i7, v11, v2)
                                 end
@@ -563,7 +599,9 @@ local function updateIconsForKey(p1, p2) -- Line: 409 -- upvalues: BindUtil (val
         end
     end
 end
-function u295.Show(p1) -- Line: 444 -- upvalues: u295 (val), u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val)
+
+function u295.Show(p1) -- Line: 444
+    -- upvalues: u295 (val), u290 (ref), BindUtil (val), ScreenGui (val), peek (val), Settings (val)
     u295.IsShowing = true
     if u290 then
         u295:Update()
@@ -573,32 +611,41 @@ function u295.Show(p1) -- Line: 444 -- upvalues: u295 (val), u290 (ref), BindUti
         ScreenGui.Enabled = peek(Settings.Controls.ShowControlHints)
     end
 end
+
 function u295.Hide(p1) -- Line: 453 -- upvalues: u295 (val), ScreenGui (val)
     u295.IsShowing = false
     ScreenGui.Enabled = false
 end
-function u295.Init(p1, p2, p3) -- Line: 458 -- upvalues: u290 (ref), u58 (ref), u59 (ref), u295 (val), BindUtil (val), Settings (val), UserInputService (val), updateIconsForKey (val)
+
+function u295.Init(p1, p2, p3) -- Line: 458
+    -- upvalues: u290 (ref), u58 (ref), u59 (ref), u295 (val), BindUtil (val), Settings (val), UserInputService (val)
+    -- upvalues: updateIconsForKey (val)
     if u290 then
         return
     end
     u290 = true
     u58 = p2
     u59 = p3
-    u58.WeaponEquipped:Connect(function() -- Line: 466 -- upvalues: u295 (upval)
+    local v1 = u58
+    v1.WeaponEquipped:Connect(function() -- Line: 466 -- upvalues: u295 (upval)
         u295:Update()
     end)
-    u58.WeaponUnequipped:Connect(function() -- Line: 469 -- upvalues: u295 (upval)
+    v1 = u58
+    v1.WeaponUnequipped:Connect(function() -- Line: 469 -- upvalues: u295 (upval)
         u295:Update()
     end)
-    BindUtil.InputMethodChanged:Connect(function() -- Line: 474 -- upvalues: u295 (upval)
+    v1 = BindUtil
+    v1.InputMethodChanged:Connect(function() -- Line: 474 -- upvalues: u295 (upval)
         u295:Update()
     end)
-    Settings.SettingsChanged:Connect(function(p1) -- Line: 479 -- upvalues: u295 (upval)
+    v1 = Settings
+    v1.SettingsChanged:Connect(function(p1) -- Line: 479 -- upvalues: u295 (upval)
         if p1 and p1[1] == "Controls" then
             u295:Update()
         end
     end)
-    UserInputService.InputBegan:Connect(function(p1, p2) -- Line: 486 -- upvalues: updateIconsForKey (upval)
+    v1 = UserInputService
+    v1.InputBegan:Connect(function(p1, p2) -- Line: 486 -- upvalues: updateIconsForKey (upval)
         if p2 then
             return
         end
@@ -608,7 +655,8 @@ function u295.Init(p1, p2, p3) -- Line: 458 -- upvalues: u290 (ref), u58 (ref), 
         end
         updateIconsForKey(KeyCode, true)
     end)
-    UserInputService.InputEnded:Connect(function(p1) -- Line: 496 -- upvalues: updateIconsForKey (upval)
+    v1 = UserInputService
+    v1.InputEnded:Connect(function(p1) -- Line: 496 -- upvalues: updateIconsForKey (upval)
         local KeyCode = p1.KeyCode
         if KeyCode == Enum.KeyCode.Unknown then
             KeyCode = p1.UserInputType
@@ -617,4 +665,5 @@ function u295.Init(p1, p2, p3) -- Line: 458 -- upvalues: u290 (ref), u58 (ref), 
     end)
     u295:Update()
 end
+
 return u295

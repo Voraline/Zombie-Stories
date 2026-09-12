@@ -1,7 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local u5 = {objectName = "TopbarPlusReference"}
+
 function u5.addToReplicatedStorage() -- Line: 10 -- upvalues: ReplicatedStorage (val), u5 (val)
-    if ReplicatedStorage:FindFirstChild(u5.objectName) then
+    local v1 = ReplicatedStorage
+    local v2 = u5
+    local objectName = v2.objectName
+    if v1:FindFirstChild(objectName) then
         return false
     end
     local ObjectValue = Instance.new("ObjectValue")
@@ -10,11 +14,16 @@ function u5.addToReplicatedStorage() -- Line: 10 -- upvalues: ReplicatedStorage 
     ObjectValue.Parent = ReplicatedStorage
     return ObjectValue
 end
+
 function u5.getObject() -- Line: 22 -- upvalues: ReplicatedStorage (val), u5 (val)
-    local v1 = ReplicatedStorage:FindFirstChild(u5.objectName)
+    local v1 = ReplicatedStorage
+    local v2 = u5
+    local objectName = v2.objectName
+    v1 = v1:FindFirstChild(objectName)
     if v1 then
         return v1
     end
     return false
 end
+
 return u5

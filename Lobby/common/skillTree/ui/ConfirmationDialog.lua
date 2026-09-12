@@ -9,8 +9,7 @@ return function(p1) -- Line: 18 -- upvalues: Players (val), UIKit (val), Theme (
     local u11 = u3:Value("")
     local u15 = u3:Value("")
     local u16 = nil
-    local v1 = u3:New("ScreenGui")
-    v1 = v1({
+    local v1 = u3:New("ScreenGui")({
         Name = "ConfirmationDialog",
         DisplayOrder = 25,
         IgnoreGuiInset = true,
@@ -18,7 +17,9 @@ return function(p1) -- Line: 18 -- upvalues: Players (val), UIKit (val), Theme (
         Parent = Players.LocalPlayer:WaitForChild("PlayerGui"),
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
-    local v2 = {
+    local v2 = UIKit
+    local Modal = v2.Modal
+    local v3 = {
         Name = "SkillTreeConfirmation",
         scope = u3,
         Parent = v1,
@@ -28,8 +29,8 @@ return function(p1) -- Line: 18 -- upvalues: Players (val), UIKit (val), Theme (
         TextColor = Theme.Menu.TextMuted,
         Size = UDim2.fromOffset(430, 0),
     }
-    local v3 = {}
-    local v4 = {
+    local v4 = {}
+    local v5 = {
         Text = "YES",
         Color = Theme.Menu.Positive,
         TextColor = Theme.Menu.Text,
@@ -44,7 +45,7 @@ return function(p1) -- Line: 18 -- upvalues: Players (val), UIKit (val), Theme (
             end
         end,
     }
-    local v5 = {
+    local v6 = {
         Text = "NO",
         Color = Theme.Colors.CloseButton,
         TextColor = Theme.Menu.Text,
@@ -55,13 +56,15 @@ return function(p1) -- Line: 18 -- upvalues: Players (val), UIKit (val), Theme (
             u16 = nil
         end,
     }
-    v3[1] = v4
-    v3[2] = v5
-    v2.Buttons = v3
-    function v2.OnClose() -- Line: 71 -- upvalues: u16 (ref)
+    v4[1] = v5
+    v4[2] = v6
+    v3.Buttons = v4
+
+    function v3.OnClose() -- Line: 71 -- upvalues: u16 (ref)
         u16 = nil
     end
-    UIKit.Modal(v2)
+
+    Modal(v3)
     return {
         show = function(p1, p2, p3, p4) -- Line: 77 -- upvalues: u11 (val), u15 (val), u16 (ref), u7 (val)
             u11:set(p2)

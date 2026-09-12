@@ -2,12 +2,11 @@ local function getCached(p1, p2) -- Line: 7
     local children
     local v1 = p1
     local n = p2.n
-    local v2 = 1
-    local v3 = p2
-    for i = 1, n, v2 do
+    local v2 = p2
+    for i = 1, n do
         children = v1.children
         if children then
-            children = v1.children[v3[i]]
+            children = v1.children[v2[i]]
         end
         v1 = children
         if not v1 then
@@ -16,28 +15,30 @@ local function getCached(p1, p2) -- Line: 7
     end
     return v1.returns
 end
+
 local function setCached(p1, p2, p3) -- Line: 18
-    local children, v1, v2, v3
+    local children, children_2, v1, v2, v3
     local v4 = p1
     local n = p2.n
-    local v5 = 1
-    local v6 = p2
-    for i = 1, n, v5 do
-        v2 = v6[i]
+    local v5 = p2
+    for i = 1, n do
+        v2 = v5[i]
         children = v4.children
         if not children then
             children = {}
         end
         v4.children = children
+        children_2 = v4.children
         v3 = v4.children[v2]
         if not v3 then
             v3 = {}
         end
-        v4.children[v2] = v3
+        children_2[v2] = v3
         v4 = v4.children[v2]
     end
     v4.returns = v1
 end
+
 return function(p1) -- Line: 36 -- upvalues: setCached (val)
     local u1 = {}
     return function(...) -- Line: 39 -- upvalues: u1 (val), p1 (val), setCached (upval)
@@ -45,8 +46,7 @@ return function(p1) -- Line: 36 -- upvalues: setCached (val)
         local v1 = table.pack(...)
         local v2 = u1
         local n = v1.n
-        local v3 = 1
-        for i = 1, n, v3 do
+        for i = 1, n do
             children = v2.children
             if children then
                 children = v2.children[v1[i]]

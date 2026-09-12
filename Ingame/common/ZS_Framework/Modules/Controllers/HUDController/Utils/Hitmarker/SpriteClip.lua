@@ -7,20 +7,23 @@ local u5 = {}
 local u6 = {}
 local u7 = false
 local u8 = 0
-game:GetService("RunService").Heartbeat:Connect(function() -- Line: 46 -- upvalues: u8 (ref), u6 (val)
+;(game:GetService("RunService")).Heartbeat:Connect(function() -- Line: 46 -- upvalues: u8 (ref), u6 (val)
     u8 = u8 + 1
     if u6[1] then
-        local v1
+        local FrameTime, v1
         local v2 = #u6
-        local v3 = 1
-        for i = 1, v2, v3 do
+        for i = 1, v2 do
             v1 = u6[i]
-            if v1.State and u8 % v1.FrameTime == 0 then
-                v1:Advance(1)
+            if v1.State then
+                FrameTime = v1.FrameTime
+                if u8 % FrameTime == 0 then
+                    v1:Advance(1)
+                end
             end
         end
     end
 end)
+
 function u5.Play(p1) -- Line: 62
     if p1.State then
         p1.CurrentFrame = 0
@@ -34,50 +37,49 @@ function u5.Play(p1) -- Line: 62
     p1.State = true
     return true
 end
+
 function u5:Pause() -- Line: 75
     if self.State then
         self.State = false
     end
     return false
 end
+
 function u5:Stop() -- Line: 81
     self:Pause()
     self.CurrentFrame = 0
     return true
 end
+
 function u5:Advance(p2) -- Line: 86 -- upvalues: new (val)
-    local EdgeOffsetPixel, SpriteCountX, SpriteOffsetPixel, SpriteSizePixel, v1, v2
-    local v3 = self.CurrentFrame + (p2 or 1)
-    if self.SpriteCount - 1 >= v3 then
-        self.CurrentFrame = v3
-        SpriteSizePixel = self.SpriteSizePixel
-        SpriteOffsetPixel = self.SpriteOffsetPixel
-        EdgeOffsetPixel = self.EdgeOffsetPixel
-        SpriteCountX = self.SpriteCountX
-        v1 = v3 % SpriteCountX
-        v2 = (v3 - v1) / SpriteCountX
-        v1 = EdgeOffsetPixel.X + v1 * (SpriteSizePixel.X + SpriteOffsetPixel.X)
-        v2 = EdgeOffsetPixel.Y + v2 * (SpriteSizePixel.Y + SpriteOffsetPixel.Y)
-        self.Adornee.ImageRectOffset = new(v1, v2)
-        return
+    local v1 = self.CurrentFrame + (p2 or 1)
+    if self.SpriteCount - 1 < v1 then
+        if not self.Looped then
+            self:Stop()
+            return
+        else
+            v1 = 0
+        end
     end
-    if not self.Looped then
-        self:Stop()
-        return
-    end
-    v3 = 0
-    self.CurrentFrame = v3
-    SpriteSizePixel = self.SpriteSizePixel
-    SpriteOffsetPixel = self.SpriteOffsetPixel
-    EdgeOffsetPixel = self.EdgeOffsetPixel
-    SpriteCountX = self.SpriteCountX
-    v1 = v3 % SpriteCountX
-    v2 = (v3 - v1) / SpriteCountX
-    v1 = EdgeOffsetPixel.X + v1 * (SpriteSizePixel.X + SpriteOffsetPixel.X)
-    v2 = EdgeOffsetPixel.Y + v2 * (SpriteSizePixel.Y + SpriteOffsetPixel.Y)
-    self.Adornee.ImageRectOffset = new(v1, v2)
+    self.CurrentFrame = v1
+    local SpriteSizePixel = self.SpriteSizePixel
+    local X_2 = SpriteSizePixel.X
+    local Y = SpriteSizePixel.Y
+    local SpriteOffsetPixel = self.SpriteOffsetPixel
+    local X = SpriteOffsetPixel.X
+    local Y_2 = SpriteOffsetPixel.Y
+    local EdgeOffsetPixel = self.EdgeOffsetPixel
+    local SpriteCountX = self.SpriteCountX
+    local SpriteCount = self.SpriteCount
+    local v2 = v1 % SpriteCountX
+    local v3 = (v1 - v2) / SpriteCountX
+    v2 = EdgeOffsetPixel.X + v2 * (X_2 + X)
+    v3 = EdgeOffsetPixel.Y + v3 * (Y + Y_2)
+    self.Adornee.ImageRectOffset = new(v2, v3)
 end
-function u4.new() -- Line: 112 -- upvalues: new (val), u1 (val), u5 (val), u2 (val), u3 (val), u7 (ref), u6 (val), u4 (val)
+
+function u4.new() -- Line: 112
+    -- upvalues: new (val), u1 (val), u5 (val), u2 (val), u3 (val), u7 (ref), u6 (val), u4 (val)
     local u0 = {
         InheritSpriteSheet = true,
         CurrentFrame = 0,
@@ -88,10 +90,10 @@ function u4.new() -- Line: 112 -- upvalues: new (val), u1 (val), u5 (val), u2 (v
         Looped = true,
         State = false,
         Sorted = true,
-        SpriteSizePixel = new(100, 100),
-        EdgeOffsetPixel = new(0, 0),
-        SpriteOffsetPixel = new(0, 0),
     }
+    u0.SpriteSizePixel = new(100, 100)
+    u0.EdgeOffsetPixel = new(0, 0)
+    u0.SpriteOffsetPixel = new(0, 0)
     local v1 = u1
     local v2 = u5
     local v3 = nil
@@ -101,24 +103,10 @@ function u4.new() -- Line: 112 -- upvalues: new (val), u1 (val), u5 (val), u2 (v
     v1 = u2(true)
     local u28 = u3(v1)
     u28.__index = u0
+
     function u28.__newindex(p1, p2, p3) -- Line: 135 -- upvalues: u0 (val)
-        local Adornee
         u0[p2] = p3
-        if p2 == "Adornee" then
-            Adornee = u0.Adornee
-            if Adornee then
-                Adornee.ImageRectSize = u0.SpriteSizePixel
-            end
-            if p2 ~= "Adornee" then
-                return
-            end
-            if u0.InheritSpriteSheet then
-                u0.SpriteSheet = Adornee.Image
-                return
-            end
-            Adornee.Image = u0.SpriteSheet
-            return
-        elseif p2 ~= "SpriteSizePixel" then
+        if p2 ~= "Adornee" and p2 ~= "SpriteSizePixel" then
             if p2 ~= "SpriteSheet" then
                 if p2 == "FrameRate" then
                     u0.FrameTime = 60 / p3
@@ -131,33 +119,52 @@ function u4.new() -- Line: 112 -- upvalues: new (val), u1 (val), u5 (val), u2 (v
             u0.Adornee.Image = p3
             return
         end
+        local Adornee = u0.Adornee
+        local v1 = u0
+        local SpriteSizePixel = v1.SpriteSizePixel
+        if Adornee then
+            Adornee.ImageRectSize = SpriteSizePixel
+        end
+        if p2 ~= "Adornee" then
+            return
+        end
+        if u0.InheritSpriteSheet then
+            u0.SpriteSheet = Adornee.Image
+            return
+        end
+        Adornee.Image = u0.SpriteSheet
     end
+
     u28.__metatable = "The metatable is locked"
+
     function u0.Destroy(p1) -- Line: 160 -- upvalues: u7 (upval), u6 (upval), u0 (val), u1 (upval), u28 (val)
-        local v1, v2
+        local v1, v2, v3, v4
         p1:Pause()
         while u7 do
             wait()
         end
         u7 = true
-        local v3 = #u6
-        local v4 = 1
-        for i = 1, v3, v4 do
+        local v5 = #u6
+        for i = 1, v5 do
             v1 = u6[i]
             if v1 == u0 then
-                v2 = #u6
-                u6[i] = u6[#u6]
-                u6[v2] = nil
+                v1 = u6
+                v2 = u6
+                v3 = #u6
+                v4 = u6[#u6]
+                v1[i] = v4
+                v2[v3] = nil
             end
         end
         u7 = false
-        v3 = u1
-        v4 = u28
-        local v5 = nil
-        for k in v3, v4, v5 do
+        v5 = u1
+        local v6 = u28
+        local v7 = nil
+        for k in v5, v6, v7 do
             u28[k] = nil
         end
     end
+
     function u0.Clone(p1) -- Line: 174 -- upvalues: u4 (upval), u1 (upval), u0 (val)
         local v1 = u4.new()
         local v2 = u1
@@ -170,7 +177,9 @@ function u4.new() -- Line: 112 -- upvalues: new (val), u1 (val), u5 (val), u2 (v
         end
         return v1
     end
+
     u6[#u6 + 1] = u0
     return v1
 end
+
 return u4

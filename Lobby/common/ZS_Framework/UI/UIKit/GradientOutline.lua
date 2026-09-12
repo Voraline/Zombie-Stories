@@ -10,6 +10,7 @@ return function(p1) -- Line: 21 -- upvalues: u11 (val)
     end
     v2.Thickness = Thickness
     v2.Transparency = p1.Transparency or 0
+    local Children = scope.Children
     local v3 = {}
     local v4 = scope:New("UIGradient")
     local v5 = {}
@@ -20,6 +21,6 @@ return function(p1) -- Line: 21 -- upvalues: u11 (val)
     v5.Color = Color
     v5.Rotation = p1.Rotation or 0
     v3[1] = v4(v5)
-    v2[scope.Children] = v3
+    v2[Children] = v3
     return v1(v2)
 end

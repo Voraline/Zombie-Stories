@@ -1,10 +1,14 @@
 local function formatTime(p1) -- Line: 1
     local v1 = math.max(0, p1)
-    local v2 = math.floor(v1 / 60)
-    local v3 = math.floor(v1 % 60)
-    local v4 = math.floor((v1 - math.floor(v1)) * 100)
-    return string.format("%02d:%02d.%02d", v2, v3, v4)
+    local v2 = v1 / 60
+    local v3 = math.floor(v2)
+    local v4 = v1 % 60
+    v2 = math.floor(v4)
+    local v5 = (v1 - (math.floor(v1))) * 100
+    v4 = math.floor(v5)
+    return string.format("%02d:%02d.%02d", v3, v2, v4)
 end
+
 local function choices() -- Line: 17
     return {
         {
@@ -21,6 +25,7 @@ local function choices() -- Line: 17
         },
     }
 end
+
 return {
     id = "Rangemaster",
     speaker = "AAPELI",
@@ -74,7 +79,11 @@ return {
             completionAction = {kind = "invoke", handler = "OpenSelfProfile"},
         },
         rangeExplanation = {
-            lines = {"Select top targets, bottom targets, or both, then choose how many you want.", "Use the range prompt to begin. Clear every target as quickly and precisely as you can, operative.", "Each setup keeps its own record. Do not mistake an easier drill for mastery."},
+            lines = {
+                "Select top targets, bottom targets, or both, then choose how many you want.",
+                "Use the range prompt to begin. Clear every target as quickly and precisely as you can, operative.",
+                "Each setup keeps its own record. Do not mistake an easier drill for mastery.",
+            },
             options = choices(),
         },
         farewell = {

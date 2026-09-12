@@ -1,12 +1,25 @@
 return {
     Images = {
         Changelogs = {
-            SkillTreeUpdate = {Banner = "rbxassetid://117712060718759", Quickdraw = "rbxassetid://87270959192736", Shields = "rbxassetid://123256078049990"},
+            SkillTreeUpdate = {
+                Banner = "rbxassetid://117712060718759",
+                Quickdraw = "rbxassetid://87270959192736",
+                Shields = "rbxassetid://123256078049990",
+            },
         },
         SkillTree = {
             skillPointIcon = "rbxassetid://117660951781807",
-            Combat = {deadEye = "rbxassetid://115391623557660", quickDraw = "rbxassetid://77813982056282", sleightSwitch = "rbxassetid://101395450295606"},
-            Core = {core1 = "rbxassetid://138198105477031", core2 = "rbxassetid://130795355442661", core3 = "rbxassetid://77600157496121", core4 = "rbxassetid://99900883715636"},
+            Combat = {
+                deadEye = "rbxassetid://115391623557660",
+                quickDraw = "rbxassetid://77813982056282",
+                sleightSwitch = "rbxassetid://101395450295606",
+            },
+            Core = {
+                core1 = "rbxassetid://138198105477031",
+                core2 = "rbxassetid://130795355442661",
+                core3 = "rbxassetid://77600157496121",
+                core4 = "rbxassetid://99900883715636",
+            },
             Survival = {
                 desperateSprint = "rbxassetid://117255733424996",
                 ironWill = "rbxassetid://126643935958820",

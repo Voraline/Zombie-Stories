@@ -2,52 +2,57 @@ local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LobbyDoorGeometry = require(ReplicatedStorage.place.Modules:WaitForChild("LobbyDoorGeometry"))
-local Remotes = ReplicatedStorage.common:WaitForChild("Remotes")
-local Net = Remotes:WaitForChild("Net")
+local Net = (ReplicatedStorage.common:WaitForChild("Remotes")):WaitForChild("Net")
+
 local function onNetEvent(p1, p2) -- Line: 9 -- upvalues: Net (val)
-    return Net.OnClientEvent:Connect(function(a1, ...) -- Line: 10 -- upvalues: p1 (val), p2 (val)
-        if a1 == p1 then
+    local v1 = Net
+    return v1.OnClientEvent:Connect(function(p1_2, ...) -- Line: 10 -- upvalues: p1 (val), p2 (val)
+        if p1_2 == p1 then
             p2(...)
         end
     end)
 end
+
 local u33 = {}
 u33.__index = u33
+
 local function disconnectConnection(p1) -- Line: 25
     if p1 then
         p1:Disconnect()
     end
 end
+
 local function getModelPivot(p1) -- Line: 31
-    local v1, v2
-    v1, v2 = pcall(p1.GetPivot, p1)
-    if not v1 then
-        local PrimaryPart = p1.PrimaryPart
-        if not PrimaryPart then
-            PrimaryPart = p1:FindFirstChildWhichIsA("BasePart", true)
-        end
-        if PrimaryPart then
-            return PrimaryPart.CFrame
-        end
-        return (CFrame.new())
-    elseif typeof(v2) == "CFrame" then
-        return v2
+    local success, result = pcall(p1.GetPivot, p1)
+    if success and typeof(result) == "CFrame" then
+        return result
     end
+    local PrimaryPart = p1.PrimaryPart
+    if not PrimaryPart then
+        PrimaryPart = p1:FindFirstChildWhichIsA("BasePart", true)
+    end
+    if PrimaryPart then
+        return PrimaryPart.CFrame
+    end
+    return (CFrame.new())
 end
+
 function u33.new() -- Line: 41 -- upvalues: u33 (val)
-    local v1 = setmetatable({}, u33)
-    v1.DoorsById = {}
-    v1.PendingStates = {}
-    v1.StateRetryTasks = {}
-    v1.SyncRetryTask = nil
-    v1.SyncRequestTask = nil
-    v1.SyncRequestAttempts = 0
-    v1.Initialized = false
-    v1.MapAddedConnection = nil
-    v1.StateConnection = nil
-    v1.SyncConnection = nil
-    return v1
+    local v1 = u33
+    local v2 = setmetatable({}, v1)
+    v2.DoorsById = {}
+    v2.PendingStates = {}
+    v2.StateRetryTasks = {}
+    v2.SyncRetryTask = nil
+    v2.SyncRequestTask = nil
+    v2.SyncRequestAttempts = 0
+    v2.Initialized = false
+    v2.MapAddedConnection = nil
+    v2.StateConnection = nil
+    v2.SyncConnection = nil
+    return v2
 end
+
 function u33:_clearDoorRecords(p2) -- Line: 56
     local DoorsById = p2
     if not DoorsById then
@@ -72,32 +77,35 @@ function u33:_clearDoorRecords(p2) -- Line: 56
     end
     table.clear(v1)
 end
+
 function u33:_scheduleSyncRequest() -- Line: 77 -- upvalues: Net (val)
-    if self.SyncRequestTask or 3 <= self.SyncRequestAttempts then
+    if not self.SyncRequestTask and not (3 <= self.SyncRequestAttempts) then
+        self.SyncRequestAttempts = self.SyncRequestAttempts + 1
+        local delay = task.delay
+        self.SyncRequestTask = delay(1.05, function() -- Line: 83 -- upvalues: self (val), Net (upval)
+            self.SyncRequestTask = nil
+            Net:FireServer("LobbyDoorRequestSync")
+        end)
         return
     end
-    self.SyncRequestAttempts = self.SyncRequestAttempts + 1
-    self.SyncRequestTask = task.delay(1.05, function() -- Line: 83 -- upvalues: self (val), Net (upval)
-        self.SyncRequestTask = nil
-        Net:FireServer("LobbyDoorRequestSync")
-    end)
 end
+
 function u33:_buildFromMap() -- Line: 89 -- upvalues: LobbyDoorGeometry (val)
-    local Attribute, v1, v2, v3, v4, v5
+    local Attribute, Open, v1, v2, v3, v4
     local DoorsById = self.DoorsById
+    local v5 = {}
     local v6 = {}
-    local v7 = {}
-    local v8 = false
+    local v7 = false
     for k, v in pairs(DoorsById) do
-        v6[v.Model] = v
+        v5[v.Model] = v
     end
     local Map = workspace:FindFirstChild("Map")
     if not Map then
-        self.DoorsById = v7
+        self.DoorsById = v6
         self:_clearDoorRecords(DoorsById)
         return false
     end
-    local v9 = self
+    local v8 = self
     for i, i2 in ipairs(Map:GetDescendants()) do
         if i2:IsA("Model") then
             Attribute = i2:GetAttribute("LobbyDoorId")
@@ -107,17 +115,16 @@ function u33:_buildFromMap() -- Line: 89 -- upvalues: LobbyDoorGeometry (val)
                     v1.DoorId = Attribute
                     v2 = DoorsById[Attribute]
                     if not v2 then
-                        v2 = v6[v1.Model]
+                        v2 = v5[v1.Model]
                     end
                     if not v2 then
-                        v8 = true
+                        v7 = true
                     end
                     v3 = v2
                     if v3 then
                         v3 = false
                         if v2.Model == v1.Model then
-                            v4 = #v2.Movers
-                            v3 = v4 == #v1.Movers
+                            v3 = #v2.Movers == #v1.Movers
                         end
                     end
                     if v3 then
@@ -131,27 +138,29 @@ function u33:_buildFromMap() -- Line: 89 -- upvalues: LobbyDoorGeometry (val)
                     if v3 then
                         v1.Open = v2.Open
                         for i4, k2 in ipairs(v1.Movers) do
-                            v5 = v2.Movers[i4]
-                            k2.Closed = v5.Closed
-                            k2.Open = v5.Open
+                            v4 = v2.Movers[i4]
+                            k2.Closed = v4.Closed
+                            k2.Open = v4.Open
                         end
-                        v9:_snapDoor(v1, v1.Open)
+                        Open = v1.Open
+                        v8:_snapDoor(v1, Open)
                     end
-                    v7[Attribute] = v1
+                    v6[Attribute] = v1
                 end
             end
         end
     end
-    v9.DoorsById = v7
-    v9:_clearDoorRecords(DoorsById)
-    return v8
+    v8.DoorsById = v6
+    v8:_clearDoorRecords(DoorsById)
+    return v7
 end
+
 function u33._ensureSound(p1, p2, p3) -- Line: 145 -- upvalues: SoundService (val)
-    local v1
-    local v2 = p2.Movers[1]
-    local Model = v2
+    local v1, v2
+    local v3 = p2.Movers[1]
+    local Model = v3
     if Model then
-        Model = v2.Model
+        Model = v3.Model
     end
     if not Model then
         return nil
@@ -161,60 +170,59 @@ function u33._ensureSound(p1, p2, p3) -- Line: 145 -- upvalues: SoundService (va
     else
         v1 = "OpenSound"
     end
-    local v3 = p2[v1]
-    if not v3 then
-        local v4
-        local PrimaryPart = Model.PrimaryPart
-        if not PrimaryPart then
-            PrimaryPart = Model:FindFirstChildWhichIsA("BasePart", true)
-        end
-        if not PrimaryPart then
-            return nil
-        end
-        if not p3 then
-            v4 = "LobbyDoorCloseSound"
-        else
-            v4 = "LobbyDoorOpenSound"
-        end
-        local v5 = PrimaryPart:FindFirstChild(v4)
-        if not v5 then
-            local OpenSoundId
-            v3 = Instance.new("Sound")
-            v3.Name = v4
-            if not p3 then
-                OpenSoundId = p2.CloseSoundId
-            else
-                OpenSoundId = p2.OpenSoundId
-            end
-            v3.SoundId = OpenSoundId
-            v3.Volume = 1
-            v3.RollOffMode = Enum.RollOffMode.InverseTapered
-            v3.RollOffMinDistance = 8
-            v3.RollOffMaxDistance = 80
-            local Primary = SoundService:FindFirstChild("Primary")
-            if Primary and Primary:IsA("SoundGroup") then
-                v3.SoundGroup = Primary
-            end
-            v3.Parent = PrimaryPart
-        elseif v5:IsA("Sound") then
-            v3 = v5
-        end
-        p2[v1] = v3
-        return v3
-    elseif v3.Parent then
-        return v3
+    local v4 = p2[v1]
+    if v4 and v4.Parent then
+        return v4
     end
+    local PrimaryPart = Model.PrimaryPart
+    if not PrimaryPart then
+        PrimaryPart = Model:FindFirstChildWhichIsA("BasePart", true)
+    end
+    if not PrimaryPart then
+        return nil
+    end
+    if not p3 then
+        v2 = "LobbyDoorCloseSound"
+    else
+        v2 = "LobbyDoorOpenSound"
+    end
+    local v5 = PrimaryPart:FindFirstChild(v2)
+    if not v5 or not v5:IsA("Sound") then
+        local OpenSoundId
+        v4 = Instance.new("Sound")
+        v4.Name = v2
+        if not p3 then
+            OpenSoundId = p2.CloseSoundId
+        else
+            OpenSoundId = p2.OpenSoundId
+        end
+        v4.SoundId = OpenSoundId
+        v4.Volume = 1
+        v4.RollOffMode = Enum.RollOffMode.InverseTapered
+        v4.RollOffMinDistance = 8
+        v4.RollOffMaxDistance = 80
+        local Primary = SoundService:FindFirstChild("Primary")
+        if Primary and Primary:IsA("SoundGroup") then
+            v4.SoundGroup = Primary
+        end
+        v4.Parent = PrimaryPart
+    else
+        v4 = v5
+    end
+    p2[v1] = v4
+    return v4
 end
+
 function u33._cancelMoverTween(p1, p2) -- Line: 186
     if p2.TweenValue then
         p2.TweenValue:Destroy()
         p2.TweenValue = nil
     end
 end
+
 function u33:_snapDoor(p2, p3) -- Line: 193
-    local v1, v2
     p2.Open = p3
-    v1, v2 = self, p3
+    local v1, v2 = self, p3
     for i, v in ipairs(p2.Movers) do
         v1:_cancelMoverTween(v)
         if v.Model and v.Model.Parent then
@@ -224,53 +232,60 @@ function u33:_snapDoor(p2, p3) -- Line: 193
                 local Open = v.Open
             end
             pcall(function() -- Line: 199 -- upvalues: v (val), Open (val)
-                v.Model:PivotTo(Open)
+                local v1 = v
+                local Model = v1.Model
+                local v2 = Open
+                Model:PivotTo(v2)
             end)
         end
     end
 end
+
 function u33:_tweenDoor(p2, p3) -- Line: 206 -- upvalues: TweenService (val)
-    local CFrame, Model, Open, OpenTweenTime, PrimaryPart, TweenTime, v1, v2, v3, v4, v5, v6
+    local CFrame_2, Model, Open, OpenTweenTime, PrimaryPart, TweenTime, new, result, success, v1, v2, v3
     if p2.Open == p3 then
         return
     end
     p2.Open = p3
-    local v7 = self:_ensureSound(p2, p3)
-    if v7 then
-        v7:Play()
+    local v4 = self:_ensureSound(p2, p3)
+    if v4 then
+        v4:Play()
     end
     if not p3 then
         OpenTweenTime = p2.CloseTweenTime
     else
         OpenTweenTime = p2.OpenTweenTime
     end
-    v1, v6, v2 = self, p3, p2
+    local v5, v6, v7 = self, p3, p2
     for i, v in ipairs(p2.Movers) do
         if v.Model and v.Model.Parent then
-            v1:_cancelMoverTween(v)
+            v5:_cancelMoverTween(v)
             local CFrameValue = Instance.new("CFrameValue")
             Model = v.Model
-            v3, v4 = pcall(Model.GetPivot, Model)
-            if not v3 then
+            success, result = pcall(Model.GetPivot, Model)
+            if not success or typeof(result) ~= "CFrame" then
                 PrimaryPart = Model.PrimaryPart
                 if not PrimaryPart then
                     PrimaryPart = Model:FindFirstChildWhichIsA("BasePart", true)
                 end
                 if not PrimaryPart then
-                    CFrame = CFrame.new()
+                    CFrame_2 = CFrame.new()
                 else
-                    CFrame = PrimaryPart.CFrame
+                    CFrame_2 = PrimaryPart.CFrame
                 end
-            elseif typeof(v4) == "CFrame" then
-                CFrame = v4
+            else
+                CFrame_2 = result
             end
-            CFrameValue.Value = CFrame
+            CFrameValue.Value = CFrame_2
             v.TweenValue = CFrameValue
             local u69 = nil
             u69 = CFrameValue.Changed:Connect(function(p1) -- Line: 227 -- upvalues: v (val), u69 (ref)
                 if v.Model.Parent then
                     pcall(function() -- Line: 229 -- upvalues: v (upval), p1 (val)
-                        v.Model:PivotTo(p1)
+                        local v1 = v
+                        local Model = v1.Model
+                        local v2 = p1
+                        Model:PivotTo(v2)
                     end)
                     return
                 end
@@ -284,13 +299,16 @@ function u33:_tweenDoor(p2, p3) -- Line: 206 -- upvalues: TweenService (val)
             else
                 Open = v.Open
             end
+            v1 = TweenService
+            new = TweenInfo.new
             TweenTime = OpenTweenTime
             if not TweenTime then
-                TweenTime = v2.TweenTime
+                TweenTime = v7.TweenTime
             end
-            v5 = TweenInfo.new(TweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            v3 = TweenService:Create(CFrameValue, v5, {Value = Open})
-            v3.Completed:Connect(function() -- Line: 244 -- upvalues: u69 (ref), v (val), CFrameValue (val)
+            v2 = new(TweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            v3 = {Value = Open}
+            v1 = v1:Create(CFrameValue, v2, v3)
+            v1.Completed:Connect(function() -- Line: 244 -- upvalues: u69 (ref), v (val), CFrameValue (val)
                 local v1 = u69
                 if v1 then
                     v1:Disconnect()
@@ -300,57 +318,62 @@ function u33:_tweenDoor(p2, p3) -- Line: 206 -- upvalues: TweenService (val)
                 end
                 CFrameValue:Destroy()
             end)
-            v3:Play()
+            v1:Play()
         end
     end
 end
+
 function u33:_applySync(p2, p3) -- Line: 257
-    local open, u105, u108, u75, v1, v2
+    local open_2, v1, v2
     self.SyncRetryTask = nil
     local v3 = self:_buildFromMap()
     if type(p2) ~= "table" then
-        open = {}
-    elseif type(p2.open) == "table" then
-        open = p2.open
+        open_2 = {}
+    else
+        local open = p2.open
+        if type(open) ~= "table" then
+            open_2 = {}
+        else
+            open_2 = p2.open
+        end
     end
     local v4 = false
-    u75, u105, u108 = self, p2, p3
-    for k in pairs(open) do
+    for k in pairs(open_2) do
         v1 = tonumber(k)
-        if not v1 then
+        if not v1 or not self.DoorsById[v1] then
             v4 = true
-        elseif u75.DoorsById[v1] then
         end
     end
-    for k2, v in pairs(u75.DoorsById) do
-        v2 = if open[k2] ~= true then open[tostring(k2)] == true else true
-        u75:_snapDoor(v, v2)
+    for k2, v in pairs(self.DoorsById) do
+        v2 = true
+        if open_2[k2] ~= true then
+            v2 = open_2[tostring(k2)] == true
+        end
+        self:_snapDoor(v, v2)
     end
     if not v4 and not v3 then
-        u75.SyncRequestAttempts = 0
+        self.SyncRequestAttempts = 0
     end
     if v3 then
-        u75:_scheduleSyncRequest()
+        self:_scheduleSyncRequest()
         return
     end
-    if not v4 then
-        if v4 then
-            u75.SyncRetryTask = task.delay(0.1, function() -- Line: 281 -- upvalues: u75 (val), u105 (val), u108 (val)
-                u75:_applySync(u105, u108 + 1)
-            end)
-        end
-        return
-    end
-    if 3 <= u108 then
-        u75:_scheduleSyncRequest()
+    if v4 and 3 <= p3 then
+        self:_scheduleSyncRequest()
         return
     end
     if v4 then
-        u75.SyncRetryTask = task.delay(0.1, function() -- Line: 281 -- upvalues: u75 (val), u105 (val), u108 (val)
-            u75:_applySync(u105, u108 + 1)
+        local delay = task.delay
+        self.SyncRetryTask = delay(0.1, function() -- Line: 281 -- upvalues: self (val), p2 (val), p3 (val)
+            local v1 = self
+            local v2 = p2
+            local v3 = p3
+            local v4 = v3 + 1
+            v1:_applySync(v2, v4)
         end)
     end
 end
+
 function u33:_applyPendingStates() -- Line: 287
     local v1
     for k, v in pairs(self.PendingStates) do
@@ -361,72 +384,72 @@ function u33:_applyPendingStates() -- Line: 287
         end
     end
 end
+
 function u33:_retryState(p2, p3) -- Line: 297
-    local StateRetryTasks
     self.StateRetryTasks[p2] = nil
     if self:_buildFromMap() then
         self:_scheduleSyncRequest()
     end
     local v1 = self.PendingStates[p2]
     local v2 = self.DoorsById[p2]
-    if not v2 then
-        if not v2 then
-            if p3 >= 3 then
-                self.PendingStates[p2] = nil
-                return
-            end
-            StateRetryTasks = self.StateRetryTasks
-            StateRetryTasks[p2] = task.delay(0.1, function() -- Line: 310 -- upvalues: self (val), p2 (val), p3 (val)
-                self:_retryState(p2, p3 + 1)
-            end)
-            return
-        end
-        return
-    end
-    if v1 ~= nil then
+    if v2 and v1 ~= nil then
         self.PendingStates[p2] = nil
         self:_tweenDoor(v2, v1)
         return
     end
-    if v2 then
-        return
-    end
-    if p3 >= 3 then
-        self.PendingStates[p2] = nil
-        return
-    end
-    StateRetryTasks = self.StateRetryTasks
-    StateRetryTasks[p2] = task.delay(0.1, function() -- Line: 310 -- upvalues: self (val), p2 (val), p3 (val)
-        self:_retryState(p2, p3 + 1)
-    end)
-end
-function u33:_handleDoorState(p2) -- Line: 319
-    local StateRetryTasks, id, open
-    if type(p2) ~= "table" or typeof(p2.id) ~= "number" or typeof(p2.open) ~= "boolean" then
-        return
-    end
-    id = p2.id
-    open = p2.open
-    local v1 = self.DoorsById[id]
-    if not v1 then
-        if self:_buildFromMap() then
-            self:_scheduleSyncRequest()
+    if not v2 then
+        if p3 < 3 then
+            local StateRetryTasks = self.StateRetryTasks
+            local delay = task.delay
+            StateRetryTasks[p2] = (delay(0.1, function() -- Line: 310 -- upvalues: self (val), p2 (val), p3 (val)
+                local v1 = self
+                local v2 = p2
+                local v3 = p3
+                local v4 = v3 + 1
+                v1:_retryState(v2, v4)
+            end))
+            return
         end
-        v1 = self.DoorsById[id]
-    end
-    if v1 then
-        self.PendingStates[id] = nil
-        self:_tweenDoor(v1, open)
-        return
-    end
-    self.PendingStates[id] = open
-    if not (self.StateRetryTasks[id]) then
-        StateRetryTasks = self.StateRetryTasks
-        StateRetryTasks[id] = task.delay(0.1, function() -- Line: 341 -- upvalues: self (val), id (val)
-            self:_retryState(id, 1)
-        end)
+        self.PendingStates[p2] = nil
     end
 end
+
+function u33:_handleDoorState(p2) -- Line: 319
+    if type(p2) == "table" then
+        local id_2 = p2.id
+        if typeof(id_2) == "number" then
+            local open = p2.open
+            if typeof(open) == "boolean" then
+                local id = p2.id
+                local open_2 = p2.open
+                local v1 = self.DoorsById[id]
+                if not v1 then
+                    if self:_buildFromMap() then
+                        self:_scheduleSyncRequest()
+                    end
+                    v1 = self.DoorsById[id]
+                end
+                if v1 then
+                    self.PendingStates[id] = nil
+                    self:_tweenDoor(v1, open_2)
+                    return
+                end
+                self.PendingStates[id] = open_2
+                if not self.StateRetryTasks[id] then
+                    local StateRetryTasks = self.StateRetryTasks
+                    local delay = task.delay
+                    StateRetryTasks[id] = (delay(0.1, function() -- Line: 341 -- upvalues: self (val), id (val)
+                        local v1 = self
+                        local v2 = id
+                        v1:_retryState(v2, 1)
+                    end))
+                end
+                return
+            end
+        end
+    end
+end
+
 function u33:_handleDoorSync(p2) -- Line: 348
     if self.SyncRetryTask then
         task.cancel(self.SyncRetryTask)
@@ -438,33 +461,43 @@ function u33:_handleDoorSync(p2) -- Line: 348
     end
     self:_applySync(p2, 0)
 end
+
 function u33.Init(p1) -- Line: 360 -- upvalues: Net (val)
     if p1.Initialized then
         return
     end
     p1.Initialized = true
     p1:_buildFromMap()
-    local function u6(a1) -- Line: 367 -- upvalues: p1 (val)
-        p1:_handleDoorState(a1)
+
+    local function u6(p1_2) -- Line: 367 -- upvalues: p1 (val)
+        p1:_handleDoorState(p1_2)
     end
+
+    local v1 = Net
+    local OnClientEvent = v1.OnClientEvent
     local u9 = "LobbyDoorState"
-    p1.StateConnection = Net.OnClientEvent:Connect(function(p1, ...) -- Line: 10 -- upvalues: u9 (val), u6 (val)
+    p1.StateConnection = OnClientEvent:Connect(function(p1, ...) -- Line: 10 -- upvalues: u9 (val), u6 (val)
         if p1 == u9 then
             u6(...)
         end
     end)
-    local function u15(a1) -- Line: 370 -- upvalues: p1 (val)
-        p1:_handleDoorSync(a1)
+
+    local function u15(p1_2) -- Line: 370 -- upvalues: p1 (val)
+        p1:_handleDoorSync(p1_2)
     end
+
+    v1 = Net
+    local OnClientEvent_2 = v1.OnClientEvent
     local u18 = "LobbyDoorSync"
-    p1.SyncConnection = Net.OnClientEvent:Connect(function(p1, ...) -- Line: 10 -- upvalues: u18 (val), u15 (val)
+    p1.SyncConnection = OnClientEvent_2:Connect(function(p1, ...) -- Line: 10 -- upvalues: u18 (val), u15 (val)
         if p1 == u18 then
             u15(...)
         end
     end)
     Net:FireServer("LobbyDoorRequestSync")
-    p1.MapAddedConnection = workspace.ChildAdded:Connect(function(a1) -- Line: 376 -- upvalues: p1 (val)
-        if a1.Name == "Map" then
+    local ChildAdded = workspace.ChildAdded
+    p1.MapAddedConnection = ChildAdded:Connect(function(p1_2) -- Line: 376 -- upvalues: p1 (val)
+        if p1_2.Name == "Map" then
             task.defer(function() -- Line: 378 -- upvalues: p1 (upval)
                 local v1 = p1:_buildFromMap()
                 p1:_applyPendingStates()
@@ -475,6 +508,7 @@ function u33.Init(p1) -- Line: 360 -- upvalues: Net (val)
         end
     end)
 end
+
 function u33:Destroy() -- Line: 389
     local MapAddedConnection = self.MapAddedConnection
     if MapAddedConnection then
@@ -508,4 +542,5 @@ function u33:Destroy() -- Line: 389
     self.SyncRequestAttempts = 0
     self.Initialized = false
 end
+
 return (u33.new())

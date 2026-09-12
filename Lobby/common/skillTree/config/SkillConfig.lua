@@ -4,17 +4,22 @@ local v2 = require("./CombatSkills")
 local v3 = require("./SurvivalSkills")
 local v4 = require("./SkillLayout")
 local u15 = {}
+
 local function registerSkills(p1) -- Line: 28 -- upvalues: u15 (val)
-    local v1 = p1
-    local v2 = nil
+    local id, v1
+    local v2 = p1
     local v3 = nil
-    for i, j in v1, v2, v3 do
+    local v4 = nil
+    for i, j in v2, v3, v4 do
         if u15[j.id] then
-            warn((("Duplicate skill ID: %*"):format(j.id)))
+            v1 = warn
+            id = j.id
+            v1((("Duplicate skill ID: %*"):format(id)))
         end
         u15[j.id] = j
     end
 end
+
 registerSkills(v1)
 registerSkills(v2)
 registerSkills(v3)
@@ -59,18 +64,18 @@ return {
         return v1
     end,
     getTierRequiredCount = function(p1, p2) -- Line: 86 -- upvalues: u15 (val)
-        local requirements, v1, v2, v3, v4
-        local v5 = u15
-        local v6 = nil
-        local v7 = nil
-        v1, v2 = p1, p2
-        for i, j in v5, v6, v7 do
-            if j.branch == v1 and j.tier == v2 + 1 and j.requirements then
+        local requirements, v1, v2
+        local v3 = u15
+        local v4 = nil
+        local v5 = nil
+        local v6, v7 = p1, p2
+        for i, j in v3, v4, v5 do
+            if j.branch == v6 and j.tier == v7 + 1 and j.requirements then
                 requirements = j.requirements.requirements
-                v3 = nil
-                v4 = nil
-                for k, n in requirements, v3, v4 do
-                    if n.type == "tier" and n.tier == v2 then
+                v1 = nil
+                v2 = nil
+                for k, n in requirements, v1, v2 do
+                    if n.type == "tier" and n.tier == v7 then
                         return n.count or 4
                     end
                 end

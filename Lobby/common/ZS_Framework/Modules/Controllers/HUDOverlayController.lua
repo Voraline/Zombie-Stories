@@ -5,14 +5,11 @@ local HUDOverlay = script:WaitForChild("HUDOverlay")
 local ModalButton = HUDOverlay:WaitForChild("ModalButton")
 local Scoreboard = HUDOverlay:WaitForChild("Scoreboard")
 local ScrollingFrame = Scoreboard:WaitForChild("ScrollingFrame")
-local PlayerScripts = Players.LocalPlayer:WaitForChild("PlayerScripts")
-local FrameworkEvent = PlayerScripts:WaitForChild("FrameworkEvent")
-local Remotes = game.ReplicatedStorage.common:WaitForChild("Remotes")
-local Net = Remotes:WaitForChild("Net")
+local FrameworkEvent = (Players.LocalPlayer:WaitForChild("PlayerScripts")):WaitForChild("FrameworkEvent")
+local Net = (game.ReplicatedStorage.common:WaitForChild("Remotes")):WaitForChild("Net")
 local CameraController = require(game:GetService("ReplicatedStorage").common.ZS_Framework.Modules.Controllers.CameraController)
 local u67 = workspace:GetAttribute("IsArcade") or false
-local AttributeChangedSignal = workspace:GetAttributeChangedSignal("IsArcade")
-AttributeChangedSignal:Connect(function() -- Line: 16 -- upvalues: u67 (ref)
+;(workspace:GetAttributeChangedSignal("IsArcade")):Connect(function() -- Line: 16 -- upvalues: u67 (ref)
     u67 = workspace:GetAttribute("IsArcade") or false
 end)
 local Icon = require(common.Icon)
@@ -23,23 +20,25 @@ local u87 = true
 local u88 = {}
 local u89 = nil
 HUDOverlay.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-local u97 = {
-    SetVisible = function(p1, p2) -- Line: 37 -- upvalues: u86 (ref), u85 (ref), HUDOverlay (val), ModalButton (val), CameraController (val)
-        if not u86 then
-            u85 = false
-            HUDOverlay.Enabled = false
-            ModalButton.Modal = false
-            CameraController:SetMouseUnlocked("Leaderboard", false)
-            CameraController:MouseIconEnabled("Leaderboard", false)
-            return
-        end
-        u85 = p2
-        HUDOverlay.Enabled = p2
-        ModalButton.Modal = p2
-        CameraController:SetMouseUnlocked("Leaderboard", p2)
-        CameraController:MouseIconEnabled("Leaderboard", p2)
-    end,
-}
+local u97 = {}
+
+function u97.SetVisible(p1, p2) -- Line: 37
+    -- upvalues: u86 (ref), u85 (ref), HUDOverlay (val), ModalButton (val), CameraController (val)
+    if not u86 then
+        u85 = false
+        HUDOverlay.Enabled = false
+        ModalButton.Modal = false
+        CameraController:SetMouseUnlocked("Leaderboard", false)
+        CameraController:MouseIconEnabled("Leaderboard", false)
+        return
+    end
+    u85 = p2
+    HUDOverlay.Enabled = p2
+    ModalButton.Modal = p2
+    CameraController:SetMouseUnlocked("Leaderboard", p2)
+    CameraController:MouseIconEnabled("Leaderboard", p2)
+end
+
 function u97.SetEnabled(p1, p2) -- Line: 55 -- upvalues: u86 (ref), u89 (ref), u97 (val)
     u86 = p2
     if u89 then
@@ -49,12 +48,15 @@ function u97.SetEnabled(p1, p2) -- Line: 55 -- upvalues: u86 (ref), u89 (ref), u
         u97:SetVisible(false)
     end
 end
+
 function u97.IsVisible(p1) -- Line: 66 -- upvalues: u85 (ref)
     return u85
 end
-local v1 = Icon.new():setImage(2246486837)
-v1 = v1:bindEvent("selected", function(p1) -- Line: 91 -- upvalues: u97 (val)
+
+local v1 = ((Icon.new():setImage(2246486837)):bindEvent("selected", function(p1) -- Line: 91 -- upvalues: u97 (val)
     u97:SetVisible(true)
+end)):bindEvent("deselected", function() -- Line: 94 -- upvalues: u97 (val)
+    u97:SetVisible(false)
 end)
 FrameworkEvent.Event:Connect(function(p1, p2, p3) -- Line: 99 -- upvalues: u87 (ref)
     if p1 == "SettingsUpdated" and p3 and type(p3) == "table" and p3.HUDOverlayToggleMode ~= nil then
@@ -69,6 +71,7 @@ local u123 = {
     Unknown = "rbxassetid://4458718282",
     Arcade = "rbxassetid://112766246588072",
 }
+
 local function countPlayerListItems() -- Line: 115 -- upvalues: ScrollingFrame (val)
     local v1
     local v2 = 0
@@ -84,11 +87,15 @@ local function countPlayerListItems() -- Line: 115 -- upvalues: ScrollingFrame (
     end
     return v2
 end
-local function ShiftLeaderboard() -- Line: 125 -- upvalues: u88 (val), u123 (val), countPlayerListItems (val), ScrollingFrame (val), Scoreboard (val)
-    local PaddedFrame
+
+local function ShiftLeaderboard() -- Line: 125
+    -- upvalues: u88 (val), u123 (val), countPlayerListItems (val), ScrollingFrame (val), Scoreboard (val)
+    local PaddedFrame, Score, UI
     for k, v in pairs(u88) do
         PaddedFrame = v.UI.PaddedFrame
-        v.UI.LayoutOrder = -math.floor(v.Score) - 2
+        UI = v.UI
+        Score = v.Score
+        UI.LayoutOrder = -math.floor(Score) - 2
         PaddedFrame.Header.ClassLevelLabel.Text = v.Level
         PaddedFrame.Stats.ScoreLabel.Text = string.format("%.0f", v.Score)
         PaddedFrame.Stats.KillsLabel.Text = v.Kills
@@ -99,101 +106,133 @@ local function ShiftLeaderboard() -- Line: 125 -- upvalues: u88 (val), u123 (val
     local v2 = math.min(v1, 6)
     ScrollingFrame.Size = UDim2.new(1, 0, v2 * 0.1, 0)
     ScrollingFrame.CanvasSize = UDim2.new(0, 0, v1 * 0.1, 0)
-    Scoreboard.Header.Position = UDim2.new(0, 0, (6 - v2) * 0.0491666666666667 + 0.225, 0)
+    local v3 = Scoreboard
+    local Header = v3.Header
+    Header.Position = UDim2.new(0, 0, (6 - v2) * 0.0491666666666667 + 0.225, 0)
 end
-local function CreateNewTemplate(p1, p2) -- Line: 144 -- upvalues: u88 (val), ScrollingFrame (val), u123 (val), ShiftLeaderboard (val), Players (val), PlayerRoles (val)
-    local DisplayName, v1
-    if not (workspace:FindFirstChild("LoadingStatus")) or u88[p1] then
-        return
-    end
-    local v2 = ScrollingFrame.Template:Clone()
-    if p2 then
-        v1 = p2
-    else
-        v1 = {}
-    end
-    u88[p1] = {
-        Class = "Assault",
-        UI = v2,
-        Level = v1.Level or 0,
-        Score = v1.Score or 0,
-        Kills = v1.Kills or 0,
-        Downs = v1.Downs or 0,
-    }
-    local PaddedFrame = v2:WaitForChild("PaddedFrame")
-    local v3 = workspace.LoadingStatus.Players:WaitForChild(p1.Name)
-    local Class = v3:WaitForChild("Class")
-    local Level = v3:WaitForChild("Level")
-    local function updateClassAndLevel() -- Line: 169 -- upvalues: u88 (upval), p1 (val), Class (val), Level (val), PaddedFrame (val), u123 (upval), ShiftLeaderboard (upval)
-        local v1 = u88[p1]
-        v1.Class = Class.Value
-        v1 = u88[p1]
-        v1.Level = Level.Value
+
+local function CreateNewTemplate(p1, p2) -- Line: 144
+    -- upvalues: u88 (val), ScrollingFrame (val), u123 (val), ShiftLeaderboard (val), Players (val), PlayerRoles (val)
+    if workspace:FindFirstChild("LoadingStatus") then
+        local DisplayName, v1
+        if u88[p1] then
+            return
+        end
+        local v2 = ScrollingFrame.Template:Clone()
+        if p2 then
+            v1 = p2
+        else
+            v1 = {}
+        end
+        local v3 = u88
+        local v4 = {
+            Class = "Assault",
+            UI = v2,
+            Level = v1.Level or 0,
+            Score = v1.Score or 0,
+            Kills = v1.Kills or 0,
+            Downs = v1.Downs or 0,
+        }
+        v3[p1] = v4
+        local PaddedFrame = v2:WaitForChild("PaddedFrame")
+        local Players_2 = workspace.LoadingStatus.Players
+        local Name = p1.Name
+        v4 = Players_2:WaitForChild(Name)
+        local Class = v4:WaitForChild("Class")
+        local Level = v4:WaitForChild("Level")
+
+        local function updateClassAndLevel() -- Line: 169
+            -- upvalues: u88 (upval), p1 (val), Class (val), Level (val), PaddedFrame (val), u123 (upval)
+            -- upvalues: ShiftLeaderboard (upval)
+            local v1 = u88[p1]
+            v1.Class = Class.Value
+            v1 = u88[p1]
+            v1.Level = Level.Value
+            PaddedFrame.Header.ClassIcon.Image = u123[Class.Value]
+            ShiftLeaderboard()
+        end
+
+        local v5 = u88[p1]
+        v5.Class = Class.Value
+        v5 = u88[p1]
+        v5.Level = Level.Value
         PaddedFrame.Header.ClassIcon.Image = u123[Class.Value]
         ShiftLeaderboard()
-    end
-    local v4 = u88[p1]
-    v4.Class = Class.Value
-    v4 = u88[p1]
-    v4.Level = Level.Value
-    PaddedFrame.Header.ClassIcon.Image = u123[Class.Value]
-    ShiftLeaderboard()
-    Class.Changed:Connect(updateClassAndLevel)
-    Level.Changed:Connect(updateClassAndLevel)
-    v2.Visible = true
-    v2.Name = p1.Name
-    local u77 = Players:FindFirstChild(p1.Name)
-    if not u77 then
-        DisplayName = p1.Name
-    else
-        DisplayName = u77.DisplayName
-    end
-    local DisplayNameLabel = PaddedFrame:WaitForChild("DisplayNameLabel")
-    local RoleIcon = DisplayNameLabel:FindFirstChild("RoleIcon")
-    if not RoleIcon then
-        RoleIcon = Instance.new("ImageLabel")
-        RoleIcon.Name = "RoleIcon"
-        RoleIcon.AnchorPoint = Vector2.new(0, 0.5)
-        RoleIcon.Position = UDim2.new(1, 3, 0.5, 0)
-        RoleIcon.Size = UDim2.fromOffset(14, 14)
-        RoleIcon.BackgroundTransparency = 1
-        RoleIcon.ZIndex = DisplayNameLabel.ZIndex + 1
-        RoleIcon.Parent = DisplayNameLabel
-    end
-    local function applyRole() -- Line: 197 -- upvalues: PlayerRoles (upval), u77 (val), DisplayNameLabel (val), RoleIcon (ref)
-        local Color, Image
-        local Attribute = u77
-        if Attribute then
-            Attribute = u77:GetAttribute("ZSRoleId")
-        end
-        local UI = PlayerRoles.Get(Attribute).UI
-        if not UI then
-            UI = PlayerRoles.Default
-        end
-        local Attribute_2 = u77
-        if Attribute_2 then
-            Attribute_2 = u77:GetAttribute("ZSRoleId")
-        end
-        local v1 = u77
-        if v1 then
-            v1 = u77:GetAttribute("ZSVerified") == true
-        end
-        local v2 = u77
-        if v2 then
-            v2 = u77:GetAttribute("ZSPremium") == true
-        end
-        local v3 = PlayerRoles.ResolveDisplayIcon(Attribute_2, v1, v2)
-        DisplayNameLabel.TextColor3 = UI.Name
-        local v4 = RoleIcon
-        if not v3 then
-            Image = ""
+        Class.Changed:Connect(updateClassAndLevel)
+        Level.Changed:Connect(updateClassAndLevel)
+        v2.Visible = true
+        v2.Name = p1.Name
+        v5 = Players
+        local Name_2 = p1.Name
+        local u77 = v5:FindFirstChild(Name_2)
+        if not u77 then
+            DisplayName = p1.Name
         else
-            Image = v3.Image
+            DisplayName = u77.DisplayName
         end
-        v4.Image = Image
-        v4 = RoleIcon
-        if not v3 then
+        local DisplayNameLabel = PaddedFrame:WaitForChild("DisplayNameLabel")
+        local RoleIcon = DisplayNameLabel:FindFirstChild("RoleIcon")
+        if not RoleIcon then
+            RoleIcon = Instance.new("ImageLabel")
+            RoleIcon.Name = "RoleIcon"
+            RoleIcon.AnchorPoint = Vector2.new(0, 0.5)
+            RoleIcon.Position = UDim2.new(1, 3, 0.5, 0)
+            RoleIcon.Size = UDim2.fromOffset(14, 14)
+            RoleIcon.BackgroundTransparency = 1
+            RoleIcon.ZIndex = DisplayNameLabel.ZIndex + 1
+            RoleIcon.Parent = DisplayNameLabel
+        end
+
+        local function applyRole() -- Line: 197
+            -- upvalues: PlayerRoles (upval), u77 (val), DisplayNameLabel (val), RoleIcon (ref)
+            local Color, Image
+            local Get = PlayerRoles.Get
+            local Attribute = u77
+            if Attribute then
+                Attribute = u77:GetAttribute("ZSRoleId")
+            end
+            local UI = Get(Attribute).UI
+            if not UI then
+                UI = PlayerRoles.Default
+            end
+            local ResolveDisplayIcon = PlayerRoles.ResolveDisplayIcon
+            local Attribute_2 = u77
+            if Attribute_2 then
+                Attribute_2 = u77:GetAttribute("ZSRoleId")
+            end
+            local v1 = u77
+            if v1 then
+                v1 = u77:GetAttribute("ZSVerified") == true
+            end
+            local v2 = u77
+            if v2 then
+                v2 = u77:GetAttribute("ZSPremium") == true
+            end
+            local v3 = ResolveDisplayIcon(Attribute_2, v1, v2)
+            DisplayNameLabel.TextColor3 = UI.Name
+            local v4 = RoleIcon
             if not v3 then
+                Image = ""
+            else
+                Image = v3.Image
+                if not Image then
+                    Image = ""
+                end
+            end
+            v4.Image = Image
+            v4 = RoleIcon
+            if not v3 then
+                if not v3 then
+                    Color = UI.Name
+                else
+                    Color = v3.Color
+                    if not Color then
+                        Color = UI.Name
+                    end
+                end
+            elseif v3.Tint == false then
+                Color = Color3.new(1, 1, 1)
+            elseif not v3 then
                 Color = UI.Name
             else
                 Color = v3.Color
@@ -201,88 +240,88 @@ local function CreateNewTemplate(p1, p2) -- Line: 144 -- upvalues: u88 (val), Sc
                     Color = UI.Name
                 end
             end
-        elseif v3.Tint == false then
-            Color = Color3.new(1, 1, 1)
+            v4.ImageColor3 = Color
+            v4 = RoleIcon
+            v1 = v3 ~= nil
+            v4.Visible = v1
         end
-        v4.ImageColor3 = Color
-        v1 = v3 ~= nil
-        RoleIcon.Visible = v1
+
+        PaddedFrame.NameLabel.Text = "@" .. p1.Name
+        DisplayNameLabel.Text = DisplayName
+        PaddedFrame.Header.ClassIcon.Image = u123[Class.Value]
+        if not u77 then
+            PaddedFrame.Header.HeadshotLabel.Image = "rbxassetid://5650877971"
+        else
+            PaddedFrame.Header.HeadshotLabel.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. u77.UserId .. "&width=420&height=420&format=png"
+        end
+        applyRole()
+        if u77 then
+            (u77:GetAttributeChangedSignal("ZSRoleId")):Connect(applyRole)
+            ;(u77:GetAttributeChangedSignal("ZSVerified")):Connect(applyRole)
+            ;(u77:GetAttributeChangedSignal("ZSPremium")):Connect(applyRole)
+        end
+        v2.Parent = ScrollingFrame
+        ShiftLeaderboard()
     end
-    PaddedFrame.NameLabel.Text = "@" .. p1.Name
-    DisplayNameLabel.Text = DisplayName
-    PaddedFrame.Header.ClassIcon.Image = u123[Class.Value]
-    if not u77 then
-        PaddedFrame.Header.HeadshotLabel.Image = "rbxassetid://5650877971"
-    else
-        PaddedFrame.Header.HeadshotLabel.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. u77.UserId .. "&width=420&height=420&format=png"
-    end
-    applyRole()
-    if u77 then
-        local AttributeChangedSignal = u77:GetAttributeChangedSignal("ZSRoleId")
-        AttributeChangedSignal:Connect(applyRole)
-        local AttributeChangedSignal_2 = u77:GetAttributeChangedSignal("ZSVerified")
-        AttributeChangedSignal_2:Connect(applyRole)
-        local AttributeChangedSignal_3 = u77:GetAttributeChangedSignal("ZSPremium")
-        AttributeChangedSignal_3:Connect(applyRole)
-    end
-    v2.Parent = ScrollingFrame
-    ShiftLeaderboard()
 end
+
 local function UpdateStats(p1, p2, p3) -- Line: 235 -- upvalues: u88 (val), Net (val), ShiftLeaderboard (val)
-    if not (u88[p1]) then
+    if not u88[p1] then
         Net:FireServer("GetLDB")
         return
     end
     u88[p1][p2] = p3
     ShiftLeaderboard()
 end
+
 Net.OnClientEvent:Connect(function(p1, ...) -- Line: 244 -- upvalues: u88 (val), Net (val), ShiftLeaderboard (val), CreateNewTemplate (val)
-    local v1
-    local v2 = {...}
+    local v1, v2, v3
+    local v4 = {...}
     if p1 == "UpdLDB" then
-        v1 = v2[1]
-        if not (u88[v1]) then
+        v1 = v4[1]
+        v2 = v4[2]
+        v3 = v4[3]
+        if not u88[v1] then
             Net:FireServer("GetLDB")
             return
         end
-        u88[v1][v2[2]] = v2[3]
+        u88[v1][v2] = v3
         ShiftLeaderboard()
         return
     end
     if p1 == "NewLDB" then
-        CreateNewTemplate(v2[1])
+        CreateNewTemplate(v4[1])
         return
     end
     if p1 == "GetLDB" then
-        local v3
-        v1 = v2[1]
-        local v4 = nil
-        local v5 = nil
-        for i, j in v1, v4, v5 do
-            v3 = game.Players:FindFirstChild(i)
-            if v3 then
-                CreateNewTemplate(v3, j)
+        local v5
+        v1 = v4[1]
+        v2 = nil
+        v3 = nil
+        for i, j in v1, v2, v3 do
+            v5 = game.Players:FindFirstChild(i)
+            if v5 then
+                CreateNewTemplate(v5, j)
             end
         end
     end
 end)
 Net:FireServer("GetLDB")
 game.Players.PlayerRemoving:Connect(function(p1) -- Line: 262 -- upvalues: u88 (val), u67 (ref)
-    if not (u88[p1]) then
-        return
-    end
-    local UI = u88[p1].UI
-    UI.PaddedFrame.Left.Visible = true
-    if not u67 then
+    if u88[p1] then
+        local UI = u88[p1].UI
+        UI.PaddedFrame.Left.Visible = true
+        if u67 then
+            u88[p1].UI:Destroy()
+            u88[p1] = nil
+            return
+        end
         task.delay(180, function() -- Line: 271 -- upvalues: UI (val)
             if UI.PaddedFrame.Left.Visible then
                 UI.Visible = false
             end
         end)
-        return
     end
-    u88[p1].UI:Destroy()
-    u88[p1] = nil
 end)
 game.Players.PlayerAdded:Connect(function(p1) -- Line: 280 -- upvalues: u88 (val), ShiftLeaderboard (val)
     if u88[p1] then

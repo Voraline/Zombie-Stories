@@ -98,27 +98,31 @@ local u11 = {
             },
         },
     },
+    LMaD = {
+        Kind = "GamePass",
+        GrantKey = "LMaD",
+        Rewards = {
+            ZBucks = 5000,
+            Items = {
+                {ItemId = "1307", Tradable = true},
+                {ItemId = "2140", Tradable = true},
+                {ItemId = "3102", Tradable = true},
+            },
+        },
+    },
 }
-local v1 = {Kind = "GamePass", GrantKey = "LMaD"}
-local v2 = {ZBucks = 5000}
-local v3 = {
-    {ItemId = "1307", Tradable = true},
-    {ItemId = "2140", Tradable = true},
-    {ItemId = "3102", Tradable = true},
-}
-v2.Items = v3
-v1.Rewards = v2
-u11.LMaD = v1
+
 function deepCopy(p1) -- Line: 116 -- upvalues: deepCopy (val)
     if typeof(p1) ~= "table" then
         return p1
     end
     local v1 = {}
     for k, v in pairs(p1) do
-        v1[k] = deepCopy(v)
+        v1[k] = (deepCopy(v))
     end
     return v1
 end
+
 function u10.GetByKey(p1) -- Line: 128 -- upvalues: u11 (val), deepCopy (val), MonetizationCatalog (val)
     local v1 = u11[p1]
     if not v1 then
@@ -130,23 +134,16 @@ function u10.GetByKey(p1) -- Line: 128 -- upvalues: u11 (val), deepCopy (val), M
     v2.GiftProductId = MonetizationCatalog.GetGiftProduct(p1)
     return v2
 end
+
 function u10.Get(p1) -- Line: 141 -- upvalues: u11 (val), MonetizationCatalog (val), u10 (val), LimitedBundles (val)
-    local v1
-    if not p1 then
-        v1 = LimitedBundles.GetByProductId(p1)
-        if v1 then
-            v1.Kind = "DeveloperProduct"
-            v1.GiftProductId = p1
-            return v1
-        end
-        return nil
-    end
-    for k in pairs(u11) do
-        if MonetizationCatalog.GetPass(k) == p1 then
-            return u10.GetByKey(k)
+    if p1 then
+        for k in pairs(u11) do
+            if MonetizationCatalog.GetPass(k) == p1 then
+                return u10.GetByKey(k)
+            end
         end
     end
-    v1 = LimitedBundles.GetByProductId(p1)
+    local v1 = LimitedBundles.GetByProductId(p1)
     if not v1 then
         return nil
     end
@@ -154,6 +151,7 @@ function u10.Get(p1) -- Line: 141 -- upvalues: u11 (val), MonetizationCatalog (v
     v1.GiftProductId = p1
     return v1
 end
+
 function u10.GetAll() -- Line: 160 -- upvalues: u11 (val), u10 (val)
     local v1
     local v2 = {}
@@ -165,4 +163,5 @@ function u10.GetAll() -- Line: 160 -- upvalues: u11 (val), u10 (val)
     end
     return v2
 end
+
 return u10

@@ -31,6 +31,7 @@ return function(p1) -- Line: 41 -- upvalues: u11 (val)
     v2.BackgroundTransparency = p1.BackgroundTransparency or 0
     v2.Image = p1.Thumb or ""
     v2.ImageTransparency = p1.ImageTransparency or 0
+    local Children = scope.Children
     local v3 = {}
     local v4 = scope:New("UICorner")
     local v5 = {}
@@ -40,8 +41,7 @@ return function(p1) -- Line: 41 -- upvalues: u11 (val)
     end
     v5.CornerRadius = CornerRadius
     v4 = v4(v5)
-    v5 = scope:New("UIAspectRatioConstraint")
-    v5 = v5({AspectRatio = 1})
+    v5 = scope:New("UIAspectRatioConstraint")({AspectRatio = 1})
     local v6 = scope:New("UIStroke")
     local v7 = {ApplyStrokeMode = Enum.ApplyStrokeMode.Border}
     local BorderColor3 = p1.BorderColor3
@@ -73,15 +73,12 @@ return function(p1) -- Line: 41 -- upvalues: u11 (val)
     v8.TextColor3 = u11.Menu.Positive
     v8.TextScaled = true
     v8.ZIndex = ZIndex + 1
-    local Children = scope.Children
-    local v9 = {}
-    local v10 = scope:New("UIStroke")
-    v9[1] = v10({Thickness = 1, Color = u11.Menu.HeaderStroke})
-    v8[Children] = v9
+    local Children_2 = scope.Children
+    v8[Children_2] = {scope:New("UIStroke")({Thickness = 1, Color = u11.Menu.HeaderStroke})}
     v3[1] = v4
     v3[2] = v5
     v3[3] = v6
     v3[4] = v7(v8)
-    v2[scope.Children] = v3
+    v2[Children] = v3
     return v1(v2)
 end

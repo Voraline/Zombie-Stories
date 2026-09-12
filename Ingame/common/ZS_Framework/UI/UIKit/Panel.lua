@@ -2,14 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 require(ReplicatedStorage.Packages.Fusion)
 local u11 = require("../Theme")
 return function(p1) -- Line: 30 -- upvalues: u11 (val)
-    local Visible, v1
+    local Visible
     local scope = p1.scope
-    local v2 = nil
+    local v1 = nil
     if p1.GradientColor then
-        v1 = scope:New("UIGradient")
-        v2 = v1({Color = p1.GradientColor, Rotation = p1.GradientRotation or 90})
+        v1 = scope:New("UIGradient")({Color = p1.GradientColor, Rotation = p1.GradientRotation or 90})
     end
-    v1 = scope:New("Frame")
+    local v2 = scope:New("Frame")
     local v3 = {Name = p1.Name or "Panel"}
     local Size = p1.Size
     if not Size then
@@ -49,6 +48,7 @@ return function(p1) -- Line: 30 -- upvalues: u11 (val)
     end
     v3.Visible = Visible
     v3.Parent = p1.Parent
+    local Children = scope.Children
     local v4 = {}
     local v5 = scope:New("UICorner")
     local v6 = {}
@@ -74,8 +74,8 @@ return function(p1) -- Line: 30 -- upvalues: u11 (val)
     v6 = v6(v7)
     v4[1] = v5
     v4[2] = v6
-    v4[3] = v2
+    v4[3] = v1
     v4[4] = p1.Children
-    v3[scope.Children] = v4
-    return v1(v3)
+    v3[Children] = v4
+    return v2(v3)
 end

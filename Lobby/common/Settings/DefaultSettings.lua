@@ -1,4 +1,3 @@
-local v1 = require("./MainMenuThemes")
 return {
     Graphics = {
         QualityTier = "Auto",
@@ -19,7 +18,7 @@ return {
         DisplayDamageIndicators = false,
         ProceduralAnimations = true,
     },
-    Sound = {RagdollSounds = true, MusicVolume = 1, MainMenuTheme = v1.Ambience},
+    Sound = {RagdollSounds = true, MusicVolume = 1, MainMenuTheme = (require("./MainMenuThemes")).Ambience},
     Meta = {SettingsMigration = 0},
     MainMenu = {TradeEnabled = true, ShowLevel = true, ShowStats = true},
     Camera = {MaxCameraDistance = 6, ThirdPersonSide = 1, PinchToZoom = true, ScrollWheelZoom = true},

@@ -1,4 +1,5 @@
-require(script.Parent.Parent.PubTypes)
+local Parent_2 = script.Parent.Parent
+require(Parent_2.PubTypes)
 return {
     type = "SpecialKey",
     kind = "Cleanup",

@@ -204,12 +204,16 @@ v1[Enum.KeyCode.DPadDown] = "rbxassetid://128962953096251"
 v1[Enum.KeyCode.DPadLeft] = "rbxassetid://135949602484357"
 v1[Enum.KeyCode.DPadRight] = "rbxassetid://133739786136359"
 u5.ps_solid = v1
+
 function u5.GetGamepadType() -- Line: 228 -- upvalues: UserInputService (val)
-    if UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" then
+    local v1 = UserInputService
+    local ButtonA = Enum.KeyCode.ButtonA
+    if v1:GetStringForKeyCode(ButtonA) == "ButtonCross" then
         return "ps"
     end
     return "xbox"
 end
+
 function u5.Resolve(p1, p2) -- Line: 232 -- upvalues: u5 (val)
     local v1
     local v2 = u5.GetGamepadType()
@@ -223,4 +227,5 @@ function u5.Resolve(p1, p2) -- Line: 232 -- upvalues: u5 (val)
     end
     return ""
 end
+
 return u5

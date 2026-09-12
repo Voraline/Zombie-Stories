@@ -71,30 +71,40 @@ return function(p1) -- Line: 1
         v1[10] = v7
         _, u66 = p1:modifyTheme(v1)
         task.defer(function() -- Line: 72 -- upvalues: p1 (val), u66 (val)
-            p1.joinJanitor:add(function() -- Line: 73 -- upvalues: p1 (upval), u66 (upval)
-                p1:removeModification(u66)
+            local v1 = p1
+            v1.joinJanitor:add(function() -- Line: 73 -- upvalues: p1 (upval), u66 (upval)
+                local v1 = p1
+                local v2 = u66
+                v1:removeModification(v2)
             end)
         end)
     end)
-    p1.dropdownSet:Connect(function(a1) -- Line: 78 -- upvalues: p1 (val), iconModule (val)
+    p1.dropdownSet:Connect(function(p1_2) -- Line: 78 -- upvalues: p1 (val), iconModule (val)
         for k, v in pairs(p1.dropdownIcons) do
             iconModule.getIconByUID(v):destroy()
         end
-        if type(a1) == "table" then
-            for k2, i in pairs(a1) do
-                i:joinDropdown(p1)
+        local v1 = #p1_2
+        if type(p1_2) == "table" then
+            local v2
+            for k2, i in pairs(p1_2) do
+                v2 = p1
+                i:joinDropdown(v2)
             end
         end
     end)
     local u105 = require("../Utility")
-    dropdownJanitor:add(p1.toggled:Connect(function() -- Line: 95 -- upvalues: u105 (val), Frame (val), p1 (val)
+    local v1 = p1.toggled:Connect(function() -- Line: 95 -- upvalues: u105 (val), Frame (val), p1 (val)
         u105.setVisible(Frame, p1.isSelected, "InternalDropdown")
-    end))
+    end)
+    dropdownJanitor:add(v1)
     u105.setVisible(Frame, p1.isSelected, "InternalDropdown")
     local u120 = 0
     local u121 = false
-    function updateMaxIcons() -- Line: 107 -- upvalues: u120 (ref), u121 (ref), updateMaxIcons (val), Frame (val), ScrollingFrame (val), iconModule (val), p1 (val), UIPadding (val)
-        local Attribute_2, v1, v2, v3, v4
+
+    function updateMaxIcons() -- Line: 107
+        -- upvalues: u120 (ref), u121 (ref), updateMaxIcons (val), Frame (val), ScrollingFrame (val), iconModule (val)
+        -- upvalues: p1 (val), UIPadding (val)
+        local Attribute_2, v1, v2, v3, v4, v5
         u120 = u120 + 1
         if u121 then
             return
@@ -111,52 +121,56 @@ return function(p1) -- Line: 1
         if not Attribute then
             return
         end
-        local v5 = {}
+        local v6 = {}
         for k, v in pairs(ScrollingFrame:GetChildren()) do
             if v:IsA("GuiObject") then
-                table.insert(v5, {v, v.AbsolutePosition.Y})
+                v1 = {v, v.AbsolutePosition.Y}
+                table.insert(v6, v1)
             end
         end
-        table.sort(v5, function(p1, p2) -- Line: 133
+        table.sort(v6, function(p1, p2) -- Line: 133
             local v1 = p1[2] < p2[2]
             return v1
         end)
-        local v6 = 0
-        local v7 = false
-        local v8 = Attribute
-        local v9 = 1
-        for i = 1, v8, v9 do
-            v3 = v5[i]
-            if not v3 then
+        local v7 = 0
+        local v8 = false
+        local v9 = Attribute
+        for i = 1, v9 do
+            v4 = v6[i]
+            if not v4 then
                 break
             end
-            v4 = v3[1]
-            v6 = v6 + v4.AbsoluteSize.Y
-            Attribute_2 = v4:GetAttribute("WidgetUID")
-            v1 = Attribute_2
-            if v1 then
-                v1 = iconModule.getIconByUID(Attribute_2)
+            v5 = v4[1]
+            v7 = v7 + v5.AbsoluteSize.Y
+            Attribute_2 = v5:GetAttribute("WidgetUID")
+            v2 = Attribute_2
+            if v2 then
+                v2 = iconModule.getIconByUID(Attribute_2)
             end
-            if v1 then
-                v2 = nil
-                if not v7 then
-                    v7 = true
-                    v2 = p1:getInstance("ClickRegion")
+            if v2 then
+                v3 = nil
+                if not v8 then
+                    v8 = true
+                    v3 = p1:getInstance("ClickRegion")
                 end
-                v1:getInstance("ClickRegion").NextSelectionUp = v2
+                v2:getInstance("ClickRegion").NextSelectionUp = v3
             end
         end
-        v6 = v6 + UIPadding.PaddingTop.Offset
-        v6 = v6 + UIPadding.PaddingBottom.Offset
-        ScrollingFrame.Size = UDim2.fromOffset(0, v6)
+        v7 = v7 + UIPadding.PaddingTop.Offset
+        v7 = v7 + UIPadding.PaddingBottom.Offset
+        ScrollingFrame.Size = UDim2.fromOffset(0, v7)
     end
-    local PropertyChangedSignal = ScrollingFrame:GetPropertyChangedSignal("AbsoluteCanvasSize")
-    dropdownJanitor:add(PropertyChangedSignal:Connect(updateMaxIcons))
-    dropdownJanitor:add(ScrollingFrame.ChildAdded:Connect(updateMaxIcons))
-    dropdownJanitor:add(ScrollingFrame.ChildRemoved:Connect(updateMaxIcons))
-    local AttributeChangedSignal = Frame:GetAttributeChangedSignal("MaxIcons")
-    dropdownJanitor:add(AttributeChangedSignal:Connect(updateMaxIcons))
-    dropdownJanitor:add(p1.childThemeModified:Connect(updateMaxIcons))
+
+    local v2 = (ScrollingFrame:GetPropertyChangedSignal("AbsoluteCanvasSize")):Connect(updateMaxIcons)
+    dropdownJanitor:add(v2)
+    v2 = ScrollingFrame.ChildAdded:Connect(updateMaxIcons)
+    dropdownJanitor:add(v2)
+    v2 = ScrollingFrame.ChildRemoved:Connect(updateMaxIcons)
+    dropdownJanitor:add(v2)
+    v2 = (Frame:GetAttributeChangedSignal("MaxIcons")):Connect(updateMaxIcons)
+    dropdownJanitor:add(v2)
+    v2 = p1.childThemeModified:Connect(updateMaxIcons)
+    dropdownJanitor:add(v2)
     updateMaxIcons()
     return Frame
 end

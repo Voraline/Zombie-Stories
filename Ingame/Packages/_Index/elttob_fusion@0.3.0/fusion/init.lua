@@ -2,7 +2,7 @@ require(script.Types)
 local External = require(script.External)
 local RobloxExternal = require(script.RobloxExternal)
 External.setExternalProvider(RobloxExternal)
-local v1 = {
+return (table.freeze({
     version = {major = 0, minor = 3, isRelease = true},
     Contextual = require(script.Utility.Contextual),
     Safe = require(script.Utility.Safe),
@@ -30,5 +30,4 @@ local v1 = {
     Out = require(script.Instances.Out),
     Tween = require(script.Animation.Tween),
     Spring = require(script.Animation.Spring),
-}
-return (table.freeze(v1))
+}))

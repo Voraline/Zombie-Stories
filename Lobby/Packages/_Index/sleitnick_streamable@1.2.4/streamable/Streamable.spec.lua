@@ -2,6 +2,7 @@ return function() -- Line: 1
     local Streamable = require(script.Parent.Streamable)
     local u5 = nil
     local u6 = nil
+
     local function CreateInstance(p1) -- Line: 7 -- upvalues: u5 (ref)
         local Folder = Instance.new("Folder")
         Folder.Name = p1
@@ -9,6 +10,7 @@ return function() -- Line: 1
         Folder.Parent = u5
         return Folder
     end
+
     local function CreatePrimary() -- Line: 15 -- upvalues: u6 (ref)
         local Part = Instance.new("Part")
         Part.Anchored = true
@@ -16,6 +18,7 @@ return function() -- Line: 1
         u6.PrimaryPart = Part
         return Part
     end
+
     beforeAll(function() -- Line: 23 -- upvalues: u5 (ref), u6 (ref)
         u5 = Instance.new("Folder")
         u5.Name = "KnitTestFolder"
@@ -61,12 +64,11 @@ return function() -- Line: 1
             expect(u13).to.equal(2)
         end)
         it("should detect instance that is not immediately available", function() -- Line: 67 -- upvalues: Streamable (upval), u5 (upval)
-            local u5
             local v1 = Streamable.new(u5, "TestImmediate")
-            u5 = 0
+            local u5_2 = 0
             local u6 = 0
-            v1:Observe(function(p1, p2) -- Line: 71 -- upvalues: u5 (ref), u6 (ref)
-                u5 = u5 + 1
+            v1:Observe(function(p1, p2) -- Line: 71 -- upvalues: u5_2 (ref), u6 (ref)
+                u5_2 = u5_2 + 1
                 p2:Add(function() -- Line: 73 -- upvalues: u6 (upval)
                     u6 = u6 + 1
                 end)
@@ -84,7 +86,7 @@ return function() -- Line: 1
             task.wait()
             v1:Destroy()
             task.wait()
-            expect(u5).to.equal(2)
+            expect(u5_2).to.equal(2)
             expect(u6).to.equal(2)
         end)
         it("should detect primary part that is immediately available", function() -- Line: 90 -- upvalues: u6 (upval), Streamable (upval)

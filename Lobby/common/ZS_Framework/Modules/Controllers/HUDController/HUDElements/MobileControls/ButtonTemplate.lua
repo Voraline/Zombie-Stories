@@ -1,5 +1,6 @@
 local Fusion = require(game.ReplicatedStorage.Packages.Fusion)
 local v1 = Fusion.scoped(Fusion)
+local Children = Fusion.Children
 local v2 = v1:New("ImageButton")
 local v3 = {
     Name = "ButtonTemplate",
@@ -13,8 +14,7 @@ local v3 = {
     Size = UDim2.fromOffset(70, 70),
 }
 local v4 = {}
-local v5 = v1:New("TextLabel")
-v5 = v5({
+local v5 = v1:New("TextLabel")({
     Name = "TextLabel",
     BackgroundTransparency = 1,
     Text = "AIM",
@@ -29,8 +29,7 @@ v5 = v5({
     Size = UDim2.fromScale(0.7, 0.386),
     TextColor3 = Color3.fromRGB(182, 182, 182),
 })
-local v6 = v1:New("ImageLabel")
-v6 = v6({
+local v6 = v1:New("ImageLabel")({
     Name = "ImageLabel",
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
@@ -45,5 +44,5 @@ local v7 = v1:New("UIScale")
 v4[1] = v5
 v4[2] = v6
 v4[3] = v7({Name = "UIScale"})
-v3[Fusion.Children] = v4
+v3[Children] = v4
 return v2(v3)

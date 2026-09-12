@@ -1,9 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local SharedResources = ReplicatedStorage.common:WaitForChild("SharedResources")
-local Assets = SharedResources:WaitForChild("Assets")
+local Assets = (ReplicatedStorage.common:WaitForChild("SharedResources")):WaitForChild("Assets")
 local Controllers = script.Parent.Parent.Parent.Parent.Controllers
 local u25 = nil
+
 local function GetTransparencyUtil() -- Line: 23 -- upvalues: u25 (ref), Controllers (val)
     if u25 then
         return u25
@@ -20,7 +20,9 @@ local function GetTransparencyUtil() -- Line: 23 -- upvalues: u25 (ref), Control
     end
     return u25
 end
+
 local v1 = {}
+
 local function GetPlayerAppearance() -- Line: 42 -- upvalues: Players (val)
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer
@@ -53,21 +55,22 @@ local function GetPlayerAppearance() -- Line: 42 -- upvalues: Players (val)
     end
     return Color, ShirtTemplate
 end
+
 local function ApplyPlayerAppearance(p1) -- Line: 73 -- upvalues: GetPlayerAppearance (val)
-    local v1, v2
-    v1, v2 = GetPlayerAppearance()
+    local v1, v2 = GetPlayerAppearance()
     p1.Color = v1
     local Clothing = p1:FindFirstChild("Clothing")
-    if not Clothing or not (Clothing:IsA("Decal")) then
-        return
+    if Clothing and Clothing:IsA("Decal") then
+        if v2 then
+            Clothing.Texture = v2
+            return
+        end
+        Clothing.Transparency = 1
     end
-    if v2 then
-        Clothing.Texture = v2
-        return
-    end
-    Clothing.Transparency = 1
 end
+
 local u30 = {RightHidden = false, LeftHidden = false}
+
 local function HideRealArms(p1, p2) -- Line: 101 -- upvalues: Players (val), u25 (ref), Controllers (val), u30 (val)
     local v1, v2
     local LocalPlayer = Players.LocalPlayer
@@ -116,6 +119,7 @@ local function HideRealArms(p1, p2) -- Line: 101 -- upvalues: Players (val), u25
         end
     end
 end
+
 local function ShowRealArms(p1, p2) -- Line: 138 -- upvalues: u25 (ref), Controllers (val), u30 (val)
     local v1
     if not u25 then
@@ -154,7 +158,9 @@ local function ShowRealArms(p1, p2) -- Line: 138 -- upvalues: u25 (ref), Control
         end
     end
 end
+
 local u33 = {}
+
 local function GetArmTemplate(p1) -- Line: 174 -- upvalues: u33 (val), Assets (val)
     if u33[p1] then
         return u33[p1]
@@ -168,19 +174,26 @@ local function GetArmTemplate(p1) -- Line: 174 -- upvalues: u33 (val), Assets (v
     warn("[ArmModelUtil] Could not find arm template: " .. v1)
     return nil
 end
+
 v1.ViewmodelArms = {}
-function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204 -- upvalues: HideRealArms (val), u33 (val), Assets (val), GetPlayerAppearance (val)
-    local Name, Right, v1, v2
+
+function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204
+    -- upvalues: HideRealArms (val), u33 (val), Assets (val), GetPlayerAppearance (val)
+    local Name, v1, v2
     local v3 = print
     local format = string.format
+    local v4 = "[ArmModelUtil-DEBUG] AttachArms called: viewmodel=%s, attachRight=%s, attachLeft=%s, mirrorLeft=%s"
     if not p2 then
         Name = "nil"
     else
         Name = p2.Name
+        if not Name then
+            Name = "nil"
+        end
     end
-    local v4 = tostring(p3)
-    local v5 = tostring(p4)
-    v3(format("[ArmModelUtil-DEBUG] AttachArms called: viewmodel=%s, attachRight=%s, attachLeft=%s, mirrorLeft=%s", Name, v4, v5, (tostring(p5))))
+    local v5 = tostring(p3)
+    local v6 = tostring(p4)
+    v3(format(v4, Name, v5, v6, (tostring(p5))))
     if not p2 then
         warn("[ArmModelUtil] Cannot attach arms - viewmodel is nil")
         return {}
@@ -191,6 +204,7 @@ function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204 -- upvalues: HideRealArm
     if p3 then
         v1 = p2:FindFirstChild("Right Arm")
         if v1 then
+            local Right
             if not u33.Right then
                 local RightArm = Assets:FindFirstChild("RightArm")
                 if not RightArm then
@@ -208,14 +222,14 @@ function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204 -- upvalues: HideRealArm
                 v2.Name = "ArmModel_Right"
                 v2.CanCollide = false
                 v2.Anchored = false
-                v4, v5 = GetPlayerAppearance()
-                v2.Color = v4
+                v5, v6 = GetPlayerAppearance()
+                v2.Color = v5
                 local Clothing = v2:FindFirstChild("Clothing")
                 if Clothing and Clothing:IsA("Decal") then
-                    if not v5 then
+                    if not v6 then
                         Clothing.Transparency = 1
                     else
-                        Clothing.Texture = v5
+                        Clothing.Texture = v6
                     end
                 end
                 local Motor6D = Instance.new("Motor6D")
@@ -276,14 +290,14 @@ function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204 -- upvalues: HideRealArm
                     FileMesh.Scale = Vector3.new(-1, 1, 1)
                 end
             end
-            v4, v5 = GetPlayerAppearance()
-            v2.Color = v4
+            v5, v6 = GetPlayerAppearance()
+            v2.Color = v5
             local Clothing_2 = v2:FindFirstChild("Clothing")
             if Clothing_2 and Clothing_2:IsA("Decal") then
-                if not v5 then
+                if not v6 then
                     Clothing_2.Transparency = 1
                 else
-                    Clothing_2.Texture = v5
+                    Clothing_2.Texture = v6
                 end
             end
             local Motor6D_2 = Instance.new("Motor6D")
@@ -303,19 +317,22 @@ function v1.AttachArms(p1, p2, p3, p4, p5) -- Line: 204 -- upvalues: HideRealArm
         end
     end
     p1.ViewmodelArms[p2] = v3
+    v1 = print
+    local format_2 = string.format
     if not v3.Right then
-        v4 = "none"
-    else
-        v4 = "attached"
-    end
-    if not v3.Left then
         v5 = "none"
     else
         v5 = "attached"
     end
-    print(string.format("[ArmModelUtil-DEBUG] AttachArms complete: Right=%s, Left=%s", v4, v5))
+    if not v3.Left then
+        v6 = "none"
+    else
+        v6 = "attached"
+    end
+    v1(format_2("[ArmModelUtil-DEBUG] AttachArms complete: Right=%s, Left=%s", v5, v6))
     return v3
 end
+
 function v1:DetachArms(p2) -- Line: 333 -- upvalues: ShowRealArms (val)
     local v1 = self.ViewmodelArms[p2]
     if not v1 then
@@ -332,14 +349,23 @@ function v1:DetachArms(p2) -- Line: 333 -- upvalues: ShowRealArms (val)
     self.ViewmodelArms[p2] = nil
     ShowRealArms(v2, v3)
 end
+
 function v1.GetArms(p1, p2) -- Line: 363
     return p1.ViewmodelArms[p2]
 end
+
 function v1.HasArms(p1, p2) -- Line: 373
     local v1 = p1.ViewmodelArms[p2]
-    local v2 = if v1 ~= nil then if v1.Right == nil then v1.Left ~= nil else true else false
+    local v2 = false
+    if v1 ~= nil then
+        v2 = true
+        if v1.Right == nil then
+            v2 = v1.Left ~= nil
+        end
+    end
     return v2
 end
+
 function v1.SetArmVisibility(p1, p2, p3, p4) -- Line: 385
     local v1
     local v2 = p1.ViewmodelArms[p2]
@@ -347,20 +373,23 @@ function v1.SetArmVisibility(p1, p2, p3, p4) -- Line: 385
         return
     end
     if v2.Right then
+        local Right = v2.Right
         if not p3 then
             v1 = 1
         else
             v1 = 0
         end
-        v2.Right.Transparency = v1
+        Right.Transparency = v1
     end
     if v2.Left then
+        local Left = v2.Left
         if not p4 then
             v1 = 1
         else
             v1 = 0
         end
-        v2.Left.Transparency = v1
+        Left.Transparency = v1
     end
 end
+
 return v1

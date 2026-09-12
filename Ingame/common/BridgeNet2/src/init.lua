@@ -59,9 +59,11 @@ else
     makeBridge_3 = u7.makeBridge
 end
 v2.ClientBridge = makeBridge_3
+
 function v2.HandleInvalidPlayer(p1) -- Line: 41 -- upvalues: u19 (val), u22 (val), u13 (val)
     u19.fatalAssert(u22, "Cannot call from client")
     u13.invalidPlayerhandler(p1)
 end
+
 table.freeze(v2)
 return v2

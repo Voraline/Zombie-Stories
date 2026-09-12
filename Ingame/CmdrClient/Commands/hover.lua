@@ -10,7 +10,9 @@ return {
         if not Target then
             return ""
         end
-        local PlayerFromCharacter = Players:GetPlayerFromCharacter(Target:FindFirstAncestorOfClass("Model"))
+        local v1 = Players
+        local v2 = Target:FindFirstAncestorOfClass("Model")
+        local PlayerFromCharacter = v1:GetPlayerFromCharacter(v2)
         if not PlayerFromCharacter then
             Name = ""
         else

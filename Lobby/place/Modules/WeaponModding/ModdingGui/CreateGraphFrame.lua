@@ -14,9 +14,10 @@ return function(p1) -- Line: 4 -- upvalues: New (val), Children (val), OnEvent (
         Position = UDim2.fromScale(0.5, 0.5),
         Visible = p1.isOpen,
     }
-    local v2 = {}
+    local v2 = Children
+    local v3 = {}
     local TextButton = New("TextButton")
-    local v3 = {
+    local v4 = {
         Name = "Exit",
         Text = "",
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -31,10 +32,11 @@ return function(p1) -- Line: 4 -- upvalues: New (val), Children (val), OnEvent (
         ZIndex = 5,
     }
     local MouseButton1Click = OnEvent("MouseButton1Click")
-    v3[MouseButton1Click] = p1.onClose
-    local v4 = {}
+    v4[MouseButton1Click] = p1.onClose
+    local v5 = Children
+    local v6 = {}
     local Frame_2 = New("Frame")
-    local v5 = {
+    local v7 = {
         Name = "Frame",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(63, 22, 22),
@@ -44,9 +46,9 @@ return function(p1) -- Line: 4 -- upvalues: New (val), Children (val), OnEvent (
         Size = UDim2.new(1, 0, 1, -5),
         ZIndex = 3,
     }
-    local v6 = {}
-    local Frame_3 = New("Frame")
-    local v7 = Frame_3({
+    local v8 = Children
+    local v9 = {}
+    local v10 = New("Frame")({
         Name = "Point",
         BackgroundTransparency = 1,
         ZIndex = 4,
@@ -55,8 +57,7 @@ return function(p1) -- Line: 4 -- upvalues: New (val), Children (val), OnEvent (
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Position = UDim2.fromScale(1, 0.5),
     })
-    local TextLabel = New("TextLabel")
-    local v8 = TextLabel({
+    local v11 = New("TextLabel")({
         Name = "BottomLabel",
         Text = "CLOSE",
         TextScaled = true,
@@ -74,24 +75,25 @@ return function(p1) -- Line: 4 -- upvalues: New (val), Children (val), OnEvent (
         Size = UDim2.fromScale(0.88, 0.9),
     })
     local UIGradient = New("UIGradient")
-    local v9 = {Name = "UIGradient", Rotation = 90}
-    local v10 = {}
-    local v11 = ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255))
-    local v12 = ColorSequenceKeypoint.new(0.536, Color3.fromRGB(255, 255, 255))
-    v10[1] = v11
-    v10[2] = v12
-    v10[3] = ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    v9.Color = ColorSequence.new(v10)
-    local v13 = UIGradient(v9)
+    local v12 = {Name = "UIGradient", Rotation = 90}
+    local new = ColorSequence.new
+    local v13 = {}
+    local v14 = ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255))
+    local v15 = ColorSequenceKeypoint.new(0.536, Color3.fromRGB(255, 255, 255))
+    v13[1] = v14
+    v13[2] = v15
+    v13[3] = ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    v12.Color = new(v13)
+    local v16 = UIGradient(v12)
     local UICorner = New("UICorner")
-    v6[1] = v7
-    v6[2] = v8
-    v6[3] = v13
-    v6[4] = UICorner({Name = "UICorner"})
-    v5[Children] = v6
-    v4[1] = Frame_2(v5)
-    v3[Children] = v4
-    v2[1] = TextButton(v3)
-    v1[Children] = v2
+    v9[1] = v10
+    v9[2] = v11
+    v9[3] = v16
+    v9[4] = UICorner({Name = "UICorner"})
+    v7[v8] = v9
+    v6[1] = Frame_2(v7)
+    v4[v5] = v6
+    v3[1] = TextButton(v4)
+    v1[v2] = v3
     return Frame(v1)
 end

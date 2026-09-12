@@ -7,13 +7,16 @@ local u17 = {}
 local u18 = {}
 local u19 = {}
 local u20 = {}
-function u20.start() -- Line: 15 -- upvalues: u16 (ref), ReplicatedStorage (val), u17 (val), u18 (val), u19 (val), u20 (val)
+
+function u20.start() -- Line: 15
+    -- upvalues: u16 (ref), ReplicatedStorage (val), u17 (val), u18 (val), u19 (val), u20 (val)
     u16 = ReplicatedStorage:WaitForChild("identifierStorage")
     for i, j in u16:GetAttributes() do
         u17[i] = j
         u18[j] = i
     end
-    u16.AttributeChanged:Connect(function(p1) -- Line: 26 -- upvalues: u16 (upval), u19 (upval), u17 (upval), u18 (upval)
+    local v1 = u16
+    v1.AttributeChanged:Connect(function(p1) -- Line: 26 -- upvalues: u16 (upval), u19 (upval), u17 (upval), u18 (upval)
         local v1
         local Attribute = u16:GetAttribute(p1)
         if not Attribute then
@@ -37,6 +40,7 @@ function u20.start() -- Line: 15 -- upvalues: u16 (ref), ReplicatedStorage (val)
     end)
     u20.ref("NIL_VALUE")
 end
+
 function u20.ref(p1, p2) -- Line: 55 -- upvalues: u15 (val), RunService (val), u17 (val), u18 (val), u19 (val)
     local v1
     u15.typecheck("string", "ReferenceIdentifier", "identifierName", p1)
@@ -57,7 +61,8 @@ function u20.ref(p1, p2) -- Line: 55 -- upvalues: u15 (val), RunService (val), u
     if not u34 then
         v1 = {}
         v1[u28] = true
-        u19[p1] = v1
+        u34 = v1
+        u19[p1] = u34
     else
         u34[u28] = true
     end
@@ -73,14 +78,19 @@ function u20.ref(p1, p2) -- Line: 55 -- upvalues: u15 (val), RunService (val), u
     end
     return v3
 end
+
 function u20.deser(p1) -- Line: 105 -- upvalues: u15 (val), u18 (val)
+    local fatalAssert = u15.fatalAssert
     local v1 = typeof(p1) == "string"
-    u15.fatalAssert(v1, string.format("Deserialize takes string, got %*", (typeof(p1))))
+    fatalAssert(v1, string.format("Deserialize takes string, got %*", (typeof(p1))))
     return u18[p1]
 end
+
 function u20.ser(p1) -- Line: 113 -- upvalues: u15 (val), u17 (val)
+    local fatalAssert = u15.fatalAssert
     local v1 = typeof(p1) == "string"
-    u15.fatalAssert(v1, string.format("Serialize takes string, got %*", (typeof(p1))))
+    fatalAssert(v1, string.format("Serialize takes string, got %*", (typeof(p1))))
     return u17[p1]
 end
+
 return u20

@@ -50,8 +50,7 @@ return {
         return p1
     end),
     Equipped = Red.SharedEvent("Equipped", function(p1) -- Line: 73 -- upvalues: Guard (val)
-        local v1 = Guard.Optional(Guard.Or(Guard.String, Guard.Number))
-        return v1(p1)
+        return Guard.Optional(Guard.Or(Guard.String, Guard.Number))(p1)
     end),
     CharacterLoaded = Red.SharedEvent("CharacterLoaded", function() end),
     WeaponUse = Red.SharedEvent("WeaponUse", function(p1) -- Line: 81

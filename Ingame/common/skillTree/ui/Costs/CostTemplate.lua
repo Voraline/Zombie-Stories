@@ -1,39 +1,48 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Children = require(ReplicatedStorage.Packages.Fusion).Children
+local Packages = ReplicatedStorage.Packages
+local Children = (require(Packages.Fusion)).Children
 local Theme = require(ReplicatedStorage.common.ZS_Framework.UI.Theme)
+
 local function commaFormat(p1) -- Line: 18
-    local v1 = tostring((math.floor(p1)))
-    local v2 = #v1
-    if v2 <= 3 then
-        return v1
+    local v1 = math.floor(p1)
+    local v2 = tostring(v1)
+    v1 = #v2
+    if v1 <= 3 then
+        return v2
     end
     local v3 = ""
-    local v4 = v2
-    local v5 = 1
-    for i = 1, v4, v5 do
-        if 1 < i and (v2 - i + 1) % 3 == 0 then
+    local v4 = v1
+    for i = 1, v4 do
+        if 1 < i and (v1 - i + 1) % 3 == 0 then
             v3 = v3 .. ","
         end
-        v3 = v3 .. v1:sub(i, i)
+        v3 = v3 .. v2:sub(i, i)
     end
     return v3
 end
-local u17 = {
-    SP = {label = "SP", useImage = false, enabled = true, color = Theme.Menu.AccentCyan},
-    ZBucks = {label = "Z$", useImage = false, enabled = true, color = Theme.Colors.ZBucksTitle},
-    Gems = {label = "GM", useImage = false, enabled = false, color = Color3.fromRGB(255, 80, 80)},
-    ClassLevel = {
-        label = "",
-        useImage = true,
-        image = "rbxassetid://3187426822",
-        enabled = true,
-        color = Color3.fromRGB(255, 255, 255),
-    },
+
+local u17 = {}
+local v1 = {label = "SP", useImage = false, enabled = true, color = Theme.Menu.AccentCyan}
+u17.SP = v1
+v1 = {label = "Z$", useImage = false, enabled = true, color = Theme.Colors.ZBucksTitle}
+u17.ZBucks = v1
+v1 = {label = "GM", useImage = false, enabled = false, color = Color3.fromRGB(255, 80, 80)}
+u17.Gems = v1
+v1 = {
+    label = "",
+    useImage = true,
+    image = "rbxassetid://3187426822",
+    enabled = true,
+    color = Color3.fromRGB(255, 255, 255),
 }
+u17.ClassLevel = v1
 return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Children (val), Theme (val)
     local scope = p1.scope
-    local u5 = scope:Computed(function(a1) -- Line: 77 -- upvalues: p1 (val), u17 (upval)
-        local SP = u17[a1(p1.CostType)]
+    local u5 = scope:Computed(function(p1_2) -- Line: 77 -- upvalues: p1 (val), u17 (upval)
+        local v1 = p1
+        local CostType = v1.CostType
+        local v2 = p1_2(CostType)
+        local SP = u17[v2]
         if not SP then
             SP = u17.SP
         end
@@ -54,8 +63,8 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
     local v5 = scope:Computed(function(p1) -- Line: 98 -- upvalues: u5 (val)
         return p1(u5).image or ""
     end)
-    local v6 = scope:Computed(function(a1) -- Line: 102 -- upvalues: commaFormat (upval), p1 (val)
-        return (commaFormat(a1(p1.Amount)))
+    local v6 = scope:Computed(function(p1_2) -- Line: 102 -- upvalues: commaFormat (upval), p1 (val)
+        return (commaFormat(p1_2(p1.Amount)))
     end)
     local v7 = scope:Computed(function(p1) -- Line: 106 -- upvalues: u5 (val)
         local v1 = p1(u5).enabled ~= false
@@ -71,17 +80,17 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
         LayoutOrder = p1.LayoutOrder or 0,
         Visible = v7,
     }
-    local v10 = {}
-    local v11 = scope:New("UIListLayout")
-    v11 = v11({
+    local v10 = Children
+    local v11 = {}
+    local v12 = scope:New("UIListLayout")({
         Name = "UIListLayout",
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Left,
         SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Center,
     })
-    local v12 = scope:New("TextLabel")
-    local v13 = {
+    local v13 = scope:New("TextLabel")
+    local v14 = {
         Name = "Cost",
         AnchorPoint = Vector2.new(0.5, 0.5),
         AutomaticSize = Enum.AutomaticSize.X,
@@ -97,13 +106,11 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
         TextScaled = true,
         ZIndex = 2,
     }
-    local v14 = {}
-    local v15 = scope:New("UIStroke")
-    v14[1] = v15({Name = "UIStroke", StrokeSizingMode = "ScaledSize", Thickness = 0.06})
-    v13[Children] = v14
-    v12 = v12(v13)
-    v13 = scope:New("Frame")
-    local v16 = {
+    local v15 = Children
+    v14[v15] = {scope:New("UIStroke")({Name = "UIStroke", StrokeSizingMode = "ScaledSize", Thickness = 0.06})}
+    v13 = v13(v14)
+    v14 = scope:New("Frame")
+    v15 = {
         Name = "TypeFrame",
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundTransparency = 1,
@@ -112,9 +119,10 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
         Size = UDim2.fromScale(0.8, 0.8),
         SizeConstraint = Enum.SizeConstraint.RelativeYY,
     }
-    v15 = {}
-    local v17 = scope:New("TextLabel")
-    local v18 = {
+    local v16 = Children
+    local v17 = {}
+    local v18 = scope:New("TextLabel")
+    local v19 = {
         Name = "Label",
         AnchorPoint = Vector2.new(0.5, 0.5),
         AutomaticSize = Enum.AutomaticSize.X,
@@ -130,13 +138,11 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
         Visible = v1,
         ZIndex = 2,
     }
-    local v19 = {}
-    local v20 = scope:New("UIStroke")
-    v19[1] = v20({Name = "UIStroke", StrokeSizingMode = "ScaledSize", Thickness = 0.06})
-    v18[Children] = v19
-    v17 = v17(v18)
-    v18 = scope:New("ImageLabel")
-    local v21 = {
+    local v20 = Children
+    v19[v20] = {scope:New("UIStroke")({Name = "UIStroke", StrokeSizingMode = "ScaledSize", Thickness = 0.06})}
+    v18 = v18(v19)
+    v19 = scope:New("ImageLabel")
+    v20 = {
         Name = "ImageLabel",
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -147,12 +153,12 @@ return function(p1) -- Line: 73 -- upvalues: u17 (val), commaFormat (val), Child
         Size = UDim2.fromScale(0.8, 0.8),
         Visible = v2,
     }
-    v15[1] = v17
-    v15[2] = v18(v21)
-    v16[Children] = v15
-    v10[1] = v11
-    v10[2] = v12
-    v10[3] = v13(v16)
-    v9[Children] = v10
+    v17[1] = v18
+    v17[2] = v19(v20)
+    v15[v16] = v17
+    v11[1] = v12
+    v11[2] = v13
+    v11[3] = v14(v15)
+    v9[v10] = v11
     return v8(v9)
 end

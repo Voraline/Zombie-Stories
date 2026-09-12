@@ -14,7 +14,8 @@ return {
         if Ignore then
             Mouse.TargetFilter = Ignore
         end
-        Character:MoveTo(Mouse.Hit.p)
+        local p = Mouse.Hit.p
+        Character:MoveTo(p)
         return "Blinked!"
     end,
 }

@@ -1,52 +1,54 @@
-local v1 = {
-    SystemAdd = "SystemAdd",
-    SystemRemove = "SystemRemove",
-    SystemReplace = "SystemReplace",
-    SystemError = "SystemError",
-    OuterSystemCall = "OuterSystemCall",
-    InnerSystemCall = "InnerSystemCall",
-    SystemCall = "SystemCall",
-    PhaseAdd = "PhaseAdd",
-    PhaseBegan = "PhaseBegan",
-}
 return {
-    Hooks = v1,
+    Hooks = {
+        SystemAdd = "SystemAdd",
+        SystemRemove = "SystemRemove",
+        SystemReplace = "SystemReplace",
+        SystemError = "SystemError",
+        OuterSystemCall = "OuterSystemCall",
+        InnerSystemCall = "InnerSystemCall",
+        SystemCall = "SystemCall",
+        PhaseAdd = "PhaseAdd",
+        PhaseBegan = "PhaseBegan",
+    },
     systemAdd = function(p1, p2) -- Line: 3
-        local v1, v2
-        local v3 = {scheduler = p1, system = p2}
-        local v4 = p1._hooks[p1.Hooks.SystemAdd]
+        local result, success
+        local v1 = p1._hooks[p1.Hooks.SystemAdd]
+        local v2 = {scheduler = p1, system = p2}
+        local v3 = v1
+        local v4 = nil
         local v5 = nil
-        local v6 = nil
-        for i, j in v4, v5, v6 do
-            v2, v1 = pcall(j, v3)
-            if not v2 then
-                warn("Unexpected error in hook:", v1)
+        for i, j in v3, v4, v5 do
+            success, result = pcall(j, v2)
+            if not success then
+                warn("Unexpected error in hook:", result)
             end
         end
     end,
     systemRemove = function(p1, p2) -- Line: 18
-        local v1, v2
-        local v3 = {scheduler = p1, system = p2}
-        local v4 = p1._hooks[p1.Hooks.SystemRemove]
+        local result, success
+        local v1 = p1._hooks[p1.Hooks.SystemRemove]
+        local v2 = {scheduler = p1, system = p2}
+        local v3 = v1
+        local v4 = nil
         local v5 = nil
-        local v6 = nil
-        for i, j in v4, v5, v6 do
-            v2, v1 = pcall(j, v3)
-            if not v2 then
-                warn("Unexpected error in hook:", v1)
+        for i, j in v3, v4, v5 do
+            success, result = pcall(j, v2)
+            if not success then
+                warn("Unexpected error in hook:", result)
             end
         end
     end,
     systemReplace = function(p1, p2, p3) -- Line: 33
-        local v1, v2
-        local v3 = {scheduler = p1, new = p3, old = p2}
-        local v4 = p1._hooks[p1.Hooks.SystemReplace]
+        local result, success
+        local v1 = p1._hooks[p1.Hooks.SystemReplace]
+        local v2 = {scheduler = p1, new = p3, old = p2}
+        local v3 = v1
+        local v4 = nil
         local v5 = nil
-        local v6 = nil
-        for i, j in v4, v5, v6 do
-            v1, v2 = pcall(j, v3)
-            if not v1 then
-                warn("Unexpected error in hook:", v2)
+        for i, j in v3, v4, v5 do
+            success, result = pcall(j, v2)
+            if not success then
+                warn("Unexpected error in hook:", result)
             end
         end
     end,
@@ -84,28 +86,30 @@ return {
         end
     end,
     phaseAdd = function(p1, p2) -- Line: 91
-        local v1, v2
-        local v3 = {scheduler = p1, phase = p2}
-        local v4 = p1._hooks[p1.Hooks.PhaseAdd]
+        local result, success
+        local v1 = p1._hooks[p1.Hooks.PhaseAdd]
+        local v2 = {scheduler = p1, phase = p2}
+        local v3 = v1
+        local v4 = nil
         local v5 = nil
-        local v6 = nil
-        for i, j in v4, v5, v6 do
-            v2, v1 = pcall(j, v3)
-            if not v2 then
-                warn("Unexpected error in hook:", v1)
+        for i, j in v3, v4, v5 do
+            success, result = pcall(j, v2)
+            if not success then
+                warn("Unexpected error in hook:", result)
             end
         end
     end,
     phaseBegan = function(p1, p2) -- Line: 106
-        local v1, v2
-        local v3 = {scheduler = p1, phase = p2}
-        local v4 = p1._hooks[p1.Hooks.PhaseBegan]
+        local result, success
+        local v1 = p1._hooks[p1.Hooks.PhaseBegan]
+        local v2 = {scheduler = p1, phase = p2}
+        local v3 = v1
+        local v4 = nil
         local v5 = nil
-        local v6 = nil
-        for i, j in v4, v5, v6 do
-            v2, v1 = pcall(j, v3)
-            if not v2 then
-                warn("Unexpected error in hook:", v1)
+        for i, j in v3, v4, v5 do
+            success, result = pcall(j, v2)
+            if not success then
+                warn("Unexpected error in hook:", result)
             end
         end
     end,

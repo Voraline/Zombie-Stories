@@ -4,17 +4,22 @@ local CollectionService = game:GetService("CollectionService")
 local TextService = game:GetService("TextService")
 local Terrain = Workspace.Terrain
 local u25 = Color3.new(1, 0, 0)
-local u26 = {_defaultColor = u25}
+local u26 = {}
+u26._defaultColor = u25
+
 function u26.setColor(p1) -- Line: 40 -- upvalues: u26 (val)
     u26._defaultColor = p1
 end
+
 function u26.resetColor() -- Line: 47 -- upvalues: u26 (val), u25 (val)
     u26._defaultColor = u25
 end
+
 function u26.setRandomColor() -- Line: 54 -- upvalues: u26 (val)
-    local v1 = 0.5 + 0.5 * math.random()
-    u26.setColor(Color3.fromHSV(math.random(), v1, 1))
+    local v1 = u26
+    v1.setColor(Color3.fromHSV(math.random(), 0.5 + 0.5 * math.random(), 1))
 end
+
 function u26.ray(p1, p2, p3, p4, p5) -- Line: 73 -- upvalues: u26 (val)
     local v1 = typeof(p1) == "Ray"
     assert(v1, "Bad typeof(ray) for Ray")
@@ -39,12 +44,12 @@ function u26.ray(p1, p2, p3, p4, p5) -- Line: 73 -- upvalues: u26 (val)
     Part.CanQuery = false
     Part.CanTouch = false
     Part.CastShadow = false
-    local v7 = CFrame.new(v3, p1.Origin + p1.Direction)
-    Part.CFrame = v7 * CFrame.Angles(1.5707963267948966, 0, 0)
+    Part.CFrame = (CFrame.new(v3, p1.Origin + p1.Direction)) * CFrame.Angles(1.5707963267948966, 0, 0)
     Part.Color = v2
     Part.Name = "DebugRay"
     Part.Shape = Enum.PartType.Cylinder
-    Part.Size = Vector3.new(v6, p1.Direction.Magnitude, v6)
+    local Magnitude = p1.Direction.Magnitude
+    Part.Size = Vector3.new(v6, Magnitude, v6)
     Part.TopSurface = Enum.SurfaceType.Smooth
     Part.Transparency = 0.5
     local Part_2 = Instance.new("Part")
@@ -76,6 +81,7 @@ function u26.ray(p1, p2, p3, p4, p5) -- Line: 73 -- upvalues: u26 (val)
     Part.Parent = v4
     return Part
 end
+
 function u26.updateRay(p1, p2, p3) -- Line: 152
     local Color = p3
     if not Color then
@@ -83,9 +89,11 @@ function u26.updateRay(p1, p2, p3) -- Line: 152
     end
     local v1 = Color
     local x = p1.Size.x
-    local v2 = CFrame.new(p2.Origin + p2.Direction / 2, p2.Origin + p2.Direction)
-    p1.CFrame = v2 * CFrame.Angles(1.5707963267948966, 0, 0)
-    p1.Size = Vector3.new(x, p2.Direction.Magnitude, x)
+    local v2 = p2.Origin + p2.Direction / 2
+    local v3 = CFrame.new(v2, p2.Origin + p2.Direction)
+    p1.CFrame = v3 * CFrame.Angles(1.5707963267948966, 0, 0)
+    local Magnitude = p2.Direction.Magnitude
+    p1.Size = Vector3.new(x, Magnitude, x)
     p1.Color = v1
     local RotatedPart = p1:FindFirstChild("RotatedPart")
     if RotatedPart then
@@ -101,6 +109,7 @@ function u26.updateRay(p1, p2, p3) -- Line: 152
         DrawRayLineHandleAdornment.Color3 = v1
     end
 end
+
 function u26.text(p1, p2, p3) -- Line: 188 -- upvalues: Terrain (val), u26 (val)
     if typeof(p1) ~= "Vector3" then
         if typeof(p1) == "Instance" then
@@ -116,6 +125,7 @@ function u26.text(p1, p2, p3) -- Line: 188 -- upvalues: Terrain (val), u26 (val)
     u26._textOnAdornee(Attachment, p2, p3)
     return Attachment
 end
+
 function u26._textOnAdornee(p1, p2, p3) -- Line: 205 -- upvalues: u26 (val), TextService (val)
     local BillboardGui = Instance.new("BillboardGui")
     BillboardGui.Name = "DebugBillboardGui"
@@ -146,37 +156,44 @@ function u26._textOnAdornee(p1, p2, p3) -- Line: 205 -- upvalues: u26 (val), Tex
     TextLabel.TextColor3 = Color3.new(1, 1, 1)
     TextLabel.Size = UDim2.new(1, 0, 1, 0)
     TextLabel.Parent = Frame
-    if not (tonumber(p2)) then
+    if not tonumber(p2) then
         TextLabel.Font = Enum.Font.GothamMedium
     else
         TextLabel.Font = Enum.Font.Code
     end
-    local TextSize = TextService:GetTextSize(TextLabel.Text, TextLabel.TextSize, TextLabel.Font, Vector2.new(1024, 1000000))
-    local v1 = TextSize.y / TextLabel.TextSize
-    local v2 = TextLabel.TextSize * 0.5
-    local v3 = TextSize.y + 2 * v2
-    local v4 = TextSize.x + 2 * v2
-    local v5 = v4 / v3
+    local v1 = TextService
+    local Text = TextLabel.Text
+    local TextSize = TextLabel.TextSize
+    local Font = TextLabel.Font
+    local v2 = Vector2.new(1024, 1000000)
+    local TextSize_2 = v1:GetTextSize(Text, TextSize, Font, v2)
+    local v3 = TextSize_2.y / TextLabel.TextSize
+    local v4 = TextLabel.TextSize * 0.5
+    local v5 = TextSize_2.y + 2 * v4
+    local v6 = TextSize_2.x + 2 * v4
+    v2 = v6 / v5
     local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
-    UIAspectRatioConstraint.AspectRatio = v5
+    UIAspectRatioConstraint.AspectRatio = v2
     UIAspectRatioConstraint.Parent = Frame
     local UIPadding = Instance.new("UIPadding")
-    UIPadding.PaddingBottom = UDim.new(v2 / v3, 0)
-    UIPadding.PaddingTop = UDim.new(v2 / v3, 0)
-    UIPadding.PaddingLeft = UDim.new(v2 / v4, 0)
-    UIPadding.PaddingRight = UDim.new(v2 / v4, 0)
+    UIPadding.PaddingBottom = UDim.new(v4 / v5, 0)
+    UIPadding.PaddingTop = UDim.new(v4 / v5, 0)
+    UIPadding.PaddingLeft = UDim.new(v4 / v6, 0)
+    UIPadding.PaddingRight = UDim.new(v4 / v6, 0)
     UIPadding.Parent = Frame
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(v2 / v3 / 2, 0)
+    UICorner.CornerRadius = UDim.new(v4 / v5 / 2, 0)
     UICorner.Parent = Frame
-    local v6 = v1 * 2 * 2 * 0.5
-    BillboardGui.Size = UDim2.new(v6 * v5, 0, v6, 0)
+    local v7 = v3 * 2 * 2 * 0.5
+    BillboardGui.Size = UDim2.new(v7 * v2, 0, v7, 0)
     BillboardGui.Parent = p1
     return BillboardGui
 end
+
 function u26.sphere(p1, p2, p3, p4) -- Line: 294 -- upvalues: u26 (val)
     return u26.point(p1, p3, p4, p2 * 2)
 end
+
 function u26.point(p1, p2, p3, p4) -- Line: 311 -- upvalues: u26 (val)
     local Position
     if typeof(p1) ~= "CFrame" then
@@ -223,6 +240,7 @@ function u26.point(p1, p2, p3, p4) -- Line: 311 -- upvalues: u26 (val)
     Part.Parent = v3
     return Part
 end
+
 function u26.labelledPoint(p1, p2, p3, p4) -- Line: 366 -- upvalues: u26 (val)
     local Position
     if typeof(p1) ~= "CFrame" then
@@ -234,32 +252,34 @@ function u26.labelledPoint(p1, p2, p3, p4) -- Line: 366 -- upvalues: u26 (val)
     u26.text(v1, p2, p3)
     return v1
 end
+
 function u26.cframe(p1) -- Line: 388 -- upvalues: u26 (val)
     local Model = Instance.new("Model")
     Model.Name = "DebugCFrame"
     local Position = p1.Position
     u26.point(Position, nil, Model, 0.1)
-    local v1 = Ray.new(Position, p1.XVector)
-    local v2 = Color3.new(0.75, 0.25, 0.25)
-    local v3 = u26.ray(v1, v2, Model, 0.1)
-    v3.Name = "XVector"
-    v2 = Ray.new(Position, p1.YVector)
-    local v4 = Color3.new(0.25, 0.75, 0.25)
-    v1 = u26.ray(v2, v4, Model, 0.1)
-    v1.Name = "YVector"
-    v4 = Ray.new(Position, p1.ZVector)
-    local v5 = Color3.new(0.25, 0.25, 0.75)
-    v2 = u26.ray(v4, v5, Model, 0.1)
-    v2.Name = "ZVector"
+    local v1 = u26
+    v1 = v1.ray(Ray.new(Position, p1.XVector), Color3.new(0.75, 0.25, 0.25), Model, 0.1)
+    v1.Name = "XVector"
+    local v2 = u26
+    v2 = v2.ray(Ray.new(Position, p1.YVector), Color3.new(0.25, 0.75, 0.25), Model, 0.1)
+    v2.Name = "YVector"
+    local v3 = u26
+    v3 = v3.ray(Ray.new(Position, p1.ZVector), Color3.new(0.25, 0.25, 0.75), Model, 0.1)
+    v3.Name = "ZVector"
     Model.Parent = u26.getDefaultParent()
     return Model
 end
+
 function u26.part(p1, p2, p3, p4) -- Line: 431 -- upvalues: u26 (val)
-    local v1 = if typeof(p1) == "Instance" then p1:IsA("BasePart") else false
+    local v1 = false
+    if typeof(p1) == "Instance" then
+        v1 = p1:IsA("BasePart")
+    end
     assert(v1, "Bad template")
     local v2 = p1:Clone()
     for k, v in pairs(v2:GetChildren()) do
-        if not (v:IsA("Mesh")) then
+        if not v:IsA("Mesh") then
             v:Destroy()
         else
             u26._sanitize(v)
@@ -287,6 +307,7 @@ function u26.part(p1, p2, p3, p4) -- Line: 431 -- upvalues: u26 (val)
     v2.Parent = u26.getDefaultParent()
     return v2
 end
+
 function u26._sanitize(p1) -- Line: 466 -- upvalues: CollectionService (val)
     for k, v in pairs(p1:GetAttributes()) do
         p1:SetAttribute(k, nil)
@@ -295,6 +316,7 @@ function u26._sanitize(p1) -- Line: 466 -- upvalues: CollectionService (val)
         CollectionService:RemoveTag(p1, i)
     end
 end
+
 function u26.box(p1, p2, p3) -- Line: 488 -- upvalues: u26 (val)
     local v1
     local v2 = typeof(p2) == "Vector3"
@@ -338,52 +360,58 @@ function u26.box(p1, p2, p3) -- Line: 488 -- upvalues: u26 (val)
     Part.Parent = u26.getDefaultParent()
     return Part
 end
+
 function u26.region3(p1, p2) -- Line: 535 -- upvalues: u26 (val)
     return u26.box(p1.CFrame, p1.Size, p2)
 end
+
 function u26.terrainCell(p1, p2) -- Line: 551 -- upvalues: Terrain (val), u26 (val)
     local v1 = Terrain:WorldToCell(p1)
-    local v2 = Terrain:CellCenterToWorld(v1.x, v1.y, v1.z)
-    local v3 = CFrame.new(v2)
-    local v4 = u26.box(v3, Vector3.new(4, 4, 4), p2)
-    v4.Name = "DebugTerrainCell"
-    return v4
+    local v2 = Terrain
+    local x = v1.x
+    local y = v1.y
+    local z = v1.z
+    v2 = v2:CellCenterToWorld(x, y, z)
+    local v3 = u26
+    v3 = v3.box(CFrame.new(v2), Vector3.new(4, 4, 4), p2)
+    v3.Name = "DebugTerrainCell"
+    return v3
 end
+
 function u26.screenPointLine(p1, p2, p3, p4) -- Line: 565 -- upvalues: u26 (val)
-    local v1, v2, v3
-    local v4 = p2 - p1
-    local v5 = p1 + v4 / 2
+    local v1
+    local v2 = p2 - p1
+    local v3 = p1 + v2 / 2
     local Frame = Instance.new("Frame")
     Frame.Name = "DebugScreenLine"
-    local v6 = math.abs(v4.x)
-    Frame.Size = UDim2.fromScale(v6, (math.abs(v4.y)))
+    local fromScale = UDim2.fromScale
+    local x = v2.x
+    local v4 = math.abs(x)
+    local y = v2.y
+    Frame.Size = fromScale(v4, (math.abs(y)))
     Frame.BackgroundTransparency = 1
-    Frame.Position = UDim2.fromScale(v5.x, v5.y)
+    Frame.Position = UDim2.fromScale(v3.x, v3.y)
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
     Frame.BorderSizePixel = 0
     Frame.ZIndex = 10000
     Frame.Parent = p3
-    if v4.magnitude == 0 then
+    if v2.magnitude == 0 then
         return Frame
     end
-    v6 = v4.y / v4.x
-    if 0 < v6 then
-        v3 = 25
-        v1 = 1
-        for j = 0, v3, v1 do
-            v2 = Vector2.new(j / 25, j / 25)
-            u26.screenPoint(v2, Frame, p4, 3)
+    if 0 < v2.y / v2.x then
+        for j = 0, 25 do
+            v1 = u26
+            v1.screenPoint(Vector2.new(j / 25, j / 25), Frame, p4, 3)
         end
         return Frame
     end
-    v3 = 25
-    v1 = 1
-    for i = 0, v3, v1 do
-        v2 = Vector2.new(i / 25, 1 - i / 25)
-        u26.screenPoint(v2, Frame, p4, 3)
+    for i = 0, 25 do
+        v1 = u26
+        v1.screenPoint(Vector2.new(i / 25, 1 - i / 25), Frame, p4, 3)
     end
     return Frame
 end
+
 function u26.screenPoint(p1, p2, p3, p4) -- Line: 603
     local Frame = Instance.new("Frame")
     Frame.Name = "DebugScreenPoint"
@@ -404,28 +432,30 @@ function u26.screenPoint(p1, p2, p3, p4) -- Line: 603
     Frame.Parent = p2
     return Frame
 end
+
 function u26.vector(p1, p2, p3, p4, p5) -- Line: 636 -- upvalues: u26 (val)
-    local v1 = Ray.new(p1, p2)
-    return u26.ray(v1, p3, p4, p5)
+    local v1 = u26
+    return v1.ray(Ray.new(p1, p2), p3, p4, p5)
 end
+
 function u26.ring(p1, p2, p3, p4, p5) -- Line: 654 -- upvalues: u26 (val)
-    local v1, v2, v3, v4
-    local v5 = CFrame.new(p1, p1 + p2)
-    local v6 = {}
-    local v7 = 6.283185307179586
-    local v8 = 0.39269908169872414
-    for i = 0, v7, v8 do
+    local v1, v2, v3, v4, v5
+    local v6 = CFrame.new(p1, p1 + p2)
+    local v7 = {}
+    for i = 0, 6.283185307179586, 0.39269908169872414 do
         v1 = math.cos(i) * p3
-        v3 = v5:pointToWorldSpace((Vector3.new(v1, math.sin(i) * p3, 0)))
-        table.insert(v6, v3)
+        v2 = (math.sin(i)) * p3
+        v5 = Vector3.new(v1, v2, 0)
+        v3 = v6:pointToWorldSpace(v5)
+        table.insert(v7, v3)
     end
     local Folder = Instance.new("Folder")
     Folder.Name = "DebugRing"
-    v8 = #v6
-    local v9 = 1
-    for j = 1, v8, v9 do
-        v2 = v6[j]
-        v4 = Ray.new(v2, v6[j % #v6 + 1] - v2)
+    local v8 = #v7
+    for j = 1, v8 do
+        v2 = v7[j]
+        v3 = v7[j % #v7 + 1]
+        v4 = Ray.new(v2, v3 - v2)
         u26.ray(v4, p4, Folder)
     end
     v8 = p5
@@ -435,8 +465,9 @@ function u26.ring(p1, p2, p3, p4, p5) -- Line: 654 -- upvalues: u26 (val)
     Folder.Parent = v8
     return Folder
 end
+
 function u26.getDefaultParent() -- Line: 684 -- upvalues: RunService (val), Workspace (val)
-    if not (RunService:IsRunning()) then
+    if not RunService:IsRunning() then
         return Workspace.CurrentCamera
     end
     if RunService:IsServer() then
@@ -444,4 +475,5 @@ function u26.getDefaultParent() -- Line: 684 -- upvalues: RunService (val), Work
     end
     return Workspace.CurrentCamera
 end
+
 return u26

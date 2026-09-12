@@ -4,6 +4,7 @@ local u12 = require("./Argument")
 local u15 = RunService:IsServer()
 local u16 = {}
 u16.__index = u16
+
 function u16.new(p1) -- Line: 12 -- upvalues: u16 (val)
     local v1 = {
         Dispatcher = p1.Dispatcher,
@@ -22,40 +23,50 @@ function u16.new(p1) -- Line: 12 -- upvalues: u16 (val)
         Arguments = {},
         Data = p1.Data,
     }
-    setmetatable(v1, u16)
+    local v2 = u16
+    setmetatable(v1, v2)
     return v1
 end
+
 function u16.Parse(p1, p2) -- Line: 40 -- upvalues: u12 (val)
-    local v1, v2
-    local v3 = false
-    local v4 = p1
+    local Name, Name_2, v1, v2, v3
+    local v4 = false
+    local v5 = p1
     for i, v in ipairs(p1.ArgumentDefinitions) do
         if type(v) == "function" then
-            v = v(v4)
+            v = v(v5)
             if v == nil then
                 break
             end
         end
-        v2 = if v.Default == nil then v.Optional ~= true else false
+        v2 = false
+        if v.Default == nil then
+            v2 = v.Optional ~= true
+        end
         if not v2 then
             if not v2 then
-                v3 = true
+                v4 = true
             end
-        elseif v3 then
-            error(("Command %q: Required arguments cannot occur after optional arguments."):format(v4.Name))
+        elseif v4 then
+            v3 = error
+            Name = v5.Name
+            v3(("Command %q: Required arguments cannot occur after optional arguments."):format(Name))
+        elseif not v2 then
+            v4 = true
         end
-        if v4.RawArguments[i] == nil and v2 and v1 ~= true then
-            return false, ("Required argument #%d %s is missing."):format(i, v.Name)
+        if v5.RawArguments[i] == nil and v2 and v1 ~= true then
+            Name_2 = v.Name
+            return false, ("Required argument #%d %s is missing."):format(i, Name_2)
         end
-        if v4.RawArguments[i] then
-            v4.Arguments[i] = u12.new(v4, v, v4.RawArguments[i] or "")
-        elseif not v1 then
+        if v5.RawArguments[i] or v1 then
+            v5.Arguments[i] = (u12.new(v5, v, v5.RawArguments[i] or ""))
         end
     end
     return true
 end
+
 function u16:Validate(p2) -- Line: 72
-    local v1, v2
+    local Name, v1, v2
     self._Validated = true
     local v3 = ""
     local v4 = true
@@ -63,36 +74,40 @@ function u16:Validate(p2) -- Line: 72
         v2, v1 = v:Validate(p2)
         if not v2 then
             v4 = false
-            v3 = ("%s; #%d %s: %s"):format(v3, k, v.Name, v1 or "error")
+            Name = v.Name
+            v3 = ("%s; #%d %s: %s"):format(v3, k, Name, v1 or "error")
         end
     end
     return v4, v3:sub(3)
 end
+
 function u16.GetLastArgument(p1) -- Line: 91
-    local v1 = 1
-    local v2 = -1
-    for i = #p1.Arguments, v1, v2 do
+    for i = #p1.Arguments, 1, -1 do
         if p1.Arguments[i].RawValue then
             return p1.Arguments[i]
         end
     end
 end
+
 function u16:GatherArgumentValues() -- Line: 100
-    local v1
-    local v2 = {}
-    local v3 = #self.ArgumentDefinitions
-    local v4 = 1
+    local v1, v2
+    local v3 = {}
+    local v4 = #self.ArgumentDefinitions
     local v5 = self
-    for i = 1, v3, v4 do
+    for i = 1, v4 do
         v1 = v5.Arguments[i]
-        if v1 then
-            v2[i] = v1:GetValue()
-        elseif type(v5.ArgumentDefinitions[i]) == "table" then
-            v2[i] = v5.ArgumentDefinitions[i].Default
+        if not v1 then
+            v2 = v5.ArgumentDefinitions[i]
+            if type(v2) == "table" then
+                v3[i] = v5.ArgumentDefinitions[i].Default
+            end
+        else
+            v3[i] = (v1:GetValue())
         end
     end
-    return v2, #v5.ArgumentDefinitions
+    return v3, #v5.ArgumentDefinitions
 end
+
 function u16.Run(p1) -- Line: 117 -- upvalues: u15 (val)
     local v1, v2
     if p1._Validated == nil then
@@ -115,12 +130,18 @@ function u16.Run(p1) -- Line: 117 -- upvalues: u15 (val)
             v1, v2 = p1:GatherArgumentValues()
             p1.Response = p1.Object.Run(p1, unpack(v1, 1, v2))
         elseif not u15 then
-            p1.Response = p1.Dispatcher:Send(p1.RawText, p1.Data)
+            local Dispatcher = p1.Dispatcher
+            local RawText = p1.RawText
+            local Data = p1.Data
+            p1.Response = Dispatcher:Send(RawText, Data)
         else
             if not p1.Object.ClientRun then
                 warn(p1.Name, "command has no implementation!")
             else
-                warn(p1.Name, "command fell back to the server because ClientRun returned nil, but there is no server implementation! Either return a string from ClientRun, or create a server implementation for this command.")
+                warn(
+                    p1.Name,
+                    "command fell back to the server because ClientRun returned nil, but there is no server implementation! Either return a string from ClientRun, or create a server implementation for this command."
+                )
             end
             p1.Response = "No implementation."
         end
@@ -131,9 +152,11 @@ function u16.Run(p1) -- Line: 117 -- upvalues: u15 (val)
     end
     return p1.Response
 end
+
 function u16.GetArgument(p1, p2) -- Line: 164
     return p1.Arguments[p2]
 end
+
 function u16.GetData(p1) -- Line: 172 -- upvalues: u15 (val)
     if p1.Data then
         return p1.Data
@@ -143,6 +166,7 @@ function u16.GetData(p1) -- Line: 172 -- upvalues: u15 (val)
     end
     return p1.Data
 end
+
 function u16:SendEvent(p2, p3, ...) -- Line: 185 -- upvalues: u15 (val), Players (val)
     local v1 = typeof(p2) == "Instance"
     assert(v1, "Argument #1 must be a Player")
@@ -160,28 +184,31 @@ function u16:SendEvent(p2, p3, ...) -- Line: 185 -- upvalues: u15 (val), Players
         self.Dispatcher.Cmdr.Events[p3](...)
     end
 end
+
 function u16.BroadcastEvent(p1, ...) -- Line: 199 -- upvalues: u15 (val)
     if not u15 then
         error("Can't broadcast event messages from the client.", 2)
     end
     p1.Dispatcher.Cmdr.RemoteEvent:FireAllClients(...)
 end
+
 function u16.Reply(p1, ...) -- Line: 208
-    return p1:SendEvent(p1.Executor, "AddLine", ...)
+    local Executor = p1.Executor
+    return p1:SendEvent(Executor, "AddLine", ...)
 end
-function u16:GetStore(, ...) -- Line: 213
+
+function u16:GetStore(...) -- Line: 213
     return self.Dispatcher.Cmdr.Registry:GetStore(...)
 end
+
 function u16.HasImplementation(p1) -- Line: 218 -- upvalues: RunService (val)
-    if not (RunService:IsClient()) then
-        if p1.Object.Run then
-            return true
-        end
-        return false
+    if RunService:IsClient() and p1.Object.ClientRun then
+        return true
     end
-    if p1.Object.ClientRun or p1.Object.Run then
+    if p1.Object.Run then
         return true
     end
     return false
 end
+
 return u16

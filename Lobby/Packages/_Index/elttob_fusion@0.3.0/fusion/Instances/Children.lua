@@ -9,19 +9,30 @@ return {
     type = "SpecialKey",
     kind = "Children",
     stage = "descendants",
-    apply = function(p1, p2, p3, p4) -- Line: 28 -- upvalues: castToState (val), peek (val), Observer (val), External (val), doCleanup (val)
+    apply = function(p1, p2, p3, p4) -- Line: 28
+        -- upvalues: castToState (val), peek (val), Observer (val), External (val), doCleanup (val)
         local updateChildren
         local u4 = {}
         local u5 = {}
         local u6 = {}
         local u7 = {}
-        function updateChildren() -- Line: 44 -- upvalues: u5 (ref), u4 (ref), u7 (ref), u6 (ref), p4 (val), castToState (upval), peek (upval), Observer (upval), updateChildren (val), External (upval), p3 (ref), doCleanup (upval)
+
+        function updateChildren() -- Line: 44
+            -- upvalues: u5 (ref), u4 (ref), u7 (ref), u6 (ref), p4 (val), castToState (upval), peek (upval)
+            -- upvalues: Observer (upval), updateChildren (val), External (upval), p3 (ref), doCleanup (upval)
             local processChild
-            u5 = u4
-            u4 = u5
-            u7 = u6
-            u6 = u7
-            function processChild(p1, p2) -- Line: 48 -- upvalues: u4 (upval), u5 (upval), p4 (upval), castToState (upval), peek (upval), processChild (val), u7 (upval), Observer (upval), updateChildren (upval), u6 (upval), External (upval)
+            local v1 = u4
+            local v2 = u5
+            u5 = v1
+            u4 = v2
+            v1 = u6
+            v2 = u7
+            u7 = v1
+            u6 = v2
+
+            function processChild(p1, p2) -- Line: 48
+                -- upvalues: u4 (upval), u5 (upval), p4 (upval), castToState (upval), peek (upval), processChild (val)
+                -- upvalues: u7 (upval), Observer (upval), updateChildren (upval), u6 (upval), External (upval)
                 local v1, v2
                 local v3 = typeof(p1)
                 if v3 == "Instance" then
@@ -42,8 +53,10 @@ return {
                     if v5 ~= nil then
                         u7[p1] = nil
                     else
-                        local v6 = Observer({}, p1)
-                        v6:onChange(updateChildren)
+                        v5 = {}
+                        local v6 = Observer(v5, p1)
+                        local v7 = updateChildren
+                        v6:onChange(v7)
                     end
                     u6[p1] = v5
                     return
@@ -52,18 +65,19 @@ return {
                     External.logWarn("unrecognisedChildType", v3)
                     return
                 end
-                local v7 = p2
+                local v8 = p2
                 for k, v in pairs(p1) do
                     v1 = typeof(k)
                     v2 = nil
                     if v1 == "string" then
                         v2 = k
-                    elseif v1 == "number" and v7 ~= nil then
-                        v2 = v7 .. "_" .. k
+                    elseif v1 == "number" and v8 ~= nil then
+                        v2 = v8 .. "_" .. k
                     end
                     processChild(v, v2)
                 end
             end
+
             if p3 ~= nil then
                 processChild(p3)
             end
@@ -76,6 +90,7 @@ return {
             end
             table.clear(u7)
         end
+
         table.insert(p2, function() -- Line: 140 -- upvalues: p3 (ref), updateChildren (val)
             p3 = nil
             updateChildren()

@@ -2,20 +2,20 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 require(ReplicatedStorage.Packages.Fusion)
 return function(p1) -- Line: 11
     local scope = p1.scope
-    local v1 = scope:Computed(function(a1) -- Line: 14 -- upvalues: p1 (val)
-        if a1(p1.showReady) then
+    local v1 = scope:Computed(function(p1_2) -- Line: 14 -- upvalues: p1 (val)
+        if p1_2(p1.showReady) then
             return (UDim2.fromScale(0.5, 0.5))
         end
         return (UDim2.fromScale(1, 1))
     end)
-    local v2 = scope:Computed(function(a1) -- Line: 18 -- upvalues: p1 (val)
-        if a1(p1.showReady) then
+    local v2 = scope:Computed(function(p1_2) -- Line: 18 -- upvalues: p1 (val)
+        if p1_2(p1.showReady) then
             return 0
         end
         return 1
     end)
-    local v3 = scope:Computed(function(a1) -- Line: 22 -- upvalues: p1 (val)
-        if a1(p1.showReady) then
+    local v3 = scope:Computed(function(p1_2) -- Line: 22 -- upvalues: p1 (val)
+        if p1_2(p1.showReady) then
             return (Color3.fromRGB(255, 137, 101))
         end
         return (Color3.fromRGB(255, 255, 255))
@@ -23,8 +23,7 @@ return function(p1) -- Line: 11
     local v4 = scope:Spring(v1, 15, 0.6)
     local v5 = scope:Spring(v2, 20, 1)
     local v6 = scope:Spring(v3, 20, 1)
-    local v7 = scope:New("ImageLabel")
-    return v7({
+    return scope:New("ImageLabel")({
         Name = "ChargeAttack",
         Image = "rbxassetid://14503290950",
         BackgroundTransparency = 1,

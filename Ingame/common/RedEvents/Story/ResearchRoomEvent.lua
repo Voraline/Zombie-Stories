@@ -1,17 +1,19 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Red = require(ReplicatedStorage.Packages.Red)
+
 local function sanitizeString(p1, p2) -- Line: 10
     local v1
     if typeof(p1) ~= "string" then
         return p2
     end
-    if 120 >= #p1 then
+    if not (120 < #p1) then
         v1 = p1
     else
         v1 = string.sub(p1, 1, 120)
     end
     return v1
 end
+
 local function sanitizePath(p1) -- Line: 22
     local v1, v2
     if p1 == nil or typeof(p1) ~= "table" then
@@ -39,12 +41,13 @@ local function sanitizePath(p1) -- Line: 22
     end
     return v3
 end
+
 local function sanitizeBodyParts(p1) -- Line: 47 -- upvalues: sanitizePath (val)
-    local id, name, v1, v2, v3, v4
+    local id, name, partPaths, v1, v2, v3, v4, v5
     if typeof(p1) ~= "table" then
         return {}
     end
-    local v5 = {}
+    local v6 = {}
     for i, v in ipairs(p1) do
         if 12 < i then
             break
@@ -58,9 +61,9 @@ local function sanitizeBodyParts(p1) -- Line: 47 -- upvalues: sanitizePath (val)
                 if 120 < #id then
                     id = string.sub(id, 1, 120)
                 end
-                v2 = id
+                v3 = id
             else
-                v2 = nil
+                v3 = nil
             end
             name = v.name
             if not name then
@@ -70,35 +73,38 @@ local function sanitizeBodyParts(p1) -- Line: 47 -- upvalues: sanitizePath (val)
                 if 120 < #name then
                     name = string.sub(name, 1, 120)
                 end
-                v3 = name
+                v4 = name
             else
-                v3 = nil
+                v4 = nil
             end
-            v4 = {}
-            if typeof(v.partPaths) == "table" then
+            v5 = {}
+            partPaths = v.partPaths
+            if typeof(partPaths) == "table" then
                 for i2, i3 in ipairs(v.partPaths) do
                     if 12 < i2 then
                         break
                     end
-                    v1 = sanitizePath(i3)
-                    if v1 then
-                        table.insert(v4, v1)
+                    v2 = sanitizePath(i3)
+                    if v2 then
+                        table.insert(v5, v2)
                     end
                 end
             end
-            if v2 and v3 and 0 < #v4 then
-                table.insert(v5, {id = v2, name = v3, partPaths = v4})
+            if v3 and v4 and 0 < #v5 then
+                v1 = {id = v3, name = v4, partPaths = v5}
+                table.insert(v6, v1)
             end
         end
     end
-    return v5
+    return v6
 end
+
 local function sanitizeCapsules(p1) -- Line: 89 -- upvalues: sanitizePath (val), sanitizeBodyParts (val)
-    local bodyParts, id, label, modelPath, shortLabel, v1, v2, v3, v4, zombieModelRef
+    local bodyParts, id, label, modelPath, shortLabel, v1, v2, v3, v4, v5, zombieModelRef, zombieModelRef_2
     if typeof(p1) ~= "table" then
         return {}
     end
-    local v5 = {}
+    local v6 = {}
     for i, v in ipairs(p1) do
         if 50 < i then
             break
@@ -120,46 +126,51 @@ local function sanitizeCapsules(p1) -- Line: 89 -- upvalues: sanitizePath (val),
                     if 120 < #label then
                         label = string.sub(label, 1, 120)
                     end
-                    v3 = label
+                    v4 = label
                 else
-                    v3 = v1
+                    v4 = v1
                 end
                 shortLabel = v.shortLabel
                 if typeof(shortLabel) == "string" then
                     if 120 < #shortLabel then
                         shortLabel = string.sub(shortLabel, 1, 120)
                     end
-                    v4 = shortLabel
+                    v5 = shortLabel
                 else
-                    v4 = nil
+                    v5 = nil
                 end
+                v1 = sanitizePath
                 modelPath = v.modelPath
                 if not modelPath then
                     modelPath = v.path
                 end
-                v1 = sanitizePath(modelPath)
+                v1 = v1(modelPath)
+                v2 = sanitizeBodyParts
                 bodyParts = v.bodyParts
                 if not bodyParts then
                     bodyParts = v.zones
                 end
-                v2 = sanitizeBodyParts(bodyParts)
-                zombieModelRef = nil
-                if typeof(v.zombieModelRef) == "Instance" then
-                    zombieModelRef = v.zombieModelRef
+                v2 = v2(bodyParts)
+                zombieModelRef_2 = nil
+                zombieModelRef = v.zombieModelRef
+                if typeof(zombieModelRef) == "Instance" then
+                    zombieModelRef_2 = v.zombieModelRef
                 end
-                table.insert(v5, {
+                v3 = {
                     id = id,
-                    label = v3,
-                    shortLabel = v4,
+                    label = v4,
+                    shortLabel = v5,
                     modelPath = v1,
                     bodyParts = v2,
-                    zombieModelRef = zombieModelRef,
-                })
+                    zombieModelRef = zombieModelRef_2,
+                }
+                table.insert(v6, v3)
             end
         end
     end
-    return v5
+    return v6
 end
+
 local function sanitizeScanState(p1) -- Line: 136
     local v1, v2
     if typeof(p1) ~= "table" then
@@ -174,9 +185,24 @@ local function sanitizeScanState(p1) -- Line: 136
     else
         v1 = "idle"
     end
-    local v3 = if typeof(p1.capsuleId) == "number" then math.floor(p1.capsuleId) else nil
-    local v4 = if typeof(p1.duration) == "number" then math.max(0, p1.duration) else nil
-    local v5 = if typeof(p1.remaining) == "number" then math.max(0, p1.remaining) else nil
+    local v3 = nil
+    local capsuleId = p1.capsuleId
+    if typeof(capsuleId) == "number" then
+        local capsuleId_2 = p1.capsuleId
+        v3 = math.floor(capsuleId_2)
+    end
+    local v4 = nil
+    local duration = p1.duration
+    if typeof(duration) == "number" then
+        local duration_2 = p1.duration
+        v4 = math.max(0, duration_2)
+    end
+    local v5 = nil
+    local remaining = p1.remaining
+    if typeof(remaining) == "number" then
+        local remaining_2 = p1.remaining
+        v5 = math.max(0, remaining_2)
+    end
     local startedBy = p1.startedBy
     if typeof(startedBy) == "string" then
         if 120 < #startedBy then
@@ -186,7 +212,12 @@ local function sanitizeScanState(p1) -- Line: 136
     else
         v2 = nil
     end
-    local v6 = if typeof(p1.cooldown) == "number" then math.max(0, p1.cooldown) else nil
+    local v6 = nil
+    local cooldown = p1.cooldown
+    if typeof(cooldown) == "number" then
+        local cooldown_2 = p1.cooldown
+        v6 = math.max(0, cooldown_2)
+    end
     return {
         mode = v1,
         capsuleId = v3,
@@ -196,8 +227,9 @@ local function sanitizeScanState(p1) -- Line: 136
         cooldown = v6,
     }
 end
+
 return Red.SharedEvent("ResearchRoom", function(p1) -- Line: 173 -- upvalues: sanitizeCapsules (val), sanitizeScanState (val)
-    local capsuleId, v1, v2, v3, v4
+    local v1, v2, v3, v4
     if typeof(p1) ~= "table" then
         return nil
     end
@@ -223,12 +255,18 @@ return Red.SharedEvent("ResearchRoom", function(p1) -- Line: 173 -- upvalues: sa
         else
             v2 = nil
         end
+        v3 = sanitizeCapsules
         local capsules = p1.capsules
         if not capsules then
             capsules = {}
         end
-        v3 = sanitizeCapsules(capsules)
-        v4 = if typeof(p1.focusId) == "number" then math.floor(p1.focusId) else nil
+        v3 = v3(capsules)
+        v4 = nil
+        local focusId = p1.focusId
+        if typeof(focusId) == "number" then
+            local focusId_2 = p1.focusId
+            v4 = math.floor(focusId_2)
+        end
         return {action = v1, sessionId = v2, capsules = v3, focusId = v4}
     end
     if v1 == "CloseXRay" then
@@ -244,13 +282,13 @@ return Red.SharedEvent("ResearchRoom", function(p1) -- Line: 173 -- upvalues: sa
         else
             v2 = nil
         end
+        v3 = sanitizeCapsules
         local capsules_2 = p1.capsules
         if not capsules_2 then
             capsules_2 = {}
         end
-        v3 = sanitizeCapsules(capsules_2)
-        v4 = sanitizeScanState(p1.scanState)
-        return {action = v1, sessionId = v2, capsules = v3, scanState = v4}
+        v3 = v3(capsules_2)
+        return {action = v1, sessionId = v2, capsules = v3, scanState = sanitizeScanState(p1.scanState)}
     end
     if v1 == "ScanState" then
         v2 = sanitizeScanState(p1.scanState)
@@ -259,45 +297,7 @@ return Red.SharedEvent("ResearchRoom", function(p1) -- Line: 173 -- upvalues: sa
         end
         return {action = v1, scanState = v2}
     end
-    if v1 ~= "ScanResult" then
-        if v1 == "ConsoleInUse" then
-            local by = p1.by
-            if typeof(by) == "string" then
-                if 120 < #by then
-                    by = string.sub(by, 1, 120)
-                end
-                v2 = by
-            else
-                v2 = nil
-            end
-            return {action = v1, by = v2}
-        end
-        if v1 == "RequestScanStatus" then
-            return {action = v1}
-        end
-        if v1 ~= "StartScan" then
-            if v1 ~= "CloseScan" then
-                if v1 == "CloseXRayClient" or v1 == "RequestXRayData" then
-                    return {action = v1}
-                end
-                return nil
-            end
-            return {action = v1}
-        end
-        capsuleId = p1.capsuleId
-        if typeof(capsuleId) == "number" then
-            capsuleId = math.floor(capsuleId)
-        elseif typeof(capsuleId) == "string" then
-            capsuleId = tonumber(capsuleId)
-            if capsuleId then
-                capsuleId = math.floor(capsuleId)
-            end
-        end
-        if typeof(capsuleId) ~= "number" or capsuleId < 1 then
-            return nil
-        end
-        return {action = v1, capsuleId = capsuleId}
-    else
+    if v1 == "ScanResult" then
         local result = p1.result
         if typeof(result) == "string" then
             if 120 < #result then
@@ -307,27 +307,73 @@ return Red.SharedEvent("ResearchRoom", function(p1) -- Line: 173 -- upvalues: sa
         else
             v2 = nil
         end
-        if v2 == "success" then
-            v3 = if typeof(p1.capsuleId) == "number" then math.floor(p1.capsuleId) else nil
-            local message = p1.message
-            if typeof(message) == "string" then
-                if 120 < #message then
-                    message = string.sub(message, 1, 120)
-                end
-                v4 = message
-            else
-                v4 = nil
-            end
-            local v5 = if typeof(p1.cooldown) == "number" then math.max(0, p1.cooldown) else nil
-            return {
-                action = v1,
-                result = v2,
-                capsuleId = v3,
-                message = v4,
-                cooldown = v5,
-            }
-        elseif v2 ~= "failure" then
+        if v2 ~= "success" and v2 ~= "failure" then
             return nil
         end
+        v3 = nil
+        local capsuleId = p1.capsuleId
+        if typeof(capsuleId) == "number" then
+            local capsuleId_2 = p1.capsuleId
+            v3 = math.floor(capsuleId_2)
+        end
+        local message = p1.message
+        if typeof(message) == "string" then
+            if 120 < #message then
+                message = string.sub(message, 1, 120)
+            end
+            v4 = message
+        else
+            v4 = nil
+        end
+        local v5 = nil
+        local cooldown = p1.cooldown
+        if typeof(cooldown) == "number" then
+            local cooldown_2 = p1.cooldown
+            v5 = math.max(0, cooldown_2)
+        end
+        return {
+            action = v1,
+            result = v2,
+            capsuleId = v3,
+            message = v4,
+            cooldown = v5,
+        }
     end
+    if v1 == "ConsoleInUse" then
+        local by = p1.by
+        if typeof(by) == "string" then
+            if 120 < #by then
+                by = string.sub(by, 1, 120)
+            end
+            v2 = by
+        else
+            v2 = nil
+        end
+        return {action = v1, by = v2}
+    end
+    if v1 == "RequestScanStatus" then
+        return {action = v1}
+    end
+    if v1 ~= "StartScan" then
+        if v1 ~= "CloseScan" and v1 ~= "CloseXRayClient" then
+            if v1 == "RequestXRayData" then
+                return {action = v1}
+            end
+            return nil
+        end
+        return {action = v1}
+    end
+    local capsuleId_3 = p1.capsuleId
+    if typeof(capsuleId_3) == "number" then
+        capsuleId_3 = math.floor(capsuleId_3)
+    elseif typeof(capsuleId_3) == "string" then
+        capsuleId_3 = tonumber(capsuleId_3)
+        if capsuleId_3 then
+            capsuleId_3 = math.floor(capsuleId_3)
+        end
+    end
+    if typeof(capsuleId_3) == "number" and not (capsuleId_3 < 1) then
+        return {action = v1, capsuleId = capsuleId_3}
+    end
+    return nil
 end)

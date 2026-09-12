@@ -1,7 +1,7 @@
 game:GetService("ReplicatedStorage")
 game:GetService("Players")
-local Data = game:GetService("ReplicatedStorage").common.ZS_Framework:WaitForChild("Data")
-local PlayerDatabase = require(Data:WaitForChild("PlayerDatabase"))
+local ZS_Framework = (game:GetService("ReplicatedStorage")).common.ZS_Framework
+local PlayerDatabase = require((ZS_Framework:WaitForChild("Data")):WaitForChild("PlayerDatabase"))
 local v1 = require("@game/ReplicatedStorage/common/zap")
 v1.InitQuests.On(function(p1) -- Line: 12 -- upvalues: PlayerDatabase (val)
     local v1 = p1
@@ -42,9 +42,14 @@ v1.UpdateQuestProgress.On(function(p1) -- Line: 45 -- upvalues: PlayerDatabase (
         return
     end
     v2.Progress.Current = p1.Progress
-    if v2.Progress.Goal <= v2.Progress.Current then
+    local Current = v2.Progress.Current
+    if v2.Progress.Goal <= Current then
         v2.IsCompleted = true
-        PlayerDatabase.Signals.BannerMessage:Fire(p1.Category .. " Quest Completed!", v2.Title, 1)
+        local v3 = PlayerDatabase
+        local BannerMessage = v3.Signals.BannerMessage
+        local v4 = p1.Category .. " Quest Completed!"
+        local Title = v2.Title
+        BannerMessage:Fire(v4, Title, 1)
     end
 end)
 return {}

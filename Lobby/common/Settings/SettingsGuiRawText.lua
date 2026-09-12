@@ -1,8 +1,9 @@
 local v1 = scope:New("ScreenGui")
 local v2 = {Name = "SettingsGui", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling}
-local v3 = {}
-local v4 = scope:New("Frame")
-local v5 = {
+local v3 = Children
+local v4 = {}
+local v5 = scope:New("Frame")
+local v6 = {
     Name = "Panel",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.fromRGB(17, 37, 63),
@@ -11,11 +12,10 @@ local v5 = {
     Size = UDim2.fromScale(1.2, 0.78),
     SizeConstraint = Enum.SizeConstraint.RelativeYY,
 }
-local v6 = {}
-local v7 = scope:New("UICorner")
-v7 = v7({Name = "UICorner", CornerRadius = UDim.new(0.015, 0)})
-local v8 = scope:New("Frame")
-v8 = v8({
+local v7 = Children
+local v8 = {}
+local v9 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.015, 0)})
+local v10 = scope:New("Frame")({
     Name = "Background",
     BorderSizePixel = 0,
     Visible = false,
@@ -25,13 +25,12 @@ v8 = v8({
     Size = UDim2.fromScale(1.538, 1),
     SizeConstraint = Enum.SizeConstraint.RelativeYY,
 })
-local v9 = scope:New("Frame")
-local v10 = {Name = "Header", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.065)}
-local v11 = {}
-local v12 = scope:New("UICorner")
-v12 = v12({Name = "UICorner", CornerRadius = UDim.new(0.3, 0)})
-local v13 = scope:New("TextLabel")
-v13 = v13({
+local v11 = scope:New("Frame")
+local v12 = {Name = "Header", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.065)}
+local v13 = Children
+local v14 = {}
+local v15 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.3, 0)})
+local v16 = scope:New("TextLabel")({
     Name = "TextLabel",
     BackgroundTransparency = 1,
     Text = "SETTINGS",
@@ -42,8 +41,8 @@ v13 = v13({
     Size = UDim2.fromScale(0.15, 1),
     TextColor3 = Color3.fromRGB(255, 184, 84),
 })
-local v14 = scope:New("TextButton")
-local v15 = {
+local v17 = scope:New("TextButton")
+local v18 = {
     Name = "Exit",
     Active = false,
     AnchorPoint = Vector2.new(1, 1),
@@ -53,9 +52,10 @@ local v15 = {
     Size = UDim2.fromOffset(35, 35),
     Visible = false,
 }
-local v16 = {}
-local v17 = scope:New("ImageLabel")
-local v18 = {
+local v19 = Children
+local v20 = {}
+local v21 = scope:New("ImageLabel")
+local v22 = {
     Name = "WeaponStats",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -68,9 +68,9 @@ local v18 = {
     Size = UDim2.fromScale(1, 1),
     SliceCenter = Rect.new(12, 12, 12, 12),
 }
-local v19 = {}
-local v20 = scope:New("ImageLabel")
-v20 = v20({
+local v23 = Children
+local v24 = {}
+local v25 = scope:New("ImageLabel")({
     Name = "Fill",
     BackgroundTransparency = 1,
     Image = "rbxassetid://2851928361",
@@ -81,8 +81,8 @@ v20 = v20({
     Size = UDim2.new(1, -10, 1, -10),
     SliceCenter = Rect.new(7, 7, 7, 7),
 })
-local v21 = scope:New("TextLabel")
-local v22 = {
+local v26 = scope:New("TextLabel")
+local v27 = {
     Name = "Label",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
@@ -93,46 +93,42 @@ local v22 = {
     TextColor3 = Color3.fromRGB(255, 73, 73),
     TextScaled = true,
 }
-local v23 = {}
-local v24 = scope:New("UITextSizeConstraint")
-v23[1] = v24({Name = "UITextSizeConstraint", MaxTextSize = 20})
-v22[Children] = v23
-v19[1] = v20
-v19[2] = v21(v22)
-v18[Children] = v19
-v16[1] = v17(v18)
-v15[Children] = v16
-v11[1] = v12
-v11[2] = v13
-v11[3] = v14(v15)
-v10[Children] = v11
-v9 = v9(v10)
-v10 = scope:New("Frame")
-local v25 = {
+local v28 = Children
+v27[v28] = {scope:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 20})}
+v24[1] = v25
+v24[2] = v26(v27)
+v22[v23] = v24
+v20[1] = v21(v22)
+v18[v19] = v20
+v14[1] = v15
+v14[2] = v16
+v14[3] = v17(v18)
+v12[v13] = v14
+v11 = v11(v12)
+v12 = scope:New("Frame")
+v13 = {
     Name = "Container",
     AnchorPoint = Vector2.new(1, 1),
     BackgroundTransparency = 1,
     Position = UDim2.fromScale(0.995, 1),
     Size = UDim2.fromScale(0.695, 0.945),
 }
-v12 = {}
-v13 = scope:New("UICorner")
-v12[1] = v13({Name = "UICorner", CornerRadius = UDim.new(0.016, 0)})
-v25[Children] = v12
-v10 = v10(v25)
-v25 = scope:New("Frame")
-v11 = {
+v14 = Children
+v13[v14] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.016, 0)})}
+v12 = v12(v13)
+v13 = scope:New("Frame")
+v14 = {
     Name = "Tabs",
     AnchorPoint = Vector2.new(0, 1),
     BackgroundTransparency = 1,
     Position = UDim2.fromScale(0, 1),
     Size = UDim2.fromScale(0.296, 1),
 }
-v13 = {}
-v14 = scope:New("UICorner")
-v14 = v14({Name = "UICorner", CornerRadius = UDim.new(0.035, 0)})
-v15 = scope:New("ScrollingFrame")
-local v26 = {
+v15 = Children
+v16 = {}
+v17 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.035, 0)})
+v18 = scope:New("ScrollingFrame")
+v19 = {
     Name = "Frame",
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -143,20 +139,21 @@ local v26 = {
     Selectable = false,
     Size = UDim2.fromScale(1, 1),
 }
-v17 = {}
-v18 = scope:New("UIListLayout")
-v18 = v18({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})
-local v27 = scope:New("TextButton")
-v19 = {
+v20 = Children
+v21 = {}
+v22 = scope:New("UIListLayout")({Name = "UIListLayout", SortOrder = Enum.SortOrder.LayoutOrder})
+v23 = scope:New("TextButton")
+v24 = {
     Name = "Button",
     BackgroundTransparency = 1,
     Size = UDim2.fromScale(1, 0.3),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
     Visible = false,
 }
-v21 = {}
-v22 = scope:New("Frame")
-local v28 = {
+v25 = Children
+v26 = {}
+v27 = scope:New("Frame")
+v28 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.new(),
@@ -164,13 +161,12 @@ local v28 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.new(0.95, -8, 0.85, -8),
 }
-v24 = {}
-local v29 = scope:New("UICorner")
-v29 = v29({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
-local v30 = scope:New("UIStroke")
-v30 = v30({Name = "UIStroke", Thickness = 4, Color = Color3.fromRGB(255, 184, 84)})
-local v31 = scope:New("TextLabel")
-local v32 = {
+local v29 = Children
+local v30 = {}
+local v31 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
+local v32 = scope:New("UIStroke")({Name = "UIStroke", Thickness = 4, Color = Color3.fromRGB(255, 184, 84)})
+local v33 = scope:New("TextLabel")
+local v34 = {
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "GRAPHICS",
@@ -181,24 +177,25 @@ local v32 = {
     Size = UDim2.fromScale(0.9, 0.85),
     TextColor3 = Color3.new(1, 1, 1),
 }
-v24[1] = v29
-v24[2] = v30
-v24[3] = v31(v32)
-v28[Children] = v24
-v21[1] = v22(v28)
-v19[Children] = v21
-v27 = v27(v19)
-v19 = scope:New("TextButton")
-v20 = {
+v30[1] = v31
+v30[2] = v32
+v30[3] = v33(v34)
+v28[v29] = v30
+v26[1] = v27(v28)
+v24[v25] = v26
+v23 = v23(v24)
+v24 = scope:New("TextButton")
+v25 = {
     Name = "Exit",
     BackgroundTransparency = 1,
     Size = UDim2.fromScale(1, 0.2),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
     Visible = false,
 }
-v22 = {}
+v26 = Children
+v27 = {}
 v28 = scope:New("Frame")
-v23 = {
+v29 = {
     Name = "Frame",
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Color3.fromRGB(61, 0, 0),
@@ -206,13 +203,12 @@ v23 = {
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.new(0.95, -8, 0.85, -8),
 }
-v29 = {}
-v30 = scope:New("UICorner")
-v30 = v30({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
-v31 = scope:New("UIStroke")
-v31 = v31({Name = "UIStroke", Thickness = 4, Color = Color3.fromRGB(255, 73, 73)})
-v32 = scope:New("TextLabel")
-local v33 = {
+v30 = Children
+v31 = {}
+v32 = scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.2, 0)})
+v33 = scope:New("UIStroke")({Name = "UIStroke", Thickness = 4, Color = Color3.fromRGB(255, 73, 73)})
+v34 = scope:New("TextLabel")
+local v35 = {
     Name = "Label",
     BackgroundTransparency = 1,
     Text = "EXIT",
@@ -223,53 +219,59 @@ local v33 = {
     Size = UDim2.fromScale(0.9, 0.85),
     TextColor3 = Color3.fromRGB(255, 73, 73),
 }
-v29[1] = v30
-v29[2] = v31
-v29[3] = v32(v33)
-v23[Children] = v29
-v22[1] = v28(v23)
-v20[Children] = v22
-v17[1] = v18
-v17[2] = v27
-v17[3] = v19(v20)
-v26[Children] = v17
-v15 = v15(v26)
-v26 = scope:New("Frame")
-v16 = {
+v31[1] = v32
+v31[2] = v33
+v31[3] = v34(v35)
+v29[v30] = v31
+v27[1] = v28(v29)
+v25[v26] = v27
+v21[1] = v22
+v21[2] = v23
+v21[3] = v24(v25)
+v19[v20] = v21
+v18 = v18(v19)
+v19 = scope:New("Frame")
+v20 = {
     Name = "Background",
     BackgroundTransparency = 1,
     ClipsDescendants = true,
     Size = UDim2.fromScale(1, 1),
     ZIndex = 0,
 }
-v18 = {}
-v27 = scope:New("Frame")
-v19 = {Name = "CurvedFrame", BackgroundColor3 = Color3.new(), BackgroundTransparency = 0.9, Size = UDim2.fromScale(1.2, 1)}
-v21 = {}
-v22 = scope:New("UICorner")
-v21[1] = v22({Name = "UICorner", CornerRadius = UDim.new(0.028, 0)})
-v19[Children] = v21
-v18[1] = v27(v19)
-v16[Children] = v18
-v13[1] = v14
-v13[2] = v15
-v13[3] = v26(v16)
-v11[Children] = v13
-v25 = v25(v11)
-v11 = scope:New("UIGradient")
-v12 = {Name = "UIGradient", Rotation = 90}
-v14 = {}
-v15 = ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1))
-v14[1] = v15
-v14[2] = ColorSequenceKeypoint.new(1, Color3.fromRGB(95, 95, 95))
-v12.Color = ColorSequence.new(v14)
-v6[1] = v7
-v6[2] = v8
-v6[3] = v9
-v6[4] = v10
-v6[5] = v25
-v6[6] = v11(v12)
-v5[Children] = v6
-v3[1] = v4(v5)
-v2[Children] = v3
+v21 = Children
+v22 = {}
+v23 = scope:New("Frame")
+v24 = {
+    Name = "CurvedFrame",
+    BackgroundColor3 = Color3.new(),
+    BackgroundTransparency = 0.9,
+    Size = UDim2.fromScale(1.2, 1),
+}
+v25 = Children
+v24[v25] = {scope:New("UICorner")({Name = "UICorner", CornerRadius = UDim.new(0.028, 0)})}
+v22[1] = v23(v24)
+v20[v21] = v22
+v16[1] = v17
+v16[2] = v18
+v16[3] = v19(v20)
+v14[v15] = v16
+v13 = v13(v14)
+v14 = scope:New("UIGradient")
+v15 = {
+    Name = "UIGradient",
+    Rotation = 90,
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(95, 95, 95)),
+    }),
+}
+v8[1] = v9
+v8[2] = v10
+v8[3] = v11
+v8[4] = v12
+v8[5] = v13
+v8[6] = v14(v15)
+v6[v7] = v8
+v4[1] = v5(v6)
+v2[v3] = v4
 v1(v2)

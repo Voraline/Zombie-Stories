@@ -1,5 +1,5 @@
 local u2 = require("../Shared/Util")
-local v1 = {
+local u214 = u2.MakeFuzzyFinder({
     "White",
     "Grey",
     "Light yellow",
@@ -208,39 +208,52 @@ local v1 = {
     "Pastel brown",
     "Royal purple",
     "Hot pink",
-}
-local u214 = u2.MakeFuzzyFinder(v1)
-local u215 = {
-    Prefixes = "% teamColor",
-    Transform = function(p1) -- Line: 40 -- upvalues: u214 (val)
-        local v1 = {}
-        for k, v in pairs(u214(p1)) do
-            v1[k] = BrickColor.new(v)
-        end
-        return v1
-    end,
-    Validate = function(p1) -- Line: 48
-        local v1 = 0 < #p1
-        return v1, "No valid brick colors with that name could be found."
-    end,
-    Autocomplete = function(p1) -- Line: 52 -- upvalues: u2 (val)
-        return u2.GetNames(p1)
-    end,
-    Parse = function(p1) -- Line: 56
-        return p1[1]
-    end,
-}
-local u220 = {
-    Transform = u215.Transform,
-    Validate = u215.Validate,
-    Autocomplete = u215.Autocomplete,
-    Parse = function(p1) -- Line: 66
-        return p1[1].Color
-    end,
-}
+})
+local u215 = {Prefixes = "% teamColor"}
+
+function u215.Transform(p1) -- Line: 40 -- upvalues: u214 (val)
+    local v1 = {}
+    for k, v in pairs(u214(p1)) do
+        v1[k] = (BrickColor.new(v))
+    end
+    return v1
+end
+
+function u215.Validate(p1) -- Line: 48
+    local v1 = 0 < #p1
+    return v1, "No valid brick colors with that name could be found."
+end
+
+function u215.Autocomplete(p1) -- Line: 52 -- upvalues: u2 (val)
+    return u2.GetNames(p1)
+end
+
+function u215.Parse(p1) -- Line: 56
+    return p1[1]
+end
+
+local u220 = {}
+u220.Transform = u215.Transform
+u220.Validate = u215.Validate
+u220.Autocomplete = u215.Autocomplete
+
+function u220.Parse(p1) -- Line: 66
+    return p1[1].Color
+end
+
 return function(p1) -- Line: 71 -- upvalues: u215 (val), u2 (val), u220 (val)
-    p1:RegisterType("brickColor", u215)
-    p1:RegisterType("brickColors", u2.MakeListableType(u215, {Prefixes = "% teamColors"}))
-    p1:RegisterType("brickColor3", u220)
-    p1:RegisterType("brickColor3s", u2.MakeListableType(u220))
+    local v1 = u215
+    p1:RegisterType("brickColor", v1)
+    v1 = u2
+    local MakeListableType = v1.MakeListableType
+    local v2 = u215
+    v1 = MakeListableType(v2, {Prefixes = "% teamColors"})
+    p1:RegisterType("brickColors", v1)
+    v1 = u220
+    p1:RegisterType("brickColor3", v1)
+    v1 = u2
+    local MakeListableType_2 = v1.MakeListableType
+    v2 = u220
+    v1 = MakeListableType_2(v2)
+    p1:RegisterType("brickColor3s", v1)
 end

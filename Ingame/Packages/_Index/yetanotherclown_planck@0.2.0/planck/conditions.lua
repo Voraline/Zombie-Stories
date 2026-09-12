@@ -5,13 +5,11 @@ return {
     timePassed = function(p1) -- Line: 22
         local u1 = nil
         return function() -- Line: 25 -- upvalues: u1 (ref), p1 (val)
-            if u1 == nil then
-                u1 = os.clock()
-                return true
-            end
-            local v1 = os.clock() - u1
-            if p1 > v1 then
-                return false
+            if u1 ~= nil then
+                local v1 = os.clock() - u1
+                if not (p1 <= v1) then
+                    return false
+                end
             end
             u1 = os.clock()
             return true
@@ -33,6 +31,7 @@ return {
         local u10 = false
         local u11 = {}
         local u12 = nil
+
         local function disconnect() -- Line: 119 -- upvalues: u12 (ref), utils (upval)
             if not u12 then
                 return
@@ -40,6 +39,14 @@ return {
             utils.disconnectEvent(u12)
             u12 = nil
         end
+
+        local v2 = v1(function(...) -- Line: 128 -- upvalues: u10 (ref), u11 (val)
+            u10 = true
+            local v1 = u11
+            local v2 = {...}
+            table.insert(v1, v2)
+        end)
+
         local function hasNewEvent() -- Line: 135 -- upvalues: u10 (ref), u11 (val)
             if u10 then
                 u10 = false
@@ -48,6 +55,7 @@ return {
             table.clear(u11)
             return false
         end
+
         u8[hasNewEvent] = disconnect
         return hasNewEvent, function() -- Line: 145 -- upvalues: u11 (val)
             local u0 = 0

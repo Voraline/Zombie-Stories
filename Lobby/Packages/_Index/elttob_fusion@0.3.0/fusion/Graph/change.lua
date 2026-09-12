@@ -7,7 +7,7 @@ return function(p1) -- Line: 23 -- upvalues: External (val), evaluate (val)
     if p1.validity == "busy" then
         return External.logError("infiniteLoop")
     end
-    if not (evaluate(p1, true)) then
+    if not evaluate(p1, true) then
         return
     end
     local v7 = {}
@@ -15,7 +15,7 @@ return function(p1) -- Line: 23 -- upvalues: External (val), evaluate (val)
     local v9 = {}
     v7[1] = p1
     local v10 = os.clock() + 1 * External.safetyTimerMultiplier
-    while v10 >= os.clock() do
+    while not (v10 < os.clock()) do
         v3 = true
         v4 = v7
         v5 = nil

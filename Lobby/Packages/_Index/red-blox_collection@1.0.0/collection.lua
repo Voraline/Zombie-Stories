@@ -1,18 +1,18 @@
 local CollectionService = game:GetService("CollectionService")
 local Spawn = require(script.Parent.Spawn)
 return function(p1, p2) -- Line: 5 -- upvalues: CollectionService (val), Spawn (val)
+    local v1
     local u2 = {}
     for i, j in CollectionService:GetTagged(p1) do
-        Spawn(function() -- Line: 9 -- upvalues: u2 (val), j (val), p2 (val)
-            u2[j] = p2(j)
+        v1 = Spawn
+        v1(function() -- Line: 9 -- upvalues: u2 (val), j (val), p2 (val)
+            u2[j] = (p2(j))
         end)
     end
-    local InstanceAddedSignal = CollectionService:GetInstanceAddedSignal(p1)
-    local u28 = InstanceAddedSignal:Connect(function(p1) -- Line: 14 -- upvalues: u2 (val), p2 (val)
-        u2[p1] = p2(p1)
+    local u28 = (CollectionService:GetInstanceAddedSignal(p1)):Connect(function(p1) -- Line: 14 -- upvalues: u2 (val), p2 (val)
+        u2[p1] = (p2(p1))
     end)
-    local InstanceRemovedSignal = CollectionService:GetInstanceRemovedSignal(p1)
-    local u37 = InstanceRemovedSignal:Connect(function(p1) -- Line: 18 -- upvalues: u2 (val)
+    local u37 = (CollectionService:GetInstanceRemovedSignal(p1)):Connect(function(p1) -- Line: 18 -- upvalues: u2 (val)
         local v1 = u2[p1]
         if v1 then
             u2[p1] = nil

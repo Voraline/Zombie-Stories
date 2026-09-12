@@ -86,7 +86,12 @@ v1.ParallaxYaw = 0.026179938779914945
 v1.ParallaxPitch = 0.013962634015954637
 v1.ParallaxSpring = 34
 v1.ParallaxDamping = 10
-v1.SeatedIdleAnimations = {"rbxassetid://138456593729774", "rbxassetid://107622015700798", "rbxassetid://120137752770811", "rbxassetid://136926757335614"}
+v1.SeatedIdleAnimations = {
+    "rbxassetid://138456593729774",
+    "rbxassetid://107622015700798",
+    "rbxassetid://120137752770811",
+    "rbxassetid://136926757335614",
+}
 v1.SeatedIdleFadeTime = 0.35
 v1.SeatedIdleSpeedJitter = 0.06
 v1.HeliInteriorSoundId = "rbxassetid://109810223981955"
@@ -131,7 +136,12 @@ v1.StoryReadyTagSize = UDim2.fromScale(2.2, 0.45)
 v1.StoryReadyTagStudsOffset = Vector3.new(0, 0.3499999940395355, 0)
 v1.StoryReadyTagMaxDistance = 60
 v1.StoryReadyTagMaxTextSize = 30
-v1.ClassIcons = {Assault = "rbxassetid://4458718282", Medic = "rbxassetid://2706886795", Support = "rbxassetid://2706886028", Sniper = "rbxassetid://4458692655"}
+v1.ClassIcons = {
+    Assault = "rbxassetid://4458718282",
+    Medic = "rbxassetid://2706886795",
+    Support = "rbxassetid://2706886028",
+    Sniper = "rbxassetid://4458692655",
+}
 v1.CountdownBeep = "rbxassetid://10080515826"
 v1.CountdownFinalBeep = "rbxassetid://10080515739"
 v1.Tips = {

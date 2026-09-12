@@ -2,7 +2,12 @@ local Fusion = require(game.ReplicatedStorage.Packages.Fusion)
 local v1 = Fusion.scoped(Fusion)
 local Children = Fusion.Children
 local v2 = v1:New("ScreenGui")
-local v3 = {Name = "Edit", IgnoreGuiInset = true, ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets, ZIndexBehavior = Enum.ZIndexBehavior.Sibling}
+local v3 = {
+    Name = "Edit",
+    IgnoreGuiInset = true,
+    ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets,
+    ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+}
 local v4 = {}
 local v5 = v1:New("Frame")
 local v6 = {
@@ -17,8 +22,7 @@ local v6 = {
     Size = UDim2.fromOffset(405, 0),
 }
 local v7 = {}
-local v8 = v1:New("TextLabel")
-v8 = v8({
+local v8 = v1:New("TextLabel")({
     Name = "TextLabel",
     BackgroundTransparency = 1,
     Text = "Tap on a button to edit",
@@ -51,13 +55,9 @@ local v10 = {
     TextSize = 14,
     TextWrapped = true,
 }
-local v11 = {}
-local v12 = v1:New("UITextSizeConstraint")
-v11[1] = v12({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v10[Children] = v11
+v10[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v9 = v9(v10)
-v10 = v1:New("TextButton")
-v10 = v10({
+v10 = v1:New("TextButton")({
     Name = "Dec",
     BackgroundTransparency = 0.75,
     BorderSizePixel = 5,
@@ -74,8 +74,8 @@ v10 = v10({
     Size = UDim2.fromOffset(101, 50),
     TextColor3 = Color3.fromRGB(0, 0, 0),
 })
-v11 = v1:New("TextButton")
-v12 = {
+local v11 = v1:New("TextButton")
+local v12 = {
     Name = "Cancel",
     AnchorPoint = Vector2.new(0, 1),
     BackgroundColor3 = Color3.fromRGB(188, 0, 0),
@@ -92,13 +92,9 @@ v12 = {
     TextSize = 14,
     TextWrapped = true,
 }
-local v13 = {}
-local v14 = v1:New("UITextSizeConstraint")
-v13[1] = v14({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v12[Children] = v13
+v12[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v11 = v11(v12)
-v12 = v1:New("TextButton")
-v12 = v12({
+v12 = v1:New("TextButton")({
     Name = "Incr",
     BackgroundTransparency = 0.75,
     BorderSizePixel = 5,
@@ -115,8 +111,8 @@ v12 = v12({
     Size = UDim2.fromOffset(101, 50),
     TextColor3 = Color3.fromRGB(0, 0, 0),
 })
-v13 = v1:New("TextButton")
-v14 = {
+local v13 = v1:New("TextButton")
+local v14 = {
     Name = "Reset",
     AnchorPoint = Vector2.new(0.5, 1),
     BackgroundColor3 = Color3.fromRGB(188, 94, 0),
@@ -133,13 +129,10 @@ v14 = {
     TextSize = 14,
     TextWrapped = true,
 }
-local v15 = {}
-local v16 = v1:New("UITextSizeConstraint")
-v15[1] = v16({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v14[Children] = v15
+v14[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v13 = v13(v14)
 v14 = v1:New("Frame")
-v15 = {
+local v15 = {
     Name = "Frame",
     BackgroundTransparency = 0.25,
     BorderSizePixel = 0,
@@ -188,10 +181,7 @@ v10 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v11 = {}
-v12 = v1:New("UITextSizeConstraint")
-v11[1] = v12({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v10[Children] = v11
+v10[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v9 = v9(v10)
 v10 = v1:New("TextButton")
 v11 = {
@@ -211,10 +201,7 @@ v11 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v12 = {}
-v13 = v1:New("UITextSizeConstraint")
-v12[1] = v13({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v11[Children] = v12
+v11[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v10 = v10(v11)
 v11 = v1:New("TextButton")
 v12 = {
@@ -234,10 +221,7 @@ v12 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v13 = {}
-v14 = v1:New("UITextSizeConstraint")
-v13[1] = v14({Name = "UITextSizeConstraint", MaxTextSize = 22})
-v12[Children] = v13
+v12[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 22})}
 v8[1] = v9
 v8[2] = v10
 v8[3] = v11(v12)
@@ -270,10 +254,7 @@ v11 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v12 = {}
-v13 = v1:New("UITextSizeConstraint")
-v12[1] = v13({Name = "UITextSizeConstraint", MaxTextSize = 14})
-v11[Children] = v12
+v11[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 14})}
 v10 = v10(v11)
 v11 = v1:New("TextButton")
 v12 = {
@@ -293,10 +274,7 @@ v12 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v13 = {}
-v14 = v1:New("UITextSizeConstraint")
-v13[1] = v14({Name = "UITextSizeConstraint", MaxTextSize = 18})
-v12[Children] = v13
+v12[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 18})}
 v11 = v11(v12)
 v12 = v1:New("TextButton")
 v13 = {
@@ -316,10 +294,7 @@ v13 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v14 = {}
-v15 = v1:New("UITextSizeConstraint")
-v14[1] = v15({Name = "UITextSizeConstraint", MaxTextSize = 18})
-v13[Children] = v14
+v13[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 18})}
 v12 = v12(v13)
 v13 = v1:New("TextButton")
 v14 = {
@@ -339,10 +314,7 @@ v14 = {
     TextSize = 14,
     TextWrapped = true,
 }
-v15 = {}
-v16 = v1:New("UITextSizeConstraint")
-v15[1] = v16({Name = "UITextSizeConstraint", MaxTextSize = 18})
-v14[Children] = v15
+v14[Children] = {v1:New("UITextSizeConstraint")({Name = "UITextSizeConstraint", MaxTextSize = 18})}
 v9[1] = v10
 v9[2] = v11
 v9[3] = v12

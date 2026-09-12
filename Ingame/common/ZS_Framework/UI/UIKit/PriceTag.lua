@@ -37,9 +37,9 @@ return function(p1) -- Line: 35 -- upvalues: u11 (val)
     v2.BorderSizePixel = 0
     v2.ClipsDescendants = true
     v2.Parent = p1.Parent
+    local Children = scope.Children
     local v3 = {}
-    local v4 = scope:New("UICorner")
-    v4 = v4({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
+    local v4 = scope:New("UICorner")({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
     local v5 = scope:New("UIStroke")
     local v6 = {ApplyStrokeMode = Enum.ApplyStrokeMode.Border}
     local StrokeColor3 = p1.StrokeColor3
@@ -58,9 +58,9 @@ return function(p1) -- Line: 35 -- upvalues: u11 (val)
     v7.BackgroundColor3 = BackgroundColor3
     v7.BorderSizePixel = 0
     v7.ZIndex = ZIndex
+    local Children_2 = scope.Children
     local v8 = {}
-    local v9 = scope:New("UICorner")
-    v9 = v9({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
+    local v9 = scope:New("UICorner")({CornerRadius = UDim.new(0, u11.Menu.CornerRadius)})
     local v10 = scope:New("UIGradient")
     local v11 = {}
     local GradientColor = p1.GradientColor
@@ -71,7 +71,7 @@ return function(p1) -- Line: 35 -- upvalues: u11 (val)
     v11.Rotation = u11.Menu.ShadeRotation
     v8[1] = v9
     v8[2] = v10(v11)
-    v7[scope.Children] = v8
+    v7[Children_2] = v8
     v6 = v6(v7)
     v7 = scope:New("TextLabel")
     local v12 = {
@@ -93,6 +93,6 @@ return function(p1) -- Line: 35 -- upvalues: u11 (val)
     v3[2] = v5
     v3[3] = v6
     v3[4] = v7(v12)
-    v2[scope.Children] = v3
+    v2[Children] = v3
     return v1(v2)
 end

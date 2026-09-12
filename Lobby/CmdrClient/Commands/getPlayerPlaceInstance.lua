@@ -6,7 +6,12 @@ return {
     Args = {
         {Type = "playerId", Name = "Player", Description = "Get the place instance of this player"},
         function(p1) -- Line: 12
-            return {Name = "Format", Description = "What data to return. PlaceIdJobId returns both separated by a space.", Default = "PlaceIdJobId", Type = p1.Cmdr.Util.MakeEnumType("PlaceInstance Format", {"PlaceIdJobId", "PlaceId", "JobId"})}
+            return {
+                Name = "Format",
+                Description = "What data to return. PlaceIdJobId returns both separated by a space.",
+                Default = "PlaceIdJobId",
+                Type = p1.Cmdr.Util.MakeEnumType("PlaceInstance Format", {"PlaceIdJobId", "PlaceId", "JobId"}),
+            }
         end,
     },
 }

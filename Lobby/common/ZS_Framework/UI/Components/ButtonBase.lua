@@ -26,28 +26,38 @@ return function(p1) -- Line: 16 -- upvalues: OnEvent (val), peek (val), Children
         BackgroundTransparency = 1,
     }
     local Activated = OnEvent("Activated")
+
     v2[Activated] = function() -- Line: 31 -- upvalues: p1 (val), peek (upval), Disabled (val)
-        if p1.OnClick ~= nil and not (peek(Disabled)) then
+        if p1.OnClick ~= nil and not peek(Disabled) then
             p1.OnClick()
         end
     end
+
     local MouseButton1Down = OnEvent("MouseButton1Down")
+
     v2[MouseButton1Down] = function() -- Line: 37 -- upvalues: isHeldDown (val)
         isHeldDown:set(true)
     end
+
     local MouseButton1Up = OnEvent("MouseButton1Up")
+
     v2[MouseButton1Up] = function() -- Line: 40 -- upvalues: isHeldDown (val)
         isHeldDown:set(false)
     end
+
     local MouseEnter = OnEvent("MouseEnter")
+
     v2[MouseEnter] = function() -- Line: 44 -- upvalues: isHovering (val)
         isHovering:set(true)
     end
+
     local MouseLeave = OnEvent("MouseLeave")
+
     v2[MouseLeave] = function() -- Line: 47 -- upvalues: isHeldDown (val), isHovering (val)
         isHeldDown:set(false)
         isHovering:set(false)
     end
+
     v2[Children] = {}
     return v1(v2)
 end

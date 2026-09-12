@@ -1,9 +1,9 @@
 local u0 = {}
 local RunService = game:GetService("RunService")
-local v1 = {Live = 653118530, Testing = 1970013852}
-u0.UniverseIds = v1
+u0.UniverseIds = {Live = 653118530, Testing = 1970013852}
 local u7 = {}
-u7[u0.UniverseIds.Live] = {
+local Live = u0.UniverseIds.Live
+u7[Live] = {
     Name = "Live",
     Passes = {
         Axiom = 1337735330,
@@ -53,7 +53,8 @@ u7[u0.UniverseIds.Live] = {
         Umbra = 3711459053,
     },
 }
-local v2 = {
+local Testing = u0.UniverseIds.Testing
+u7[Testing] = {
     Name = "Testing",
     Passes = {
         Axiom = 1966213229,
@@ -91,8 +92,8 @@ local v2 = {
     },
     LimitedBundleProducts = {Umbra = 3711363599},
 }
-u7[u0.UniverseIds.Testing] = v2
 local u30 = u7[game.GameId]
+
 local function get(p1, p2) -- Line: 109 -- upvalues: u30 (val)
     local v1
     local v2 = u30
@@ -109,6 +110,7 @@ local function get(p1, p2) -- Line: 109 -- upvalues: u30 (val)
     end
     return v1
 end
+
 function u0.GetEnvironmentName() -- Line: 114 -- upvalues: u30 (val)
     local Name
     if not u30 then
@@ -121,10 +123,12 @@ function u0.GetEnvironmentName() -- Line: 114 -- upvalues: u30 (val)
     end
     return Name
 end
+
 function u0.IsSupportedUniverse() -- Line: 118 -- upvalues: u30 (val)
     local v1 = u30 ~= nil
     return v1
 end
+
 function u0.GetPass(p1) -- Line: 122 -- upvalues: u30 (val)
     local v1
     local Passes = u30
@@ -141,6 +145,7 @@ function u0.GetPass(p1) -- Line: 122 -- upvalues: u30 (val)
     end
     return v1
 end
+
 function u0.GetPassIds(p1) -- Line: 126 -- upvalues: u0 (val), u30 (val)
     local v1
     local v2 = {}
@@ -157,6 +162,9 @@ function u0.GetPassIds(p1) -- Line: 126 -- upvalues: u0 (val), u30 (val)
         v1 = nil
     else
         v1 = LegacyPasses[p1]
+        if not v1 then
+            v1 = nil
+        end
     end
     if not v1 then
         v1 = {}
@@ -166,6 +174,7 @@ function u0.GetPassIds(p1) -- Line: 126 -- upvalues: u0 (val), u30 (val)
     end
     return v2
 end
+
 function u0.GetProduct(p1) -- Line: 138 -- upvalues: u30 (val)
     local v1
     local Products = u30
@@ -182,9 +191,10 @@ function u0.GetProduct(p1) -- Line: 138 -- upvalues: u30 (val)
     end
     return v1
 end
+
 function u0.GetStudioTestProduct(p1) -- Line: 145 -- upvalues: RunService (val), u7 (val), u0 (val)
     local v1
-    if not (RunService:IsStudio()) then
+    if not RunService:IsStudio() then
         return nil
     end
     local v2 = u7[u0.UniverseIds.Testing]
@@ -198,23 +208,25 @@ function u0.GetStudioTestProduct(p1) -- Line: 145 -- upvalues: RunService (val),
     end
     return v1
 end
+
 function u0.GetPassForPreview(p1) -- Line: 155 -- upvalues: u0 (val), RunService (val), u7 (val)
-    local v1
-    local v2 = u0.GetPass(p1)
-    if v2 or not (RunService:IsStudio()) then
-        return v2
-    end
-    local v3 = u7[u0.UniverseIds.Testing]
-    if not v3 then
-        v1 = nil
-    else
-        v1 = v3.Passes[p1]
-        if not v1 then
-            v1 = nil
+    local v1 = u0.GetPass(p1)
+    if not v1 and RunService:IsStudio() then
+        local v2
+        local v3 = u7[u0.UniverseIds.Testing]
+        if not v3 then
+            v2 = nil
+        else
+            v2 = v3.Passes[p1]
+            if not v2 then
+                v2 = nil
+            end
         end
+        return v2
     end
     return v1
 end
+
 function u0.GetProductForPreview(p1) -- Line: 164 -- upvalues: u0 (val)
     local v1 = u0.GetProduct(p1)
     if not v1 then
@@ -222,6 +234,7 @@ function u0.GetProductForPreview(p1) -- Line: 164 -- upvalues: u0 (val)
     end
     return v1
 end
+
 function u0.GetProductForStudioReceipt(p1) -- Line: 171 -- upvalues: u0 (val)
     local v1 = u0.GetProduct(p1)
     if v1 then
@@ -229,6 +242,7 @@ function u0.GetProductForStudioReceipt(p1) -- Line: 171 -- upvalues: u0 (val)
     end
     return u0.GetStudioTestProduct(p1)
 end
+
 function u0.GetGiftProduct(p1) -- Line: 179 -- upvalues: u30 (val)
     local v1
     local GiftProducts = u30
@@ -245,6 +259,7 @@ function u0.GetGiftProduct(p1) -- Line: 179 -- upvalues: u30 (val)
     end
     return v1
 end
+
 function u0.GetLimitedBundleProduct(p1) -- Line: 183 -- upvalues: u30 (val)
     local v1
     local LimitedBundleProducts = u30
@@ -261,4 +276,5 @@ function u0.GetLimitedBundleProduct(p1) -- Line: 183 -- upvalues: u30 (val)
     end
     return v1
 end
+
 return u0

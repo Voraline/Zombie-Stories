@@ -1,3 +1,4 @@
+local v1
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 game:GetService("ReplicatedStorage")
@@ -8,26 +9,30 @@ local peek = require(game:GetService("ReplicatedStorage").Packages.Fusion).peek
 local u37 = {}
 local u41 = peek(u25.Graphics.HideNearbyPlayers)
 local u42 = false
+
 local function playerAdded(p1) -- Line: 17 -- upvalues: Players (val), u22 (val), u37 (val)
     local PlayerFromCharacter = Players:GetPlayerFromCharacter(p1)
     if PlayerFromCharacter == Players.LocalPlayer then
         return
     end
     local PlayerState = u22:GetPlayerState(PlayerFromCharacter)
-    u37[p1] = {
+    local v1 = u37
+    local v2 = {
         LastDistance = 100,
         Character = p1,
         LastCheck = os.time(),
         Player = PlayerFromCharacter,
         PlayerState = PlayerState,
     }
+    v1[p1] = v2
     if not PlayerState then
-        local v1 = u22:WaitForPlayerState(PlayerFromCharacter)
+        v1 = u22:WaitForPlayerState(PlayerFromCharacter)
         if v1 then
             u37[p1].PlayerState = v1
         end
     end
 end
+
 local function makeVisiblePlayers() -- Line: 67 -- upvalues: u37 (val)
     local v1 = u37
     local v2 = nil
@@ -38,10 +43,14 @@ local function makeVisiblePlayers() -- Line: 67 -- upvalues: u37 (val)
         end
     end
 end
-RunService.Heartbeat:Connect(function() -- Line: 75 -- upvalues: peek (val), u25 (val), u41 (ref), Players (val), makeVisiblePlayers (val), u42 (ref), u37 (val), u22 (val)
-    local LastDistance, Magnitude, PlayerState, PrimaryPart_2, v1
-    local v2 = peek(u25.Graphics.HideNearbyPlayers)
-    u41 = v2
+
+RunService.Heartbeat:Connect(function() -- Line: 75
+    -- upvalues: peek (val), u25 (val), u41 (ref), Players (val), makeVisiblePlayers (val), u42 (ref), u37 (val)
+    -- upvalues: u22 (val)
+    local LastDistance, LocalPlayer, Magnitude, PlayerState, PrimaryPart_2, v1, v2, v3
+    local v4 = peek(u25.Graphics.HideNearbyPlayers)
+    local v5 = u41
+    u41 = v4
     local Character = Players.LocalPlayer.Character
     local PrimaryPart = Character
     if PrimaryPart then
@@ -50,8 +59,8 @@ RunService.Heartbeat:Connect(function() -- Line: 75 -- upvalues: peek (val), u25
             PrimaryPart = Character:FindFirstChild("HumanoidRootPart")
         end
     end
-    if not v2 then
-        if u41 then
+    if not v4 then
+        if v5 then
             makeVisiblePlayers()
         end
         return
@@ -64,10 +73,10 @@ RunService.Heartbeat:Connect(function() -- Line: 75 -- upvalues: peek (val), u25
         return
     end
     u42 = true
-    local v3 = u37
-    local v4 = nil
-    local v5 = nil
-    for i, j in v3, v4, v5 do
+    local v6 = u37
+    local v7 = nil
+    local v8 = nil
+    for i, j in v6, v7, v8 do
         if j.Character then
             PrimaryPart_2 = j.Character.PrimaryPart
             if PrimaryPart_2 then
@@ -77,25 +86,49 @@ RunService.Heartbeat:Connect(function() -- Line: 75 -- upvalues: peek (val), u25
                 if LastDistance < 10 then
                     if Magnitude <= 3 then
                         v1 = 1
-                    elseif 6 > Magnitude then
+                    elseif not (6 <= Magnitude) then
                         v1 = (6 - Magnitude) / 3
                     else
                         v1 = 0
                     end
-                    PlayerState = u22:GetPlayerState(Players.LocalPlayer)
+                    v2 = u22
+                    v3 = Players
+                    LocalPlayer = v3.LocalPlayer
+                    PlayerState = v2:GetPlayerState(LocalPlayer)
                     if PlayerState and PlayerState.Properties.IsDowned then
                         v1 = 0
                     end
                     if j.PlayerState then
-                        if j.PlayerState.Properties.IsDowned then
+                        if j.PlayerState.Properties.IsDowned or j.PlayerState.Properties.IsDead then
                             v1 = 0
-                        elseif not j.PlayerState.Properties.IsDead then
                         end
                     end
                     for k, n in j.Character:QueryDescendants("BasePart, Decal") do
                         n.LocalTransparencyModifier = v1
                     end
-                elseif Magnitude >= 10 then
+                elseif Magnitude < 10 then
+                    if Magnitude <= 3 then
+                        v1 = 1
+                    elseif not (6 <= Magnitude) then
+                        v1 = (6 - Magnitude) / 3
+                    else
+                        v1 = 0
+                    end
+                    v2 = u22
+                    v3 = Players
+                    LocalPlayer = v3.LocalPlayer
+                    PlayerState = v2:GetPlayerState(LocalPlayer)
+                    if PlayerState and PlayerState.Properties.IsDowned then
+                        v1 = 0
+                    end
+                    if j.PlayerState then
+                        if j.PlayerState.Properties.IsDowned or j.PlayerState.Properties.IsDead then
+                            v1 = 0
+                        end
+                    end
+                    for m, i5 in j.Character:QueryDescendants("BasePart, Decal") do
+                        i5.LocalTransparencyModifier = v1
+                    end
                 end
             end
         end
@@ -104,24 +137,23 @@ end)
 for i, j in CollectionService:GetTagged("PlayerCharacter") do
     playerAdded(j)
 end
-local InstanceAddedSignal = CollectionService:GetInstanceAddedSignal("PlayerCharacter")
-InstanceAddedSignal:Connect(playerAdded)
-local InstanceRemovedSignal = CollectionService:GetInstanceRemovedSignal("PlayerCharacter")
-InstanceRemovedSignal:Connect(function(p1) -- Line: 41 -- upvalues: u37 (val)
+;(CollectionService:GetInstanceAddedSignal("PlayerCharacter")):Connect(playerAdded)
+;(CollectionService:GetInstanceRemovedSignal("PlayerCharacter")):Connect(function(p1) -- Line: 41 -- upvalues: u37 (val)
     for i, j in p1:QueryDescendants("BasePart, Decal") do
         j.LocalTransparencyModifier = 0
     end
     u37[p1] = nil
 end)
 for k, n in CollectionService:GetTagged("WorldWeapon") do
-    u37[n] = {LastDistance = 100, Character = n, LastCheck = os.time()}
+    v1 = {LastDistance = 100, Character = n, LastCheck = os.time()}
+    u37[n] = v1
 end
-local InstanceAddedSignal_2 = CollectionService:GetInstanceAddedSignal("WorldWeapon")
-InstanceAddedSignal_2:Connect(function(p1) -- Line: 49 -- upvalues: u37 (val)
-    u37[p1] = {LastDistance = 100, Character = p1, LastCheck = os.time()}
+;(CollectionService:GetInstanceAddedSignal("WorldWeapon")):Connect(function(p1) -- Line: 49 -- upvalues: u37 (val)
+    local v1 = u37
+    local v2 = {LastDistance = 100, Character = p1, LastCheck = os.time()}
+    v1[p1] = v2
 end)
-local InstanceRemovedSignal_2 = CollectionService:GetInstanceRemovedSignal("WorldWeapon")
-InstanceRemovedSignal_2:Connect(function(p1) -- Line: 59 -- upvalues: u37 (val)
+;(CollectionService:GetInstanceRemovedSignal("WorldWeapon")):Connect(function(p1) -- Line: 59 -- upvalues: u37 (val)
     for i, j in p1:QueryDescendants("BasePart, Decal") do
         j.LocalTransparencyModifier = 0
     end

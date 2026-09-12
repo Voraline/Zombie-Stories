@@ -1,31 +1,23 @@
 local v1 = {}
 local u1 = {}
-local v2 = {}
-local v3 = CFrame.new(0, 1, 0, 0, -1, 0, 1, 0, -0, 0, 0, 1)
-v2[1] = v3
-v2[2] = CFrame.new(0, -0.5, 0, 0, -1, 0, 1, 0, -0, 0, 0, 1)
+local v2 = {CFrame.new(0, 1, 0, 0, -1, 0, 1, 0, -0, 0, 0, 1), CFrame.new(0, -0.5, 0, 0, -1, 0, 1, 0, -0, 0, 0, 1)}
 u1.Neck = v2
-v2 = {}
-v3 = CFrame.new(-1.3, 0.75, 0, -1, 0, 0, 0, -1, 0, 0, 0, 1)
-v2[1] = v3
-v2[2] = CFrame.new(0.2, 0.75, 0, -1, 0, 0, 0, -1, 0, 0, 0, 1)
+v2 = {
+    CFrame.new(-1.3, 0.75, 0, -1, 0, 0, 0, -1, 0, 0, 0, 1),
+    CFrame.new(0.2, 0.75, 0, -1, 0, 0, 0, -1, 0, 0, 0, 1),
+}
 u1["Left Shoulder"] = v2
-v2 = {}
-v3 = CFrame.new(1.3, 0.75, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-v2[1] = v3
-v2[2] = CFrame.new(-0.2, 0.75, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+v2 = {
+    CFrame.new(1.3, 0.75, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    CFrame.new(-0.2, 0.75, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+}
 u1["Right Shoulder"] = v2
-v2 = {}
-v3 = CFrame.new(-0.5, -1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)
-v2[1] = v3
-v2[2] = CFrame.new(0, 1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)
+v2 = {CFrame.new(-0.5, -1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1), CFrame.new(0, 1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)}
 u1["Left Hip"] = v2
-v2 = {}
-v3 = CFrame.new(0.5, -1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)
-v2[1] = v3
-v2[2] = CFrame.new(0, 1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)
+v2 = {CFrame.new(0.5, -1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1), CFrame.new(0, 1, 0, 0, 1, -0, -1, 0, 0, 0, 0, 1)}
 u1["Right Hip"] = v2
 local u147 = {RagdollAttachment = true, RagdollConstraint = true, ColliderPart = true}
+
 local function createColliderPart(p1) -- Line: 22
     if not p1 then
         return
@@ -44,6 +36,7 @@ local function createColliderPart(p1) -- Line: 22
     Part.Parent = p1
     return Part
 end
+
 function replaceJoints(p1) -- Line: 44 -- upvalues: u1 (val), createColliderPart (val)
     local Attachment, BallSocketConstraint, v1
     for k, v in pairs(p1:GetDescendants()) do
@@ -80,9 +73,11 @@ function replaceJoints(p1) -- Line: 44 -- upvalues: u1 (val), createColliderPart
         end
     end
 end
+
 function v1.Ragdoll(p1) -- Line: 102
     replaceJoints(p1)
 end
+
 function v1.UnRagdoll(p1) -- Line: 106 -- upvalues: u147 (val)
     for k, v in pairs(p1:GetDescendants()) do
         if u147[v.Name] then
@@ -93,4 +88,5 @@ function v1.UnRagdoll(p1) -- Line: 106 -- upvalues: u147 (val)
         end
     end
 end
+
 return v1

@@ -4,22 +4,23 @@ local Server = require(script.Backends.Server)
 local OutfitVFX = require(script.OutfitVFX)
 local SpecialMesh = require(script.SpecialMesh)
 local Watcher = require(script.Watcher)
-local u27 = {SpecialMeshTag = SpecialMesh.TAG}
+local u27 = {}
+u27.SpecialMeshTag = SpecialMesh.TAG
+
 local function copyOptions(p1) -- Line: 23
     local v1 = {}
-    local v2 = p1
-    if not v2 then
-        v2 = {}
-    end
-    for k, v in pairs(v2) do
+    local v2 = pairs
+    local v3 = p1 or {}
+    for k, v in v2(v3) do
         v1[k] = v
     end
     return v1
 end
+
 local function backendFor(p1) -- Line: 31 -- upvalues: RunService (val), Server (val), Client (val)
     local Backend = p1.Backend
     if Backend == nil then
-        if not (RunService:IsServer()) then
+        if not RunService:IsServer() then
             Backend = "Client"
         else
             Backend = "Server"
@@ -31,77 +32,83 @@ local function backendFor(p1) -- Line: 31 -- upvalues: RunService (val), Server 
     if Backend == "Client" then
         return Client, Backend
     end
-    local v1 = "Invalid OutfitMorph backend: " .. tostring(Backend)
-    error(v1, 3)
+    error("Invalid OutfitMorph backend: " .. tostring(Backend), 3)
 end
+
 local function cleanBrokenJoints(p1) -- Line: 46
     for i, v in ipairs(p1:GetDescendants()) do
         if v:IsA("JointInstance") then
-            if not v.Part0 then
+            if not v.Part0 or not v.Part1 then
                 v:Destroy()
-            elseif v.Part1 then
             end
         end
     end
 end
+
 local function clearClothingAndAccessories(p1) -- Line: 54
     for i, v in ipairs(p1:GetChildren()) do
-        if v:IsA("Shirt") then
+        if v:IsA("Shirt")
+            or v:IsA("Pants")
+            or v:IsA("ShirtGraphic")
+            or v:IsA("CharacterMesh")
+            or v:IsA("BodyColors")
+            or v:IsA("Accessory")
+            or v.ClassName == "Hat" then
             v:Destroy()
-        elseif not (v:IsA("Pants")) and not (v:IsA("ShirtGraphic")) and not (v:IsA("CharacterMesh")) and not (v:IsA("BodyColors")) and not (v:IsA("Accessory")) and v.ClassName ~= "Hat" then
         end
     end
 end
+
 local function cleanupArtifacts(p1, p2) -- Line: 70 -- upvalues: SpecialMesh (val), OutfitVFX (val)
     SpecialMesh.Cleanup(p1, p2)
     OutfitVFX.Cleanup(p1, p2)
 end
+
 function u27.Cleanup(p1, p2) -- Line: 75 -- upvalues: Watcher (val), SpecialMesh (val), OutfitVFX (val)
     Watcher.Cancel(p1)
-    local v1 = p2
-    if not v1 then
-        v1 = {}
-    end
+    local v1 = p2 or {}
     SpecialMesh.Cleanup(p1, v1)
     OutfitVFX.Cleanup(p1, v1)
 end
+
 function u27.IsSpecialMeshOutfit(p1) -- Line: 80 -- upvalues: SpecialMesh (val)
     return SpecialMesh.Matches(p1)
 end
+
 function u27.VfxTagFor(p1) -- Line: 84 -- upvalues: OutfitVFX (val)
     return OutfitVFX.VfxTagFor(p1)
 end
+
 function u27.ApplyOutfitClothing(p1, p2, p3) -- Line: 88 -- upvalues: Watcher (val)
-    local v1, v2
+    local ClassName, v1, v2
     if not p2 then
         return
     end
     local v3 = p1
     for i, v in ipairs(p2:GetChildren()) do
-        if v:IsA("Shirt") then
-            v1 = v3:FindFirstChildOfClass(v.ClassName)
+        if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("BodyColors") then
+            ClassName = v.ClassName
+            v1 = v3:FindFirstChildOfClass(ClassName)
             if v1 then
                 v1:Destroy()
             end
             v2 = v:Clone()
             Watcher.AllowCurrent(v3, v2)
             v2.Parent = v3
-        elseif not (v:IsA("Pants")) and not (v:IsA("BodyColors")) then
         end
     end
 end
-function u27.ApplyOutfitAccessories(p1, p2, p3) -- Line: 107 -- upvalues: RunService (val), Server (val), Client (val), Watcher (val), cleanBrokenJoints (val)
+
+function u27.ApplyOutfitAccessories(p1, p2, p3) -- Line: 107
+    -- upvalues: RunService (val), Server (val), Client (val), Watcher (val), cleanBrokenJoints (val)
     local v1, v2, v3
     if not p2 then
         return
     end
-    local v4 = p3
-    if not v4 then
-        v4 = {}
-    end
+    local v4 = p3 or {}
     local Backend = v4.Backend
     if Backend == nil then
-        if not (RunService:IsServer()) then
+        if not RunService:IsServer() then
             Backend = "Client"
         else
             Backend = "Server"
@@ -111,8 +118,7 @@ function u27.ApplyOutfitAccessories(p1, p2, p3) -- Line: 107 -- upvalues: RunSer
         v2 = Server
         v3 = Backend
     elseif Backend ~= "Client" then
-        local v5 = "Invalid OutfitMorph backend: " .. tostring(Backend)
-        error(v5, 3)
+        error("Invalid OutfitMorph backend: " .. tostring(Backend), 3)
         v2 = nil
         v3 = nil
     else
@@ -132,7 +138,7 @@ function u27.ApplyOutfitAccessories(p1, p2, p3) -- Line: 107 -- upvalues: RunSer
         end
         headmesh:Clone().Parent = Head
     end
-    local v6 = p1
+    local v5 = p1
     for i, v in ipairs(p2:GetChildren()) do
         if v:IsA("Accessory") then
             v1 = v:Clone()
@@ -141,17 +147,20 @@ function u27.ApplyOutfitAccessories(p1, p2, p3) -- Line: 107 -- upvalues: RunSer
                     i3.Anchored = false
                 end
             end
-            Watcher.AllowCurrent(v6, v1)
+            Watcher.AllowCurrent(v5, v1)
             if v3 ~= "Client" then
-                v1.Parent = v6
+                v1.Parent = v5
             else
-                v2.AttachAccessory(v6, v1)
+                v2.AttachAccessory(v5, v1)
             end
         end
     end
-    cleanBrokenJoints(v6)
+    cleanBrokenJoints(v5)
 end
-function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunService (val), Server (val), Client (val), Watcher (val), SpecialMesh (val), OutfitVFX (val), clearClothingAndAccessories (val), u27 (val)
+
+function u27.Apply(p1, p2, p3) -- Line: 146
+    -- upvalues: copyOptions (val), RunService (val), Server (val), Client (val), Watcher (val), SpecialMesh (val)
+    -- upvalues: OutfitVFX (val), clearClothingAndAccessories (val), u27 (val)
     local v1, v2, v3, v4
     local v5 = p1
     if v5 then
@@ -170,7 +179,7 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
     end
     local Backend = u25.Backend
     if Backend == nil then
-        if not (RunService:IsServer()) then
+        if not RunService:IsServer() then
             Backend = "Client"
         else
             Backend = "Server"
@@ -180,36 +189,39 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
         v5 = Server
         v3 = Backend
     elseif Backend ~= "Client" then
-        local v6 = "Invalid OutfitMorph backend: " .. tostring(Backend)
-        error(v6, 3)
+        error("Invalid OutfitMorph backend: " .. tostring(Backend), 3)
         v5 = nil
         v3 = nil
     else
         v5 = Client
         v3 = Backend
     end
-    local u78 = if u25.Player ~= nil then if u25.Player.Character == p1 then p1.Parent ~= nil else false else false
+    local u78 = false
+    if u25.Player ~= nil then
+        u78 = false
+        if u25.Player.Character == p1 then
+            u78 = p1.Parent ~= nil
+        end
+    end
     local u83 = Watcher.Begin(p1)
+
     local function jobIsCurrent() -- Line: 162 -- upvalues: Watcher (upval), u83 (val), u78 (val), u25 (val), p1 (val)
-        if not (Watcher.IsCurrent(u83)) then
+        if not Watcher.IsCurrent(u83) then
             return false
         end
         if not u78 then
             return true
         end
-        if u25.Player.Character ~= p1 then
-            Watcher.Finish(u83)
-            return false
-        end
-        if p1.Parent ~= nil then
+        if u25.Player.Character == p1 and p1.Parent ~= nil then
             return true
         end
         Watcher.Finish(u83)
         return false
     end
+
     SpecialMesh.Cleanup(p1, u25)
     OutfitVFX.Cleanup(p1, u25)
-    if not (Watcher.IsCurrent(u83)) then
+    if not Watcher.IsCurrent(u83) then
         v4 = false
     elseif not u78 then
         v4 = true
@@ -217,6 +229,10 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
         Watcher.Finish(u83)
         v4 = false
     elseif p1.Parent ~= nil then
+        v4 = true
+    else
+        Watcher.Finish(u83)
+        v4 = false
     end
     if not v4 then
         return false, "superseded"
@@ -229,24 +245,29 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
         return v4, v1
     end
     v4 = SpecialMesh.Matches(p2)
-    v1 = if v3 == "Server" then u78 else false
-    local v7 = "Off"
+    v1 = false
+    if v3 == "Server" then
+        v1 = u78
+    end
+    local v6 = "Off"
     if v1 then
         if v4 then
-            v7 = "Strict"
+            v6 = "Strict"
         elseif not u25.UseOutfitHats then
-            v7 = "ClothingOnly"
+            v6 = "ClothingOnly"
+        else
+            v6 = "Strict"
         end
     end
-    Watcher.Arm(u83, v7)
-    local v8 = u25
+    Watcher.Arm(u83, v6)
+    local v7 = u25
     if v4 then
-        v8 = copyOptions(u25)
-        v8.UseOutfitHats = true
-        v8.KeepPlayerFace = false
+        v7 = copyOptions(u25)
+        v7.UseOutfitHats = true
+        v7.KeepPlayerFace = false
     end
-    v5.ApplyBaseAppearance(p1, v8)
-    if not (Watcher.IsCurrent(u83)) then
+    v5.ApplyBaseAppearance(p1, v7)
+    if not Watcher.IsCurrent(u83) then
         v2 = false
     elseif not u78 then
         v2 = true
@@ -254,6 +275,10 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
         Watcher.Finish(u83)
         v2 = false
     elseif p1.Parent ~= nil then
+        v2 = true
+    else
+        Watcher.Finish(u83)
+        v2 = false
     end
     if not v2 then
         return false, "superseded"
@@ -267,10 +292,10 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
             u27.ApplyOutfitAccessories(p1, p2, u25)
         end
     else
-        SpecialMesh.Apply(p1, p2, v8)
-        u27.ApplyOutfitAccessories(p1, p2, v8)
+        SpecialMesh.Apply(p1, p2, v7)
+        u27.ApplyOutfitAccessories(p1, p2, v7)
     end
-    if not (Watcher.IsCurrent(u83)) then
+    if not Watcher.IsCurrent(u83) then
         v2 = false
     elseif not u78 then
         v2 = true
@@ -286,21 +311,21 @@ function u27.Apply(p1, p2, p3) -- Line: 146 -- upvalues: copyOptions (val), RunS
     if not v2 then
         return false, "superseded"
     end
-    if v7 ~= "Off" then
+    if v6 ~= "Off" then
         Watcher.FinishAfter(u83, 5)
     else
         Watcher.Finish(u83)
     end
     return true
 end
+
 function u27.RestoreAvatar(p1, p2) -- Line: 230 -- upvalues: copyOptions (val), u27 (val)
-    local v1 = p2
-    if not v1 then
-        v1 = {}
-    end
-    local v2 = copyOptions(v1)
-    v2.Morph = false
-    v2.UseOutfitHats = false
-    return u27.Apply(p1, nil, v2)
+    local v1 = copyOptions
+    local v2 = p2 or {}
+    v1 = v1(v2)
+    v1.Morph = false
+    v1.UseOutfitHats = false
+    return u27.Apply(p1, nil, v1)
 end
+
 return u27

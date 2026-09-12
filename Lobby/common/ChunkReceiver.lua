@@ -5,8 +5,9 @@ local ReplicationTarget = v2.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitF
 local u33 = require("@game/ReplicatedStorage/common/RedEvents/NPC/ChunkReceived"):Client()
 require(game.ReplicatedStorage.common:WaitForChild("HUDService"))
 local u43 = nil
+
 local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
-    local Name, ServerTimeNow_2, ThePrimaryPart, v1, v2, v3
+    local ServerTimeNow_2, ThePrimaryPart
     local NumberOfDescendants = p1:WaitForChild("NumberOfDescendants", 30)
     if not NumberOfDescendants then
         warn("[ChunkReceiver] Timed out waiting for NumberOfDescendants on: " .. p1.Name)
@@ -17,15 +18,13 @@ local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
     local ServerTimeNow = workspace:GetServerTimeNow()
     while #p1:GetDescendants() < Value do
         p1.DescendantAdded:Wait()
-        v2 = workspace:GetServerTimeNow() - ServerTimeNow
-        if 30 < v2 then
-            Name = p1.Name
-            v3 = #p1:GetDescendants()
-            warn("[ChunkReceiver] Timed out waiting for descendants on: " .. Name .. " (got " .. v3 .. "/" .. Value .. ")")
+        if 30 < workspace:GetServerTimeNow() - ServerTimeNow then
+            warn("[ChunkReceiver] Timed out waiting for descendants on: " .. p1.Name .. " (got " .. #p1:GetDescendants() .. "/" .. Value .. ")")
             p1:Destroy()
             return
         end
     end
+
     local function isJoint(p1) -- Line: 46
         local v1 = p1:IsA("Weld")
         if not v1 then
@@ -33,6 +32,7 @@ local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
         end
         return v1
     end
+
     for i, j in p1:QueryDescendants("Model") do
         ThePrimaryPart = j:WaitForChild("ThePrimaryPart", 30)
         if not ThePrimaryPart then
@@ -43,7 +43,7 @@ local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
         j.PrimaryPart = ThePrimaryPart.Value
         ThePrimaryPart:Destroy()
     end
-    local v4 = p1
+    local v1 = p1
     for k, n in p1:QueryDescendants("Weld, Motor6D") do
         if n.Name ~= "NULL" and n.Name ~= "Grip" then
             if n.Part0 ~= nil and n.Part1 ~= nil then
@@ -53,30 +53,38 @@ local function HandleReplication(p1) -- Line: 23 -- upvalues: u33 (val)
             while true do
                 if n.Part1 == nil then
                     task.wait()
-                    v1 = workspace:GetServerTimeNow() - ServerTimeNow_2
-                    if 30 < v1 then
+                    if 30 < workspace:GetServerTimeNow() - ServerTimeNow_2 then
                         warn("[ChunkReceiver] Timed out waiting for joint parts on: " .. n:GetFullName())
-                        v4:Destroy()
+                        v1:Destroy()
                         return
                     end
-                elseif n.Part0 ~= nil then
-                    break
+                else
+                    if n.Part0 ~= nil then
+                        break
+                    end
+                    task.wait()
+                    if 30 < workspace:GetServerTimeNow() - ServerTimeNow_2 then
+                        warn("[ChunkReceiver] Timed out waiting for joint parts on: " .. n:GetFullName())
+                        v1:Destroy()
+                        return
+                    end
                 end
             end
         end
     end
-    local v5 = v4:Clone()
-    local ToParent = v5:WaitForChild("ToParent", 30)
+    local v2 = v1:Clone()
+    local ToParent = v2:WaitForChild("ToParent", 30)
     if not ToParent then
-        warn("[ChunkReceiver] Timed out waiting for ToParent on clone: " .. v5.Name)
-        v5:Destroy()
+        warn("[ChunkReceiver] Timed out waiting for ToParent on clone: " .. v2.Name)
+        v2:Destroy()
         return
     end
     local Value_2 = ToParent.Value
     ToParent:Destroy()
-    v5.Parent = Value_2
-    u33:Fire(v4)
+    v2.Parent = Value_2
+    u33:Fire(v1)
 end
+
 function v1.Main() -- Line: 96 -- upvalues: u43 (ref), ReplicationTarget (val), HandleReplication (val)
     if u43 then
         return
@@ -86,6 +94,10 @@ function v1.Main() -- Line: 96 -- upvalues: u43 (ref), ReplicationTarget (val), 
     for k, v in pairs(Children) do
         HandleReplication(v)
     end
-    ReplicationTarget.ChildAdded:Connect(HandleReplication)
+    local v1 = ReplicationTarget
+    local ChildAdded = v1.ChildAdded
+    local v2 = HandleReplication
+    ChildAdded:Connect(v2)
 end
+
 return v1

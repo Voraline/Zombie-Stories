@@ -53,8 +53,7 @@ return function(p1) -- Line: 1
         u83.DisplayOrder = p1.baseDisplayOrder
     end)
     v3[u83.Name] = u83
-    local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("TopbarInset")
-    PropertyChangedSignal:Connect(function() -- Line: 44 -- upvalues: Holders (val), GuiService (val), u58 (ref)
+    ;(GuiService:GetPropertyChangedSignal("TopbarInset")):Connect(function() -- Line: 44 -- upvalues: Holders (val), GuiService (val), u58 (ref)
         Holders.Size = UDim2.new(1, 0, 0, GuiService.TopbarInset.Height + u58)
     end)
     Holders.Size = UDim2.new(1, 0, 0, GuiService.TopbarInset.Height + u58)
@@ -74,8 +73,7 @@ return function(p1) -- Line: 1
     v3[u135.Name] = u135
     if isOldTopbar then
         task.defer(function() -- Line: 73 -- upvalues: GuiService (val), p1 (val)
-            local PropertyChangedSignal = GuiService:GetPropertyChangedSignal("MenuIsOpen")
-            PropertyChangedSignal:Connect(function() -- Line: 74 -- upvalues: GuiService (upval), p1 (upval)
+            (GuiService:GetPropertyChangedSignal("MenuIsOpen")):Connect(function() -- Line: 74 -- upvalues: GuiService (upval), p1 (upval)
                 if GuiService.MenuIsOpen then
                     p1.setTopbarEnabled(false, true)
                     return

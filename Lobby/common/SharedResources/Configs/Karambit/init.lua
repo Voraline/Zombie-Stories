@@ -1,1 +1,0 @@
-return {BaseConfig = "M9 Bayonet"}

@@ -47,12 +47,13 @@ return function() -- Line: 1
             expect(v1.Connected).to.equal(false)
         end)
         it("should add and clean up a function", function() -- Line: 53 -- upvalues: u0 (ref)
-            local u0 = false
-            u0:Add(function() -- Line: 55 -- upvalues: u0 (ref)
-                u0 = true
+            local u0_2 = false
+            local v1 = u0
+            v1:Add(function() -- Line: 55 -- upvalues: u0_2 (ref)
+                u0_2 = true
             end)
             u0:Destroy()
-            expect(u0).to.equal(true)
+            expect(u0_2).to.equal(true)
         end)
         it("should allow a custom cleanup method", function() -- Line: 62 -- upvalues: u0 (ref)
             local v1 = {
@@ -72,41 +73,50 @@ return function() -- Line: 1
             u0:Destroy()
         end)
         it("should fail to add object without proper cleanup method", function() -- Line: 79 -- upvalues: u0 (ref)
-            local u0 = {}
-            expect(function() -- Line: 81 -- upvalues: u0 (upval), u0 (val)
-                u0:Add(u0)
+            local u0_2 = {}
+            expect(function() -- Line: 81 -- upvalues: u0 (upval), u0_2 (val)
+                local v1 = u0
+                local v2 = u0_2
+                v1:Add(v2)
             end).to.throw()
         end)
         it("should construct an object and add it", function() -- Line: 86 -- upvalues: u0 (ref)
-            local v1
-            local u0 = {}
-            u0.__index = u0
-            function u0.new(p1) -- Line: 89 -- upvalues: u0 (val)
-                local v1 = setmetatable({}, u0)
-                v1._msg = p1
-                v1._destroyed = false
-                return v1
+            local u0_2 = {}
+            u0_2.__index = u0_2
+
+            function u0_2.new(p1) -- Line: 89 -- upvalues: u0_2 (val)
+                local v1 = u0_2
+                local v2 = setmetatable({}, v1)
+                v2._msg = p1
+                v2._destroyed = false
+                return v2
             end
-            function u0:Destroy() -- Line: 95
+
+            function u0_2:Destroy() -- Line: 95
                 self._destroyed = true
             end
-            v1 = u0:Construct(u0, "abc")
+
+            local v1 = u0:Construct(u0_2, "abc")
             expect((typeof(v1))).to.equal("table")
-            expect((getmetatable(v1))).to.equal(u0)
+            expect((getmetatable(v1))).to.equal(u0_2)
             expect(v1._msg).to.equal("abc")
             expect(v1._destroyed).to.equal(false)
             u0:Destroy()
             expect(v1._destroyed).to.equal(true)
         end)
         it("should connect to a signal", function() -- Line: 108 -- upvalues: u0 (ref)
-            local v1 = u0:Connect(workspace.Changed, function() end)
+            local v1 = u0
+            local Changed = workspace.Changed
+            v1 = v1:Connect(Changed, function() end)
             expect((typeof(v1))).to.equal("RBXScriptConnection")
             expect(v1.Connected).to.equal(true)
             u0:Destroy()
             expect(v1.Connected).to.equal(false)
         end)
         it("should remove an object", function() -- Line: 116 -- upvalues: u0 (ref)
-            local v1 = u0:Connect(workspace.Changed, function() end)
+            local v1 = u0
+            local Changed = workspace.Changed
+            v1 = v1:Connect(Changed, function() end)
             expect(u0:Remove(v1)).to.equal(true)
             expect(v1.Connected).to.equal(false)
         end)
@@ -127,22 +137,26 @@ return function() -- Line: 1
         it("should fail to attach to instance not in hierarchy", function() -- Line: 138 -- upvalues: u0 (ref)
             local Part = Instance.new("Part")
             expect(function() -- Line: 140 -- upvalues: u0 (upval), Part (val)
-                u0:AttachToInstance(Part)
+                local v1 = u0
+                local v2 = Part
+                v1:AttachToInstance(v2)
             end).to.throw()
         end)
         it("should extend itself", function() -- Line: 145 -- upvalues: u0 (ref), Parent (upval)
-            local u4
             local v1 = u0:Extend()
+            local u4 = false
             v1:Add(function() -- Line: 148 -- upvalues: u4 (ref)
                 u4 = true
             end)
             expect(v1).to.be.a("table")
             expect((getmetatable(v1))).to.equal(Parent)
             u0:Clean()
-            expect(false).to.equal(true)
+            expect(u4).to.equal(true)
         end)
         it("should clone an instance", function() -- Line: 157 -- upvalues: u0 (ref)
-            local v1 = u0:Construct(Instance.new, "Part")
+            local v1 = u0
+            local new = Instance.new
+            v1 = v1:Construct(new, "Part")
             v1.Name = "TroveCloneTest"
             local v2 = u0:Clone(v1)
             expect((typeof(v2))).to.equal("Instance")

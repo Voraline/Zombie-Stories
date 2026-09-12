@@ -1,8 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Packages = ReplicatedStorage:WaitForChild("Packages")
-local Red = require(Packages:WaitForChild("Red"))
+local Red = require((ReplicatedStorage:WaitForChild("Packages")):WaitForChild("Red"))
 local u15 = {Image = true, Paper = true}
 local u16 = {Show = true, Hide = true}
+
 local function coerceString(p1) -- Line: 15
     if typeof(p1) == "string" then
         return p1
@@ -12,6 +12,7 @@ local function coerceString(p1) -- Line: 15
     end
     return nil
 end
+
 local function sanitizeImageId(p1) -- Line: 25
     if typeof(p1) ~= "string" then
         if typeof(p1) == "number" then
@@ -28,136 +29,97 @@ local function sanitizeImageId(p1) -- Line: 25
     end
     return p1
 end
+
 local function sanitizeFont(p1) -- Line: 42
-    local v1, v2
-    if typeof(p1) ~= "EnumItem" then
-        if typeof(p1) == "string" then
-            v1, v2 = pcall(function() -- Line: 47 -- upvalues: p1 (val)
-                return Enum.Font[p1]
-            end)
-            if v1 then
-                return v2
-            end
-            return nil
-        end
-        return nil
-    end
-    if p1.EnumType == Enum.Font then
+    if typeof(p1) == "EnumItem" and p1.EnumType == Enum.Font then
         return p1
     end
-    if typeof(p1) ~= "string" then
-        return nil
-    end
-    v1, v2 = pcall(function() -- Line: 47 -- upvalues: p1 (val)
-        return Enum.Font[p1]
-    end)
-    if v1 then
-        return v2
+    if typeof(p1) == "string" then
+        local success, result = pcall(function() -- Line: 47 -- upvalues: p1 (val)
+            return Enum.Font[p1]
+        end)
+        if success then
+            return result
+        end
     end
     return nil
 end
+
 local function sanitizeFontFace(p1) -- Line: 57
     if typeof(p1) == "Font" then
         return p1
     end
     return nil
 end
+
 local function sanitizeVector2(p1) -- Line: 64
     if typeof(p1) == "Vector2" then
         return Vector2.new(p1.X, p1.Y)
     end
-    if typeof(p1) ~= "table" then
-        return nil
-    end
-    local X = p1.X
-    if not X then
-        X = p1.x
-    end
-    local Y = p1.Y
-    if not Y then
-        Y = p1.y
-    end
-    if typeof(X) ~= "number" then
-        return nil
-    end
-    if typeof(Y) == "number" then
-        return Vector2.new(X, Y)
+    if typeof(p1) == "table" then
+        local X = p1.X
+        if not X then
+            X = p1.x
+        end
+        local Y = p1.Y
+        if not Y then
+            Y = p1.y
+        end
+        if typeof(X) == "number" and typeof(Y) == "number" then
+            return Vector2.new(X, Y)
+        end
     end
     return nil
 end
+
 local function sanitizeUDim2(p1) -- Line: 78
     if typeof(p1) == "UDim2" then
         return p1
     end
     return nil
 end
+
 local function sanitizeTextAlignmentX(p1) -- Line: 85
-    local v1, v2
-    if typeof(p1) ~= "EnumItem" then
-        if typeof(p1) == "string" then
-            v1, v2 = pcall(function() -- Line: 90 -- upvalues: p1 (val)
-                return Enum.TextXAlignment[p1]
-            end)
-            if v1 then
-                return v2
-            end
-            return nil
-        end
-        return nil
-    end
-    if p1.EnumType == Enum.TextXAlignment then
+    if typeof(p1) == "EnumItem" and p1.EnumType == Enum.TextXAlignment then
         return p1
     end
-    if typeof(p1) ~= "string" then
-        return nil
-    end
-    v1, v2 = pcall(function() -- Line: 90 -- upvalues: p1 (val)
-        return Enum.TextXAlignment[p1]
-    end)
-    if v1 then
-        return v2
+    if typeof(p1) == "string" then
+        local success, result = pcall(function() -- Line: 90 -- upvalues: p1 (val)
+            return Enum.TextXAlignment[p1]
+        end)
+        if success then
+            return result
+        end
     end
     return nil
 end
+
 local function sanitizeTextAlignmentY(p1) -- Line: 100
-    local v1, v2
-    if typeof(p1) ~= "EnumItem" then
-        if typeof(p1) == "string" then
-            v1, v2 = pcall(function() -- Line: 105 -- upvalues: p1 (val)
-                return Enum.TextYAlignment[p1]
-            end)
-            if v1 then
-                return v2
-            end
-            return nil
-        end
-        return nil
-    end
-    if p1.EnumType == Enum.TextYAlignment then
+    if typeof(p1) == "EnumItem" and p1.EnumType == Enum.TextYAlignment then
         return p1
     end
-    if typeof(p1) ~= "string" then
-        return nil
-    end
-    v1, v2 = pcall(function() -- Line: 105 -- upvalues: p1 (val)
-        return Enum.TextYAlignment[p1]
-    end)
-    if v1 then
-        return v2
+    if typeof(p1) == "string" then
+        local success, result = pcall(function() -- Line: 105 -- upvalues: p1 (val)
+            return Enum.TextYAlignment[p1]
+        end)
+        if success then
+            return result
+        end
     end
     return nil
 end
+
 local function sanitizeAction(p1) -- Line: 115 -- upvalues: u16 (val)
     if typeof(p1) ~= "string" then
         return nil
     end
-    local v1 = string.upper((string.sub(p1, 1, 1)))
-    local v2 = v1 .. string.lower((string.sub(p1, 2)))
-    if u16[v2] then
-        return v2
+    local v1 = (string.upper((string.sub(p1, 1, 1)))) .. string.lower((string.sub(p1, 2)))
+    if u16[v1] then
+        return v1
     end
     return nil
 end
+
 local function sanitizeHintType(p1) -- Line: 126
     if typeof(p1) ~= "string" then
         return nil
@@ -171,16 +133,18 @@ local function sanitizeHintType(p1) -- Line: 126
     end
     return nil
 end
-return Red.SharedEvent("Hint", function(p1) -- Line: 139 -- upvalues: u16 (val), u15 (val), sanitizeVector2 (val), sanitizeFont (val), sanitizeTextAlignmentX (val), sanitizeTextAlignmentY (val)
+
+return Red.SharedEvent("Hint", function(p1) -- Line: 139
+    -- upvalues: u16 (val), u15 (val), sanitizeVector2 (val), sanitizeFont (val), sanitizeTextAlignmentX (val)
+    -- upvalues: sanitizeTextAlignmentY (val)
     local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13
     if typeof(p1) ~= "table" then
         return nil
     end
     local action = p1.action
     if typeof(action) == "string" then
-        v10 = string.upper((string.sub(action, 1, 1)))
-        v9 = v10 .. string.lower((string.sub(action, 2)))
-        if not (u16[v9]) then
+        v9 = (string.upper((string.sub(action, 1, 1)))) .. string.lower((string.sub(action, 2)))
+        if not u16[v9] then
             v1 = nil
         else
             v1 = v9
@@ -219,7 +183,7 @@ return Red.SharedEvent("Hint", function(p1) -- Line: 139 -- upvalues: u16 (val),
     else
         v5 = nil
     end
-    if not v5 or not (u15[v5]) then
+    if not v5 or not u15[v5] then
         return nil
     end
     v9 = {action = v1, hintType = v5}
@@ -348,7 +312,8 @@ return Red.SharedEvent("Hint", function(p1) -- Line: 139 -- upvalues: u16 (val),
     end
     local textSize = p1.textSize
     if typeof(textSize) == "number" then
-        v4 = math.floor(textSize + 0.5)
+        local v15 = textSize + 0.5
+        v4 = math.floor(v15)
         v9.textSize = math.clamp(v4, 6, 200)
     end
     local textWrapped = p1.textWrapped
@@ -385,29 +350,34 @@ return Red.SharedEvent("Hint", function(p1) -- Line: 139 -- upvalues: u16 (val),
     if typeof(textStrokeTransparency) == "number" then
         v9.textStrokeTransparency = math.clamp(textStrokeTransparency, 0, 1)
     end
-    local v15 = sanitizeTextAlignmentX(p1.textXAlignment)
-    if v15 then
-        v9.textXAlignment = v15
-    end
-    local v16 = sanitizeTextAlignmentY(p1.textYAlignment)
+    local v16 = sanitizeTextAlignmentX(p1.textXAlignment)
     if v16 then
-        v9.textYAlignment = v16
+        v9.textXAlignment = v16
     end
+    local v17 = sanitizeTextAlignmentY(p1.textYAlignment)
+    if v17 then
+        v9.textYAlignment = v17
+    end
+    local v18 = sanitizeVector2
     local frameSize = p1.frameSize
     if not frameSize then
         frameSize = p1.textSizePixels
     end
-    local v17 = sanitizeVector2(frameSize)
-    if v17 then
-        v6 = math.max(v17.X, 1)
-        v7 = math.max(v17.Y, 1)
+    v18 = v18(frameSize)
+    if v18 then
+        local X = v18.X
+        v6 = math.max(X, 1)
+        local Y = v18.Y
+        v7 = math.max(Y, 1)
         v9.frameSize = Vector2.new(v6, v7)
     end
     v6 = sanitizeVector2(p1.canvasSize)
     if v6 then
-        v7 = math.max(v6.X, 1)
-        local v18 = math.max(v6.Y, 1)
-        v9.canvasSize = Vector2.new(v7, v18)
+        local X_2 = v6.X
+        v7 = math.max(X_2, 1)
+        local Y_2 = v6.Y
+        local v19 = math.max(Y_2, 1)
+        v9.canvasSize = Vector2.new(v7, v19)
     end
     local backgroundColor3_2 = p1.backgroundColor3
     if not backgroundColor3_2 then
@@ -420,9 +390,9 @@ return Red.SharedEvent("Hint", function(p1) -- Line: 139 -- upvalues: u16 (val),
     if typeof(backgroundTransparency_2) == "number" then
         v9.backgroundTransparency = math.clamp(backgroundTransparency_2, 0, 1)
     end
-    local v19 = sanitizeVector2(p1.padding)
-    if v19 then
-        v9.padding = v19
+    local v20 = sanitizeVector2(p1.padding)
+    if v20 then
+        v9.padding = v20
     end
     local sizeUDim = p1.sizeUDim
     if not sizeUDim then

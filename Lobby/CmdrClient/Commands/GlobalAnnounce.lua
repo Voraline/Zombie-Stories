@@ -4,7 +4,15 @@ return {
     Group = "Announcements",
     Aliases = {"ga", "broadcast"},
     Args = {
-        {Type = "announceScope", Name = "scope", Description = "Who receives it: all, lobby, arcade, or story"},
-        {Type = "string", Name = "message", Description = "Message text. Everything after the scope is used, spaces and all."},
+        {
+            Type = "announceScope",
+            Name = "scope",
+            Description = "Who receives it: all, lobby, arcade, or story",
+        },
+        {
+            Type = "string",
+            Name = "message",
+            Description = "Message text. Everything after the scope is used, spaces and all.",
+        },
     },
 }

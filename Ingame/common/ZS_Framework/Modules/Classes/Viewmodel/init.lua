@@ -3,10 +3,13 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local CurrentCamera = workspace.CurrentCamera
 local common = ReplicatedStorage.common
+local VModels = ReplicatedStorage.common.SharedResources.VModels
 local Ignore = workspace.Ignore
 local ViewmodelUtils = script.ViewmodelUtils
 local Utils = script.Parent.Parent.Utils
 local Controllers = script.Parent.Parent.Controllers
+local Shared = script.Parent.Parent.Shared
+local Resources = script.Resources
 local FakeArmUtil = require(ViewmodelUtils.FakeArmUtil)
 local ArmModelUtil = require(ViewmodelUtils.ArmModelUtil)
 local GunMovementUtil = require(ViewmodelUtils.GunMovementUtil)
@@ -18,7 +21,7 @@ local ScopeHideEffect = require(ViewmodelUtils.ScopeHideEffect)
 local BobbingUtil = require(Utils.BobbingUtil)
 local SpringUtil = require(Utils.SpringUtil)
 local LocalPlayerController = require(Controllers.LocalPlayerController)
-local SharedSprings = require(script.Parent.Parent.Shared.SharedSprings)
+local SharedSprings = require(Shared.SharedSprings)
 local Promise = require(common.Promise)
 local Janitor = require(common.Janitor)
 local CameraController = require(Controllers.CameraController)
@@ -66,9 +69,11 @@ local Angles = CFrame.Angles
 Vector2.new(0.5, 0.5)
 local u183 = {}
 u183.__index = u183
+
 function u183.new(p1) -- Line: 119 -- upvalues: u183 (val), u136 (ref), Janitor (val), u120 (val), SpringUtil (val)
     local v1 = {}
-    setmetatable(v1, u183)
+    local v2 = u183
+    setmetatable(v1, v2)
     v1.Weapon = p1
     v1.Config = p1.Config
     v1.Offsets = {}
@@ -105,31 +110,44 @@ function u183.new(p1) -- Line: 119 -- upvalues: u183 (val), u136 (ref), Janitor 
     v1.EquipSpring.Target = 0
     v1.EquipSpring.Speed = 12
     v1.EquipSpring.Damper = 0.8
-    loadViewmodelPromise(v1):catch(function(a1) -- Line: 191 -- upvalues: p1 (val)
-        warn("[Viewmodel] Failed to load viewmodel for weapon " .. p1.Name .. ": " .. tostring(a1))
+    ;(loadViewmodelPromise(v1)):catch(function(p1_2) -- Line: 191 -- upvalues: p1 (val)
+        warn("[Viewmodel] Failed to load viewmodel for weapon " .. p1.Name .. ": " .. tostring(p1_2))
     end)
     return v1
 end
-function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTreeData (val), RecoilUtil (val), BobbingUtil (val), u147 (val), SpringUtil (val), new (val), ShellSystem (val), RunService (val), Value (val), PointRotationUtil (val), GunMovementUtil (val), u141 (val), LocalPlayerController (val), SharedSprings (val), peek (val), u107 (val), u138 (ref), Angles (val), u159 (val), u165 (val), CurrentCamera (val), CameraController (val), CursorRecoilUtil (val), RaycastUtil (val), u171 (val), HolographicEffect (val), ScopeHideEffect (val), FakeArmUtil (val), GripBlenderEffect (val), TweenService (val), AnimatedTextures (val), ArmModelUtil (val)
-    local HRPADSAttachment, Model
+
+function u183.SetEnabled(p1, p2) -- Line: 203
+    -- upvalues: Fusion (val), SkillTreeData (val), RecoilUtil (val), BobbingUtil (val), u147 (val), SpringUtil (val)
+    -- upvalues: new (val), ShellSystem (val), RunService (val), Value (val), PointRotationUtil (val)
+    -- upvalues: GunMovementUtil (val), u141 (val), LocalPlayerController (val), SharedSprings (val), peek (val)
+    -- upvalues: u107 (val), u138 (ref), Angles (val), u159 (val), u165 (val), CurrentCamera (val)
+    -- upvalues: CameraController (val), CursorRecoilUtil (val), RaycastUtil (val), u171 (val), HolographicEffect (val)
+    -- upvalues: ScopeHideEffect (val), FakeArmUtil (val), GripBlenderEffect (val), TweenService (val)
+    -- upvalues: AnimatedTextures (val), ArmModelUtil (val)
+    local v1
     if p1.Enabled == p2 then
         return
     end
     p1.Enabled = p2
     if not p2 then
         p1.EquipSpring.Target = 1.5
-        Model = 12
-        p1.EquipSpring.Speed = Model * (p1.Weapon.Config.HolsterSpeed or 1)
+        p1.EquipSpring.Speed = 12 * (p1.Weapon.Config.HolsterSpeed or 1)
         ShellSystem.UsingViewmodelStep = false
         if not p1.UseArmModels then
-            FakeArmUtil:Hide(p1.Model)
+            v1 = FakeArmUtil
+            local Model_2 = p1.Model
+            v1:Hide(Model_2)
         else
-            ArmModelUtil:DetachArms(p1.Model)
+            v1 = ArmModelUtil
+            local Model = p1.Model
+            v1:DetachArms(Model)
         end
         if p1.Model then
             p1.Model.Parent = nil
         end
-        RunService:UnbindFromRenderStep(p1.Name)
+        v1 = RunService
+        local Name_2 = p1.Name
+        v1:UnbindFromRenderStep(Name_2)
         CameraController:SetCameraBone(nil, nil)
         if p1.HRPADSAttachment then
             p1.HRPADSAttachment:Destroy()
@@ -142,7 +160,7 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
     p1.EquipSpring.Position = 1
     p1.EquipSpring.Target = 0
     p1.EquipSpring.Speed = 12 * (p1.Weapon.Config.DrawSpeed or 1)
-    local v1 = Fusion.peek(SkillTreeData.SwapSpeedMult)
+    v1 = Fusion.peek(SkillTreeData.SwapSpeedMult)
     p1.EquipSpring.Speed = p1.EquipSpring.Speed * v1
     p1.RecoilInstance = RecoilUtil.getOrCreate(p1.Weapon)
     if not p1.LeftArmOnly and not p1.IsMirrored then
@@ -155,7 +173,7 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
         p1.HRPADSAttachment = Instance.new("Attachment")
         p1.HRPADSAttachment.Parent = p1.PrimaryPart
         if p1._idleAimRelCF then
-            HRPADSAttachment = p1.HRPADSAttachment
+            local HRPADSAttachment = p1.HRPADSAttachment
             HRPADSAttachment.WorldCFrame = p1.PrimaryPart.CFrame * p1._idleAimRelCF:Inverse()
         end
         p1.VMAnimInfluenceSpring = SpringUtil.new(0)
@@ -166,10 +184,22 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
     if p1.ViewmodelReady then
         p1:Loaded()
     end
-    Model = new()
+    local v2 = new
+    local u77 = v2()
     ShellSystem.UsingViewmodelStep = true
-    RunService:BindToRenderStep(p1.Name, Value, function(a1) -- Line: 249 -- upvalues: PointRotationUtil (upval), p1 (val), u41 (ref), u147 (upval), GunMovementUtil (upval), u141 (upval), LocalPlayerController (upval), SharedSprings (upval), new (upval), peek (upval), u107 (upval), BobbingUtil (upval), u138 (upval), Angles (upval), u159 (upval), u165 (upval), CurrentCamera (upval), CameraController (upval), RecoilUtil (upval), CursorRecoilUtil (upval), SpringUtil (upval), RaycastUtil (upval), u171 (upval), HolographicEffect (upval), ScopeHideEffect (upval), FakeArmUtil (upval), GripBlenderEffect (upval), Fusion (upval), SkillTreeData (upval), TweenService (upval), ShellSystem (upval), Model (ref), AnimatedTextures (upval)
-        local Weapon, v1, v2, v3
+    local v3 = RunService
+    local Name = p1.Name
+    local v4 = Value
+    v3:BindToRenderStep(Name, v4, function(p1_2) -- Line: 249
+        -- upvalues: PointRotationUtil (upval), p1 (val), u41 (ref), u147 (upval), GunMovementUtil (upval), u141 (upval)
+        -- upvalues: LocalPlayerController (upval), SharedSprings (upval), new (upval), peek (upval), u107 (upval)
+        -- upvalues: BobbingUtil (upval), u138 (upval), Angles (upval), u159 (upval), u165 (upval)
+        -- upvalues: CurrentCamera (upval), CameraController (upval), RecoilUtil (upval), CursorRecoilUtil (upval)
+        -- upvalues: SpringUtil (upval), RaycastUtil (upval), u171 (upval), HolographicEffect (upval)
+        -- upvalues: ScopeHideEffect (upval), FakeArmUtil (upval), GripBlenderEffect (upval), Fusion (upval)
+        -- upvalues: SkillTreeData (upval), TweenService (upval), ShellSystem (upval), u77 (ref)
+        -- upvalues: AnimatedTextures (upval)
+        local v1, v2, v3, v4
         PointRotationUtil.SetActiveViewmodel(p1.Weapon)
         u41 = p1.Weapon.Config.ADSSpeed or 1
         u147.Speed = 18 * u41
@@ -182,47 +212,67 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
         if Aimpart then
             Aimpart = not Config.AimingDisabled
         end
-        local v4 = Aimpart
-        if v4 then
-            v4 = not IsDualWieldRight
-        end
-        if not Aimpart then
+        local v5 = Aimpart and not IsDualWieldRight
+        if not Aimpart or p1.Weapon.Aiming or not p1.Weapon.SecondaryAttackDown then
             if p1.Weapon.Aiming then
-                if not p1.Weapon.SecondaryAttackDown then
+                if not p1.Weapon.SecondaryAttackDown or not p1.Weapon.IsEquipped then
                     p1.Weapon.Aiming = false
                     if Config.CustomAiming then
                         Config.CustomAiming(p1.Model, false)
                     end
-                elseif p1.Weapon.IsEquipped then
                 end
             end
-        elseif not p1.Weapon.Aiming and p1.Weapon.SecondaryAttackDown and p1.Weapon.IsEquipped then
+        elseif p1.Weapon.IsEquipped then
             p1:StopAnimation("Inspect")
             p1.Weapon.Aiming = true
             if Config.CustomAiming then
                 Config.CustomAiming(p1.Model, true)
             end
+        elseif p1.Weapon.Aiming then
+            if not p1.Weapon.SecondaryAttackDown or not p1.Weapon.IsEquipped then
+                p1.Weapon.Aiming = false
+                if Config.CustomAiming then
+                    Config.CustomAiming(p1.Model, false)
+                end
+            end
         end
-        v1, v2 = GunMovementUtil:Update(a1, p1.Weapon.Aiming)
+        local v6 = GunMovementUtil
+        local v7 = p1
+        local Aiming = v7.Weapon.Aiming
+        v6, v3 = v6:Update(p1_2, Aiming)
         if not p1.RecoilInstance then
-            v3 = CFrame.new()
+            v4 = CFrame.new()
         else
-            v3 = p1.RecoilInstance:Update(a1, u147, u141)
+            v4 = p1
+            local RecoilInstance = v4.RecoilInstance
+            v1 = u147
+            v2 = u141
+            v4 = RecoilInstance:Update(p1_2, v1, v2)
+            if not v4 then
+                v4 = CFrame.new()
+            end
         end
         p1:UpdatePhysics()
-        if p1.ViewmodelReady then
+        if p1.ViewmodelReady
+            or not p1.ViewmodelLoaded
+            or not p1.Model
+            or not p1.Animations
+            or not p1.Animations.Idle
+            or not (0 < p1.Animations.Idle.Length) then
             p1.LoadingFrame.Target = 0
-        elseif p1.ViewmodelLoaded and p1.Model and p1.Animations and p1.Animations.Idle and 0 < p1.Animations.Idle.Length then
+        else
             p1.ViewmodelReady = true
             p1:Loaded()
         end
         if p1.Model and p1.ViewmodelReady then
-            local CFrame, Lasers, Parent, Position, Position_3, hrp, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22
+            local Position_2, Position_4, PrimaryPart_3, hrp, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31
             if LocalPlayerController.ThirdPerson then
                 hrp = 0.05 < SharedSprings.TPSpring.Position
             else
                 hrp = LocalPlayerController.hrp
-                if not hrp then end
+                if hrp then
+                    hrp = 0.05 < SharedSprings.TPSpring.Position
+                end
             end
             if p1.VMAnimInfluenceSpring then
                 if not p1.Weapon.Reloading then
@@ -231,14 +281,20 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
                     p1.VMAnimInfluenceSpring.Target = Config.ReloadADSInfluence or 0.15
                 end
             end
-            if not v4 then
-                v22 = new()
+            if not v5 then
+                v31 = new()
             else
-                local Attribute
-                if not p1.HRPADSAttachment then
-                    CFrame = p1.Aimpart.CFrame
-                elseif p1.VMAnimInfluenceSpring then
-                    CFrame = p1.Aimpart.CFrame:Lerp(p1.HRPADSAttachment.WorldCFrame, p1.VMAnimInfluenceSpring.Position)
+                local Attribute, CFrame_3
+                if not p1.HRPADSAttachment or not p1.VMAnimInfluenceSpring then
+                    CFrame_3 = p1.Aimpart.CFrame
+                else
+                    v2 = p1
+                    local CFrame_2 = v2.Aimpart.CFrame
+                    v10 = p1
+                    local WorldCFrame = v10.HRPADSAttachment.WorldCFrame
+                    v11 = p1
+                    local Position = v11.VMAnimInfluenceSpring.Position
+                    CFrame_3 = CFrame_2:Lerp(WorldCFrame, Position)
                 end
                 if p1.Aimpart ~= p1.DefaultAimpart then
                     Attribute = new()
@@ -246,222 +302,298 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
                     Attribute = p1.Model:GetAttribute("SkinAimPartOffset")
                     if not Attribute then
                         Attribute = new()
+                        if not Attribute then
+                            Attribute = new()
+                        end
                     end
                 end
                 local AimOffset = Config.AimOffset
                 if not AimOffset then
                     AimOffset = new()
                 end
-                v22 = (CFrame * AimOffset * Attribute):toObjectSpace(p1.PrimaryPart.CFrame)
+                v9 = CFrame_3 * AimOffset * Attribute
+                v11 = p1
+                local CFrame_4 = v11.PrimaryPart.CFrame
+                v31 = v9:toObjectSpace(CFrame_4)
             end
             if hrp then
-                v22 = new()
+                v31 = new()
             end
             if not p1.ForceLoweredPosition then
-                v6 = u147
+                v1 = u147
                 if not p1.Weapon.Aiming then
-                    v7 = 0
+                    v2 = 0
                 elseif not Config.DisableADSReload then
-                    v7 = 1
-                elseif Config.DisableADSReload and p1.Weapon.Reloading then
+                    v2 = 1
+                elseif not Config.DisableADSReload or p1.Weapon.Reloading then
+                    v2 = 0
+                else
+                    v2 = 1
                 end
-                v6.Target = v7
+                v1.Target = v2
             end
-            Weapon = p1.Weapon
-            if 1 > u147.Target then
-                v7 = 0
+            local Weapon_2 = p1.Weapon
+            if not (1 <= u147.Target) then
+                v2 = 0
             else
-                v7 = u147.Position / u147.Target
+                v2 = u147.Position / u147.Target
+                if not v2 then
+                    v2 = 0
+                end
             end
-            Weapon.ADSStrength = v7
+            Weapon_2.ADSStrength = v2
             local GripOffset = Config.GripOffset
-            if not Config.LeftArmGrip then
-                v6 = new()
-            elseif GripOffset then
-                v6 = GripOffset:Lerp(new(), p1.Weapon.ADSStrength)
+            if not Config.LeftArmGrip or not GripOffset then
+                v1 = new()
+            else
+                v11 = new
+                v11 = v11()
+                v12 = p1
+                local ADSStrength = v12.Weapon.ADSStrength
+                v1 = GripOffset:Lerp(v11, ADSStrength)
             end
-            local v23 = math.clamp(a1 * 10, 0.01, 1)
-            p1.ImpulseCF = p1.ImpulseCF:Lerp(CFrame.new(), v23)
+            v10 = p1_2 * 10
+            v9 = math.clamp(v10, 0.01, 1)
+            v10 = p1
+            v11 = p1
+            local ImpulseCF = v11.ImpulseCF
+            local v32 = CFrame.new()
+            v10.ImpulseCF = ImpulseCF:Lerp(v32, v9)
             local DynamicFOVOffsetConstant = Config.DynamicFOVOffsetConstant
-            local v24 = Config.AimDynamicFOVOffsetConstant or DynamicFOVOffsetConstant
-            local v25 = CFrame.new()
-            local v26 = CFrame.new()
+            v11 = Config.AimDynamicFOVOffsetConstant or DynamicFOVOffsetConstant
+            v12 = CFrame.new()
+            v32 = CFrame.new()
             if DynamicFOVOffsetConstant then
-                v8 = math.sin((math.rad(peek(u107.Graphics.BaseFOV) * 0.5))) + -0.573576436351046
-                v25 = CFrame.new(0, 0, v8 * DynamicFOVOffsetConstant)
-                v26 = CFrame.new(0, 0, v8 * v24)
+                v16 = peek
+                v17 = u107
+                v16 = v16(v17.Graphics.BaseFOV)
+                v15 = v16 * 0.5
+                v14 = math.rad(v15)
+                v13 = math.sin(v14) + -0.573576436351046
+                v12 = CFrame.new(0, 0, v13 * DynamicFOVOffsetConstant)
+                v32 = CFrame.new(0, 0, v13 * v11)
             end
             if not hrp then
-                Position = u147.Position
+                Position_2 = u147.Position
             else
-                Position = 0
+                Position_2 = 0
             end
-            local v27 = v25:Lerp(v26, Position)
-            local v28 = v27 * BobbingUtil.gunBobCF * v1
-            local v29 = v28 * u138 * v3
-            local v30 = v29 * p1.TotalOffset
-            v8 = v30 * p1.ImpulseCF * v6
-            local v31 = CFrame.new()
+            v17 = (v12:Lerp(v32, Position_2)) * BobbingUtil.gunBobCF * v6
+            v14 = v17 * u138 * v4 * p1.TotalOffset
+            v13 = v14 * p1.ImpulseCF * v1
+            local v33 = CFrame.new()
             if p1.StartingTransform and p1.CameraBoneMotor6D then
-                local Position_2
-                v30 = p1.StartingTransform * p1.CameraBoneMotor6D.Transform:inverse()
+                local Position_3
+                v14 = p1.StartingTransform * p1.CameraBoneMotor6D.Transform:inverse()
                 if Config.UseAltCameraReload then
-                    _, _, v28 = (v30 - v30.Position):ToOrientation()
-                    v30 = Angles(0, 0, v28 * 0.05)
+                    _, _, v17 = (v14 - v14.Position):ToOrientation()
+                    v14 = Angles(0, 0, v17 * 0.05)
                 end
                 if p1.LeftArmOnly then
-                    Position_2 = p1.EquipSpring.Position
-                    if not Position_2 then
-                        Position_2 = SharedSprings.EquipSpring.Position
+                    Position_3 = p1.EquipSpring.Position
+                    if not Position_3 then
+                        Position_3 = SharedSprings.EquipSpring.Position
                     end
                 elseif not p1.IsMirrored then
+                    Position_3 = SharedSprings.EquipSpring.Position
+                else
+                    Position_3 = p1.EquipSpring.Position
+                    if not Position_3 then
+                        Position_3 = SharedSprings.EquipSpring.Position
+                    end
                 end
-                v31 = v30:Lerp(CFrame.new(), Position_2)
+                v18 = CFrame.new()
+                v33 = v14:Lerp(v18, Position_3)
             end
-            v28 = v22 * BobbingUtil.gunBobCF * v1 * u138 * v3 * v31
+            v17 = v31 * BobbingUtil.gunBobCF * v6 * u138 * v4 * v33
+            v16 = v17 * p1.ImpulseCF
             if not hrp then
-                Position_3 = u147.Position
+                Position_4 = u147.Position
             else
-                Position_3 = 0
+                Position_4 = 0
             end
-            v8 = v8:Lerp(v28 * p1.ImpulseCF, Position_3)
-            v27 = a1 * 10 * u41
-            u159.Target = Lerp(u159.Target, 0, (math.clamp(v27, 0.0001, 1)))
-            v27 = a1 * 10 * u41
-            u165.Target = Lerp(u165.Target, 0, (math.clamp(v27, 0.0001, 1)))
-            local CFrame_2 = CurrentCamera.CFrame
-            if hrp and LocalPlayerController.hrp and LocalPlayerController.hrp.Parent and LocalPlayerController.humanoid.Humanoid and 0 < LocalPlayerController.humanoid.Humanoid.Health then
-                Parent = LocalPlayerController.hrp.Parent
+            v13 = v13:Lerp(v16, Position_4)
+            v14 = u159
+            v15 = Lerp
+            v16 = u159
+            local Target = v16.Target
+            local v34 = p1_2 * 10 * u41
+            v14.Target = v15(Target, 0, (math.clamp(v34, 0.0001, 1)))
+            v14 = u165
+            v15 = Lerp
+            v16 = u165
+            local Target_2 = v16.Target
+            v34 = p1_2 * 10 * u41
+            v14.Target = v15(Target_2, 0, (math.clamp(v34, 0.0001, 1)))
+            local CFrame_5 = CurrentCamera.CFrame
+            if hrp
+                and LocalPlayerController.hrp
+                and LocalPlayerController.hrp.Parent
+                and LocalPlayerController.humanoid.Humanoid
+                and 0 < LocalPlayerController.humanoid.Humanoid.Health then
+                local Parent = LocalPlayerController.hrp.Parent
                 local HEADCOPY = Parent:FindFirstChild("HEADCOPY")
-                if not HEADCOPY then
+                if not HEADCOPY or not HEADCOPY:IsA("BasePart") then
                     HEADCOPY = Parent:FindFirstChild("Head")
-                elseif HEADCOPY:IsA("BasePart") then
                 end
-                if not HEADCOPY then
+                if not HEADCOPY or not HEADCOPY:IsA("BasePart") then
                     HEADCOPY = LocalPlayerController.hrp
-                elseif HEADCOPY:IsA("BasePart") then
                 end
-                local CFrame_3 = HEADCOPY.CFrame
-                local CFrame_4 = LocalPlayerController.hrp.CFrame
-                local Position_4 = u147.Position
+                local CFrame_6 = HEADCOPY.CFrame
+                local CFrame_7 = LocalPlayerController.hrp.CFrame
+                local Position_5 = u147.Position
                 if not LocalPlayerController.Animator then
-                    CFrame_2 = CFrame_3
+                    CFrame_5 = CFrame_6
                 else
                     local AimTwistAngle
                     local Proning = LocalPlayerController.States.Proning
                     local Y = CameraController.Y
                     if not Proning then
-                        v12 = 0
+                        v20 = 0
                     else
-                        v12 = 1.5707963267948966
+                        v20 = 1.5707963267948966
                     end
-                    v13 = math.clamp(-Y / 1.5707963267948966, 0, 1)
-                    v14 = math.clamp(Y / 1.5707963267948966, 0, 1)
+                    v22 = -Y / 1.5707963267948966
+                    v21 = math.clamp(v22, 0, 1)
+                    v23 = Y / 1.5707963267948966
+                    v22 = math.clamp(v23, 0, 1)
                     if Proning then
-                        CFrame_3 = CFrame_3 * new(0, -1, 0.8)
-                        CFrame_4 = CFrame_4 * new(0, -1, 0.8)
+                        CFrame_6 = CFrame_6 * new(0, -1, 0.8)
+                        CFrame_7 = CFrame_7 * new(0, -1, 0.8)
                     end
                     if not Proning then
                         AimTwistAngle = LocalPlayerController.Animator:GetAimTwistAngle()
                     else
                         AimTwistAngle = 0
                     end
-                    v17 = CFrame_3 * Angles(v12, 0, 0)
-                    v16 = v17 * Angles(0, AimTwistAngle, 0)
-                    v28 = v16 * Angles(Y * 0.5, 0, 0)
-                    v19 = CFrame_4 * new(0, 1.5, 0)
-                    local v32 = Y + RecoilUtil:GetPitchRecoil() * 2
-                    v18 = v19 * Angles(v32, 0, 0)
-                    v19 = new()
+                    v17 = CFrame_6 * Angles(v20, 0, 0) * Angles(0, AimTwistAngle, 0) * Angles(Y * 0.5, 0, 0)
+                    local PitchRecoil = RecoilUtil:GetPitchRecoil()
+                    v27 = CFrame_7 * new(0, 1.5, 0)
+                    local v35 = Angles
+                    v28 = Y + PitchRecoil * 2
+                    v26 = v27 * v35(v28, 0, 0)
+                    v27 = new()
                     if Proning then
-                        v32 = new()
+                        v28 = new()
                     else
-                        v32 = new(0, 0.5, -1.5)
+                        v28 = new(0, 0.5, -1.5)
+                        if not v28 then
+                            v28 = new()
+                        end
                     end
-                    v17 = v18 * v19:Lerp(v32, v13)
-                    v18 = new()
+                    v25 = v26 * v27:Lerp(v28, v21)
+                    v26 = new()
                     if Proning then
-                        v20 = new()
+                        v35 = new()
                     else
-                        v20 = new(0, 1, 1.5)
+                        v35 = new(0, 1, 1.5)
+                        if not v35 then
+                            v35 = new()
+                        end
                     end
-                    CFrame_2 = v28:Lerp(v17 * v18:Lerp(v20, v14), Position_4)
+                    v26 = v26:Lerp(v35, v22)
+                    v18 = v25 * v26
+                    CFrame_5 = v17:Lerp(v18, Position_5)
                 end
             end
-            if p1.ManagerState == "Lowered" then
-                p1.PrimaryPart.CFrame = CFrame_2 * p1.ViewmodelBaseOffset * BobbingUtil.gunBobCF * v1 * p1.TotalOffset * p1.ImpulseCF
-            elseif p1.ManagerState ~= "Hidden" and not p1.ForceLoweredPosition then
-                if 0 >= u147.Target then
-                    v29 = 1
+            if p1.ManagerState == "Lowered" or p1.ManagerState == "Hidden" then
+                v15 = p1
+                PrimaryPart_3 = v15.PrimaryPart
+                PrimaryPart_3.CFrame = CFrame_5 * p1.ViewmodelBaseOffset * BobbingUtil.gunBobCF * v6 * p1.TotalOffset * p1.ImpulseCF
+            elseif not p1.ForceLoweredPosition then
+                if not (0 < u147.Target) then
+                    v15 = 1
                 else
-                    v29 = 0
+                    v15 = 0
                 end
-                v9 = p1.LoadingFrame.Position * v29
-                v28 = u159.Position * v29
-                v10 = u165.Position * v29
-                v14 = CFrame_2 * p1.ViewmodelBaseOffset
-                v18 = new(0, 0, -0.5)
-                v17 = v18 * Angles(-0.2617993877991494, 0, 0.2617993877991494)
-                v13 = v14 * new():Lerp(v17, v28)
-                v17 = new(0, 0, -0.5)
-                v16 = v17 * Angles(0, 0, -0.2617993877991494)
-                v12 = v13 * new():Lerp(v16, v10)
-                v15 = new(0, 0, 1)
-                p1.PrimaryPart.CFrame = v12 * new():Lerp(v15, v9) * v8
+                v16 = p1.LoadingFrame.Position * v15
+                v17 = u159.Position * v15
+                v18 = u165.Position * v15
+                v34 = p1
+                local PrimaryPart_2 = v34.PrimaryPart
+                v22 = CFrame_5 * p1.ViewmodelBaseOffset
+                v23 = new
+                v23 = v23()
+                v25 = (new(0, 0, -0.5)) * Angles(-0.2617993877991494, 0, 0.2617993877991494)
+                v21 = v22 * v23:Lerp(v25, v17)
+                v22 = new
+                v22 = v22()
+                v24 = (new(0, 0, -0.5)) * Angles(0, 0, -0.2617993877991494)
+                v20 = v21 * v22:Lerp(v24, v18)
+                v21 = new
+                v21 = v21()
+                v23 = new(0, 0, 1)
+                PrimaryPart_2.CFrame = v20 * v21:Lerp(v23, v16) * v13
+            else
+                v15 = p1
+                PrimaryPart_3 = v15.PrimaryPart
+                PrimaryPart_3.CFrame = CFrame_5 * p1.ViewmodelBaseOffset * BobbingUtil.gunBobCF * v6 * p1.TotalOffset * p1.ImpulseCF
             end
             if p1.IsMirrored then
-                local CFrame_5 = p1.PrimaryPart.CFrame
-                v29 = CFrame.fromMatrix(CFrame_5.Position, CFrame_5.XVector * -1, CFrame_5.YVector, CFrame_5.ZVector)
-                p1.PrimaryPart.CFrame = v29
+                local CFrame_8 = p1.PrimaryPart.CFrame
+                v15 = CFrame.fromMatrix(CFrame_8.Position, CFrame_8.XVector * -1, CFrame_8.YVector, CFrame_8.ZVector)
+                p1.PrimaryPart.CFrame = v15
             end
             if not p1.ForceLoweredPosition then
-                PointRotationUtil.Update(a1, p1.Model, p1.Weapon.Aiming, u147, CFrame_2, v26, p1.Weapon)
+                PointRotationUtil.Update(p1_2, p1.Model, p1.Weapon.Aiming, u147, CFrame_5, v32, p1.Weapon)
             end
             local crosshairRecoil = CursorRecoilUtil.crosshairRecoil
             if p1.Weapon.Aiming and 0.0001 < crosshairRecoil.Magnitude and p1.Aimpart then
-                v9 = CFrame.new(Vector3.new(0, 0, 1), crosshairRecoil * Vector3.new(1, 1, 1))
-                v28 = v9 - v9.Position
-                local CFrame_6 = p1.Aimpart.CFrame
-                v27 = CFrame_6:ToObjectSpace(p1.PrimaryPart.CFrame)
-                p1.PrimaryPart.CFrame = (CFrame_6 * v28):ToWorldSpace(v27)
+                v16 = CFrame.new(Vector3.new(0, 0, 1), crosshairRecoil * Vector3.new(1, 1, 1))
+                v17 = v16 - v16.Position
+                local CFrame_9 = p1.Aimpart.CFrame
+                v19 = p1
+                local CFrame_10 = v19.PrimaryPart.CFrame
+                v34 = CFrame_9:ToObjectSpace(CFrame_10)
+                v18 = CFrame_9 * v17
+                p1.PrimaryPart.CFrame = v18:ToWorldSpace(v34)
             end
             if Config.Lasers then
-                local Position_5
-                Lasers = Config.Lasers
-                v28 = nil
-                v10 = nil
-                v5 = a1
-                for i, j in Lasers, v28, v10 do
-                    v11 = j[1]
-                    v12 = j[2]
-                    if not (j[3]) then
-                        j[3] = SpringUtil.new(0)
+                local LookVector, Position_7, Position_8, Position_9
+                local Lasers = Config.Lasers
+                v17 = nil
+                v18 = nil
+                v8 = p1_2
+                for i, j in Lasers, v17, v18 do
+                    v19 = j[1]
+                    v20 = j[2]
+                    if not j[3] then
+                        j[3] = (SpringUtil.new(0))
                         j[3].Target = 0
                         j[3].Speed = 20
                         j[3].Damper = 1
                     end
-                    Position_5 = RaycastUtil.CustomRayDirection(v11.CFrame.Position, -v11.CFrame.RightVector.Unit * 100).Position
-                    v11.End.WorldCFrame = new(Position_5)
-                    v18 = 1 - math.abs((CFrame_2.LookVector:Dot(-v11.CFrame.RightVector)))
-                    if 0.0005 < v18 then
-                        v18 = 1
+                    v21 = j[3]
+                    Position_7 = RaycastUtil.CustomRayDirection(v19.CFrame.Position, -v19.CFrame.RightVector.Unit * 100).Position
+                    v19.End.WorldCFrame = new(Position_7)
+                    LookVector = CFrame_5.LookVector
+                    v24 = -v19.CFrame.RightVector
+                    v25 = LookVector:Dot(v24)
+                    v26 = 1 - math.abs(v25)
+                    if 0.0005 < v26 then
+                        v26 = 1
                     end
                     if hrp then
-                        u171.Target = 1 - v18
+                        u171.Target = 1 - v26
                     else
                         u171.Target = 0
                     end
-                    v12.BillboardGui.Enabled = true
-                    v12.Position = Position_5:Lerp(RaycastUtil.CastBaseRay().Position, u171.Position)
+                    v20.BillboardGui.Enabled = true
+                    v28 = RaycastUtil
+                    v28 = v28.CastBaseRay()
+                    Position_8 = v28.Position
+                    v29 = u171
+                    Position_9 = v29.Position
+                    v20.Position = Position_7:Lerp(Position_8, Position_9)
                 end
             end
             local Lense = Config.Lense
             if Lense and p1.Reticle then
-                HolographicEffect.UpdateReticle(Lense, p1, CFrame_2)
+                HolographicEffect.UpdateReticle(Lense, p1, CFrame_5)
             end
             local Shadow = Config.Shadow
             if Shadow and p1.ShadowRing then
-                HolographicEffect.UpdateShadow(Shadow, p1, CFrame_2)
+                HolographicEffect.UpdateShadow(Shadow, p1, CFrame_5)
             end
             if Config.HideScopeModel then
                 ScopeHideEffect.Update(p1, Config.HideScopeModel, u147)
@@ -470,152 +602,207 @@ function u183.SetEnabled(p1, p2) -- Line: 203 -- upvalues: Fusion (val), SkillTr
             if not DedicatedArms then
                 DedicatedArms = FakeArmUtil.Arms
             end
-            v27 = new()
-            local v33 = FakeArmUtil:OwnsArm(p1.Model, "Left")
-            v11 = FakeArmUtil:OwnsArm(p1.Model, "Right")
-            if DedicatedArms and v33 then
+            v34 = new()
+            local v36 = FakeArmUtil
+            v20 = p1
+            local Model = v20.Model
+            v36 = v36:OwnsArm(Model, "Left")
+            v19 = FakeArmUtil
+            v21 = p1
+            local Model_2 = v21.Model
+            v19 = v19:OwnsArm(Model_2, "Right")
+            if DedicatedArms and v36 then
                 if not Config.LeftArmGrip then
                     DedicatedArms.LeftWeld.C0 = new()
                 else
-                    v27 = GripBlenderEffect(DedicatedArms, p1.Weapon)
+                    v34 = GripBlenderEffect(DedicatedArms, p1.Weapon)
                 end
             end
-            if v33 then
-                local Left
+            if v36 then
                 if not p1.Weapon.Config.ArmIgnores then
-                    v12 = false
-                elseif p1.Weapon.Config.ArmIgnores["Left Arm"] then
-                    v12 = true
+                    v20 = false
+                else
+                    v20 = not not p1.Weapon.Config.ArmIgnores["Left Arm"]
                 end
-                if LocalPlayerController.States.IsDowned and not (Fusion.peek(SkillTreeData.HasLastStand)) then
-                    v12 = true
+                if LocalPlayerController.States.IsDowned and not Fusion.peek(SkillTreeData.HasLastStand) then
+                    v20 = true
                 end
-                if not p1.ManagerGrantedArms.Left then
-                    v12 = true
-                elseif not p1.ForceOneHanded then
+                if not p1.ManagerGrantedArms.Left or p1.ForceOneHanded then
+                    v20 = true
                 end
                 if DedicatedArms then
-                    Left = p1.PrevArmControlled.Left
-                    v14 = not v12
+                    local CFrame_14
+                    local Left = p1.PrevArmControlled.Left
+                    v22 = not v20
                     if not Left then
-                        if Left then
-                            DedicatedArms.LeftWeld.Enabled = not v12
-                            DedicatedArms.LeftShoulder.Enabled = v12
-                        elseif v14 then
-                            v17 = DedicatedArms.LeftWeld.Part0.CFrame:Inverse() * DedicatedArms.Left.CFrame
-                            DedicatedArms.LeftWeld.C0 = v17
+                        if Left or not v22 then
+                            DedicatedArms.LeftWeld.Enabled = not v20
+                            DedicatedArms.LeftShoulder.Enabled = v20
+                        else
+                            CFrame_14 = DedicatedArms.Left.CFrame
+                            v25 = DedicatedArms.LeftWeld.Part0.CFrame:Inverse() * CFrame_14
+                            DedicatedArms.LeftWeld.C0 = v25
                             DedicatedArms.LeftWeld.Enabled = true
                             DedicatedArms.LeftShoulder.Enabled = false
                         end
-                    elseif not v14 then
-                        v18 = DedicatedArms.LeftShoulder.Part0.CFrame:Inverse() * DedicatedArms.Left.CFrame * DedicatedArms.LeftShoulder.C1
-                        DedicatedArms.LeftShoulder.C0 = v18
+                    elseif not v22 then
+                        local CFrame_12 = DedicatedArms.Left.CFrame
+                        local CFrame_13 = DedicatedArms.LeftShoulder.Part0.CFrame
+                        local C1 = DedicatedArms.LeftShoulder.C1
+                        v26 = CFrame_13:Inverse() * CFrame_12 * C1
+                        DedicatedArms.LeftShoulder.C0 = v26
                         DedicatedArms.LeftShoulder.Enabled = true
                         DedicatedArms.LeftWeld.Enabled = false
-                        v21 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                        TweenService:Create(DedicatedArms.LeftShoulder, v21, {C0 = DedicatedArms.LeftShoulderC0}):Play()
+                        v27 = TweenService
+                        local LeftShoulder_3 = DedicatedArms.LeftShoulder
+                        v29 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                        v30 = {C0 = DedicatedArms.LeftShoulderC0}
+                        v27:Create(LeftShoulder_3, v29, v30):Play()
+                    elseif Left or not v22 then
+                        DedicatedArms.LeftWeld.Enabled = not v20
+                        DedicatedArms.LeftShoulder.Enabled = v20
+                    else
+                        CFrame_14 = DedicatedArms.Left.CFrame
+                        v25 = DedicatedArms.LeftWeld.Part0.CFrame:Inverse() * CFrame_14
+                        DedicatedArms.LeftWeld.C0 = v25
+                        DedicatedArms.LeftWeld.Enabled = true
+                        DedicatedArms.LeftShoulder.Enabled = false
                     end
-                    p1.PrevArmControlled.Left = v14
+                    p1.PrevArmControlled.Left = v22
                 end
             end
-            if v11 then
-                local Right
+            if v19 then
                 if not p1.Weapon.Config.ArmIgnores then
-                    v12 = false
-                elseif p1.Weapon.Config.ArmIgnores["Right Arm"] then
-                    v12 = true
+                    v20 = false
+                else
+                    v20 = not not p1.Weapon.Config.ArmIgnores["Right Arm"]
                 end
                 if not p1.ManagerGrantedArms.Right then
-                    v12 = true
+                    v20 = true
                 end
                 if DedicatedArms then
-                    Right = p1.PrevArmControlled.Right
-                    v14 = not v12
+                    local CFrame_17
+                    local Right = p1.PrevArmControlled.Right
+                    v22 = not v20
                     if not Right then
-                        if Right then
-                            DedicatedArms.RightWeld.Enabled = not v12
-                            DedicatedArms.RightShoulder.Enabled = v12
-                        elseif v14 then
-                            v17 = DedicatedArms.RightWeld.Part0.CFrame:Inverse() * DedicatedArms.Right.CFrame
-                            DedicatedArms.RightWeld.C0 = v17
+                        if Right or not v22 then
+                            DedicatedArms.RightWeld.Enabled = not v20
+                            DedicatedArms.RightShoulder.Enabled = v20
+                        else
+                            CFrame_17 = DedicatedArms.Right.CFrame
+                            v25 = DedicatedArms.RightWeld.Part0.CFrame:Inverse() * CFrame_17
+                            DedicatedArms.RightWeld.C0 = v25
                             DedicatedArms.RightWeld.Enabled = true
                             DedicatedArms.RightShoulder.Enabled = false
                         end
-                    elseif not v14 then
-                        v18 = DedicatedArms.RightShoulder.Part0.CFrame:Inverse() * DedicatedArms.Right.CFrame * DedicatedArms.RightShoulder.C1
-                        DedicatedArms.RightShoulder.C0 = v18
+                    elseif not v22 then
+                        local CFrame_15 = DedicatedArms.Right.CFrame
+                        local CFrame_16 = DedicatedArms.RightShoulder.Part0.CFrame
+                        local C1_2 = DedicatedArms.RightShoulder.C1
+                        v26 = CFrame_16:Inverse() * CFrame_15 * C1_2
+                        DedicatedArms.RightShoulder.C0 = v26
                         DedicatedArms.RightShoulder.Enabled = true
                         DedicatedArms.RightWeld.Enabled = false
-                        v21 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                        TweenService:Create(DedicatedArms.RightShoulder, v21, {C0 = DedicatedArms.RightShoulderC0}):Play()
+                        v27 = TweenService
+                        local RightShoulder_3 = DedicatedArms.RightShoulder
+                        v29 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                        v30 = {C0 = DedicatedArms.RightShoulderC0}
+                        v27:Create(RightShoulder_3, v29, v30):Play()
+                    elseif Right or not v22 then
+                        DedicatedArms.RightWeld.Enabled = not v20
+                        DedicatedArms.RightShoulder.Enabled = v20
+                    else
+                        CFrame_17 = DedicatedArms.Right.CFrame
+                        v25 = DedicatedArms.RightWeld.Part0.CFrame:Inverse() * CFrame_17
+                        DedicatedArms.RightWeld.C0 = v25
+                        DedicatedArms.RightWeld.Enabled = true
+                        DedicatedArms.RightShoulder.Enabled = false
                     end
-                    p1.PrevArmControlled.Right = v14
+                    p1.PrevArmControlled.Right = v22
                 end
             end
-            p1:UpdateArmOffsets(v5)
-            if DedicatedArms and p1.ManagerState ~= "Lowered" and p1.ManagerState ~= "Hidden" and not p1.ForceLoweredPosition then
-                v12 = if p1.Weapon.Config.IsMelee then 1 else Lerp(0.4, 1, SharedSprings.SprintSpring.Position)
-                v14 = p1.PrimaryPart.CFrame * v2
-                v13 = (v14 * BobbingUtil.gunBobCF):Lerp(p1.PrimaryPart.CFrame, v12)
-                if v33 then
-                    v14 = DedicatedArms.LeftWeld.Part0.CFrame * v27
-                    v15 = v13:ToObjectSpace(v14)
-                    v16 = v14 * CFrame.new(0.1, -1.4, 0)
-                    v20 = DedicatedArms.LeftWeld.Part0.CFrame:Inverse()
-                    DedicatedArms.LeftWeld.C0 = v20 * p1.PrimaryPart.CFrame * v15
-                    v17 = DedicatedArms.LeftWeld.Part0.CFrame:toWorldSpace(CFrame.new(DedicatedArms.LeftWeld.C0.Position))
+            p1:UpdateArmOffsets(v8)
+            if DedicatedArms
+                and p1.ManagerState ~= "Lowered"
+                and p1.ManagerState ~= "Hidden"
+                and not p1.ForceLoweredPosition then
+                v20 = Lerp(0.4, 1, SharedSprings.SprintSpring.Position)
+                if p1.Weapon.Config.IsMelee then
+                    v20 = 1
+                end
+                v22 = p1.PrimaryPart.CFrame * v3
+                v21 = v22 * BobbingUtil.gunBobCF
+                v23 = p1
+                local CFrame_18 = v23.PrimaryPart.CFrame
+                v21 = v21:Lerp(CFrame_18, v20)
+                if v36 then
+                    v22 = DedicatedArms.LeftWeld.Part0.CFrame * v34
+                    v23 = v21:ToObjectSpace(v22)
+                    v24 = v22 * CFrame.new(0.1, -1.4, 0)
+                    local LeftWeld = DedicatedArms.LeftWeld
+                    LeftWeld.C0 = (DedicatedArms.LeftWeld.Part0.CFrame:Inverse()) * p1.PrimaryPart.CFrame * v23
+                    local CFrame_19 = DedicatedArms.LeftWeld.Part0.CFrame
+                    v27 = CFrame.new(DedicatedArms.LeftWeld.C0.Position)
+                    v25 = CFrame_19:toWorldSpace(v27)
                     DedicatedArms.LeftWeld.C0 = DedicatedArms.LeftWeld.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
-                    v19 = CFrame.lookAt(v17.Position, v16.Position, DedicatedArms.Left.CFrame.UpVector)
-                    v18 = v19 * CFrame.Angles(1.5707963267948966, 0, 0)
-                    DedicatedArms.LeftWeld.C0 = DedicatedArms.LeftWeld.Part0.CFrame:toObjectSpace(v18)
+                    v26 = (CFrame.lookAt(v25.Position, v24.Position, DedicatedArms.Left.CFrame.UpVector)) * CFrame.Angles(1.5707963267948966, 0, 0)
+                    DedicatedArms.LeftWeld.C0 = DedicatedArms.LeftWeld.Part0.CFrame:toObjectSpace(v26)
                     DedicatedArms.LeftWeld.C0 = DedicatedArms.LeftWeld.C0 * p1.ArmOffsets.Left
                 end
-                if v11 then
-                    local CFrame_7 = DedicatedArms.RightWeld.Part0.CFrame
-                    v15 = v13:ToObjectSpace(CFrame_7)
-                    v16 = CFrame_7 * CFrame.new(-0.1, -1.4, 0)
-                    v20 = DedicatedArms.RightWeld.Part0.CFrame:Inverse()
-                    DedicatedArms.RightWeld.C0 = v20 * p1.PrimaryPart.CFrame * v15
-                    v17 = DedicatedArms.RightWeld.Part0.CFrame:toWorldSpace(CFrame.new(DedicatedArms.RightWeld.C0.Position))
+                if v19 then
+                    local CFrame_20 = DedicatedArms.RightWeld.Part0.CFrame
+                    v23 = v21:ToObjectSpace(CFrame_20)
+                    v24 = CFrame_20 * CFrame.new(-0.1, -1.4, 0)
+                    local RightWeld = DedicatedArms.RightWeld
+                    RightWeld.C0 = (DedicatedArms.RightWeld.Part0.CFrame:Inverse()) * p1.PrimaryPart.CFrame * v23
+                    local CFrame_21 = DedicatedArms.RightWeld.Part0.CFrame
+                    v27 = CFrame.new(DedicatedArms.RightWeld.C0.Position)
+                    v25 = CFrame_21:toWorldSpace(v27)
                     DedicatedArms.RightWeld.C0 = DedicatedArms.RightWeld.C0 * CFrame.Angles(-1.5707963267948966, 0, 0)
-                    v19 = CFrame.lookAt(v17.Position, v16.Position, DedicatedArms.Right.CFrame.UpVector)
-                    v18 = v19 * CFrame.Angles(1.5707963267948966, 0, 0)
-                    DedicatedArms.RightWeld.C0 = DedicatedArms.RightWeld.Part0.CFrame:toObjectSpace(v18)
+                    v26 = (CFrame.lookAt(v25.Position, v24.Position, DedicatedArms.Right.CFrame.UpVector)) * CFrame.Angles(1.5707963267948966, 0, 0)
+                    DedicatedArms.RightWeld.C0 = DedicatedArms.RightWeld.Part0.CFrame:toObjectSpace(v26)
                     DedicatedArms.RightWeld.C0 = DedicatedArms.RightWeld.C0 * p1.ArmOffsets.Right
                 end
             end
-            ShellSystem:Update(v5)
+            ShellSystem:Update(v8)
             if Config.ChainAtt then
-                local CFrame_8 = Config.ChainAtt.CFrame
-                Model = CFrame_8 - CFrame_8.Position
-                v15 = new(Config.ChainAtt.Parent.AttachmentPart.Position)
-                Config.ChainAtt.CFrame = v15 * Model
+                local CFrame_22 = Config.ChainAtt.CFrame
+                u77 = CFrame_22 - CFrame_22.Position
+                local ChainAtt = Config.ChainAtt
+                ChainAtt.CFrame = (new(Config.ChainAtt.Parent.AttachmentPart.Position)) * u77
             end
             if p1.AnimatedTextures then
                 AnimatedTextures.update(p1.AnimatedTextures)
             end
             if Config.CustomRS then
-                Config.CustomRS(p1.Model, {Ammo = p1.Weapon.Ammo}, v5)
+                local CustomRS = Config.CustomRS
+                v21 = p1
+                CustomRS(v21.Model, {Ammo = p1.Weapon.Ammo}, v8)
             end
             if Config.AnimateTextureThink then
-                Config.AnimateTextureThink(p1.Model, Config, u147, v5, p1)
+                Config.AnimateTextureThink(p1.Model, Config, u147, v8, p1)
             end
         end
     end)
 end
+
 function u183.ChangedFiremode(p1) -- Line: 830 -- upvalues: u159 (val), u165 (val)
     u159.Target = 0.3
     u165.Target = -0.2
 end
+
 function u183.GetModel(p1) -- Line: 836
     return p1.Model
 end
+
 function u183:Destroy() -- Line: 841 -- upvalues: RunService (val)
     if self.Model then
         self.Model:Destroy()
     end
     if self.Enabled then
-        RunService:UnbindFromRenderStep(self.Name)
+        local v1 = RunService
+        local Name = self.Name
+        v1:UnbindFromRenderStep(Name)
     end
     if self.HRPADSAttachment then
         self.HRPADSAttachment:Destroy()
@@ -627,51 +814,61 @@ function u183:Destroy() -- Line: 841 -- upvalues: RunService (val)
         self.Janitor = nil
     end
 end
+
 function u183:StopAnimation(p2) -- Line: 863
     if self.Animations and self.Animations[p2] then
         self.Animations[p2]:Stop()
     end
 end
+
 function u183.PlayAnimation(p1, p2, ...) -- Line: 869 -- upvalues: Promise (val)
-    local v1, v2, v3
+    local v1, v2
+
     local function AnimationsPromise() -- Line: 870 -- upvalues: Promise (upval), p1 (val)
-        return Promise.new(function(a1, p2, p3) -- Line: 871 -- upvalues: p1 (upval)
+        local v1 = Promise
+        return v1.new(function(p1_2, p2, p3) -- Line: 871 -- upvalues: p1 (upval)
             if not p1.Animations then
-                while true do
+                repeat
                     task.wait()
-                    if p1.Animations then
-                        break
-                    end
-                end
+                until p1.Animations
             end
-            a1()
+            p1_2()
         end)
     end
-    v1, v2, v3 = unpack({...})
+
+    local v3 = {...}
+    v1, v3, v2 = unpack(v3)
     local u9 = v1 or 0
-    local u10 = v2 or 1
-    local u11 = v3 or 1
+    local u10 = v3 or 1
+    local u11 = v2 or 1
+
     local function round(p1, p2) -- Line: 886
-        local v1 = "%." .. (p2 or 0) .. "f"
-        return (tonumber(string.format(v1, p1)))
+        local v1 = string.format("%." .. (p2 or 0) .. "f", p1)
+        return (tonumber(v1))
     end
-    return Promise.new(function(a1, p2, p3) -- Line: 871 -- upvalues: p1 (val)
+
+    local v4 = Promise
+    v4 = v4.new(function(p1_2, p2, p3) -- Line: 871 -- upvalues: p1 (val)
         if not p1.Animations then
-            while true do
+            repeat
                 task.wait()
-                if p1.Animations then
-                    break
-                end
-            end
+            until p1.Animations
         end
-        a1()
-    end):andThen(function() -- Line: 890 -- upvalues: p1 (val), p2 (val), u9 (ref), u10 (ref), u11 (ref)
-        if not (p1.Animations[p2]) then
+        p1_2()
+    end)
+    v4 = v4:andThen(function() -- Line: 890 -- upvalues: p1 (val), p2 (val), u9 (ref), u10 (ref), u11 (ref)
+        if not p1.Animations[p2] then
             return
         end
-        p1.Animations[p2]:Play(u9, u10, u11)
+        local v1 = p1.Animations[p2]
+        local v2 = u9
+        local v3 = u10
+        local v4 = u11
+        v1:Play(v2, v3, v4)
     end)
+    return v4
 end
+
 function u183.Shoot(p1) -- Line: 899 -- upvalues: ShellSystem (val), peek (val), u107 (val)
     if not p1.Weapon.Config.ShellOn then
         ShellSystem:Eject(p1)
@@ -679,32 +876,43 @@ function u183.Shoot(p1) -- Line: 899 -- upvalues: ShellSystem (val), peek (val),
     if p1.RecoilInstance then
         p1.RecoilInstance:Impulse()
     end
-    local v1 = peek(u107.Graphics.ParticleQuality)
-    if 1 < v1 and p1.MuzzleModule then
+    if 1 < (peek(u107.Graphics.ParticleQuality)) and p1.MuzzleModule then
         pcall(function() -- Line: 909 -- upvalues: p1 (val)
-            p1.MuzzleModule:Emit(p1)
+            local v1 = p1
+            local MuzzleModule = v1.MuzzleModule
+            local v2 = p1
+            MuzzleModule:Emit(v2)
         end)
     end
     if p1.Weapon.Config.CustomShoot then
         p1.Weapon.Config.CustomShoot(p1.Weapon.Ammo, p1.Model)
     end
 end
-function u183:Loaded() -- Line: 920 -- upvalues: ArmModelUtil (val), FakeArmUtil (val), PointRotationUtil (val), Ignore (val), CameraController (val)
-    local CameraBoneMotor6D, v1
+
+function u183:Loaded() -- Line: 920
+    -- upvalues: ArmModelUtil (val), FakeArmUtil (val), PointRotationUtil (val), Ignore (val), CameraController (val)
+    local v1
     local v2 = not self.RightArmOnly
     local v3 = not self.LeftArmOnly
     if not self.UseArmModels then
-        FakeArmUtil:ShowForArms(self.Model, v2, v3)
+        v1 = FakeArmUtil
+        local Model_2 = self.Model
+        v1:ShowForArms(Model_2, v2, v3)
     else
-        ArmModelUtil:AttachArms(self.Model, v3, v2, self.IsMirrored)
+        v1 = ArmModelUtil
+        local Model = self.Model
+        local IsMirrored = self.IsMirrored
+        v1:AttachArms(Model, v3, v2, IsMirrored)
     end
     if not self.ForceLoweredPosition then
         PointRotationUtil.NewWeapon(self)
     end
     self.Model.Parent = Ignore
-    if not self.NoCameraBone and not self.CameraBoneMotor6D and not self.IgnoreCameraBone and not self.Weapon.Config.DisableCameraBone then
-        local Head, Head_2
-        Head, Head_2 = self.Model:FindFirstChild("Head")
+    if not self.NoCameraBone
+        and not self.CameraBoneMotor6D
+        and not self.IgnoreCameraBone
+        and not self.Weapon.Config.DisableCameraBone then
+        local Head, Head_2 = self.Model:FindFirstChild("Head")
         if Head then
             Head_2 = self.Model.Head:FindFirstChild("Camera")
         end
@@ -712,10 +920,7 @@ function u183:Loaded() -- Line: 920 -- upvalues: ArmModelUtil (val), FakeArmUtil
             Head_2 = self.Model.HumanoidRootPart:FindFirstChild("Camera")
         end
         if not Head_2 then
-            Head_2 = self.Model:FindFirstChild("TrackMe", true)
-            if not Head_2 then
-                Head_2 = self.Model:FindFirstChild("Head 🡪 Handle", true)
-            end
+            Head_2 = self.Model:FindFirstChild("TrackMe", true) or self.Model:FindFirstChild("Head 🡪 Handle", true)
         end
         if not Head_2 then
             self.NoCameraBone = true
@@ -724,137 +929,145 @@ function u183:Loaded() -- Line: 920 -- upvalues: ArmModelUtil (val), FakeArmUtil
             self.CameraBoneMotor6D = Head_2
         end
     end
-    CameraController:SetCameraBone(self.StartingTransform, self.CameraBoneMotor6D)
+    v1 = CameraController
+    local StartingTransform = self.StartingTransform
+    local CameraBoneMotor6D = self.CameraBoneMotor6D
+    v1:SetCameraBone(StartingTransform, CameraBoneMotor6D)
     local FirstDrawAnimation = self.Weapon.Config.FirstDrawAnimation
     local DrawAnimation = self.Weapon.Config.DrawAnimation
-    if not FirstDrawAnimation then
-        if DrawAnimation and not self.Weapon.Reloading then
-            v1 = self:PlayAnimation(DrawAnimation, nil, nil, self.Weapon.Config.DrawSpeed or 1)
-            v1:andThen(function() -- Line: 989 -- upvalues: self (val), DrawAnimation (val)
-                local v1 = self.Animations[DrawAnimation]
-                v1.TimePosition = self.Weapon.Config.DrawAnimationTime or 0
-            end)
-        end
-        return
-    end
-    if not self.FirstDrew then
+    if FirstDrawAnimation and not self.FirstDrew then
         self.FirstDrew = true
-        local v4 = self:PlayAnimation(FirstDrawAnimation)
-        v4:andThen(function() -- Line: 984 -- upvalues: self (val), FirstDrawAnimation (val)
+        ;(self:PlayAnimation(FirstDrawAnimation)):andThen(function() -- Line: 984 -- upvalues: self (val), FirstDrawAnimation (val)
             local v1 = self.Animations[FirstDrawAnimation]
             v1.TimePosition = self.Weapon.Config.FirstDrawAnimationTime or 0
         end)
         return
     end
     if DrawAnimation and not self.Weapon.Reloading then
-        v1 = self:PlayAnimation(DrawAnimation, nil, nil, self.Weapon.Config.DrawSpeed or 1)
-        v1:andThen(function() -- Line: 989 -- upvalues: self (val), DrawAnimation (val)
+        local DrawSpeed = self.Weapon.Config.DrawSpeed
+        ;(self:PlayAnimation(DrawAnimation, nil, nil, DrawSpeed or 1)):andThen(function() -- Line: 989 -- upvalues: self (val), DrawAnimation (val)
             local v1 = self.Animations[DrawAnimation]
             v1.TimePosition = self.Weapon.Config.DrawAnimationTime or 0
         end)
     end
 end
+
 function u183:_resolveIdleAimCFrame() -- Line: 999 -- upvalues: new (val), RunService (val)
     local Viewmodel = self.Weapon.Config.Viewmodel
     if not Viewmodel then
         return
     end
     task.spawn(function() -- Line: 1009 -- upvalues: Viewmodel (val), new (upval), self (val), RunService (upval)
-        local v1
-        local v2 = Viewmodel:Clone()
-        v2:PivotTo(new(0, 10000, 0))
-        v2.Parent = workspace.Ignore
-        local HumanoidRootPart = v2:FindFirstChild("HumanoidRootPart")
-        local KeyParts = v2:WaitForChild("KeyParts")
-        local Aimpart = KeyParts:FindFirstChild("Aimpart")
-        if not HumanoidRootPart or not Aimpart then
-            v2:Destroy()
-            return
-        end
-        local AnimationController = v2:FindFirstChildWhichIsA("AnimationController")
-        if not AnimationController then
-            AnimationController = Instance.new("AnimationController")
-            AnimationController.Parent = v2
-        end
-        local Animator = AnimationController:FindFirstChildOfClass("Animator")
-        if not Animator then
-            Animator = Instance.new("Animator")
-            Animator.Parent = AnimationController
-        end
-        local Animations = v2:FindFirstChild("Animations")
-        if not Animations then
-            v2:Destroy()
-            return
-        end
-        local Idle = Animations:FindFirstChild("Idle")
-        if not Idle then
-            local Swing1
-            local Config = self.Weapon.Config
-            if Config.IsMelee then
-                Swing1 = Animations:FindFirstChild("Swing1")
-            elseif not Config.UsesLoadLoop then
-                Swing1 = Animations:FindFirstChild("Reload")
-            else
-                Swing1 = Animations:FindFirstChild("LoadStart")
+        local v1 = Viewmodel:Clone()
+        local v2 = new
+        v2 = v2(0, 10000, 0)
+        v1:PivotTo(v2)
+        v1.Parent = workspace.Ignore
+        local HumanoidRootPart = v1:FindFirstChild("HumanoidRootPart")
+        local Aimpart = (v1:WaitForChild("KeyParts")):FindFirstChild("Aimpart")
+        if HumanoidRootPart and Aimpart then
+            local CFrame_4, v3, v4
+            local AnimationController = v1:FindFirstChildWhichIsA("AnimationController")
+            if not AnimationController then
+                AnimationController = Instance.new("AnimationController")
+                AnimationController.Parent = v1
             end
-            Idle = Swing1
-            if Idle then
-                Idle = Idle:Clone()
-                Idle.Name = "Idle"
+            local Animator = AnimationController:FindFirstChildOfClass("Animator")
+            if not Animator then
+                Animator = Instance.new("Animator")
+                Animator.Parent = AnimationController
             end
-        end
-        if not Idle then
-            v2:Destroy()
-            return
-        end
-        local v3 = Animator:LoadAnimation(Idle)
-        v3.Looped = true
-        v3.Priority = Enum.AnimationPriority.Core
-        v3:Play(0, 1, 1)
-        local v4 = new()
-        local Model = self.Model
-        if Model then
-            Model = self.Model:FindFirstChild("KeyParts")
-            if Model then
-                Model = self.Model.KeyParts:FindFirstChild("Aimpart")
-            end
-        end
-        if Model and self.Aimpart and self.Aimpart ~= Model then
-            v4 = Model.CFrame:ToObjectSpace(self.Aimpart.CFrame)
-        end
-        local v5 = false
-        local v6 = 60
-        local v7 = 1
-        for i = 1, v6, v7 do
-            RunService.RenderStepped:Wait()
-            if self.Weapon.IsDestroyed then
-                v2:Destroy()
+            local Animations = v1:FindFirstChild("Animations")
+            if not Animations then
+                v1:Destroy()
                 return
             end
-            if not v5 and 0 < v3.Length then
-                v3:AdjustSpeed(0.0001)
-                v3.TimePosition = 0
-                v5 = true
+            local Idle = Animations:FindFirstChild("Idle")
+            if not Idle then
+                local Swing1
+                local Config = self.Weapon.Config
+                if Config.IsMelee then
+                    Swing1 = Animations:FindFirstChild("Swing1")
+                    if not Swing1 then
+                        if not Config.UsesLoadLoop then
+                            Swing1 = Animations:FindFirstChild("Reload")
+                        else
+                            Swing1 = Animations:FindFirstChild("LoadStart")
+                            if not Swing1 then
+                                Swing1 = Animations:FindFirstChild("Reload")
+                            end
+                        end
+                    end
+                elseif not Config.UsesLoadLoop then
+                    Swing1 = Animations:FindFirstChild("Reload")
+                else
+                    Swing1 = Animations:FindFirstChild("LoadStart")
+                    if not Swing1 then
+                        Swing1 = Animations:FindFirstChild("Reload")
+                    end
+                end
+                Idle = Swing1
+                if Idle then
+                    Idle = Idle:Clone()
+                    Idle.Name = "Idle"
+                end
             end
-            v1 = (Aimpart.CFrame * v4):ToObjectSpace(HumanoidRootPart.CFrame)
-            self._idleAimRelCF = v1
-            if self.HRPADSAttachment and self.PrimaryPart then
-                self.HRPADSAttachment.WorldCFrame = self.PrimaryPart.CFrame * v1:Inverse()
+            if not Idle then
+                v1:Destroy()
+                return
             end
+            local v5 = Animator:LoadAnimation(Idle)
+            v5.Looped = true
+            v5.Priority = Enum.AnimationPriority.Core
+            v5:Play(0, 1, 1)
+            local v6 = new()
+            local Model = self.Model
+            if Model then
+                Model = self.Model:FindFirstChild("KeyParts")
+                if Model then
+                    Model = self.Model.KeyParts:FindFirstChild("Aimpart")
+                end
+            end
+            if Model and self.Aimpart and self.Aimpart ~= Model then
+                local CFrame = Model.CFrame
+                local v7 = self
+                local CFrame_2 = v7.Aimpart.CFrame
+                v6 = CFrame:ToObjectSpace(CFrame_2)
+            end
+            local v8 = false
+            for i = 1, 60 do
+                RunService.RenderStepped:Wait()
+                if self.Weapon.IsDestroyed then
+                    v1:Destroy()
+                    return
+                end
+                if not v8 and 0 < v5.Length then
+                    v5:AdjustSpeed(0.0001)
+                    v5.TimePosition = 0
+                    v8 = true
+                end
+                v3 = Aimpart.CFrame * v6
+                CFrame_4 = HumanoidRootPart.CFrame
+                v4 = v3:ToObjectSpace(CFrame_4)
+                self._idleAimRelCF = v4
+                if self.HRPADSAttachment and self.PrimaryPart then
+                    self.HRPADSAttachment.WorldCFrame = self.PrimaryPart.CFrame * v4:Inverse()
+                end
+            end
+            v5:Stop(0)
+            v5:Destroy()
+            v1:Destroy()
+            return
         end
-        v3:Stop(0)
-        v3:Destroy()
-        v2:Destroy()
+        v1:Destroy()
     end)
 end
-local v2 = CFrame.new(0.5, 1.5, -0.3)
-local u204 = v2 * CFrame.Angles(0.5235987755982988, 0, 0.2617993877991494)
-local v3 = CFrame.new(-0.5, 1.5, -0.3)
-local u215 = v3 * CFrame.Angles(0.5235987755982988, 0, -0.2617993877991494)
-local v4 = CFrame.new(0, 3, -1)
-local u226 = v4 * CFrame.Angles(1.0471975511965976, 0, 0)
-local v5 = CFrame.new(0, 0, 0)
-local u237 = v5 * CFrame.Angles(-0.3490658503988659, 0.4363323129985824, 0)
+
+local u204 = (CFrame.new(0.5, 1.5, -0.3)) * CFrame.Angles(0.5235987755982988, 0, 0.2617993877991494)
+local u215 = (CFrame.new(-0.5, 1.5, -0.3)) * CFrame.Angles(0.5235987755982988, 0, -0.2617993877991494)
+local u226 = (CFrame.new(0, 3, -1)) * CFrame.Angles(1.0471975511965976, 0, 0)
+local u237 = (CFrame.new(0, 0, 0)) * CFrame.Angles(-0.3490658503988659, 0.4363323129985824, 0)
+
 function u183.ApplyManagerState(p1, p2, p3) -- Line: 1127 -- upvalues: u237 (val), u226 (val), u204 (val), u215 (val)
     p1.ManagerState = p2
     p1.ManagerGrantedArms = p3
@@ -891,25 +1104,36 @@ function u183.ApplyManagerState(p1, p2, p3) -- Line: 1127 -- upvalues: u237 (val
     end
     p1.ArmOffsetTargets.Left = u204
 end
+
 function u183.SetArmOffset(p1, p2, p3) -- Line: 1173
-    if p2 == "Right" then
-        p1.ArmOffsetTargets[p2] = p3
-    elseif p2 == "Left" then
-        p1.ArmOffsetTargets[p2] = p3
-    end
-end
-function u183.GetArmOffset(p1, p2) -- Line: 1180
     if p2 == "Right" or p2 == "Left" then
-        return p1.ArmOffsets[p2]
+        p1.ArmOffsetTargets[p2] = p3
     end
-    return CFrame.new()
 end
+
+function u183.GetArmOffset(p1, p2) -- Line: 1180
+    if p2 ~= "Right" and p2 ~= "Left" then
+        return CFrame.new()
+    end
+    return p1.ArmOffsets[p2]
+end
+
 function u183:UpdateArmOffsets(p2) -- Line: 1188
-    local v1 = math.clamp(self.ArmOffsetSpeed * p2, 0.01, 1)
-    self.ArmOffsets.Right = self.ArmOffsets.Right:Lerp(self.ArmOffsetTargets.Right, v1)
-    self.ArmOffsets.Left = self.ArmOffsets.Left:Lerp(self.ArmOffsetTargets.Left, v1)
-    self.ViewmodelBaseOffset = self.ViewmodelBaseOffset:Lerp(self.ViewmodelBaseOffsetTarget, v1)
+    local v1 = self.ArmOffsetSpeed * p2
+    v1 = math.clamp(v1, 0.01, 1)
+    local ArmOffsets = self.ArmOffsets
+    local Right = self.ArmOffsets.Right
+    local Right_2 = self.ArmOffsetTargets.Right
+    ArmOffsets.Right = Right:Lerp(Right_2, v1)
+    local ArmOffsets_3 = self.ArmOffsets
+    local Left = self.ArmOffsets.Left
+    local Left_2 = self.ArmOffsetTargets.Left
+    ArmOffsets_3.Left = Left:Lerp(Left_2, v1)
+    local ViewmodelBaseOffset = self.ViewmodelBaseOffset
+    local ViewmodelBaseOffsetTarget = self.ViewmodelBaseOffsetTarget
+    self.ViewmodelBaseOffset = ViewmodelBaseOffset:Lerp(ViewmodelBaseOffsetTarget, v1)
 end
+
 function u183:CreateDedicatedArms() -- Line: 1199 -- upvalues: FakeArmUtil (val)
     if self.DedicatedArms then
         return self.DedicatedArms
@@ -917,57 +1141,75 @@ function u183:CreateDedicatedArms() -- Line: 1199 -- upvalues: FakeArmUtil (val)
     if not self.Model then
         return nil
     end
-    self.DedicatedArms = FakeArmUtil:CreateDedicatedArms(self.Model)
+    local v1 = FakeArmUtil
+    local Model = self.Model
+    self.DedicatedArms = v1:CreateDedicatedArms(Model)
     return self.DedicatedArms
 end
+
 function u183:DestroyDedicatedArms() -- Line: 1211 -- upvalues: FakeArmUtil (val)
     if self.DedicatedArms then
-        FakeArmUtil:DestroyDedicatedArms(self.Model)
+        local v1 = FakeArmUtil
+        local Model = self.Model
+        v1:DestroyDedicatedArms(Model)
         self.DedicatedArms = nil
     end
 end
+
 function u183.ApplyImpulse(p1, p2) -- Line: 1221
     p1.ImpulseCF = p1.ImpulseCF * p2
 end
+
 function u183.ApplyOffset(p1, p2, p3) -- Line: 1228
+    local Offsets = p1.Offsets
     local v1 = p3
     if not v1 then
         v1 = CFrame.new()
     end
-    p1.Offsets[p2] = v1
+    Offsets[p2] = v1
     updateOffset(p1)
 end
+
 function u183.RemoveOffset(p1, p2) -- Line: 1235
     p1.Offsets[p2] = nil
     updateOffset(p1)
 end
+
 function u183.ApplyOffsetImpulse(p1, p2, p3) -- Line: 1243
-    local v1 = p1.Offsets[p2]
-    if not v1 then
-        _G:warn("Tried to apply impulse to a non-existant offset: " .. p2)
+    local v1
+    local v2 = p1.Offsets[p2]
+    if not v2 then
+        local v3 = _G
+        v1 = "Tried to apply impulse to a non-existant offset: " .. p2
+        v3:warn(v1)
         return
     end
-    local v2 = p3
-    if not v2 then
-        v2 = CFrame.new()
+    local Offsets = p1.Offsets
+    v1 = p3
+    if not v1 then
+        v1 = CFrame.new()
     end
-    p1.Offsets[p2] = v1 * v2
+    Offsets[p2] = v2 * v1
     updateOffset(p1)
 end
-function u183:UpdatePhysics() -- Line: 1257 -- upvalues: SharedSprings (val), u141 (val), LocalPlayerController (val), CameraController (val), PointRotationUtil (val), new (val), Angles (val), u138 (ref)
-    local Position, SprintOffset, hrp, v1, v2, v3
+
+function u183:UpdatePhysics() -- Line: 1257
+    -- upvalues: SharedSprings (val), u141 (val), LocalPlayerController (val), CameraController (val)
+    -- upvalues: PointRotationUtil (val), new (val), Angles (val), u138 (ref)
+    local Position_2, hrp, v1, v2
     local Config = self.Weapon.Config
-    if not Config.BlockSpringSpeed then
+    if not Config.BlockSpringSpeed or not self.Weapon.Blocking then
         SharedSprings.BlockSpring.Speed = 25
-    elseif self.Weapon.Blocking then
+    else
         SharedSprings.BlockSpring.Speed = Config.BlockSpringSpeed
     end
+    local BlockSpring = SharedSprings.BlockSpring
     if not self.Weapon.Blocking then
-        v2 = 0
+        v1 = 0
     else
-        v2 = 1
+        v1 = 1
     end
-    SharedSprings.BlockSpring.Target = v2
+    BlockSpring.Target = v1
     local IsDualWieldRight = self.IsDualWieldRight
     if not IsDualWieldRight then
         IsDualWieldRight = self.IsMirrored
@@ -976,222 +1218,258 @@ function u183:UpdatePhysics() -- Line: 1257 -- upvalues: SharedSprings (val), u1
     if ForceOneHanded then
         ForceOneHanded = not IsDualWieldRight
     end
-    local v4 = u141
-    if not LocalPlayerController.States.Crouching then
-        v3 = 0
-    elseif not self.Weapon.Aiming and not IsDualWieldRight and not ForceOneHanded then
-        v3 = 1
+    local v3 = u141
+    if not LocalPlayerController.States.Crouching or self.Weapon.Aiming or IsDualWieldRight or ForceOneHanded then
+        v2 = 0
+    else
+        v2 = 1
     end
-    v4.Target = v3
+    v3.Target = v2
     if LocalPlayerController.ThirdPerson then
         hrp = 0.05 < SharedSprings.TPSpring.Position
     else
         hrp = LocalPlayerController.hrp
-        if not hrp then end
+        if hrp then
+            hrp = 0.05 < SharedSprings.TPSpring.Position
+        end
     end
-    v3 = hrp
-    if v3 then
-        v3 = CameraController:ShouldGunRest()
+    v2 = hrp
+    if v2 then
+        v2 = CameraController:ShouldGunRest()
     end
-    local v5 = not IsDualWieldRight
-    if not v5 then
-        v5 = if Config.DualWieldRestMode ~= "sprint" then typeof(Config.DualWieldRestMode) == "CFrame" else true
+    local v4 = not IsDualWieldRight
+    if not v4 then
+        v4 = true
+        if Config.DualWieldRestMode ~= "sprint" then
+            local DualWieldRestMode = Config.DualWieldRestMode
+            v4 = typeof(DualWieldRestMode) == "CFrame"
+        end
     end
     local ForceOneHanded_2 = self.ForceOneHanded
     if ForceOneHanded_2 then
         ForceOneHanded_2 = not IsDualWieldRight
     end
-    local v6 = v5
-    if v6 then
-        v6 = not ForceOneHanded_2
-    end
+    local v5 = v4 and not ForceOneHanded_2
     if LocalPlayerController.States.Sliding then
         SharedSprings.SprintSpring.Target = 0
     elseif not LocalPlayerController.States.Sprinting then
-        if not v3 then
+        if not v2 or not v5 then
             SharedSprings.SprintSpring.Target = 0
-        elseif v6 then
+        else
             SharedSprings.SprintSpring.Target = 1
         end
     elseif not Config.FireWhileSprinting then
+        local v6
+        local SprintSpring = SharedSprings.SprintSpring
         if not LocalPlayerController.States.Jogging then
-            v1 = 1
+            v6 = 1
         else
-            v1 = 0.5
+            v6 = 0.5
         end
-        SharedSprings.SprintSpring.Target = v1
+        SprintSpring.Target = v6
+    elseif not v2 or not v5 then
+        SharedSprings.SprintSpring.Target = 0
+    else
+        SharedSprings.SprintSpring.Target = 1
     end
+    local UpdateRotation = PointRotationUtil.UpdateRotation
     local v7 = new()
     local CrouchAnimation = self.Weapon.Config.CrouchAnimation
     if not CrouchAnimation then
-        local v8 = new(-0.6, 0, 0)
-        CrouchAnimation = v8 * Angles(0, 0, 0.7853981633974483)
+        CrouchAnimation = (new(-0.6, 0, 0)) * Angles(0, 0, 0.7853981633974483)
     end
-    PointRotationUtil.UpdateRotation("Sliding", nil, v7:Lerp(CrouchAnimation, u141.Position))
-    v1 = new(0, 0, 0)
-    local v9 = v1 * Angles(-0.7853981633974483, 0.4363323129985824, 0.4363323129985824)
+    local v8 = u141
+    local Position = v8.Position
+    UpdateRotation("Sliding", nil, v7:Lerp(CrouchAnimation, Position))
+    local v9 = (new(0, 0, 0)) * Angles(-0.7853981633974483, 0.4363323129985824, 0.4363323129985824)
     if self.LeftArmOnly then
-        Position = self.EquipSpring.Position
-        if not Position then
-            Position = SharedSprings.EquipSpring.Position
+        Position_2 = self.EquipSpring.Position
+        if not Position_2 then
+            Position_2 = SharedSprings.EquipSpring.Position
         end
     elseif not self.IsMirrored then
+        Position_2 = SharedSprings.EquipSpring.Position
+    else
+        Position_2 = self.EquipSpring.Position
+        if not Position_2 then
+            Position_2 = SharedSprings.EquipSpring.Position
+        end
     end
-    local v10 = new():Lerp(v9, Position)
-    SprintOffset = if IsDualWieldRight and self.Config.DualWieldSprintOffset then self.Config.DualWieldSprintOffset else self.Config.SprintOffset
-    local v11 = CFrame.new():Lerp(SprintOffset, SharedSprings.SprintSpring.Position)
-    local v12 = CFrame.new()
+    local v10 = new():Lerp(v9, Position_2)
+    local SprintOffset = self.Config.SprintOffset
+    if IsDualWieldRight and self.Config.DualWieldSprintOffset then
+        SprintOffset = self.Config.DualWieldSprintOffset
+    end
+    local v11 = CFrame.new()
+    local v12 = SharedSprings
+    local Position_3 = v12.SprintSpring.Position
+    v11 = v11:Lerp(SprintOffset, Position_3)
+    local v13 = CFrame.new()
     local BlockOffset = self.Config.BlockOffset
     if not BlockOffset then
         BlockOffset = new()
     end
-    u138 = v11 * v12:Lerp(BlockOffset, SharedSprings.BlockSpring.Position) * v10
+    local v14 = SharedSprings
+    local Position_4 = v14.BlockSpring.Position
+    u138 = v11 * v13:Lerp(BlockOffset, Position_4) * v10
 end
+
 function createVM(p1) -- Line: 1349
-    local Attachment, Handle, KeyParts, v1
+    local Attachment, Handle, KeyParts, v1, v2, v3
     local Name = p1.Name
     local Viewmodel = p1.Config.Viewmodel
     if not Viewmodel then
         warn("[Viewmodel] Could not find viewmodel for weapon: " .. Name)
         return
     end
-    local v2 = p1.Config.BarrelCount or 1
-    local v3 = 1
-    for i = 1, v2, v3 do
+    local v4 = p1.Config.BarrelCount or 1
+    for i = 1, v4 do
         KeyParts = Viewmodel:WaitForChild("KeyParts")
-        if 1 >= i then
-            v1 = ""
-        else
-            v1 = i
-        end
-        Handle = KeyParts:FindFirstChild("Barrel" .. v1)
+        v3 = "Barrel"
+        v1 = 1 < i and i or ""
+        v2 = v3 .. v1
+        Handle = KeyParts:FindFirstChild(v2)
         if not Handle then
             Handle = Viewmodel.KeyParts.Handle
         end
-        if not (Handle:FindFirstChild("BarrelAttachment")) then
+        if not Handle:FindFirstChild("BarrelAttachment") then
             Attachment = Instance.new("Attachment")
             Attachment.Name = "BarrelAttachment"
             Attachment.Parent = Handle
             for j, k in Handle:GetChildren() do
-                if k:IsA("ParticleEmitter") then
+                if k:IsA("ParticleEmitter") or k:IsA("Light") or k:IsA("Attachment") and k ~= Attachment then
                     k.Parent = Attachment
-                elseif not (k:IsA("Light")) and k:IsA("Attachment") and k == Attachment then
                 end
             end
         end
     end
-    v2 = Viewmodel:Clone()
-    v2.Name = Name
-    local HumanoidRootPart = v2:FindFirstChild("HumanoidRootPart")
+    v4 = Viewmodel:Clone()
+    v4.Name = Name
+    local HumanoidRootPart = v4:FindFirstChild("HumanoidRootPart")
     if not HumanoidRootPart then
         warn("[Viewmodel]: Could not find HumanoidRootPart for weapon: " .. Name)
         return
     end
-    local AnimationController = v2:FindFirstChildWhichIsA("AnimationController")
+    local AnimationController = v4:FindFirstChildWhichIsA("AnimationController")
     if not AnimationController then
         AnimationController = Instance.new("AnimationController")
-        AnimationController.Parent = v2
+        AnimationController.Parent = v4
     end
     local Animator = AnimationController:FindFirstChildOfClass("Animator")
     if not Animator then
         Animator = Instance.new("Animator")
         Animator.Parent = AnimationController
     end
-    for n, m in v2:QueryDescendants("BasePart") do
+    for n, m in v4:QueryDescendants("BasePart") do
         m.CastShadow = false
     end
-    return v2, HumanoidRootPart, Animator
+    return v4, HumanoidRootPart, Animator
 end
+
 function updateOffset(p1) -- Line: 1397
     p1.TotalOffset = CFrame.new()
     for k, v in pairs(p1.Offsets) do
         p1.TotalOffset = p1.TotalOffset * v
     end
 end
+
 function loadAnimations(p1, p2, p3) -- Line: 1406 -- upvalues: ShellSystem (val)
-    local Janitor, u110, v1, v2, v3, v4, v5
-    local v6 = {}
-    u110, v5, v1 = p1, p3, p2
+    local Janitor, v1, v2, v3
+    local v4 = {}
+    local v5, v6 = p3, p2
     for k, v in pairs(p3:GetChildren()) do
         if v:IsA("Animation") then
-            local Config = u110.Weapon.Config
-            v2 = v1:LoadAnimation(v)
-            v3 = v.Name == "Idle"
-            v2.Looped = v3
-            u110.Janitor:Add(v2, "Destroy")
-            Janitor = u110.Janitor
-            v4 = v2.KeyframeReached:Connect(function(p1) -- Line: 1415 -- upvalues: Config (val), u110 (val), ShellSystem (upval)
-                if Config.KeyFrameSounds[p1] then
+            local Config = p1.Weapon.Config
+            v1 = v6:LoadAnimation(v)
+            v2 = v.Name == "Idle"
+            v1.Looped = v2
+            p1.Janitor:Add(v1, "Destroy")
+            Janitor = p1.Janitor
+            v3 = v1.KeyframeReached:Connect(function(p1_2) -- Line: 1415 -- upvalues: Config (val), p1 (val), ShellSystem (upval)
+                if Config.KeyFrameSounds[p1_2] then
                     local Sound = Instance.new("Sound")
-                    local SoundId = Config.KeyFrameSounds[p1][1]
+                    local SoundId = Config.KeyFrameSounds[p1_2][1]
                     if not SoundId then
-                        SoundId = Config.KeyFrameSounds[p1].SoundId
+                        SoundId = Config.KeyFrameSounds[p1_2].SoundId
                     end
                     Sound.SoundId = "rbxassetid://" .. SoundId
-                    local Volume = Config.KeyFrameSounds[p1][2]
+                    local Volume = Config.KeyFrameSounds[p1_2][2]
                     if not Volume then
-                        Volume = Config.KeyFrameSounds[p1].Volume
+                        Volume = Config.KeyFrameSounds[p1_2].Volume
                     end
                     Sound.Volume = Volume
                     Sound.Parent = script
-                    local SoundService = game:GetService("SoundService")
-                    SoundService:PlayLocalSound(Sound)
+                    ;(game:GetService("SoundService")):PlayLocalSound(Sound)
                     game.Debris:AddItem(Sound, 10)
                 end
-                if Config.ShellOn and p1 == Config.ShellOn and u110.Weapon.NeedShell then
-                    u110.Weapon.NeedShell = false
-                    ShellSystem:Eject(u110)
+                if Config.ShellOn and p1_2 == Config.ShellOn and p1.Weapon.NeedShell then
+                    p1.Weapon.NeedShell = false
+                    local v1 = ShellSystem
+                    local v2 = p1
+                    v1:Eject(v2)
                 end
                 if Config.OnKeyframeReached then
-                    Config.OnKeyframeReached(p1, u110.Weapon)
+                    Config.OnKeyframeReached(p1_2, p1.Weapon)
                 end
                 if Config.CustomKF then
-                    Config.CustomKF(p1, u110.Model, u110.Weapon.Config)
+                    Config.CustomKF(p1_2, p1.Model, p1.Weapon.Config)
                 end
             end)
-            Janitor:Add(v4, "Disconnect")
-            v6[v.Name] = v2
+            Janitor:Add(v3, "Disconnect")
+            v4[v.Name] = v1
         end
     end
-    if v6.Idle then
-        v6.Idle:Play(0, 1, 1)
-        v6.Idle.Priority = Enum.AnimationPriority.Idle
-        v6.Idle.Looped = true
+    if v4.Idle then
+        v4.Idle:Play(0, 1, 1)
+        v4.Idle.Priority = Enum.AnimationPriority.Idle
+        v4.Idle.Looped = true
     else
         local v7
-        if u110.Weapon.Config.IsMelee then
+        if p1.Weapon.Config.IsMelee then
             v7 = v5.Swing1:Clone()
-        elseif not u110.Weapon.Config.UsesLoadLoop then
+            if not v7 then
+                if not p1.Weapon.Config.UsesLoadLoop then
+                    v7 = v5.Reload:Clone()
+                else
+                    v7 = v5.LoadStart:Clone()
+                    if not v7 then
+                        v7 = v5.Reload:Clone()
+                    end
+                end
+            end
+        elseif not p1.Weapon.Config.UsesLoadLoop then
             v7 = v5.Reload:Clone()
         else
             v7 = v5.LoadStart:Clone()
-        end
-        v7.Name = "Idle"
-        local v8 = v1:LoadAnimation(v7)
-        v8.Looped = true
-        while true do
-            task.wait()
-            if 0 < v8.Length then
-                break
+            if not v7 then
+                v7 = v5.Reload:Clone()
             end
         end
+        v7.Name = "Idle"
+        local v8 = v6:LoadAnimation(v7)
+        v8.Looped = true
+        repeat
+            task.wait()
+        until 0 < v8.Length
         v8:Play(0, 1, 1)
         v8.TimePosition = v8.Length
         v8:AdjustSpeed(0)
-        v6.Idle = v8
+        v4.Idle = v8
     end
-    if v6.IdleLayer then
-        v6.IdleLayer:Play(0, 1, 1)
+    if v4.IdleLayer then
+        v4.IdleLayer:Play(0, 1, 1)
     end
-    return v6
+    return v4
 end
-function setupViewmodel(p1) -- Line: 1473 -- upvalues: Ignore (val), AttachmentSystem (val), DamageFalloffUtil (val), AnimatedTextures (val), ReplicatedStorage (val)
-    local SurfaceGui, SurfaceGui_2, u3, v1, v2, v3
-    u3, v1, v2 = createVM(p1.Weapon)
+
+function setupViewmodel(p1) -- Line: 1473
+    -- upvalues: Ignore (val), AttachmentSystem (val), DamageFalloffUtil (val), AnimatedTextures (val)
+    -- upvalues: ReplicatedStorage (val)
+    local v1
+    local u3, v2, v3 = createVM(p1.Weapon)
     p1.Model = u3
-    p1.PrimaryPart = v1
-    local KeyParts = u3:WaitForChild("KeyParts")
-    local Barrel = KeyParts:FindFirstChild("Barrel")
+    p1.PrimaryPart = v2
+    local Barrel = (u3:WaitForChild("KeyParts")):FindFirstChild("Barrel")
     if not Barrel then
         Barrel = u3.KeyParts:FindFirstChild("Handle")
     end
@@ -1202,63 +1480,65 @@ function setupViewmodel(p1) -- Line: 1473 -- upvalues: Ignore (val), AttachmentS
     end
     p1.Aimpart = u3.KeyParts:FindFirstChild("Aimpart")
     p1.DefaultAimpart = p1.Aimpart
-    p1.Animator = v2
+    p1.Animator = v3
     u3.Parent = Ignore
-    p1.Animations = loadAnimations(p1, v2, u3:WaitForChild("Animations"))
+    p1.Animations = loadAnimations(p1, v3, u3:WaitForChild("Animations"))
     p1.Animations.Idle.Priority = Enum.AnimationPriority.Core
     if p1.Weapon.Mods then
-        AttachmentSystem.DressWeapon(u3.Name, p1.Weapon.Mods, p1.Weapon.Config.AttachmentNodeData, u3, function(a1, p2, p3) -- Line: 1499 -- upvalues: u3 (val), Ignore (upval), p1 (val), DamageFalloffUtil (upval)
+        v1 = AttachmentSystem
+        v1.DressWeapon(u3.Name, p1.Weapon.Mods, p1.Weapon.Config.AttachmentNodeData, u3, function(p1_2, p2, p3) -- Line: 1499 -- upvalues: u3 (val), Ignore (upval), p1 (val), DamageFalloffUtil (upval)
             local Parent = u3.Parent
             u3.Parent = Ignore
             local v1 = nil
             if p3 then
-                local SettingChanges
                 v1 = require(p3).new(p2, p1.Weapon.Config, p1)
                 if v1.SettingChanges then
-                    local Handle, Lense, Shadow, Shadow_2, SurfaceGui, SurfaceGui_2, SurfaceGui_3, Weld, v2
-                    SettingChanges = v1.SettingChanges
-                    local v3 = nil
+                    local CFrame_2, CFrame_3, Handle, SurfaceGui, SurfaceGui_2, SurfaceGui_3, Weld, v2, v3
+                    local SettingChanges = v1.SettingChanges
                     local v4 = nil
-                    for i, j in SettingChanges, v3, v4 do
+                    local v5 = nil
+                    for i, j in SettingChanges, v4, v5 do
                         if i == "Aimpart" then
                             p1.Aimpart = j
                             Handle = p1.Model.KeyParts.Handle
-                            v2 = j.CFrame:toObjectSpace(Handle.CFrame)
+                            CFrame_2 = j.CFrame
+                            CFrame_3 = Handle.CFrame
+                            v3 = CFrame_2:toObjectSpace(CFrame_3)
                             p1.Aimpart:BreakJoints()
                             Weld = Instance.new("Weld")
                             Weld.Name = Handle.Name .. ":" .. j.Name
                             Weld.Part0 = Handle
                             Weld.Part1 = j
                             Weld.C0 = CFrame.new()
-                            Weld.C1 = v2
+                            Weld.C1 = v3
                             Weld.Parent = Handle
                         elseif i == "Lense" then
                             if p1.Weapon.Config.Lense then
-                                Lense = p1.Model.KeyParts:WaitForChild("Lense")
-                                SurfaceGui = Lense:FindFirstChildWhichIsA("SurfaceGui")
+                                SurfaceGui = (p1.Model.KeyParts:WaitForChild("Lense")):FindFirstChildWhichIsA("SurfaceGui")
                                 SurfaceGui.Enabled = false
                             end
                             if p1.Weapon.Config.Shadow and not v1.SettingChanges.Shadow then
                                 p1.Weapon.Config.Shadow = false
-                                Shadow = p1.Model.KeyParts:WaitForChild("Shadow")
-                                SurfaceGui_2 = Shadow:FindFirstChildWhichIsA("SurfaceGui")
+                                SurfaceGui_2 = (p1.Model.KeyParts:WaitForChild("Shadow")):FindFirstChildWhichIsA("SurfaceGui")
                                 SurfaceGui_2.Enabled = false
                             end
-                            v2 = j:GetAttribute("IsCircular") == true
-                            p1.LenseIsCircular = v2
+                            v2 = p1
+                            v3 = j:GetAttribute("IsCircular") == true
+                            v2.LenseIsCircular = v3
                             p1.Reticle = j:FindFirstChildWhichIsA("ImageLabel", true)
                         elseif i == "Shadow" then
                             p1.ShadowRing = j:FindFirstChild("Ring", true)
                             if p1.Weapon.Config.Shadow then
                                 p1.Weapon.Config.Shadow = false
-                                Shadow_2 = p1.Model.KeyParts:WaitForChild("Shadow")
-                                SurfaceGui_3 = Shadow_2:FindFirstChildWhichIsA("SurfaceGui")
+                                SurfaceGui_3 = (p1.Model.KeyParts:WaitForChild("Shadow")):FindFirstChildWhichIsA("SurfaceGui")
                                 SurfaceGui_3.Enabled = false
                             end
                         elseif i == "BarrelAttachment" then
                             p1.BarrelAttachment = j
                         end
-                        if i == "Damage" and p1.Weapon.Config.DamageDropoff and not v1.SettingChanges.DamageDropoff then
+                        if i == "Damage"
+                            and p1.Weapon.Config.DamageDropoff
+                            and not v1.SettingChanges.DamageDropoff then
                             p1.Weapon.Config.DamageDropoff = DamageFalloffUtil.RescaleDropoff(p1.Weapon.Config.DamageDropoff, p1.Weapon.Config.Damage, j)
                         end
                         p1.Weapon.Config[i] = j
@@ -1272,26 +1552,26 @@ function setupViewmodel(p1) -- Line: 1473 -- upvalues: Ignore (val), AttachmentS
     p1.AnimatedTextures = AnimatedTextures.collect(u3)
     if p1.Weapon.Config.Lense == true then
         p1.Weapon.Config.Lense = p1.Model.KeyParts:WaitForChild("Lense")
-        SurfaceGui = p1.Weapon.Config.Lense:FindFirstChildWhichIsA("SurfaceGui")
+        local SurfaceGui = p1.Weapon.Config.Lense:FindFirstChildWhichIsA("SurfaceGui")
         SurfaceGui.Enabled = true
-        v3 = p1.Weapon.Config.Lense:GetAttribute("IsCircular") == true
-        p1.LenseIsCircular = v3
+        v1 = p1.Weapon.Config.Lense:GetAttribute("IsCircular") == true
+        p1.LenseIsCircular = v1
         p1.Reticle = p1.Weapon.Config.Lense:FindFirstChildWhichIsA("ImageLabel", true)
     end
     if p1.Weapon.Config.Shadow == true then
         p1.Weapon.Config.Shadow = p1.Model.KeyParts:WaitForChild("Shadow")
-        SurfaceGui_2 = p1.Weapon.Config.Shadow:FindFirstChildWhichIsA("SurfaceGui")
+        local SurfaceGui_2 = p1.Weapon.Config.Shadow:FindFirstChildWhichIsA("SurfaceGui")
         SurfaceGui_2.Enabled = true
         p1.ShadowRing = p1.Weapon.Config.Shadow:FindFirstChildWhichIsA("ImageLabel", true)
     end
     if p1.Weapon.Config.MuzzleModule then
-        v3 = ReplicatedStorage.common.SharedResources.MuzzleFlash[p1.Weapon.Config.MuzzleModule]
-        local v4 = v3.Effects.MuzzleModuleFX:Clone()
+        v1 = ReplicatedStorage.common.SharedResources.MuzzleFlash[p1.Weapon.Config.MuzzleModule]
+        local v4 = v1.Effects.MuzzleModuleFX:Clone()
         v4.Parent = p1.BarrelAttachment
-        p1.MuzzleModule = require(v3)
+        p1.MuzzleModule = require(v1)
     end
     p1.EjectionAttachment = p1.Model.KeyParts.Handle:FindFirstChild("BulletEjection")
-    if p1.EjectionAttachment and not (p1.EjectionAttachment:IsA("Attachment")) then
+    if p1.EjectionAttachment and not p1.EjectionAttachment:IsA("Attachment") then
         p1.EjectionAttachment = nil
     end
     u3.Parent = nil
@@ -1299,16 +1579,21 @@ function setupViewmodel(p1) -- Line: 1473 -- upvalues: Ignore (val), AttachmentS
     p1.ConfigLoaded:Fire()
     p1:_resolveIdleAimCFrame()
 end
+
 function loadViewmodelPromise(p1) -- Line: 1603 -- upvalues: WepConfig (val)
-    local v1 = WepConfig:StreamViewmodel(p1.Weapon.WeaponId)
-    return v1:andThen(function(a1) -- Line: 1604 -- upvalues: p1 (val)
-        p1.Weapon.Config.Viewmodel = a1
+    local v1 = WepConfig
+    local WeaponId = p1.Weapon.WeaponId
+    v1 = v1:StreamViewmodel(WeaponId)
+    return v1:andThen(function(p1_2) -- Line: 1604 -- upvalues: p1 (val)
+        p1.Weapon.Config.Viewmodel = p1_2
         if not p1.Weapon.IsDestroyed then
             setupViewmodel(p1)
         end
     end)
 end
+
 function Lerp(p1, p2, p3) -- Line: 1612
     return p1 * (1 - p3) + p2 * p3
 end
+
 return u183

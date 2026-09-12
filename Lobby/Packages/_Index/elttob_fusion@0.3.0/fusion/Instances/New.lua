@@ -7,20 +7,21 @@ return function(p1, p2) -- Line: 19 -- upvalues: External (val), defaultProps (v
     if p2 == nil then
         External.logError("scopeMissing", nil, "instances using New", "myScope:New \"" .. p1 .. "\" { ... }")
     end
-    return function(a1) -- Line: 31 -- upvalues: p2 (val), External (upval), defaultProps (upval), p1 (val), applyInstanceProps (upval)
-        local v1, v2
-        v1, v2 = pcall(Instance.new, p2)
-        if not v1 then
+    return function(p1_2) -- Line: 31
+        -- upvalues: p2 (val), External (upval), defaultProps (upval), p1 (val), applyInstanceProps (upval)
+        local success, result = pcall(Instance.new, p2)
+        if not success then
             External.logError("cannotCreateClass", nil, p2)
         end
-        local v3 = defaultProps[p2]
-        if v3 ~= nil then
-            for k, v in pairs(v3) do
-                v2[k] = v
+        local v1 = defaultProps[p2]
+        if v1 ~= nil then
+            for k, v in pairs(v1) do
+                result[k] = v
             end
         end
-        table.insert(p1, v2)
-        applyInstanceProps(p1, a1, v2)
-        return v2
+        local v2 = p1
+        table.insert(v2, result)
+        applyInstanceProps(p1, p1_2, result)
+        return result
     end
 end

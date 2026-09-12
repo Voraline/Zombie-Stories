@@ -4,11 +4,15 @@ return {
     Group = "DefaultUtil",
     Aliases = {},
     Args = {
-        {Type = "userInput ! bindableResource @ player", Name = "Input/Key", Description = "The key or input type you'd like to unbind."},
+        {
+            Type = "userInput ! bindableResource @ player",
+            Name = "Input/Key",
+            Description = "The key or input type you'd like to unbind.",
+        },
     },
     ClientRun = function(p1, p2) -- Line: 14
         local Store = p1:GetStore("CMDR_Binds")
-        if not (Store[p2]) then
+        if not Store[p2] then
             return "That input wasn't bound."
         end
         Store[p2]:Disconnect()

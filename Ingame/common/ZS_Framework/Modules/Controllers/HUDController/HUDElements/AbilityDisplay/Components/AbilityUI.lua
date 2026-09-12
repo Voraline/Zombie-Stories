@@ -6,81 +6,57 @@ local Children = Fusion.Children
 local u22 = require("../../../SharedComponents/WheelFrame")
 require("../../../SharedComponents/CanvasFrame")
 return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (val), Players (val)
-    local v1
     local scope = p1.scope
-    local u5 = scope:Computed(function(a1) -- Line: 47 -- upvalues: p1 (val)
-        if a1(p1.isActive) then
-            return a1(p1.durationRemaining)
+    local u5 = scope:Computed(function(p1_2) -- Line: 47 -- upvalues: p1 (val)
+        if p1_2(p1.isActive) then
+            return p1_2(p1.durationRemaining)
         end
-        return a1(p1.percentage)
+        return p1_2(p1.percentage)
     end)
-    local v2 = scope:Spring(scope:Computed(function(p1) -- Line: 57 -- upvalues: u5 (val)
+    local v1 = scope:Computed(function(p1) -- Line: 57 -- upvalues: u5 (val)
         return (1 - p1(u5)) * 360
-    end), 25, 1)
-    local v3 = scope:Spring(scope:Computed(function(a1) -- Line: 66 -- upvalues: p1 (val)
-        if a1(p1.isActive) then
+    end)
+    local v2 = scope:Spring(v1, 25, 1)
+    local v3 = scope:Computed(function(p1_2) -- Line: 66 -- upvalues: p1 (val)
+        if p1_2(p1.isActive) then
             return Color3.fromRGB(180, 150, 255)
         end
         return Color3.fromRGB(101, 206, 255)
-    end), 15, 1)
-    v1 = scope:Spring(scope:Computed(function(a1) -- Line: 87 -- upvalues: p1 (val)
-        local v1, v2, v3, v4
-        local v5 = a1(p1.staminaPlacement)
-        local v6 = a1(p1.staminaFrameSize)
-        local v7 = a1(p1.isMobile)
-        local v8 = a1(p1.customPosition)
-        if not v7 then
-            if v5 == "center" then
-                if not v7 then
-                    return UDim2.new(1, 0, 0.86, 0)
-                end
-                v1 = a1(p1.objectiveListSizeY)
-                v2 = a1(p1.ammoHudWidth)
-                return UDim2.new(0.99, -v2, -0.02, 90 + v1)
-            end
-            v2 = -(v6.X * 0.7 + 10)
-            if v7 then
-                v3 = a1(p1.objectiveListSizeY)
-                v4 = a1(p1.ammoHudWidth)
-                return UDim2.new(0.99, -v4 + v2, -0.02, 90 + v3)
-            end
-            return UDim2.new(1, v2, 0.86, 0)
+    end)
+    local v4 = scope:Spring(v3, 15, 1)
+    local v5 = scope:Computed(function(p1_2) -- Line: 87 -- upvalues: p1 (val)
+        local v1
+        local v2 = p1_2(p1.staminaPlacement)
+        local v3 = p1_2(p1.staminaFrameSize)
+        local v4 = p1_2(p1.isMobile)
+        local v5 = p1_2(p1.customPosition)
+        if v4 and v5 then
+            return v5
         end
-        if v8 then
-            return v8
-        end
-        if v5 == "center" then
-            if not v7 then
+        if v2 == "center" then
+            if not v4 then
                 return UDim2.new(1, 0, 0.86, 0)
             end
-            v1 = a1(p1.objectiveListSizeY)
-            v2 = a1(p1.ammoHudWidth)
-            return UDim2.new(0.99, -v2, -0.02, 90 + v1)
+            local v6 = p1_2(p1.objectiveListSizeY)
+            v1 = p1_2(p1.ammoHudWidth)
+            return UDim2.new(0.99, -v1, -0.02, 90 + v6)
         end
-        v2 = -(v6.X * 0.7 + 10)
-        if not v7 then
-            return UDim2.new(1, v2, 0.86, 0)
+        v1 = -(v3.X * 0.7 + 10)
+        if not v4 then
+            return UDim2.new(1, v1, 0.86, 0)
         end
-        v3 = a1(p1.objectiveListSizeY)
-        v4 = a1(p1.ammoHudWidth)
-        return UDim2.new(0.99, -v4 + v2, -0.02, 90 + v3)
-    end), 25, 1)
-    local v4 = scope:Spring(scope:Computed(function(a1) -- Line: 129 -- upvalues: p1 (val)
-        local v1 = a1(p1.staminaPlacement)
-        local v2 = a1(p1.isMobile)
-        if not v2 then
-            if v1 == "center" then
-                if v2 then
-                    return Vector2.new(1, 0)
-                end
-                return Vector2.new(1, 1)
-            end
-            if v2 then
-                return Vector2.new(1, 0)
-            end
-            return Vector2.new(1, 1)
-        end
-        if a1(p1.customPosition) then
+        local v7 = p1_2(p1.objectiveListSizeY)
+        local v8 = p1_2(p1.ammoHudWidth)
+        return UDim2.new(0.99, -v8 + v1, -0.02, 90 + v7)
+    end)
+    local v6 = scope:Spring(v5, 25, 1)
+    local v7 = scope:Computed(function(p1_2) -- Line: 129 -- upvalues: p1 (val)
+        local v1 = p1_2(p1.staminaPlacement)
+        local v2 = p1_2(p1.isMobile)
+        local v3 = p1
+        local customPosition = v3.customPosition
+        local v4 = p1_2(customPosition)
+        if v2 and v4 then
             return Vector2.new(0.5, 0.5)
         end
         if v1 == "center" then
@@ -93,68 +69,63 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
             return Vector2.new(1, 0)
         end
         return Vector2.new(1, 1)
-    end), 25, 1)
-    local v5 = scope:Spring(scope:Computed(function(a1) -- Line: 157 -- upvalues: p1 (val)
-        if a1(p1.staminaPlacement) == "center" then
+    end)
+    local v8 = scope:Spring(v7, 25, 1)
+    local v9 = scope:Computed(function(p1_2) -- Line: 157 -- upvalues: p1 (val)
+        if p1_2(p1.staminaPlacement) == "center" then
             return UDim2.fromScale(0.15, 0.15)
         end
         return UDim2.fromScale(0.15, 0.15)
-    end), 10, 1)
-    local v6 = scope:Computed(function(a1) -- Line: 172 -- upvalues: p1 (val), u5 (val)
-        local v1
-        local v2 = a1(p1.isReady)
-        local v3 = a1(p1.isActivating)
-        if not v2 or v3 then
-            if p1.ammoCount then
-                v1 = a1(p1.ammoCount)
-                if 0 < v1 then
-                    return string.format("%d", v1)
-                end
-                return string.format("%d", (math.ceil(a1(u5) * 100)))
-            end
-            return string.format("%d", (math.ceil(a1(u5) * 100)))
-        end
-        if not (a1(p1.isActive)) then
+    end)
+    local v10 = scope:Spring(v9, 10, 1)
+    local v11 = scope:Computed(function(p1_2) -- Line: 172 -- upvalues: p1 (val), u5 (val)
+        local v1 = p1_2(p1.isReady)
+        local v2 = p1_2(p1.isActivating)
+        local v3 = p1
+        local isActive = v3.isActive
+        local v4 = p1_2(isActive)
+        if v1 and not v2 and not v4 then
             return ""
         end
-        if not p1.ammoCount then
-            return string.format("%d", (math.ceil(a1(u5) * 100)))
-        end
-        v1 = a1(p1.ammoCount)
-        if 0 < v1 then
-            return string.format("%d", v1)
-        end
-        return string.format("%d", (math.ceil(a1(u5) * 100)))
-    end)
-    local u63 = scope:Computed(function(a1) -- Line: 194 -- upvalues: p1 (val)
-        local v1 = a1(p1.isReady)
-        if v1 then
-            v1 = not a1(p1.isActivating)
-            if v1 then
-                v1 = not a1(p1.isActive)
+        if p1.ammoCount then
+            v3 = p1_2(p1.ammoCount)
+            if 0 < v3 then
+                return string.format("%d", v3)
             end
+        end
+        local format = string.format
+        local v5 = u5
+        local v6 = (p1_2(v5)) * 100
+        return format("%d", (math.ceil(v6)))
+    end)
+    local u63 = scope:Computed(function(p1_2) -- Line: 194 -- upvalues: p1 (val)
+        local v1 = p1_2(p1.isReady)
+        if v1 then
+            v1 = not p1_2(p1.isActivating) and not p1_2(p1.isActive)
         end
         return v1
     end)
-    local v7 = scope:Spring(scope:Computed(function(p1) -- Line: 199 -- upvalues: u63 (val)
+    local v12 = scope:Computed(function(p1) -- Line: 199 -- upvalues: u63 (val)
         if p1(u63) then
             return 0
         end
         return 1
-    end), 15, 1)
+    end)
+    local v13 = scope:Spring(v12, 15, 1)
     local readyLabelText = p1.readyLabelText
-    local u84 = scope:Spring(scope:Computed(function(a1) -- Line: 209 -- upvalues: p1 (val)
-        return (1 - a1(p1.activationProgress)) * 360
-    end), 30, 1)
-    local v8 = scope:Spring(scope:Computed(function(a1) -- Line: 215 -- upvalues: p1 (val)
-        if a1(p1.isActivating) then
+    local v14 = scope:Computed(function(p1_2) -- Line: 209 -- upvalues: p1 (val)
+        return (1 - p1_2(p1.activationProgress)) * 360
+    end)
+    local u84 = scope:Spring(v14, 30, 1)
+    local v15 = scope:Computed(function(p1_2) -- Line: 215 -- upvalues: p1 (val)
+        if p1_2(p1.isActivating) then
             return 0
         end
         return 1
-    end), 20, 1)
-    local v9 = Color3.fromRGB(255, 200, 100)
-    local v10 = scope:New("ImageLabel")
-    v10 = v10({
+    end)
+    local v16 = scope:Spring(v15, 20, 1)
+    local v17 = Color3.fromRGB(255, 200, 100)
+    local v18 = scope:New("ImageLabel")({
         Name = "BlueGlowImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://12799025064",
@@ -164,22 +135,21 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Size = UDim2.fromScale(1, 1),
     })
-    local v11 = scope:New("Frame")
-    local v12 = {
+    local v19 = scope:New("Frame")
+    local v20 = {
         Name = "MainFrame",
-        AnchorPoint = v4,
+        AnchorPoint = v8,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
-        Position = v1,
-        Size = v5,
+        Position = v6,
+        Size = v10,
         SizeConstraint = Enum.SizeConstraint.RelativeYY,
     }
-    local v13 = {}
-    local v14 = scope:New("UIScale")
-    v14 = v14({Name = "UIScale", Scale = p1.uiScale})
-    local v15 = scope:New("ImageLabel")
-    v15 = v15({
+    local v21 = Children
+    local v22 = {}
+    local v23 = scope:New("UIScale")({Name = "UIScale", Scale = p1.uiScale})
+    local v24 = scope:New("ImageLabel")({
         Name = "MarkerImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://12799024330",
@@ -190,8 +160,7 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         ImageColor3 = Color3.fromRGB(9, 39, 65),
         Size = UDim2.fromScale(1, 1),
     })
-    local v16 = scope:New("ImageLabel")
-    v16 = v16({
+    local v25 = scope:New("ImageLabel")({
         Name = "WheelBackImage",
         BackgroundTransparency = 1,
         Image = "rbxassetid://13676717187",
@@ -203,10 +172,12 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         Position = UDim2.fromOffset(1, 0),
         Size = UDim2.new(1, -1, 1, 0),
     })
-    local v17 = u22({isLeft = true, scope = scope, rotation = v2, wheelColor = v3})
-    local v18 = u22({isLeft = false, scope = scope, rotation = v2, wheelColor = v3})
-    local v19 = scope:New("Frame")
-    local v20 = {
+    local v26 = u22
+    v26 = v26({isLeft = true, scope = scope, rotation = v2, wheelColor = v4})
+    local v27 = u22
+    v27 = v27({isLeft = false, scope = scope, rotation = v2, wheelColor = v4})
+    local v28 = scope:New("Frame")
+    local v29 = {
         Name = "ActivationLeftFrame",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
@@ -216,42 +187,50 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         Size = UDim2.fromScale(0.5, 1),
         ZIndex = 2,
     }
-    local v21 = {}
-    local v22 = scope:New("ImageLabel")
-    local v23 = {
+    local v30 = Children
+    local v31 = {}
+    local v32 = scope:New("ImageLabel")
+    local v33 = {
         Name = "ActivationLeftWheel",
         AnchorPoint = Vector2.new(0, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Image = "rbxassetid://13676717187",
-        ImageColor3 = v9,
-        ImageTransparency = v8,
+        ImageColor3 = v17,
+        ImageTransparency = v16,
         Position = UDim2.fromScale(0, 0),
         Size = UDim2.fromScale(2, 1),
         ZIndex = 2,
     }
-    local v24 = {}
-    local v25 = scope:New("UIGradient")
-    local v26 = {Name = "UIGradient", Rotation = scope:Computed(function(p1) -- Line: 328 -- upvalues: u84 (val)
-        return (math.max(180, p1(u84)))
-    end)}
-    local v27 = {}
-    local v28 = NumberSequenceKeypoint.new(0, 1)
-    local v29 = NumberSequenceKeypoint.new(0.5, 1)
-    local v30 = NumberSequenceKeypoint.new(0.501, 0)
-    v27[1] = v28
-    v27[2] = v29
-    v27[3] = v30
-    v27[4] = NumberSequenceKeypoint.new(1, 0)
-    v26.Transparency = NumberSequence.new(v27)
-    v24[1] = v25(v26)
-    v23[Children] = v24
-    v21[1] = v22(v23)
-    v20[Children] = v21
-    v19 = v19(v20)
-    v20 = scope:New("Frame")
-    local v31 = {
+    local v34 = Children
+    local v35 = {}
+    local v36 = scope:New("UIGradient")
+    local v37 = {
+        Name = "UIGradient",
+        Rotation = scope:Computed(function(p1) -- Line: 328 -- upvalues: u84 (val)
+            local v1 = u84
+            local v2 = p1(v1)
+            return (math.max(180, v2))
+        end),
+    }
+    local new = NumberSequence.new
+    local v38 = {}
+    local v39 = NumberSequenceKeypoint.new(0, 1)
+    local v40 = NumberSequenceKeypoint.new(0.5, 1)
+    local v41 = NumberSequenceKeypoint.new(0.501, 0)
+    v38[1] = v39
+    v38[2] = v40
+    v38[3] = v41
+    v38[4] = NumberSequenceKeypoint.new(1, 0)
+    v37.Transparency = new(v38)
+    v35[1] = v36(v37)
+    v33[v34] = v35
+    v31[1] = v32(v33)
+    v29[v30] = v31
+    v28 = v28(v29)
+    v29 = scope:New("Frame")
+    v30 = {
         Name = "ActivationRightFrame",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
@@ -261,42 +240,49 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         Size = UDim2.fromScale(0.5, 1),
         ZIndex = 2,
     }
-    v22 = {}
-    v23 = scope:New("ImageLabel")
-    local v32 = {
+    v31 = Children
+    v32 = {}
+    v33 = scope:New("ImageLabel")
+    v34 = {
         Name = "ActivationRightWheel",
         AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(27, 42, 53),
         Image = "rbxassetid://13676717187",
-        ImageColor3 = v9,
-        ImageTransparency = v8,
+        ImageColor3 = v17,
+        ImageTransparency = v16,
         Position = UDim2.fromScale(1, 0),
         Size = UDim2.fromScale(2, 1),
         ZIndex = 2,
     }
-    v25 = {}
-    v26 = scope:New("UIGradient")
-    local v33 = {Name = "UIGradient", Rotation = scope:Computed(function(p1) -- Line: 371 -- upvalues: u84 (val)
-        return (math.min(180, p1(u84)))
-    end)}
-    v28 = {}
-    v29 = NumberSequenceKeypoint.new(0, 1)
-    v30 = NumberSequenceKeypoint.new(0.5, 1)
-    local v34 = NumberSequenceKeypoint.new(0.501, 0)
-    v28[1] = v29
-    v28[2] = v30
-    v28[3] = v34
-    v28[4] = NumberSequenceKeypoint.new(1, 0)
-    v33.Transparency = NumberSequence.new(v28)
-    v25[1] = v26(v33)
-    v32[Children] = v25
-    v22[1] = v23(v32)
-    v31[Children] = v22
-    v20 = v20(v31)
-    v31 = scope:New("ImageLabel")
-    v31 = v31({
+    v35 = Children
+    v36 = {}
+    v37 = scope:New("UIGradient")
+    local v42 = {
+        Name = "UIGradient",
+        Rotation = scope:Computed(function(p1) -- Line: 371 -- upvalues: u84 (val)
+            local v1 = u84
+            local v2 = p1(v1)
+            return (math.min(180, v2))
+        end),
+    }
+    local new_2 = NumberSequence.new
+    v39 = {}
+    v40 = NumberSequenceKeypoint.new(0, 1)
+    v41 = NumberSequenceKeypoint.new(0.5, 1)
+    local v43 = NumberSequenceKeypoint.new(0.501, 0)
+    v39[1] = v40
+    v39[2] = v41
+    v39[3] = v43
+    v39[4] = NumberSequenceKeypoint.new(1, 0)
+    v42.Transparency = new_2(v39)
+    v36[1] = v37(v42)
+    v34[v35] = v36
+    v32[1] = v33(v34)
+    v30[v31] = v32
+    v29 = v29(v30)
+    v30 = scope:New("ImageLabel")({
         Name = "AbilityIcon",
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -309,8 +295,8 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromScale(0.7, 0.7),
     })
-    v21 = scope:New("TextLabel")
-    v22 = {
+    v31 = scope:New("TextLabel")
+    v32 = {
         Name = "PercentageLabel",
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -320,20 +306,18 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
         Position = UDim2.fromScale(0.5, 0.65),
         Size = UDim2.fromScale(0.4, 0.18),
-        Text = v6,
+        Text = v11,
         TextColor3 = Color3.fromRGB(101, 206, 255),
         TextScaled = true,
         TextSize = 14,
         TextWrapped = true,
         ZIndex = 4,
     }
-    v32 = {}
-    v24 = scope:New("UIStroke")
-    v32[1] = v24({Name = "UIStroke", Thickness = 2, Transparency = 0.8})
-    v22[Children] = v32
-    v21 = v21(v22)
-    v22 = scope:New("TextLabel")
-    v23 = {
+    v33 = Children
+    v32[v33] = {scope:New("UIStroke")({Name = "UIStroke", Thickness = 2, Transparency = 0.8})}
+    v31 = v31(v32)
+    v32 = scope:New("TextLabel")
+    v33 = {
         Name = "ReadyLabel",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -347,17 +331,15 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         TextColor3 = Color3.fromRGB(150, 255, 150),
         TextScaled = true,
         TextSize = 14,
-        TextTransparency = v7,
+        TextTransparency = v13,
         TextWrapped = true,
         ZIndex = 4,
     }
-    v24 = {}
-    v25 = scope:New("UIStroke")
-    v24[1] = v25({Name = "UIStroke", Thickness = 2, Transparency = v7})
-    v23[Children] = v24
-    v22 = v22(v23)
-    v23 = scope:New("TextButton")
-    v32 = {
+    v34 = Children
+    v33[v34] = {scope:New("UIStroke")({Name = "UIStroke", Thickness = 2, Transparency = v13})}
+    v32 = v32(v33)
+    v33 = scope:New("TextButton")
+    v34 = {
         Name = "TouchActivateButton",
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundTransparency = 1,
@@ -370,27 +352,29 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         Active = p1.isMobile,
     }
     local Activated = Fusion.OnEvent("Activated")
-    v32[Activated] = function() -- Line: 470 -- upvalues: p1 (val)
+
+    v34[Activated] = function() -- Line: 470 -- upvalues: p1 (val)
         if p1.onActivatePressed then
             p1.onActivatePressed()
         end
     end
-    v13[1] = v14
-    v13[2] = v15
-    v13[3] = v16
-    v13[4] = v17
-    v13[5] = v18
-    v13[6] = v10
-    v13[7] = v19
-    v13[8] = v20
-    v13[9] = v31
-    v13[10] = v21
-    v13[11] = v22
-    v13[12] = v23(v32)
-    v12[Children] = v13
-    v11 = v11(v12)
-    v12 = scope:New("ScreenGui")
-    local v35 = {
+
+    v22[1] = v23
+    v22[2] = v24
+    v22[3] = v25
+    v22[4] = v26
+    v22[5] = v27
+    v22[6] = v18
+    v22[7] = v28
+    v22[8] = v29
+    v22[9] = v30
+    v22[10] = v31
+    v22[11] = v32
+    v22[12] = v33(v34)
+    v20[v21] = v22
+    v19 = v19(v20)
+    v20 = scope:New("ScreenGui")
+    v21 = {
         Name = "AbilityUI",
         Parent = Players.LocalPlayer:WaitForChild("PlayerGui"),
         IgnoreGuiInset = true,
@@ -399,7 +383,8 @@ return function(p1) -- Line: 42 -- upvalues: Children (val), u22 (val), Fusion (
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Enabled = p1.visible,
     }
-    v35[Children] = {v11}
-    v12 = v12(v35)
-    return {screenGui = v12, blueGlowImage = v10, mainFrame = v11}
+    v22 = Children
+    v21[v22] = {v19}
+    v20 = v20(v21)
+    return {screenGui = v20, blueGlowImage = v18, mainFrame = v19}
 end

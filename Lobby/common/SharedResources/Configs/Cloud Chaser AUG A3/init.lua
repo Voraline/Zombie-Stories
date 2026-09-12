@@ -1,1 +1,0 @@
-return {WorldScale = 0.7, Offset = CFrame.new(0, -0.380000001, -1.250000012, 1, 0, 0, 0, 1, 0, 0, 0, 1), AimOffset = CFrame.new(0, 0, 0.25)}

@@ -1,5 +1,6 @@
 local u0 = {}
 local GroupService = game:GetService("GroupService")
+
 local function PagesToArray(p1) -- Line: 9
     local CurrentPage, CurrentPage_2, v1
     local v2 = {}
@@ -16,12 +17,12 @@ local function PagesToArray(p1) -- Line: 9
         pcall(v3.AdvanceToNextPageAsync, v3)
     end
 end
+
 function u0.GetRankInGroupAsync(p1, p2, p3) -- Line: 18 -- upvalues: u0 (val)
     local v1
     local GroupsAsync = u0:GetGroupsAsync(p2)
     local v2 = #GroupsAsync
-    local v3 = 1
-    for i = 1, v2, v3 do
+    for i = 1, v2 do
         v1 = GroupsAsync[i]
         if v1.Id == p3 then
             return v1.Rank
@@ -29,12 +30,12 @@ function u0.GetRankInGroupAsync(p1, p2, p3) -- Line: 18 -- upvalues: u0 (val)
     end
     return 0
 end
+
 function u0.GetRoleInGroupAsync(p1, p2, p3) -- Line: 29 -- upvalues: u0 (val)
     local v1
     local GroupsAsync = u0:GetGroupsAsync(p2)
     local v2 = #GroupsAsync
-    local v3 = 1
-    for i = 1, v2, v3 do
+    for i = 1, v2 do
         v1 = GroupsAsync[i]
         if v1.Id == p3 then
             return v1.Role
@@ -42,12 +43,12 @@ function u0.GetRoleInGroupAsync(p1, p2, p3) -- Line: 29 -- upvalues: u0 (val)
     end
     return "Guest"
 end
+
 function u0.GetPrimaryGroupAsync(p1, p2) -- Line: 40 -- upvalues: u0 (val)
     local v1
     local GroupsAsync = u0:GetGroupsAsync(p2)
     local v2 = #GroupsAsync
-    local v3 = 1
-    for i = 1, v2, v3 do
+    for i = 1, v2 do
         v1 = GroupsAsync[i]
         if v1.IsPrimary then
             return v1
@@ -55,98 +56,85 @@ function u0.GetPrimaryGroupAsync(p1, p2) -- Line: 40 -- upvalues: u0 (val)
     end
     return nil
 end
+
 function u0.IsInGroupAsync(p1, p2, p3) -- Line: 51 -- upvalues: u0 (val)
     local GroupsAsync = u0:GetGroupsAsync(p2)
     local v1 = #GroupsAsync
-    local v2 = 1
-    for i = 1, v1, v2 do
+    for i = 1, v1 do
         if GroupsAsync[i].Id == p3 then
             return true
         end
     end
     return false
 end
+
 function u0.IsPrimaryGroupAsync(p1, p2) -- Line: 61 -- upvalues: u0 (val)
     local GroupsAsync = u0:GetGroupsAsync(p2)
     local v1 = #GroupsAsync
-    local v2 = 1
-    for i = 1, v1, v2 do
+    for i = 1, v1 do
         if GroupsAsync[i].IsPrimary then
             return true
         end
     end
     return false
 end
+
 function u0.IsGroupAlly(p1, p2, p3) -- Line: 71 -- upvalues: u0 (val)
     local GroupAlliesAsync = u0:GetGroupAlliesAsync(p2)
     local v1 = #GroupAlliesAsync
-    local v2 = 1
-    for i = 1, v1, v2 do
+    for i = 1, v1 do
         if GroupAlliesAsync[i].Id == p3 then
             return true
         end
     end
     return false
 end
+
 function u0.IsGroupEnemy(p1, p2, p3) -- Line: 81 -- upvalues: u0 (val)
     local GroupEnemiesAsync = u0:GetGroupEnemiesAsync(p2)
     local v1 = #GroupEnemiesAsync
-    local v2 = 1
-    for i = 1, v1, v2 do
+    for i = 1, v1 do
         if GroupEnemiesAsync[i].Id == p3 then
             return true
         end
     end
     return false
 end
+
 function u0.GetGroupAlliesAsync(p1, p2) -- Line: 91 -- upvalues: GroupService (val), PagesToArray (val)
-    local v1, v2
-    v1, v2 = pcall(GroupService.GetAlliesAsync, GroupService, p2)
-    local v3 = v1
-    if v3 then
-        v3 = v2
-        if v3 then
-            v3 = PagesToArray(v2)
+    local success, result = pcall(GroupService.GetAlliesAsync, GroupService, p2)
+    local v1 = success
+    if v1 then
+        v1 = result
+        if v1 then
+            v1 = PagesToArray(result)
         end
     end
-    return v3
+    return v1
 end
+
 function u0.GetEnemiesAsync(p1, p2) -- Line: 97 -- upvalues: GroupService (val), PagesToArray (val)
-    local v1, v2
-    v1, v2 = pcall(GroupService.GetEnemiesAsync, GroupService, p2)
-    local v3 = v1
-    if v3 then
-        v3 = v2
-        if v3 then
-            v3 = PagesToArray(v2)
+    local success, result = pcall(GroupService.GetEnemiesAsync, GroupService, p2)
+    local v1 = success
+    if v1 then
+        v1 = result
+        if v1 then
+            v1 = PagesToArray(result)
         end
     end
-    return v3
+    return v1
 end
+
 function u0.GetGroupsAsync(p1, p2) -- Line: 103 -- upvalues: GroupService (val)
-    local v1, v2, v3
-    v1, v2 = pcall(GroupService.GetGroupsAsync, GroupService, p2.UserId)
-    if not v1 then
-        v3 = {}
-    else
-        v3 = v2
-        if not v3 then
-            v3 = {}
-        end
-    end
-    return v3
+    local success, result = pcall(GroupService.GetGroupsAsync, GroupService, p2.UserId)
+    local v1 = success and result or {}
+    return v1
 end
+
 function u0.GetGroupInfoAsync(p1, p2) -- Line: 108 -- upvalues: GroupService (val)
-    local v1, v2, v3
-    v1, v2 = pcall(GroupService.GetGroupInfoAsync, GroupService, p2)
-    if not v1 then
-        v3 = {}
-    else
-        v3 = v2
-        if not v3 then
-            v3 = {}
-        end
-    end
-    return v3
+    local success, result = pcall(GroupService.GetGroupInfoAsync, GroupService, p2)
+    local v1 = success and result or {}
+    return v1
 end
+
 return u0

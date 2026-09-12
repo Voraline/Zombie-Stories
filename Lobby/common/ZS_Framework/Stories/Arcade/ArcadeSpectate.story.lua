@@ -7,7 +7,8 @@ return {
     controls = {Visible = true},
     story = function(p1) -- Line: 14 -- upvalues: u12 (val)
         local scope = p1.scope
-        u12({
+        local v1 = u12
+        v1({
             scope = scope,
             target = p1.target,
             Spectating = scope:Value("thebigkannye"),

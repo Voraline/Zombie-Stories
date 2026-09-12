@@ -2,7 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 return {
     addToReplicatedStorage = function() -- Line: 9 -- upvalues: ReplicatedStorage (val)
         local v1
-        if ReplicatedStorage:FindFirstChild(script.Name) then
+        local v2 = ReplicatedStorage
+        local Name = script.Name
+        if v2:FindFirstChild(Name) then
             return false
         end
         local ObjectValue = Instance.new("ObjectValue")
@@ -10,7 +12,7 @@ return {
         ObjectValue.Value = script.Parent
         ObjectValue.Parent = ReplicatedStorage
         local BoolValue = Instance.new("BoolValue")
-        if not (game:GetService("RunService"):IsClient()) then
+        if not game:GetService("RunService"):IsClient() then
             v1 = "Server"
         else
             v1 = "Client"
@@ -21,7 +23,9 @@ return {
         return ObjectValue
     end,
     getObject = function() -- Line: 25 -- upvalues: ReplicatedStorage (val)
-        local v1 = ReplicatedStorage:FindFirstChild(script.Name)
+        local v1 = ReplicatedStorage
+        local Name = script.Name
+        v1 = v1:FindFirstChild(Name)
         if v1 then
             return v1
         end

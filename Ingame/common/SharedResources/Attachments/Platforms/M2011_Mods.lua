@@ -15,7 +15,12 @@ v1[4] = {
 }
 v1[6] = {
     Name = "Muzzle",
-    PotentialAttachments = {AttachmentProperties["Light Suppressor"], AttachmentProperties["Osprey Suppressor"], AttachmentProperties["Pistol Muzzle Brake"], AttachmentProperties["Pistol Compensator"]},
+    PotentialAttachments = {
+        AttachmentProperties["Light Suppressor"],
+        AttachmentProperties["Osprey Suppressor"],
+        AttachmentProperties["Pistol Muzzle Brake"],
+        AttachmentProperties["Pistol Compensator"],
+    },
 }
 v1[8] = {
     Name = "Misc Rail",

@@ -1,4 +1,4 @@
-local v1 = {
+return {
     Ammo = 3,
     StoredAmmo = 42,
     AmmoType = nil,
@@ -73,11 +73,9 @@ local v1 = {
     DynamicFOVOffsetConstant = 3,
     AimDynamicFOVOffsetConstant = -0.5,
     Offset = CFrame.new(0, 0, 0),
+    SprintOffset = (CFrame.new(0.2, 0.3, -0.25)) * CFrame.Angles(-0.5, 0.3, 0.1),
+    AimOffset = CFrame.new(0.563085556, -0.08, 0.3),
+    VerticalRecoil = 18.52,
+    HorizontalRecoil = 19,
+    AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/BaseShotgun"),
 }
-local v2 = CFrame.new(0.2, 0.3, -0.25)
-v1.SprintOffset = v2 * CFrame.Angles(-0.5, 0.3, 0.1)
-v1.AimOffset = CFrame.new(0.563085556, -0.08, 0.3)
-v1.VerticalRecoil = 18.52
-v1.HorizontalRecoil = 19
-v1.AttachmentNodeData = require("@game/ReplicatedStorage/common/SharedResources/Attachments/Platforms/BaseShotgun")
-return v1

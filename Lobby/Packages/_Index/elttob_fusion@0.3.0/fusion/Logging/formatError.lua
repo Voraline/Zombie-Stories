@@ -3,6 +3,7 @@ require(Parent.Types)
 local messages = require(Parent.Logging.messages)
 return function(p1, p2, p3, ...) -- Line: 16 -- upvalues: messages (val)
     local trace, v1, v2
+    local v3 = p2
     if typeof(p3) ~= "table" then
         v2 = nil
     else
@@ -13,27 +14,31 @@ return function(p1, p2, p3, ...) -- Line: 16 -- upvalues: messages (val)
     else
         trace = p3.trace
     end
-    local v3 = messages[p2]
-    if v3 ~= nil then
+    local v4 = messages[p2]
+    if v4 ~= nil then
         v1 = p2
     else
-        v3 = messages.unknownMessage
+        v1 = "unknownMessage"
+        v4 = messages[v1]
     end
-    v3 = v3:format(...)
+    v4 = v4:format(...)
     if v2 == nil then
-        v3 = v3:gsub("ERROR_MESSAGE", p2)
+        v4 = v4:gsub("ERROR_MESSAGE", v3)
     else
-        v3 = v3:gsub("ERROR_MESSAGE", v2.message)
+        local message = v2.message
+        v4 = v4:gsub("ERROR_MESSAGE", message)
         if v2.context ~= nil then
-            v3 = v3 .. (" (%*)"):format(v2.context)
+            local context = v2.context
+            v4 = v4 .. (" (%*)"):format(context)
         end
     end
-    v3 = ("[Fusion] %* \nID: %*"):format(v3, v1)
+    v4 = ("[Fusion] %* \nID: %*"):format(v4, v1)
     if p1 ~= nil and p1.policies.allowWebLinks then
-        v3 = v3 .. ("\nLearn more: https://elttob.uk/Fusion/0.3/api-reference/general/errors/#%*"):format((v1:lower()))
+        local v5 = v1:lower()
+        v4 = v4 .. ("\nLearn more: https://elttob.uk/Fusion/0.3/api-reference/general/errors/#%*"):format(v5)
     end
     if trace ~= nil then
-        v3 = v3 .. (" \n---- Stack trace ----\n%*"):format(trace)
+        v4 = v4 .. (" \n---- Stack trace ----\n%*"):format(trace)
     end
-    return v3:gsub("\n", "\n    ")
+    return v4:gsub("\n", "\n    ")
 end

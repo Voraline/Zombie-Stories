@@ -31,6 +31,7 @@ Sound_2.SoundId = "rbxassetid://97329712338974"
 Sound_2.Parent = ScreenGui
 local u69 = {}
 local u70 = {}
+
 local function createMessageFrame(p1) -- Line: 57 -- upvalues: Frame (val), TweenService (val), u14 (val)
     local Frame_2 = Instance.new("Frame")
     Frame_2.BackgroundTransparency = 1
@@ -55,23 +56,37 @@ local function createMessageFrame(p1) -- Line: 57 -- upvalues: Frame (val), Twee
     UIStroke.Thickness = 0.05
     UIStroke.Parent = TextLabel
     Frame_2.Parent = Frame
-    TweenService:Create(TextLabel, u14, {TextTransparency = 0}):Play()
-    TweenService:Create(UIStroke, u14, {Transparency = 0.7}):Play()
+    local v1 = TweenService
+    local v2 = u14
+    v1:Create(TextLabel, v2, {TextTransparency = 0}):Play()
+    v1 = TweenService
+    v2 = u14
+    v1:Create(UIStroke, v2, {Transparency = 0.7}):Play()
     return {count = 1, frame = Frame_2, label = TextLabel, stroke = UIStroke}
 end
+
 local function fadeOutAndDestroy(p1) -- Line: 98 -- upvalues: TweenService (val), u19 (val)
     if p1.timerThread then
         task.cancel(p1.timerThread)
         p1.timerThread = nil
     end
-    TweenService:Create(p1.label, u19, {TextTransparency = 1}):Play()
-    TweenService:Create(p1.stroke, u19, {Transparency = 1}):Play()
+    local v1 = TweenService
+    local label = p1.label
+    local v2 = u19
+    v1:Create(label, v2, {TextTransparency = 1}):Play()
+    v1 = TweenService
+    local stroke = p1.stroke
+    v2 = u19
+    v1:Create(stroke, v2, {Transparency = 1}):Play()
     task.delay(0.5, function() -- Line: 107 -- upvalues: p1 (val)
         p1.frame:Destroy()
     end)
 end
+
 local u73 = {}
-function u73.Show(p1, p2, p3) -- Line: 115 -- upvalues: u69 (val), u73 (val), Sound (val), Sound_2 (val), createMessageFrame (val)
+
+function u73.Show(p1, p2, p3) -- Line: 115
+    -- upvalues: u69 (val), u73 (val), Sound (val), Sound_2 (val), createMessageFrame (val)
     local v1, v2, v3
     local v4 = p3 or 3
     if u69[p2] then
@@ -81,9 +96,12 @@ function u73.Show(p1, p2, p3) -- Line: 115 -- upvalues: u69 (val), u73 (val), So
         if u7.timerThread then
             task.cancel(u7.timerThread)
         end
-        u7.timerThread = task.delay(v4, function() -- Line: 128 -- upvalues: u7 (val), u73 (upval), p2 (val)
+        local delay = task.delay
+        u7.timerThread = delay(v4, function() -- Line: 128 -- upvalues: u7 (val), u73 (upval), p2 (val)
             u7.timerThread = nil
-            u73:_remove(p2)
+            local v1 = u73
+            local v2 = p2
+            v1:_remove(v2)
         end)
         Sound:Play()
         return
@@ -119,12 +137,16 @@ function u73.Show(p1, p2, p3) -- Line: 115 -- upvalues: u69 (val), u73 (val), So
         Sound_2:Play()
     end
     local u119 = createMessageFrame(p2)
-    u119.timerThread = task.delay(v4, function() -- Line: 166 -- upvalues: u119 (val), u73 (upval), p2 (val)
+    local delay_2 = task.delay
+    u119.timerThread = delay_2(v4, function() -- Line: 166 -- upvalues: u119 (val), u73 (upval), p2 (val)
         u119.timerThread = nil
-        u73:_remove(p2)
+        local v1 = u73
+        local v2 = p2
+        v1:_remove(v2)
     end)
     u69[p2] = u119
 end
+
 function u73._remove(p1, p2) -- Line: 174 -- upvalues: u69 (val), fadeOutAndDestroy (val)
     local v1 = u69[p2]
     if not v1 then
@@ -133,14 +155,18 @@ function u73._remove(p1, p2) -- Line: 174 -- upvalues: u69 (val), fadeOutAndDest
     u69[p2] = nil
     fadeOutAndDestroy(v1)
 end
+
 function u73.ShowKeyed(p1, p2, p3, p4) -- Line: 187 -- upvalues: u70 (val), u73 (val), createMessageFrame (val)
     local v1 = p4 or 3
-    if not (u70[p2]) then
+    if not u70[p2] then
         local u25 = createMessageFrame(p3)
         if 0 < v1 then
-            u25.timerThread = task.delay(v1, function() -- Line: 213 -- upvalues: u25 (val), u73 (upval), p2 (val)
+            local delay_2 = task.delay
+            u25.timerThread = delay_2(v1, function() -- Line: 213 -- upvalues: u25 (val), u73 (upval), p2 (val)
                 u25.timerThread = nil
-                u73:RemoveKeyed(p2)
+                local v1 = u73
+                local v2 = p2
+                v1:RemoveKeyed(v2)
             end)
         end
         u70[p2] = u25
@@ -151,15 +177,19 @@ function u73.ShowKeyed(p1, p2, p3, p4) -- Line: 187 -- upvalues: u70 (val), u73 
     if u8.timerThread then
         task.cancel(u8.timerThread)
     end
-    if 0 < v1 then
-        u8.timerThread = task.delay(v1, function() -- Line: 200 -- upvalues: u8 (val), u73 (upval), p2 (val)
-            u8.timerThread = nil
-            u73:RemoveKeyed(p2)
-        end)
+    if not (0 < v1) then
+        u8.timerThread = nil
         return
     end
-    u8.timerThread = nil
+    local delay = task.delay
+    u8.timerThread = delay(v1, function() -- Line: 200 -- upvalues: u8 (val), u73 (upval), p2 (val)
+        u8.timerThread = nil
+        local v1 = u73
+        local v2 = p2
+        v1:RemoveKeyed(v2)
+    end)
 end
+
 function u73.RemoveKeyed(p1, p2) -- Line: 222 -- upvalues: u70 (val), fadeOutAndDestroy (val)
     local v1 = u70[p2]
     if not v1 then
@@ -168,4 +198,5 @@ function u73.RemoveKeyed(p1, p2) -- Line: 222 -- upvalues: u70 (val), fadeOutAnd
     u70[p2] = nil
     fadeOutAndDestroy(v1)
 end
+
 return u73

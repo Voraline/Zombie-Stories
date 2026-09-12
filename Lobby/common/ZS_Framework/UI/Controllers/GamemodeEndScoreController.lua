@@ -6,6 +6,7 @@ local u21 = require("../../Data/PlayerDatabase")
 local u24 = require("../Components/Arcade/GamemodeEndScoreboard")
 local v1 = require("@game/ReplicatedStorage/common/zap")
 local u29 = nil
+
 local function closeScoreboard() -- Line: 15 -- upvalues: u29 (ref)
     if not u29 then
         return
@@ -22,28 +23,37 @@ local function closeScoreboard() -- Line: 15 -- upvalues: u29 (ref)
     task.wait(10)
     v1.scope:doCleanup()
 end
-v1.OpenGamemodeEndScoreboard.On(function(p1) -- Line: 33 -- upvalues: closeScoreboard (val), Fusion (val), Players (val), SoundService (val), u21 (val), u24 (val), u29 (ref)
-    local v1
+
+v1.OpenGamemodeEndScoreboard.On(function(p1) -- Line: 33
+    -- upvalues: closeScoreboard (val), Fusion (val), Players (val), SoundService (val), u21 (val), u24 (val), u29 (ref)
+    local Image, v1
     closeScoreboard()
     local u6 = Fusion.scoped(Fusion)
     local Players_2 = p1.Players
     local v2 = nil
     local v3 = nil
     for i, j in Players_2, v2, v3 do
-        j.Image = u6:Value(j.Image or "")
+        Image = j.Image
+        j.Image = u6:Value(Image or "")
         task.spawn(function() -- Line: 40 -- upvalues: u6 (val), j (val), Players (upval)
             if u6.peek(j.Image) == "" then
                 local v1 = j.UserId or 1583746009
                 if v1 <= 0 then
                     v1 = 1583746009
                 end
-                j.Image:set(Players:GetUserThumbnailAsync(v1, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100))
+                local v2 = j
+                local Image = v2.Image
+                local v3 = Players
+                local HeadShot = Enum.ThumbnailType.HeadShot
+                local Size100x100 = Enum.ThumbnailSize.Size100x100
+                local UserThumbnailAsync = v3:GetUserThumbnailAsync(v1, HeadShot, Size100x100)
+                Image:set(UserThumbnailAsync)
             end
         end)
     end
-    v2 = u6:New("ScreenGui")
-    v2 = v2({IgnoreGuiInset = true, Parent = u21.PlayerGui, ScreenInsets = Enum.ScreenInsets.None})
-    _, v1 = u24({
+    v2 = u6:New("ScreenGui")({IgnoreGuiInset = true, Parent = u21.PlayerGui, ScreenInsets = Enum.ScreenInsets.None})
+    v3 = u24
+    _, v1 = v3({
         scope = u6,
         Players = p1.Players,
         target = v2,
